@@ -1,0 +1,119 @@
+---
+import { GITHUB, WAITLIST, MAILTO } from '../data/links';
+
+const templateCode = [
+  '<span class="s-c">{# customer_support · v7 #}</span>',
+  '<span class="s-tag">{%</span> <span class="s-kw">set</span> tone = <span class="s-str">"formal"</span> <span class="s-kw">if</span> user.tier == <span class="s-str">"enterprise"</span> <span class="s-kw">else</span> <span class="s-str">"friendly"</span> <span class="s-tag">%}</span>',
+  '',
+  'You are a <span class="s-var">{{</span> tone <span class="s-var">}}</span> assistant for <span class="s-var">{{</span> company.name <span class="s-var">}}</span>.',
+  'User: <span class="s-var">{{</span> query <span class="s-var">}}</span>',
+  'Lang: <span class="s-var">{{</span> lang <span class="s-op">|</span> <span class="s-fn">default</span>(<span class="s-str">"English"</span>) <span class="s-var">}}</span>',
+].join('\n');
+
+const pythonCode = [
+  '<span class="s-kw">import</span> px0',
+  '',
+  'prompt = px0.<span class="s-fn">render</span>(<span class="s-str">"customer_support"</span>, {',
+  '    <span class="s-str">"user"</span>:    user,',
+  '    <span class="s-str">"company"</span>: company,',
+  '    <span class="s-str">"query"</span>:   query,',
+  '})<span class="cursor"></span>',
+].join('\n');
+
+const nodeCode = [
+  '<span class="s-kw">import</span> { px0 } <span class="s-kw">from</span> <span class="s-str">"px0"</span>',
+  '',
+  '<span class="s-kw">const</span> prompt = <span class="s-kw">await</span> px0.<span class="s-fn">render</span>(<span class="s-str">"customer_support"</span>, {',
+  '  user, company, query,',
+  '})<span class="cursor"></span>',
+  '',
+  '',
+].join('\n');
+
+const goCode = [
+  'prompt, err := px0.<span class="s-fn">Render</span>(<span class="s-str">"customer_support"</span>,',
+  '    map[string]any{',
+  '        <span class="s-str">"user"</span>:    user,',
+  '        <span class="s-str">"company"</span>: company,',
+  '        <span class="s-str">"query"</span>:   query,',
+  '    },',
+  ')<span class="cursor"></span>',
+].join('\n');
+---
+
+<section class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+
+    <div class="hero-left">
+      <div class="badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        open source &middot; prompt infrastructure
+      </div>
+      <h1>Prompts are code.<br>Treat them like&nbsp;it.</h1>
+      <p class="hero-desc">
+        Stop hardcoding prompts. px0 gives you versioned Jinja templates,
+        in-process caching, A/B testing, and OTEL observability,
+        built for engineers who ship AI in production.
+      </p>
+      <div class="cta-row">
+        <a href={GITHUB} class="btn-primary" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          Star on GitHub
+        </a>
+        <a href={WAITLIST} class="btn-ghost" target="_blank" rel="noopener noreferrer">join the waitlist &rarr;</a>
+      </div>
+
+      <p class="waitlist-note">
+        Still building. <a href={WAITLIST} target="_blank" rel="noopener noreferrer">Reach out if you want early access.</a>
+      </p>
+    </div>
+
+    <div class="hero-right">
+      <div class="terminal">
+        <div class="t-header">
+          <div class="t-dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="t-name">customer_support.j2</span>
+          <span class="t-ver">v7 &middot; live</span>
+        </div>
+
+        <div class="t-block">
+          <div class="t-label">template</div>
+          <pre class="t-code t-code-wrap" set:html={templateCode}></pre>
+        </div>
+
+        <div class="t-divider"></div>
+
+        <div class="t-block">
+          <div class="t-label">sdk call</div>
+          <div class="lang-tabs">
+            <button class="lang-tab active" data-lang="python">Python</button>
+            <button class="lang-tab" data-lang="node">Node.js</button>
+            <button class="lang-tab" data-lang="go">Go</button>
+          </div>
+          <pre class="t-code lang-pane active" id="lang-python" set:html={pythonCode}></pre>
+          <pre class="t-code lang-pane" id="lang-node" set:html={nodeCode}></pre>
+          <pre class="t-code lang-pane" id="lang-go" set:html={goCode}></pre>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const tabs = document.querySelectorAll('.lang-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.lang-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('lang-' + (tab as HTMLElement).dataset.lang)?.classList.add('active');
+    });
+  });
+</script>

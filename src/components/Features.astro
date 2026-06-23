@@ -1,0 +1,87 @@
+---
+const features = [
+  {
+    icon: '". ."',
+    color: "#facc15",
+    title: "No Hardcoded Strings",
+    desc: "Prompt text lives in version-controlled templates, not scattered across your codebase. No more grep-and-replace to update a prompt.",
+    tag: "zero hardcoding",
+  },
+  {
+    icon: "sdk",
+    color: "#a78bfa",
+    title: "5-Line Integration",
+    desc: "One render() call, same API across Python, Node, and Go. Swap the template name, never touch calling code again.",
+    tag: "python · node · go",
+  },
+  {
+    icon: "∅ ci",
+    color: "#34d399",
+    title: "Deploy-Free Updates",
+    desc: "Push a new template version and it goes live instantly. No PR, no build pipeline, no service restart required.",
+    tag: "instant rollout",
+  },
+  {
+    icon: "{ }",
+    color: "#38bdf8",
+    title: "Jinja Templates",
+    desc: "Write prompts as code: variables, conditionals, loops, filters, macros. Sandboxed rendering. No more concatenated strings.",
+    tag: "jinja2 · sandboxed",
+  },
+  {
+    icon: "v1 v2 v3",
+    color: "#8b5cf6",
+    title: "Atomic Versioning",
+    desc: "Published versions are immutable. Go-live is atomic, no partial deployments. Roll back to any version in one operation.",
+    tag: "immutable · diff",
+  },
+  {
+    icon: "~ <2ms",
+    color: "#0ea5e9",
+    title: "Smart Caching",
+    desc: "In-process cache with TTL and push-based invalidation. Background async refresh before expiry. Cache warming on startup.",
+    tag: "<2ms p99",
+  },
+  {
+    icon: "A / B",
+    color: "#f59e0b",
+    title: "A/B Testing",
+    desc: "Split traffic across multiple prompt versions by percentage. Let your metrics pick the winner, not gut feelings.",
+    tag: "traffic split",
+  },
+  {
+    icon: "◎ otel",
+    color: "#f43f5e",
+    title: "OTEL Observability",
+    desc: "Every render is traced and measured. Push latency, cache hit rate, and error metrics to any OpenTelemetry-compatible backend.",
+    tag: "otel · metrics",
+  },
+  {
+    icon: "≡ Δ",
+    color: "#14b8a6",
+    title: "Draft & Audit",
+    desc: "Draft - Review - Publish workflow. Visual diff between any two versions. Full audit trail of every change, by whom, and when.",
+    tag: "audit trail",
+  },
+];
+---
+
+<section class="features">
+  <div class="container">
+    <p class="section-eyebrow">// what px0 gives you</p>
+    <h2 class="section-heading">Prompt Registry</h2>
+    <div class="feature-grid">
+      {features.map(f => (
+        <div class="feature-card">
+          <div class="f-icon" style={`color:${f.color}`}>{f.icon}</div>
+          <h3 class="f-title">{f.title}</h3>
+          <p class="f-desc">{f.desc}</p>
+          <span
+            class="f-tag"
+            style={`color:${f.color};border-color:${f.color}33;background:${f.color}0f`}
+          >{f.tag}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

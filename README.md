@@ -1,46 +1,49 @@
-# Astro Starter Kit: Basics
+# px0 web
 
-```sh
-npm create astro@latest -- --template basics
+Source for [px0.ai](https://px0.ai) - the landing page for [px0](https://github.com/px0-ai/px0), the control plane for AI prompts.
+
+## Getting started
+
+Make sure you have Node.js 22+ installed, then install dependencies:
+
+```bash
+npm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Start the dev server:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```bash
+npm run dev
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+The site will be available at `http://localhost:4321`. The dev server supports hot reload, so changes to components and styles reflect instantly.
 
-## 🧞 Commands
+## Building for production
 
-All commands are run from the root of the project, from a terminal:
+```bash
+npm run build
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Output is written to `dist/`. Preview the production build locally with:
 
-## 👀 Want to learn more?
+```bash
+npm run preview
+```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Project structure
+
+```
+src/
+  components/   # Nav, Hero, Features, Footer
+  data/         # Shared constants (links, URLs)
+  layouts/      # Base HTML layout
+  pages/        # index.astro
+  styles/       # global.css
+public/         # Favicons and static assets
+```
+
+## Stack
+
+- [Astro](https://astro.build) - static site generator
+- Vanilla CSS with CSS custom properties
+- No JS frameworks - interactive bits use plain script tags
