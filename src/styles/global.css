@@ -201,16 +201,31 @@ nav {
   display: block;
 }
 
-.gh-link {
+.nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
   font-size: 12px;
   font-family: var(--mono);
   color: var(--muted);
-  border: 1px solid var(--bdr);
-  padding: 6px 14px;
+  transition: color .15s;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+.nav-link:hover {
+  color: var(--txt);
+}
+
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   border-radius: var(--r);
+  border: 1px solid var(--bdr);
+  background: transparent;
+  color: var(--muted);
   transition: color .15s, border-color .15s, background .15s;
 }
 
@@ -218,15 +233,6 @@ nav {
   color: var(--txt);
   border-color: var(--bdr-hi);
   background: var(--surface);
-}
-
-@media (max-width: 480px) {
-  .gh-text {
-    display: none;
-  }
-  .gh-link {
-    padding: 8px;
-  }
 }
 
 /* ── Hero ───────────────────────────────────────────────────── */
@@ -600,32 +606,63 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
 .footer-waitlist {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--txt-muted);
-  text-align: right;
-  transition: color .3s;
+  margin-top: 6px;
 }
 
-.footer-waitlist a {
-  color: var(--yellow);
+.footer-waitlist a,
+.waitlist-link {
+  color: var(--yellow) !important;
   transition: opacity .15s;
 }
 
-.footer-waitlist a:hover { opacity: .75; }
+.footer-waitlist a:hover,
+.waitlist-link:hover {
+  opacity: .75;
+}
+
+.footer-copyright {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--txt-muted);
+  opacity: 0.6;
+  margin-top: 12px;
+}
+
+.footer-copyright a {
+  color: inherit;
+  text-decoration: underline;
+  transition: color .15s, opacity .15s;
+}
+
+.footer-copyright a:hover {
+  color: var(--txt);
+  opacity: 1;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
 
 .footer-link {
   font-family: var(--mono);
   font-size: 12px;
   color: var(--txt-muted);
-  transition: color .15s;
+  transition: color .15s, opacity .15s;
 }
 
-.footer-link:hover { color: var(--txt); }
+.footer-link:hover {
+  color: var(--txt);
+}
 
 /* ── Animations ─────────────────────────────────────────────── */
 @keyframes pulse {
@@ -666,7 +703,7 @@ footer {
 
   .footer-inner { flex-direction: column; align-items: flex-start; }
   .footer-right { align-items: flex-start; }
-  .footer-waitlist { text-align: left; }
+  .footer-links { align-items: flex-start; }
 
   .t-code { font-size: 11px; }
   .lang-tab { font-size: 10px; padding: 3px 8px; }

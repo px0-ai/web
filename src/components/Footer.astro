@@ -1,5 +1,6 @@
 ---
-import { GITHUB, WAITLIST, EMAIL, MAILTO } from '../data/links';
+import { GITHUB, WAITLIST, EMAIL, MAILTO, DOCS } from '../data/links';
+const currentYear = new Date().getFullYear();
 ---
 
 <footer>
@@ -7,10 +8,13 @@ import { GITHUB, WAITLIST, EMAIL, MAILTO } from '../data/links';
     <div class="footer-brand">
       <a href="/" class="logo">px<span class="accent">[0]</span></a>
       <p>Open Source Prompt Infrastructure.</p>
+      <p class="footer-waitlist">Still building. <a href={WAITLIST} class="waitlist-link" target="_blank" rel="noopener noreferrer">Join the waitlist &rarr;</a></p>
     </div>
     <div class="footer-right">
-      <p class="footer-waitlist">Still building. <a href={WAITLIST} target="_blank" rel="noopener noreferrer">Join the waitlist &rarr;</a></p>
-      <a class="footer-link" href={GITHUB} target="_blank" rel="noopener noreferrer">github.com/px0-ai/px0</a>
+      <div class="footer-links">
+        <a class="footer-link" href={DOCS} target="_blank" rel="noopener noreferrer">Docs</a>
+        <a class="footer-link" href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
     </div>
   </div>
 </footer>

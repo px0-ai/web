@@ -47,3 +47,7 @@ public/         # Favicons and static assets
 - [Astro](https://astro.build) - static site generator
 - Vanilla CSS with CSS custom properties
 - No JS frameworks - interactive bits use plain script tags
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
