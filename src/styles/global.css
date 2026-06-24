@@ -1,11 +1,11 @@
 /* ── Tokens ─────────────────────────────────────────────────── */
 :root {
-  /* Default: Dark Theme (Subtle Carbon/Zinc) */
-  --bg: #09090b;
-  --surface: #141416;
-  --code-bg: #0c0c0e;
-  --bdr: #1f1f23;
-  --bdr-hi: #2e2e34;
+  /* Default: Dark Theme (Soft Volcanic Graphite) */
+  --bg: #121214;
+  --surface: #1c1c1f;
+  --code-bg: #161619;
+  --bdr: #25252a;
+  --bdr-hi: #35353c;
   --txt: #f4f4f5;
   --txt-muted: #a1a1aa;
   --muted: #71717a;
@@ -19,15 +19,15 @@
 
   /* Theme-specific variables */
   --grid-color: rgba(255, 255, 255, 0.012);
-  --nav-bg: rgba(9, 9, 11, 0.85);
+  --nav-bg: rgba(18, 18, 20, 0.85);
   --hero-glow: radial-gradient(
     ellipse at center,
     rgba(129, 140, 248, 0.035) 0%,
     transparent 65%
   );
   --btn-primary-shadow: rgba(251, 191, 36, 0.15);
-  --terminal-bg: #0f0f11;
-  --terminal-bdr: #222226;
+  --terminal-bg: #161619;
+  --terminal-bdr: #2c2c32;
   --terminal-txt: #d4d4d8;
   --terminal-header-bg: rgba(255, 255, 255, 0.01);
   --terminal-shadow: 
@@ -39,7 +39,7 @@
   --lang-tab-active-bg: rgba(251, 191, 36, 0.05);
 
   /* Syntax Highlighting */
-  --s-c: #52525b;
+  --s-c: #71717a;
   --s-tag: #a5b4fc;
   --s-kw: #818cf8;
   --s-op: #71717a;
