@@ -1,0 +1,131 @@
+# px0 - Open Source Prompt Infrastructure
+
+> Prompts are code. Treat them like it. Stop hardcoding prompts. px0 brings versioned template management, in-process caching, A/B testing, and OpenTelemetry prompt observability to your AI stack so you can iterate faster and deploy with confidence.
+
+## Core Philosophy
+
+Modern AI applications suffer from prompt spaghetti where prompt text is hardcoded across dozens of codebase files. Updating a single sentence requires a git PR, code review, CI/CD run, and a service restart.
+
+px0 decouples prompts from application code:
+
+- Prompt Registry: Prompts live as version-controlled templates.
+- Standardized SDKs: Applications render templates using an ultra-simple SDK available in Python, Node.js, and Go.
+- Instant Rollout: Push changes live without deploying code.
+- OTEL Observability: Trace and evaluate every prompt render.
+
+## Technical Features
+
+### No Hardcoded Strings
+
+- Decoupled Architecture: Prompts live in version-controlled templates, not scattered across your codebase.
+- Searchability: No more nested search-and-replace to update prompt logic.
+
+### Standardized SDK Integration
+
+- Unified API signatures: Use the same patterns across Python, Node.js, and Go.
+- Simple Rendering: A single render function abstracts all communication and cache-management logic.
+- Flexible Configuration: Swap template names or roll out dynamic version flags without updating calling code.
+
+### Deploy-Free Updates
+
+- Zero Pipeline Overhead: Push a prompt template version update and it goes live instantly.
+- No Rebuilds: No git commits, pull requests, CI/CD pipelines, or container restarts are needed to update a prompt.
+
+### Advanced Sandboxed Templating
+
+- Jinja Syntax: Prompts are formulated using standard Jinja2 syntax.
+- Full Control: Supports advanced language constructs including variables, conditionals, loops, custom filters, and reusable macros.
+- Safe Execution: Sandboxed rendering ensures untrusted inputs or bad structures never crash the main application.
+
+### Atomic Versioning and Rollbacks
+
+- Immutable Revisions: Every published prompt template version is immutable.
+- Atomic Deployments: Changes are rolled out atomically across all active SDK instances.
+- Instant Recovery: Roll back to any previous healthy template version in one click.
+
+### High Performance In-Process Caching
+
+- Low Latency: Less than 2 milliseconds latency overhead on critical paths.
+- Local Storage: Prompts are cached in the application memory to avoid remote queries on critical paths.
+- Asynchronous Refresh: Automatic background TTL refresh before the cache expires keeps prompts fresh without blocking execution.
+- Warm Start: Cache pre-warming on startup avoids cold-start latency.
+
+### Dynamic A/B Testing
+
+- Traffic Splitting: Split prompt-rendering traffic dynamically across multiple template versions using percentage allocations.
+- Data-Driven Decisions: Measure performance differences and let user engagement metrics determine the winning prompt.
+
+### Native OpenTelemetry Observability
+
+- Built-In Tracing: Every prompt rendering is traced and measured natively.
+- Standard Exporters: Supports out-of-the-box exporting for latency, cache hit rate, and render error metrics.
+- Multi-Backend Integration: Send tracing spans and metric data to any standard OpenTelemetry collector or backend.
+
+### Draft and Audit Workflows
+
+- Lifecycle Management: Draft, review, and publish cycles ensure that prompt revisions undergo checks.
+- Comparison Tooling: Interactive visual diffs between any two template versions.
+- Governance: Comprehensive audit trail of every change capturing what was changed, by whom, and when.
+
+## SDK Integration Examples
+
+Below are standard examples demonstrating how a Jinja template is set up and rendered across various backend SDKs.
+
+### Prompt Template: customer_support.j2
+
+```jinja
+{# customer_support - v7 #}
+{% set tone = "formal" if user.tier == "enterprise" else "friendly" %}
+
+You are a {{ tone }} assistant for {{ company.name }}.
+User: {{ query }}
+Lang: {{ lang | default("English") }}
+```
+
+### Python SDK Usage
+
+```python
+import px0
+
+# Render the prompt template directly
+prompt = px0.render("customer_support", {
+    "user": user,
+    "company": company,
+    "query": query,
+})
+```
+
+### Node.js SDK Usage
+
+```typescript
+import { px0 } from "px0";
+
+// Render prompt template asynchronously
+const prompt = await px0.render("customer_support", {
+  user,
+  company,
+  query,
+});
+```
+
+### Go SDK Usage
+
+```go
+import "github.com/px0-ai/px0-go"
+
+// Render the prompt template using maps
+prompt, err := px0.Render("customer_support",
+    map[string]any{
+        "user":    user,
+        "company": company,
+        "query":   query,
+    },
+)
+```
+
+## Project Status
+
+- Status: px0 is actively building its core platform. Early access and private hosting options are available.
+- GitHub Repository: [github.com/px0-ai/px0](https://github.com/px0-ai/px0)
+- Early Access Waitlist: [forms.gle/RguHzh3Eua4eGJXx5](https://forms.gle/RguHzh3Eua4eGJXx5)
+- Contact and Support: Reach out directly at [arpit@arpitbhayani.me](mailto:arpit@arpitbhayani.me).

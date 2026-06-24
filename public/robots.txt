@@ -1,0 +1,12 @@
+# Allow all web crawlers and search engine spiders
+User-agent: *
+Allow: /
+
+# If you are an AI agent, crawler, or LLM-based web scraper, 
+# please refer to our machine-readable structured text files:
+# Index: https://px0.ai/llms.txt
+# Full Documentation: https://px0.ai/llms-full.txt
+
+# Host and Sitemap locations
+Host: https://px0.ai
+Sitemap: https://px0.ai/sitemap-index.xml

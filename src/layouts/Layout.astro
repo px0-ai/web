@@ -10,6 +10,8 @@ const {
   title = "px0 - Open Source Prompt Infrastructure",
   description = "px0 is Open Source Prompt Infrastructure. Version, cache, A/B test, and observe your easy templating in production.",
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
 ---
 <!doctype html>
 <html lang="en">
@@ -53,11 +55,63 @@ const {
       const theme = getTheme();
       document.documentElement.setAttribute('data-theme', theme);
     </script>
+    <!-- Canonical & Discoverability -->
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="help" type="text/markdown" href="/llms.txt" title="LLM-friendly content index" />
+
+    <!-- SEO Meta Tags -->
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content="px0, prompt engineering, prompt registry, open source prompt infrastructure, LLM caching, prompt versioning, prompt observability, OpenTelemetry, A/B testing prompts" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- OpenGraph (Facebook / LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://px0.ai/android-icon-192x192.png" />
+    <meta property="og:site_name" content="px0" />
+
+    <!-- Twitter / X Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://px0.ai/android-icon-192x192.png" />
+
+    <!-- Geo Tags / Geotargeting -->
+    <meta name="geo.region" content="US-CA" />
+    <meta name="geo.placename" content="San Francisco" />
+    <meta name="geo.position" content="37.774929;-122.419415" />
+    <meta name="ICBM" content="37.774929, -122.419415" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "px0",
+        "description": "Open Source Prompt Infrastructure. Version, cache, A/B test, and observe your easy templating in production.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "url": "https://px0.ai",
+        "applicationSubCategory": "AI Prompt Engineering & Infrastructure",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "softwareVersion": "0.0.1",
+        "author": {
+          "@type": "Person",
+          "name": "Arpit Bhayani",
+          "email": "arpit@arpitbhayani.me",
+          "url": "https://arpitbhayani.me"
+        }
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
