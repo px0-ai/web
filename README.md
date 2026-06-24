@@ -1,6 +1,6 @@
 # px0 web
 
-Source for [px0.ai](https://px0.ai) - the landing page for [px0](https://github.com/px0-ai/px0), the control plane for AI prompts.
+Source for [px0.ai](https://px0.ai) - the landing page for [px0](https://github.com/px0-ai/px0), the Open Source Prompt Infrastructure.
 
 ## Getting started
 
