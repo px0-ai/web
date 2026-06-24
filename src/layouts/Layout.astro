@@ -40,6 +40,19 @@ const {
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="theme-color" content="#06060f" />
     <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      const getTheme = () => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          return 'light';
+        }
+        return 'dark';
+      };
+      const theme = getTheme();
+      document.documentElement.setAttribute('data-theme', theme);
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
