@@ -1,6 +1,6 @@
 # px0 - Open Source Prompt Infrastructure
 
-> px0 is Open Source Prompt Infrastructure to version, cache, A/B test, and observe your prompts in production.
+> px0 is Open Source Prompt Infrastructure to version and observe your prompts in production.
 
 This index is optimized for Large Language Models and AI agents. It provides a structured guide to the px0 platform, features, and integration SDKs.
 

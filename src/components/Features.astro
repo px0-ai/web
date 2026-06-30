@@ -1,6 +1,13 @@
 ---
 const features = [
   {
+    icon: "⛨ vpc",
+    color: "#10b981",
+    title: "Self-Hosted & Private",
+    desc: "Deploy in your own cloud, VPC, or on-premises. Retain absolute ownership of your templates, data, and access controls for compliance.",
+    tag: "on-prem · vpc",
+  },
+  {
     icon: '". ."',
     color: "#facc15",
     title: "No Hardcoded Strings",
@@ -8,18 +15,18 @@ const features = [
     tag: "zero hardcoding",
   },
   {
-    icon: "sdk",
-    color: "#a78bfa",
-    title: "5-Line Integration",
-    desc: "One render() call, same API across Python, Node, and Go. Swap the template name, never touch calling code again.",
-    tag: "python · node · go",
-  },
-  {
     icon: "∅ ci",
     color: "#34d399",
     title: "Deploy-Free Updates",
     desc: "Push a new template version and it goes live instantly. No PR, no build pipeline, no service restart required.",
     tag: "instant rollout",
+  },
+  {
+    icon: "sdk",
+    color: "#a78bfa",
+    title: "5-Line Integration",
+    desc: "One render() call, same API across Python, Node, and Go. Swap the template name, never touch calling code again.",
+    tag: "python · node · go",
   },
   {
     icon: "{ }",
@@ -36,32 +43,25 @@ const features = [
     tag: "immutable · diff",
   },
   {
-    icon: "~ <2ms",
-    color: "#0ea5e9",
-    title: "Smart Caching",
-    desc: "In-process cache with TTL and push-based invalidation. Background async refresh before expiry. Cache warming on startup.",
-    tag: "<2ms p99",
+    icon: "🔒 rbac",
+    color: "#f59e0b",
+    title: "Team-Level RBAC",
+    desc: "Role-based access control and granular team permissions. Define policies for who can view, edit, draft, or publish prompt templates.",
+    tag: "granular access",
   },
   {
-    icon: "A / B",
-    color: "#f59e0b",
-    title: "A/B Testing",
-    desc: "Split traffic across multiple prompt versions by percentage. Let your metrics pick the winner, not gut feelings.",
-    tag: "traffic split",
+    icon: "≡ Δ",
+    color: "#14b8a6",
+    title: "Draft & Review",
+    desc: "Draft - Review - Publish workflow. Visual diff between any two versions. Comprehensive change tracking of every edit and revision.",
+    tag: "change review",
   },
   {
     icon: "◎ otel",
     color: "#f43f5e",
     title: "OTEL Observability",
-    desc: "Every render is traced and measured. Push latency, cache hit rate, and error metrics to any OpenTelemetry-compatible backend.",
+    desc: "Every render is traced and measured. Push rendering latency, performance, and error metrics to any OpenTelemetry-compatible backend.",
     tag: "otel · metrics",
-  },
-  {
-    icon: "≡ Δ",
-    color: "#14b8a6",
-    title: "Draft & Audit",
-    desc: "Draft - Review - Publish workflow. Visual diff between any two versions. Full audit trail of every change, by whom, and when.",
-    tag: "audit trail",
   },
 ];
 ---

@@ -8,7 +8,7 @@ interface Props {
 
 const {
   title = "px0 - Open Source Prompt Infrastructure",
-  description = "px0 is Open Source Prompt Infrastructure. Version, cache, A/B test, and observe your easy templating in production.",
+  description = "px0 is Open Source Prompt Infrastructure. Version and observe your easy templating in production.",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
@@ -62,7 +62,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai')
     <!-- SEO Meta Tags -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content="px0, prompt engineering, prompt registry, open source prompt infrastructure, LLM caching, prompt versioning, prompt observability, OpenTelemetry, A/B testing prompts" />
+    <meta name="keywords" content="px0, prompt engineering, prompt registry, open source prompt infrastructure, prompt versioning, prompt observability, OpenTelemetry" />
     <meta name="robots" content="index, follow" />
 
     <!-- OpenGraph (Facebook / LinkedIn) -->
@@ -92,7 +92,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai')
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "px0",
-        "description": "Open Source Prompt Infrastructure. Version, cache, A/B test, and observe your easy templating in production.",
+        "description": "Open Source Prompt Infrastructure. Version and observe your easy templating in production.",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "All",
         "url": "https://px0.ai",

@@ -1,6 +1,6 @@
 # px0 - Open Source Prompt Infrastructure
 
-> Prompts are code. Treat them like it. Stop hardcoding prompts. px0 brings versioned template management, in-process caching, A/B testing, and OpenTelemetry prompt observability to your AI stack so you can iterate faster and deploy with confidence.
+> Prompts are code. Treat them like it. Stop hardcoding prompts. px0 brings versioned template management and OpenTelemetry prompt observability to your AI stack so you can iterate faster and deploy with confidence.
 
 ## Core Philosophy
 
@@ -15,21 +15,27 @@ px0 decouples prompts from application code:
 
 ## Technical Features
 
+### Self-Hosted & Private
+
+- Flexible Deployment: Deploy px0 inside your own cloud, private VPC, or completely on-premises (air-gapped).
+- Data Ownership: Retain 100% control and ownership of your prompt templates, telemetry data, and access logs.
+- Compliance Ready: Meet strict security requirements like SOC2, HIPAA, and GDPR by keeping all prompt operations in-house.
+
 ### No Hardcoded Strings
 
 - Decoupled Architecture: Prompts live in version-controlled templates, not scattered across your codebase.
 - Searchability: No more nested search-and-replace to update prompt logic.
+
+### Deploy-Free Updates
+
+- Zero Pipeline Overhead: Push a prompt template version update and it goes live instantly.
+- No Rebuilds: No git commits, pull requests, CI/CD pipelines, or container restarts are needed to update a prompt.
 
 ### Standardized SDK Integration
 
 - Unified API signatures: Use the same patterns across Python, Node.js, and Go.
 - Simple Rendering: A single render function abstracts all communication and cache-management logic.
 - Flexible Configuration: Swap template names or roll out dynamic version flags without updating calling code.
-
-### Deploy-Free Updates
-
-- Zero Pipeline Overhead: Push a prompt template version update and it goes live instantly.
-- No Rebuilds: No git commits, pull requests, CI/CD pipelines, or container restarts are needed to update a prompt.
 
 ### Advanced Sandboxed Templating
 
@@ -43,29 +49,23 @@ px0 decouples prompts from application code:
 - Atomic Deployments: Changes are rolled out atomically across all active SDK instances.
 - Instant Recovery: Roll back to any previous healthy template version in one click.
 
-### High Performance In-Process Caching
+### Team-Level RBAC
 
-- Low Latency: Less than 2 milliseconds latency overhead on critical paths.
-- Local Storage: Prompts are cached in the application memory to avoid remote queries on critical paths.
-- Asynchronous Refresh: Automatic background TTL refresh before the cache expires keeps prompts fresh without blocking execution.
-- Warm Start: Cache pre-warming on startup avoids cold-start latency.
+- Granular Access Control: Define role-based access controls for developers, reviewers, and publishers.
+- Team Permissions: Manage template access and modification rights across different engineering teams.
+- Granular Policies: Fine-grained permissions on who can view, edit, draft, or publish prompt templates.
 
-### Dynamic A/B Testing
+### Draft and Review Workflows
 
-- Traffic Splitting: Split prompt-rendering traffic dynamically across multiple template versions using percentage allocations.
-- Data-Driven Decisions: Measure performance differences and let user engagement metrics determine the winning prompt.
+- Lifecycle Management: Draft, review, and publish cycles ensure that prompt revisions undergo checks.
+- Comparison Tooling: Interactive visual diffs between any two template versions.
+- Change Tracking: Detailed log of every change capturing what was modified, by whom, and when.
 
 ### Native OpenTelemetry Observability
 
 - Built-In Tracing: Every prompt rendering is traced and measured natively.
-- Standard Exporters: Supports out-of-the-box exporting for latency, cache hit rate, and render error metrics.
+- Standard Exporters: Supports out-of-the-box exporting for latency, performance, and render error metrics.
 - Multi-Backend Integration: Send tracing spans and metric data to any standard OpenTelemetry collector or backend.
-
-### Draft and Audit Workflows
-
-- Lifecycle Management: Draft, review, and publish cycles ensure that prompt revisions undergo checks.
-- Comparison Tooling: Interactive visual diffs between any two template versions.
-- Governance: Comprehensive audit trail of every change capturing what was changed, by whom, and when.
 
 ## SDK Integration Examples
 
