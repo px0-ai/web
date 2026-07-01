@@ -2,12 +2,12 @@
 import { GITHUB, WAITLIST, MAILTO } from '../data/links';
 
 const templateCode = [
-  '<span class="s-c">{# customer_support · v7 #}</span>',
-  '<span class="s-tag">{%</span> <span class="s-kw">set</span> tone = <span class="s-str">"formal"</span> <span class="s-kw">if</span> user.tier == <span class="s-str">"enterprise"</span> <span class="s-kw">else</span> <span class="s-str">"friendly"</span> <span class="s-tag">%}</span>',
+  '<span class="s-c">{{/* customer_support · v7 */}}</span>',
+  '<span class="s-tag">{{</span> $tone := <span class="s-str">"friendly"</span> <span class="s-tag">}}{{</span> <span class="s-kw">if</span> <span class="s-fn">eq</span> .user.tier <span class="s-str">"enterprise"</span> <span class="s-tag">}}{{</span> $tone = <span class="s-str">"formal"</span> <span class="s-tag">}}{{</span> <span class="s-kw">end</span> <span class="s-tag">}}</span>',
   '',
-  'You are a <span class="s-var">{{</span> tone <span class="s-var">}}</span> assistant for <span class="s-var">{{</span> company.name <span class="s-var">}}</span>.',
-  'User: <span class="s-var">{{</span> query <span class="s-var">}}</span>',
-  'Lang: <span class="s-var">{{</span> lang <span class="s-op">|</span> <span class="s-fn">default</span>(<span class="s-str">"English"</span>) <span class="s-var">}}</span>',
+  'You are a <span class="s-var">{{</span> $tone <span class="s-var">}}</span> assistant for <span class="s-var">{{</span> .company.name <span class="s-var">}}</span>.',
+  'User: <span class="s-var">{{</span> .query <span class="s-var">}}</span>',
+  'Lang: <span class="s-var">{{</span> <span class="s-fn">or</span> .lang <span class="s-str">"English"</span> <span class="s-var">}}</span>',
 ].join('\n');
 
 const pythonCode = [
@@ -77,7 +77,7 @@ const goCode = [
           <div class="t-dots" aria-hidden="true">
             <span></span><span></span><span></span>
           </div>
-          <span class="t-name">customer_support.j2</span>
+          <span class="t-name">customer_support.tmpl</span>
           <span class="t-ver">v7 &middot; live</span>
         </div>
 
