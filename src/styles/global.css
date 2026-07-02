@@ -151,15 +151,32 @@ nav {
   justify-content: space-between;
 }
 
-.logo {
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -1px;
-  color: var(--txt);
+.logo-link {
+  display: flex;
+  align-items: center;
 }
 
-.accent { color: var(--yellow); }
+.logo-img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+.logo-light {
+  display: none;
+}
+
+.logo-dark {
+  display: block;
+}
+
+:root[data-theme="light"] .logo-light {
+  display: block;
+}
+
+:root[data-theme="light"] .logo-dark {
+  display: none;
+}
 
 .nav-right {
   display: flex;
@@ -592,7 +609,7 @@ footer {
   flex-wrap: wrap;
 }
 
-.footer-brand .logo { font-size: 18px; }
+.footer-brand .logo-img { height: 24px; }
 
 .footer-brand p {
   font-family: var(--mono);
