@@ -2,42 +2,54 @@
 import { DOCS, GITHUB } from '../data/links';
 
 const templateCode = [
-  '<span class="s-c">{{/* customer_support · v7 */}}</span>',
-  '<span class="s-tag">{{</span> $tone := <span class="s-str">"friendly"</span> <span class="s-tag">}}{{</span> <span class="s-kw">if</span> <span class="s-fn">eq</span> .user.tier <span class="s-str">"enterprise"</span> <span class="s-tag">}}{{</span> $tone = <span class="s-str">"formal"</span> <span class="s-tag">}}{{</span> <span class="s-kw">end</span> <span class="s-tag">}}</span>',
-  '',
-  'You are a <span class="s-var">{{</span> $tone <span class="s-var">}}</span> assistant for <span class="s-var">{{</span> .company.name <span class="s-var">}}</span>.',
-  'User: <span class="s-var">{{</span> .query <span class="s-var">}}</span>',
-  'Lang: <span class="s-var">{{</span> <span class="s-fn">or</span> .lang <span class="s-str">"English"</span> <span class="s-var">}}</span>',
+  'System: You are a SQL expert.',
+  'Query to <span class="s-var">{{</span> .task <span class="s-var">}}</span>:',
 ].join('\n');
 
 const pythonCode = [
   '<span class="s-kw">import</span> px0',
   '',
-  'prompt = px0.<span class="s-fn">render</span>(<span class="s-str">"customer_support"</span>, {',
-  '    <span class="s-str">"user"</span>:    user,',
-  '    <span class="s-str">"company"</span>: company,',
-  '    <span class="s-str">"query"</span>:   query,',
-  '})<span class="cursor"></span>',
+  'client = px0.<span class="s-fn">ApiClient</span>(px0.<span class="s-fn">Configuration</span>())',
+  'renders_api = px0.<span class="s-fn">PromptRendersApi</span>(client)',
+  'response = renders_api.<span class="s-fn">render_live</span>(',
+  '    slug=<span class="s-str">"sql_generator"</span>,',
+  '    render_request=px0.<span class="s-fn">RenderRequest</span>(',
+  '        variables={<span class="s-str">"task"</span>: <span class="s-str">"list active users"</span>}',
+  '    )',
+  ')<span class="cursor"></span>',
 ].join('\n');
 
 const nodeCode = [
-  '<span class="s-kw">import</span> { px0 } <span class="s-kw">from</span> <span class="s-str">"px0"</span>',
+  '<span class="s-kw">import</span> {',
+  '  Configuration,',
+  '  PromptRendersApi',
+  '} <span class="s-kw">from</span> <span class="s-str">"@px0-ai/px0"</span>;',
   '',
-  '<span class="s-kw">const</span> prompt = <span class="s-kw">await</span> px0.<span class="s-fn">render</span>(<span class="s-str">"customer_support"</span>, {',
-  '  user, company, query,',
-  '})<span class="cursor"></span>',
-  '',
-  '',
+  '<span class="s-kw">const</span> rendersApi = <span class="s-kw">new</span> <span class="s-fn">PromptRendersApi</span>(',
+  '  <span class="s-kw">new</span> <span class="s-fn">Configuration</span>()',
+  ');',
+  '<span class="s-kw">const</span> response = <span class="s-kw">await</span> rendersApi.<span class="s-fn">renderLive</span>(',
+  '  <span class="s-str">"sql_generator"</span>,',
+  '  { variables: { task: <span class="s-str">"list active users"</span> } }',
+  ');<span class="cursor"></span>',
 ].join('\n');
 
 const goCode = [
-  'prompt, err := px0.<span class="s-fn">Render</span>(<span class="s-str">"customer_support"</span>,',
-  '    map[string]any{',
-  '        <span class="s-str">"user"</span>:    user,',
-  '        <span class="s-str">"company"</span>: company,',
-  '        <span class="s-str">"query"</span>:   query,',
-  '    },',
-  ')<span class="cursor"></span>',
+  '<span class="s-kw">import</span> <span class="s-str">"github.com/px0-ai/px0-go"</span>',
+  '',
+  'client := px0.<span class="s-fn">NewAPIClient</span>(',
+  '  px0.<span class="s-fn">NewConfiguration</span>(),',
+  ')',
+  '',
+  'req := px0.<span class="s-fn">NewRenderRequest</span>()',
+  'req.<span class="s-fn">SetVariables</span>(<span class="s-kw">map</span>[<span class="s-kw">string</span>]<span class="s-kw">interface</span>{}{',
+  '  <span class="s-str">"task"</span>: <span class="s-str">"list active users"</span>,',
+  '})',
+  '',
+  'res, _, _ := client.PromptRendersAPI.',
+  '  <span class="s-fn">RenderLive</span>(<span class="s-kw">nil</span>, <span class="s-str">"sql_generator"</span>).',
+  '  <span class="s-fn">RenderRequest</span>(*req).',
+  '  <span class="s-fn">Execute</span>()<span class="cursor"></span>',
 ].join('\n');
 ---
 
@@ -74,8 +86,8 @@ const goCode = [
           <div class="t-dots" aria-hidden="true">
             <span></span><span></span><span></span>
           </div>
-          <span class="t-name">customer_support.tmpl</span>
-          <span class="t-ver">v7 &middot; live</span>
+          <span class="t-name">sql_generator.tmpl</span>
+          <span class="t-ver">v3 &middot; live</span>
         </div>
 
         <div class="t-block">
