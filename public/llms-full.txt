@@ -79,6 +79,11 @@ px0 decouples prompts and skills from application code:
 - Safe Iteration: Only `draft` versions can be modified or deleted. Stable and live versions are immutable.
 - Dynamic Duplication: Create new draft iterations by duplicating any version's file tree in one click.
 
+### Skill Template Rendering
+
+- Dynamic Code Templating: Render skill source/configuration templates dynamically prior to execution.
+- Sandboxed Jinja Support: Securely inject real-time system context, active parameters, or environment variables into your tool/skill execution context.
+
 ## SDK Integration Examples
 
 Below are standard examples demonstrating how a Jinja template is set up and rendered across various backend SDKs.
