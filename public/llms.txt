@@ -1,12 +1,12 @@
-# px0 - Open Source Prompt Infrastructure
+# px0 - Open Source Prompt & Skill Infrastructure
 
-> px0 is Open Source Prompt Infrastructure to version and observe your prompts in production.
+> px0 is Open Source Prompt and Skill Infrastructure to version, manage, and observe your prompts and agent skills in production.
 
 This index is optimized for Large Language Models and AI agents. It provides a structured guide to the px0 platform, features, and integration SDKs.
 
 ## Core Resources
 
-- [Home Page](https://px0.ai): The official landing page for px0 prompt registry.
+- [Home Page](https://px0.ai): The official landing page for px0 prompt and skill registry.
 - [GitHub Repository](https://github.com/px0-ai/px0): The source code repository, open-source packages, issue tracker, and contribution guide.
 - [Early Access Waitlist](https://forms.gle/RguHzh3Eua4eGJXx5): Join the waitlist for private cloud and advanced features.
 
