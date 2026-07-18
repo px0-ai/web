@@ -1,18 +1,19 @@
-# px0 - Open Source Prompt & Skill Infrastructure
+# px0 - Open Source Prompt, Skill & Tool Infrastructure
 
-> Prompts and agent skills are code. Treat them like it. px0 brings versioned template management, a secure skill registry, and OpenTelemetry observability to your AI stack so you can iterate faster and deploy with confidence.
+> Prompts, agent skills, and tools are code. Treat them like it. px0 brings versioned template management, a secure skill registry, a dynamic tool registry, and OpenTelemetry observability to your AI stack so you can iterate faster and deploy with confidence.
 
 ## Core Philosophy
 
-Modern AI applications suffer from hardcoding logic—whether it is prompt spaghetti scattered across dozens of codebase files or raw agent tools/skills hardcoded inside application layers. Updating a single prompt or skill logic requires a git PR, code review, CI/CD run, and a service restart.
+Modern AI applications suffer from hardcoding logic—whether it is prompt spaghetti scattered across dozens of codebase files, raw agent tools/skills hardcoded inside application layers, or static schemas defining agent interfaces. Updating a single prompt, skill logic, or tool schema requires a git PR, code review, CI/CD run, and a service restart.
 
-px0 decouples prompts and skills from application code:
+px0 decouples prompts, skills, and tools from application code:
 
 - Prompt Registry: Prompts live as version-controlled templates.
 - Skill Registry: Agent tools and functional skills live in multi-file version-controlled workspaces.
-- Standardized SDKs: Applications render templates and invoke skills using an ultra-simple SDK available in Python, Node.js, and Go.
+- Tool Registry: Agent tool specifications live as dynamic, version-controlled JSON schemas.
+- Standardized SDKs: Applications render templates, invoke skills, and retrieve tool schemas using an ultra-simple SDK available in Python, Node.js, and Go.
 - Instant Rollout: Push changes live without deploying code.
-- OTEL Observability: Trace and evaluate every prompt render and skill execution.
+- OTEL Observability: Trace and evaluate every prompt render, skill execution, and tool schema lookup.
 
 ## Technical Features
 
@@ -83,6 +84,16 @@ px0 decouples prompts and skills from application code:
 
 - Dynamic Code Templating: Render skill source/configuration templates dynamically prior to execution.
 - Sandboxed Jinja Support: Securely inject real-time system context, active parameters, or environment variables into your tool/skill execution context.
+
+### Tool Registry & JSON Schema Definitions
+
+- Input & Output Schemas: Define exact JSON Schema structures for tool inputs and outputs. Ensure full validation of parameters and returned results.
+- LLM Discovery Ready: Expose structured tool metadata and descriptions so that LLM orchestration systems can discover and invoke tools dynamically.
+
+### Tool Version Promotion Pipelines
+
+- Immutable Schema Versions: Promoting tool schemas from `draft` to `stable` makes them immutable. No more downstream drift or accidental API updates.
+- Automatic Demotion on Promotion: Promoting a tool version to `live` automatically demotes any previous active version to `stable`. Roll back atomically with a single API request.
 
 ## SDK Integration Examples
 

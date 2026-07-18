@@ -1,6 +1,6 @@
-# px0 - Open Source Prompt & Skill Infrastructure
+# px0 - Open Source Prompt, Skill & Tool Infrastructure
 
-> px0 is Open Source Prompt and Skill Infrastructure to version, manage, and observe your prompts and agent skills in production.
+> px0 is Open Source Prompt, Skill, and Tool Infrastructure to version, manage, and observe your prompts, agent skills, and tools in production.
 
 This index is optimized for Large Language Models and AI agents. It provides a structured guide to the px0 platform, features, and integration SDKs.
 
