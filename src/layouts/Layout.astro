@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { GITHUB, AUTHOR, EMAIL } from '../data/links';
 
 interface Props {
   title?: string;
@@ -7,22 +8,25 @@ interface Props {
 }
 
 const {
-  title = "px0 - Open Source Prompt, Skill & Tool Infrastructure",
-  description = "px0 is Open Source Prompt, Skill, and Tool Infrastructure. Version, govern, and observe your prompts, agent skills, and tools in production.",
+  title = "px0 - Build custom agents and workflows using natural language, then run them on a schedule.",
+  description = "px0 is a local-first open-source utility to build custom agents and workflows. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
+const ogImage = 'https://px0.ai/android-icon-192x192.png';
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+
     <!-- Apple Touch Icons -->
     <link rel="apple-touch-icon" href="/apple-icon.png" />
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png" />
@@ -34,92 +38,133 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai')
     <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png" />
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png" />
+
     <!-- Android / PWA -->
     <link rel="manifest" href="/manifest.json" />
+
     <!-- Windows Tiles -->
-    <meta name="msapplication-TileColor" content="#06060f" />
+    <meta name="msapplication-TileColor" content="#07070a" />
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
-    <meta name="theme-color" content="#06060f" />
+    <meta name="theme-color" content="#07070a" />
     <meta name="generator" content={Astro.generator} />
+
     <script is:inline>
-      const getTheme = () => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      const stored = (() => {
+        try {
           return localStorage.getItem('theme');
+        } catch (e) {
+          return null;
         }
-        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-          return 'light';
-        }
-        return 'dark';
-      };
-      const theme = getTheme();
+      })();
+      const theme =
+        stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
       document.documentElement.setAttribute('data-theme', theme);
     </script>
-    <!-- Canonical & Discoverability -->
+
+    <!-- Canonical & discoverability -->
     <link rel="canonical" href={canonicalURL} />
     <link rel="help" type="text/markdown" href="/llms.txt" title="LLM-friendly content index" />
 
-    <!-- SEO Meta Tags -->
+    <!-- SEO -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content="px0, prompt engineering, prompt registry, skill registry, tool registry, agent skills, agent tools, open source prompt infrastructure, prompt versioning, prompt observability, OpenTelemetry" />
+    <meta
+      name="keywords"
+      content="px0, local-first CLI, workflow automation, plain English automation, markdown workflows, personal automation, cron workflows, Composio, agent CLI, claude code automation, knowledge library, provenance, open source automation"
+    />
     <meta name="robots" content="index, follow" />
+    <meta name="author" content="Arpit Bhayani" />
 
-    <!-- OpenGraph (Facebook / LinkedIn) -->
+    <!-- OpenGraph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content="https://px0.ai/android-icon-192x192.png" />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:site_name" content="px0" />
 
-    <!-- Twitter / X Card -->
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://px0.ai/android-icon-192x192.png" />
+    <meta name="twitter:image" content={ogImage} />
 
-    <!-- Geo Tags / Geotargeting -->
-    <meta name="geo.region" content="US-CA" />
-    <meta name="geo.placename" content="San Francisco" />
-    <meta name="geo.position" content="37.774929;-122.419415" />
-    <meta name="ICBM" content="37.774929, -122.419415" />
-
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json" is:inline>
-      {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "px0",
-        "description": "Open Source Prompt, Skill, and Tool Infrastructure. Version, govern, and observe your prompts, agent skills, and tools in production.",
-        "applicationCategory": "DeveloperApplication",
-        "operatingSystem": "All",
-        "url": "https://px0.ai",
-        "applicationSubCategory": "AI Prompt Engineering, Skill & Tool Infrastructure",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "softwareVersion": "0.0.1",
-        "author": {
-          "@type": "Person",
-          "name": "Arpit Bhayani",
-          "email": "arpit@arpitbhayani.me",
-          "url": "https://arpitbhayani.me"
-        }
-      }
-    </script>
+    <!-- Structured data -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'px0',
+      description:
+        'px0 is a local-first open-source utility to build custom agents and workflows. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.',
+      applicationCategory: 'DeveloperApplication',
+      applicationSubCategory: 'Workflow Automation, Personal Automation, AI Agent Tooling',
+      operatingSystem: 'macOS, Linux',
+      url: 'https://px0.ai',
+      downloadUrl: 'https://pypi.org/project/px0/',
+      codeRepository: GITHUB,
+      license: 'https://opensource.org/licenses/MIT',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      author: {
+        '@type': 'Person',
+        name: 'Arpit Bhayani',
+        email: EMAIL,
+        url: AUTHOR,
+      },
+    })} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
+    <div class="atmos" aria-hidden="true">
+      <div class="atmos-aurora"></div>
+      <div class="atmos-grid"></div>
+      <div class="atmos-grain"></div>
+    </div>
     <slot />
+
+    <script>
+      // Scroll reveal, shared by every section.
+      const items = document.querySelectorAll('.reveal');
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && items.length) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+        );
+        items.forEach((el, i) => {
+          (el as HTMLElement).style.transitionDelay = `${Math.min(i % 6, 5) * 60}ms`;
+          io.observe(el);
+        });
+      } else {
+        items.forEach((el) => el.classList.add('in'));
+      }
+
+      // Copy-to-clipboard for any [data-copy] element.
+      document.querySelectorAll<HTMLElement>('[data-copy]').forEach((el) => {
+        el.addEventListener('click', async () => {
+          const text = el.dataset.copy || '';
+          try {
+            await navigator.clipboard.writeText(text);
+          } catch (e) {
+            return;
+          }
+          el.classList.add('copied');
+          window.setTimeout(() => el.classList.remove('copied'), 1600);
+        });
+      });
+    </script>
   </body>
 </html>

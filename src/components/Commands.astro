@@ -1,0 +1,152 @@
+---
+const groups = [
+  {
+    name: 'workflows',
+    rows: [
+      ['px0 workflows new', 'Turn a sentence into a workflow'],
+      ['px0 workflows run', 'Run one now, or pick from a list'],
+      ['px0 workflows edit', 'Revise the request and rebuild it'],
+      ['px0 workflows list', 'Everything you can run'],
+    ],
+  },
+  {
+    name: 'knowledge',
+    rows: [
+      ['px0 knowledge add', 'Save a URL, PDF, doc, or transcript'],
+      ['px0 knowledge ask', 'Answer a question from your library'],
+      ['px0 knowledge search', 'Retrieve the matching passages'],
+      ['px0 knowledge reindex', 'Rebuild the retrieval index'],
+    ],
+  },
+  {
+    name: 'guidelines',
+    rows: [
+      ['px0 guidelines review', 'Accept or reject proposed conventions'],
+      ['px0 guidelines consolidate', 'Merge overlap, surface stale files'],
+      ['px0 guidelines log', 'One claim’s edit history'],
+      ['px0 skills build', 'Compile guidelines into agent bundles'],
+    ],
+  },
+  {
+    name: 'runs &amp; history',
+    rows: [
+      ['px0 runs', 'Browse, filter, and re-run past runs'],
+      ['px0 runs why', 'How a run reached its result'],
+      ['px0 versions diff', 'What changed between two versions'],
+      ['px0 changes revert', 'Undo a recorded change'],
+    ],
+  },
+  {
+    name: 'the install',
+    rows: [
+      ['px0 daemon install', 'Run workflows on a schedule'],
+      ['px0 tools list --status', 'What can be called, and what is ready'],
+      ['px0 config list', 'Every setting, with its default'],
+      ['px0 doctor', 'Check that everything is wired up'],
+    ],
+  },
+];
+---
+
+<section class="section section--tight" id="commands">
+  <div class="container">
+    <div class="cmd-head reveal">
+      <div>
+        <span class="eyebrow">the whole surface</span>
+        <h2 class="h-section">Entity first, then the verb</h2>
+      </div>
+      <p class="sub">
+        Twenty-odd commands, all shaped the same way, and <code class="inline-code">--help</code> on
+        every one of them.
+      </p>
+    </div>
+
+    <div class="cmd-groups">
+      {groups.map((g) => (
+        <div class="cmd-group reveal">
+          <h3 set:html={g.name}></h3>
+          <ul>
+            {g.rows.map(([cmd, desc]) => (
+              <li>
+                <code>{cmd}</code>
+                <span>{desc}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cmd-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 44px;
+  }
+
+  .cmd-head .sub {
+    max-width: 320px;
+    font-size: 14px;
+    padding-bottom: 6px;
+  }
+
+  .cmd-groups {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 34px 30px;
+  }
+
+  .cmd-group h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    padding-bottom: 10px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .cmd-group ul {
+    list-style: none;
+  }
+
+  .cmd-group li {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 10px 10px 8px;
+    margin: 0 -8px;
+    border-radius: var(--r-sm);
+    transition: background 0.16s;
+  }
+
+  .cmd-group li:hover {
+    background: var(--surface);
+  }
+
+  .cmd-group code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--txt);
+  }
+
+  .cmd-group span {
+    font-size: 12.5px;
+    color: var(--txt-3);
+  }
+
+  @media (max-width: 900px) {
+    .cmd-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .cmd-head .sub { max-width: 100%; }
+    .cmd-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 560px) {
+    .cmd-groups { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  }
+</style>

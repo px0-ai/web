@@ -1,22 +1,149 @@
 ---
-import { GITHUB, DOCS } from '../data/links';
-const currentYear = new Date().getFullYear();
+import { GITHUB, DOCS, PYPI, LICENSE, MAILTO, AUTHOR, COMPOSIO } from '../data/links';
+const year = new Date().getFullYear();
+
+const cols = [
+  {
+    title: 'product',
+    links: [
+      { label: 'How it works', href: '#how' },
+      { label: 'Recipes', href: '#recipes' },
+      { label: 'Your store', href: '#store' },
+      { label: 'Guardrails', href: '#trust' },
+      { label: 'Commands', href: '#commands' },
+    ],
+  },
+  {
+    title: 'resources',
+    links: [
+      { label: 'Documentation', href: DOCS, ext: true },
+      { label: 'GitHub', href: GITHUB, ext: true },
+      { label: 'PyPI', href: PYPI, ext: true },
+      { label: 'Composio', href: COMPOSIO, ext: true },
+      { label: 'MIT License', href: LICENSE, ext: true },
+    ],
+  },
+];
 ---
 
 <footer>
   <div class="container footer-inner">
-    <div class="footer-brand">
-      <a href="/" class="logo-link">
-        <img src="/logo/px0-logo-dark.png" alt="px0 Logo" class="logo-img logo-dark" />
-        <img src="/logo/px0-logo-light.png" alt="px0 Logo" class="logo-img logo-light" />
+    <div class="f-brand">
+      <a href="/" class="logo-link" aria-label="px0 home">
+        <img src="/logo/px0-logo-dark.png" alt="px0" class="logo-img logo-dark" />
+        <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
       </a>
-      <p>Open Source Prompt Infrastructure.</p>
+      <p>A local-first CLI where everything is a workflow.</p>
+      <p class="f-tag">Your machine. Your files. Your voice.</p>
     </div>
-    <div class="footer-right">
-      <div class="footer-links">
-        <a class="footer-link" href={DOCS} target="_blank" rel="noopener noreferrer">Docs</a>
-        <a class="footer-link" href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub</a>
-      </div>
+
+    {cols.map((c) => (
+      <nav class="f-col" aria-label={c.title}>
+        <h3>{c.title}</h3>
+        {c.links.map((l) => (
+          <a
+            href={l.href}
+            target={l.ext ? '_blank' : undefined}
+            rel={l.ext ? 'noopener noreferrer' : undefined}
+          >{l.label}</a>
+        ))}
+      </nav>
+    ))}
+
+    <div class="f-col">
+      <h3>contact</h3>
+      <a href={MAILTO}>Email</a>
+      <a href={AUTHOR} target="_blank" rel="noopener noreferrer">Arpit Bhayani</a>
     </div>
   </div>
+
+  <div class="container f-base">
+    <span>&copy; {year} px0 &middot; MIT licensed</span>
+    <span class="f-base-right">
+      Built by <a href={AUTHOR} target="_blank" rel="noopener noreferrer">Arpit Bhayani</a>
+    </span>
+  </div>
 </footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--bdr);
+    margin-top: 40px;
+    padding: 56px 0 28px;
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+    gap: 40px;
+    padding-bottom: 40px;
+  }
+
+  .f-brand .logo-img { height: 24px; }
+
+  .f-brand p {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--txt-2);
+    max-width: 300px;
+  }
+
+  .f-tag {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--txt-3) !important;
+  }
+
+  .f-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .f-col h3 {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--txt-4);
+    margin-bottom: 2px;
+  }
+
+  .f-col a {
+    font-size: 13px;
+    color: var(--txt-2);
+    transition: color 0.15s;
+    width: fit-content;
+  }
+
+  .f-col a:hover { color: var(--amber); }
+
+  .f-base {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 22px;
+    border-top: 1px solid var(--bdr);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--txt-4);
+  }
+
+  .f-base a {
+    color: var(--txt-3);
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .f-base a:hover { color: var(--amber); }
+
+  @media (max-width: 860px) {
+    .footer-inner {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px;
+    }
+    .f-brand { grid-column: span 2; }
+  }
+</style>

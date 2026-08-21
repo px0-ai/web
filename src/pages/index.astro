@@ -2,10 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Features from '../components/Features.astro';
-import PromptRuns from '../components/PromptRuns.astro';
-import Skills from '../components/Skills.astro';
-import Tools from '../components/Tools.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Recipes from '../components/Recipes.astro';
+import Store from '../components/Store.astro';
+import Trust from '../components/Trust.astro';
+import Runs from '../components/Runs.astro';
+import Capabilities from '../components/Capabilities.astro';
+import Commands from '../components/Commands.astro';
+import Install from '../components/Install.astro';
 import Footer from '../components/Footer.astro';
 ---
 
@@ -13,10 +17,21 @@ import Footer from '../components/Footer.astro';
   <Nav />
   <main>
     <Hero />
-    <Features />
-    <PromptRuns />
-    <Skills />
-    <Tools />
+    <hr class="rule" />
+    <HowItWorks />
+    <hr class="rule" />
+    <Recipes />
+    <hr class="rule" />
+    <Store />
+    <hr class="rule" />
+    <Trust />
+    <hr class="rule" />
+    <Runs />
+    <hr class="rule" />
+    <Capabilities />
+    <hr class="rule" />
+    <Commands />
+    <Install />
   </main>
   <Footer />
 </Layout>

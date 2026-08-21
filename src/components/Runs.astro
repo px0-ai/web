@@ -1,0 +1,178 @@
+---
+const runList = [
+  '<span class="s-dim"> px0 runs · 3 of 3</span>',
+  '<span class="s-dim"> no filters</span>',
+  '<span class="s-dim">──────────────────────────────────────────</span>',
+  '<span class="s-warn">›</span> run_20260820T090031Z  post-standup  <span class="s-dim">schedule</span>  <span class="s-ok">success</span>  <span class="mark mark--write">write</span>',
+  '  run_20260820T084512Z  pr-digest     <span class="s-dim">manual</span>    <span class="s-ok">success</span>',
+  '  run_20260819T160002Z  post-standup  <span class="s-dim">schedule</span>  <span class="s-bad">failed</span>',
+  '<span class="s-dim">──────────────────────────────────────────</span>',
+  '<span class="s-dim">↑↓ move  enter detail  / workflow  f outcome  a writes</span>',
+].join('\n');
+
+const runDetail = [
+  '<span class="s-str"> run_20260820T090031Z</span>',
+  '<span class="s-dim">workflow:</span> post-standup',
+  '<span class="s-dim">trigger: </span> schedule',
+  '<span class="s-dim">outcome: </span> <span class="s-ok">success</span>',
+  '<span class="s-dim">duration:</span> 12.4s',
+  '',
+  '<span class="s-dim">guidelines inlined (1)</span>',
+  '  summarization.md <span class="s-dim">@ a1b2c3d4</span>',
+  '',
+  '<span class="s-dim">tool calls (2)</span>',
+  '  calendar.list_events  <span class="s-dim">0.83s</span> → 4 events',
+  '  slack.post_message    <span class="s-dim">1.21s</span> <span class="mark mark--write">write</span> → ok',
+  '<span class="s-dim">──────────────────────────────────────────</span>',
+  '<span class="s-dim">r rerun  l log  o output  <span class="s-warn">w why</span>  esc back</span>',
+].join('\n');
+
+const facts = [
+  {
+    k: 'px0 daemon install',
+    t: 'launchd, systemd, or cron',
+    b: 'px0 picks the right scheduler for your OS and installs it. The loop polls every 30 seconds and evaluates cron in machine local time.',
+  },
+  {
+    k: 'missed fires',
+    t: 'A closed laptop still gets its Friday digest',
+    b: 'Fires the machine slept through are not dropped. px0 compares each schedule against its last recorded fire, runs what it owes you, and marks it late.',
+  },
+  {
+    k: 'px0 runs why',
+    t: 'Every output can be traced back',
+    b: 'Which guideline versions were inlined, which passages were retrieved, which tools were called, and what evidence justified any guideline change along the way.',
+  },
+];
+---
+
+<section class="section" id="runs">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">it runs without you</span>
+      <h2 class="h-section">And then it tells you exactly what it did</h2>
+      <p class="sub">
+        The schedule came out of the sentence you typed. Install the daemon once and it fires on
+        its own — recording the inputs it resolved, the guideline versions it inlined, and every
+        tool call with its timing.
+      </p>
+    </div>
+
+    <div class="console card reveal">
+      <div class="console-bar">
+        <div class="term-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="term-title">px0 runs</span>
+        <span class="chip">interactive</span>
+      </div>
+      <div class="console-panes">
+        <div class="cpane">
+          <span class="cpane-label">list</span>
+          <pre set:html={runList}></pre>
+        </div>
+        <div class="cpane cpane-detail">
+          <span class="cpane-label">detail</span>
+          <pre set:html={runDetail}></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="run-facts">
+      {facts.map((f) => (
+        <div class="rf reveal">
+          <code class="rf-k">{f.k}</code>
+          <h3>{f.t}</h3>
+          <p>{f.b}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .console {
+    overflow: hidden;
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-float);
+  }
+
+  .console-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 42px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--bdr);
+    background: var(--surface);
+  }
+
+  .console-panes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .cpane {
+    position: relative;
+    padding: 30px 20px 22px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.95;
+    color: var(--txt-2);
+  }
+
+  .cpane-detail {
+    border-left: 1px solid var(--bdr);
+    background: var(--code-bg);
+  }
+
+  .cpane-label {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--txt-4);
+  }
+
+  .cpane pre {
+    white-space: pre;
+  }
+
+  .run-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 34px;
+    margin-top: 46px;
+  }
+
+  .rf-k {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+
+  .rf h3 {
+    font-family: var(--display);
+    font-size: 17.5px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .rf p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--txt-2);
+  }
+
+  @media (max-width: 900px) {
+    .console-panes { grid-template-columns: minmax(0, 1fr); }
+    .cpane-detail { border-left: 0; border-top: 1px solid var(--bdr); }
+    .run-facts { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 34px; }
+  }
+</style>

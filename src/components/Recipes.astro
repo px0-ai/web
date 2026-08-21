@@ -1,0 +1,405 @@
+---
+const recipes = [
+  {
+    id: 'friday-pr-digest',
+    sentence: 'every friday at 5pm, summarize the pull requests I reviewed this week and post it to #eng-standup',
+    apps: ['GitHub', 'Slack'],
+    cron: '0 17 * * 5',
+    when: 'every Friday, 17:00 local',
+    reads: ['github: list pull requests', 'github: list pull request reviews'],
+    writes: ['slack: send message to a channel'],
+    output: 'file · output/digests/pr-{date}.md',
+  },
+  {
+    id: 'morning-brief',
+    sentence: 'each morning, brief me on today’s meetings and the emails I have not replied to',
+    apps: ['Google Calendar', 'Gmail'],
+    cron: '30 7 * * 1-5',
+    when: 'weekdays, 07:30 local',
+    reads: ['calendar: list events in a window', 'gmail: search messages'],
+    writes: [],
+    output: 'file · output/brief-{date}.md',
+  },
+  {
+    id: 'spike-to-ticket',
+    sentence: 'turn last night’s error spike into a triaged bug ticket',
+    apps: ['Sentry', 'Linear'],
+    cron: '0 9 * * *',
+    when: 'daily, 09:00 local',
+    reads: ['sentry: list recent issues'],
+    writes: ['linear: create an issue'],
+    output: 'file · output/triage-{date}.md',
+  },
+  {
+    id: 'sprint-status',
+    sentence: 'post a monday sprint status from our issue tracker to the team channel',
+    apps: ['Jira', 'Slack'],
+    cron: '0 10 * * 1',
+    when: 'every Monday, 10:00 local',
+    reads: ['jira: search issues in a sprint'],
+    writes: ['slack: send message to a channel'],
+    output: 'file · output/sprint-{date}.md',
+  },
+  {
+    id: 'release-notes',
+    sentence: 'draft release notes from the commits since the last tag and file them as a page',
+    apps: ['GitHub', 'Notion'],
+    cron: null,
+    when: 'manual — run it when you cut a release',
+    reads: ['github: list commits', 'github: list tags'],
+    writes: ['notion: create a page'],
+    output: 'stdout',
+  },
+  {
+    id: 'finance-log',
+    sentence: 'log this week’s revenue and refunds into the finance sheet',
+    apps: ['Stripe', 'Google Sheets'],
+    cron: '0 18 * * 5',
+    when: 'every Friday, 18:00 local',
+    reads: ['stripe: list charges', 'stripe: list refunds'],
+    writes: ['googlesheets: append rows to a sheet'],
+    output: 'file · output/finance-{date}.md',
+  },
+  {
+    id: 'support-themes',
+    sentence: 'group this week’s support tickets by theme and open issues for the top three',
+    apps: ['Zendesk', 'Linear'],
+    cron: '0 11 * * 1',
+    when: 'every Monday, 11:00 local',
+    reads: ['zendesk: search tickets'],
+    writes: ['linear: create an issue'],
+    output: 'file · output/support-{date}.md',
+  },
+  {
+    id: 'reading-library',
+    sentence: 'save every newsletter I star to my reading library',
+    apps: ['Gmail', 'px0 knowledge'],
+    cron: '0 22 * * *',
+    when: 'daily, 22:00 local',
+    reads: ['gmail: list starred messages'],
+    writes: [],
+    output: 'file · output/reading-{date}.md',
+  },
+];
+---
+
+<section class="section" id="recipes">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">one sentence in</span>
+      <h2 class="h-section">The chores you keep doing by hand</h2>
+      <p class="sub">
+        Every line below is one sentence you type into <code class="inline-code">px0 workflows new</code>.
+        Pick one to see what px0 writes: the schedule it pulled out of your words, the tools it went
+        looking for, and which of them can change something outside px0.
+      </p>
+    </div>
+
+    <div class="recipes reveal">
+      <div class="rx-list" role="tablist" aria-label="Example workflows">
+        {recipes.map((r, i) => (
+          <button
+            class:list={['rx-item', { active: i === 0 }]}
+            data-rx={r.id}
+            role="tab"
+            aria-selected={i === 0 ? 'true' : 'false'}
+          >
+            <span class="rx-quote">“{r.sentence}”</span>
+            <span class="rx-apps">
+              {r.apps.map((a) => <span class="chip">{a}</span>)}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div class="rx-panels">
+        {recipes.map((r, i) => (
+          <div class:list={['rx-panel', { active: i === 0 }]} data-rx={r.id}>
+            <div class="rx-head">
+              <span class="rx-file">workflows/{r.id}.md</span>
+              <span class="rx-badge">{r.cron ? 'scheduled' : 'manual'}</span>
+            </div>
+
+            <dl class="rx-rows">
+              <div class="rx-row">
+                <dt>trigger</dt>
+                <dd>
+                  {r.cron ? <code class="rx-cron">{r.cron}</code> : <span class="s-dim">manual</span>}
+                  <span class="rx-when">{r.when}</span>
+                </dd>
+              </div>
+
+              <div class="rx-row">
+                <dt>inputs</dt>
+                <dd class="rx-tools">
+                  {r.reads.map((t) => (
+                    <span class="rx-tool">
+                      <span class="mark mark--read">read</span>
+                      <code>{t}</code>
+                    </span>
+                  ))}
+                </dd>
+              </div>
+
+              <div class="rx-row">
+                <dt>tools</dt>
+                <dd class="rx-tools">
+                  {r.writes.length === 0 ? (
+                    <span class="rx-none">none — this one only reads</span>
+                  ) : (
+                    r.writes.map((t) => (
+                      <span class="rx-tool">
+                        <span class="mark mark--write">write</span>
+                        <code>{t}</code>
+                      </span>
+                    ))
+                  )}
+                </dd>
+              </div>
+
+              <div class="rx-row">
+                <dt>output</dt>
+                <dd><code class="s-dim">{r.output}</code></dd>
+              </div>
+            </dl>
+
+            <div class="rx-foot">
+              <code>px0 workflows run {r.id}</code>
+              {r.writes.length > 0 && (
+                <span class="rx-warn">write tools are stubbed under <code>--dry-run</code></span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .recipes {
+    display: grid;
+    grid-template-columns: minmax(0, 47fr) minmax(0, 53fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  /* ── list ── */
+  .rx-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .rx-item {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    text-align: left;
+    padding: 15px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--r);
+    background: none;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, transform 0.18s;
+  }
+
+  .rx-item:hover {
+    background: var(--surface);
+    border-color: var(--bdr);
+  }
+
+  .rx-item.active {
+    background: var(--surface);
+    border-color: var(--amber-line);
+    box-shadow: inset 2px 0 0 var(--amber);
+  }
+
+  .rx-quote {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--txt-2);
+    transition: color 0.18s;
+  }
+
+  .rx-item.active .rx-quote {
+    color: var(--txt);
+  }
+
+  .rx-apps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* ── panel ── */
+  .rx-panels {
+    position: sticky;
+    top: 92px;
+  }
+
+  .rx-panel {
+    display: none;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .rx-panel.active {
+    display: block;
+    animation: rxin 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes rxin {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .rx-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--bdr);
+    background: var(--surface);
+  }
+
+  .rx-file {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--txt-2);
+  }
+
+  .rx-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid var(--amber-line);
+    background: var(--amber-wash);
+    padding: 2px 8px;
+    border-radius: 0;
+  }
+
+  .rx-rows {
+    padding: 6px 18px 12px;
+  }
+
+  .rx-row {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr);
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px dashed var(--bdr);
+  }
+
+  .rx-row:last-child { border-bottom: 0; }
+
+  .rx-row dt {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    padding-top: 2px;
+  }
+
+  .rx-row dd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    min-width: 0;
+    font-size: 13px;
+    color: var(--txt-2);
+  }
+
+  .rx-cron {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--amber);
+    background: var(--amber-wash);
+    border: 1px solid var(--amber-line);
+    padding: 1px 8px;
+    border-radius: 0;
+  }
+
+  .rx-when {
+    font-size: 12.5px;
+    color: var(--txt-3);
+  }
+
+  .rx-row dd.rx-tools {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .rx-tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .rx-tool code {
+    font-size: 12px;
+    color: var(--txt-2);
+  }
+
+  .rx-none {
+    font-size: 12.5px;
+    color: var(--txt-3);
+    font-style: italic;
+  }
+
+  .rx-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 13px 18px;
+    border-top: 1px solid var(--bdr);
+    background: var(--code-bg);
+  }
+
+  .rx-foot > code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--txt);
+  }
+
+  .rx-warn {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--txt-3);
+  }
+
+  .rx-warn code { color: var(--amber); }
+
+  @media (max-width: 980px) {
+    .recipes { grid-template-columns: minmax(0, 1fr); }
+    .rx-panels { position: static; }
+  }
+</style>
+
+<script>
+  const scope = document.querySelector('.recipes');
+  if (scope) {
+    const items = scope.querySelectorAll<HTMLElement>('.rx-item');
+    const panels = scope.querySelectorAll<HTMLElement>('.rx-panel');
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        items.forEach((i) => {
+          i.classList.toggle('active', i === item);
+          i.setAttribute('aria-selected', i === item ? 'true' : 'false');
+        });
+        panels.forEach((p) => p.classList.toggle('active', p.dataset.rx === item.dataset.rx));
+      });
+    });
+  }
+</script>

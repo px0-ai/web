@@ -1,0 +1,155 @@
+---
+const guards = [
+  {
+    title: 'Access comes from the provider, not a guess',
+    body: 'Every tool is labelled read, write, or destructive using Composio’s own metadata. px0 never infers access from a tool’s name.',
+  },
+  {
+    title: 'You approve the tool list first',
+    body: 'The build stops and shows you what it picked. Drop anything by number. Nothing is authorized until you say keep.',
+  },
+  {
+    title: 'Consent happens in your browser',
+    body: 'px0 preparing an authorization URL grants it nothing. Access exists only after you approve it at the provider.',
+  },
+  {
+    title: 'Dry runs stub every write',
+    body: 'px0 workflows run --dry-run resolves the real inputs and calls nothing that could post, send, or change anything.',
+  },
+  {
+    title: 'Runs that touched the world say so',
+    body: 'Any run that called a write tool is marked [write] in the run list — the fastest way to find what went out.',
+  },
+  {
+    title: 'work/ never leaves the machine',
+    body: 'Anything under knowledge/work/ is excluded from every retrieval — a hard exclusion, not a ranking penalty. Guidelines there are never compiled into a bundle.',
+  },
+];
+
+const gate = [
+  '<span class="s-dim">tools selected (3)</span>',
+  '  1.  <span class="mark mark--read">read</span>   <span class="s-fn">composio:GITHUB_LIST_PULL_REQUESTS</span>',
+  '  2.  <span class="mark mark--read">read</span>   <span class="s-fn">composio:GITHUB_LIST_REVIEWS_FOR_A_PULL_REQUEST</span>',
+  '  3.  <span class="mark mark--write">write</span>  <span class="s-fn">composio:SLACK_SEND_MESSAGE</span>',
+  '',
+  '<span class="s-warn">!</span> this workflow could change things outside px0  <span class="s-warn">SLACK_SEND_MESSAGE</span>',
+  '',
+  '<span class="s-dim">Enter accepts all; list numbers to drop (e.g. 2,3); n aborts</span>',
+  '<span class="s-var">›</span> keep all? <span class="caret"></span>',
+].join('\n');
+---
+
+<section class="section" id="trust">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">guardrails</span>
+      <h2 class="h-section">Nothing goes out<br />that you did not approve</h2>
+      <p class="sub">
+        A workflow that can post to Slack is a workflow that can embarrass you. px0 treats the
+        boundary between reading and changing things as the important one, and puts you at every
+        crossing of it.
+      </p>
+    </div>
+
+    <div class="trust-grid">
+      <div class="gate term reveal">
+        <div class="term-bar">
+          <div class="term-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="term-title">the confirm gate</span>
+        </div>
+        <div class="term-body"><pre set:html={gate}></pre></div>
+      </div>
+
+      <ul class="guards">
+        {guards.map((g) => (
+          <li class="guard reveal">
+            <span class="g-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <div>
+              <h3>{g.title}</h3>
+              <p>{g.body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .trust-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 50fr) minmax(0, 50fr);
+    gap: 44px;
+    align-items: start;
+  }
+
+  .gate {
+    position: sticky;
+    top: 92px;
+  }
+
+  .gate .term-body {
+    font-size: 11.5px;
+    line-height: 2;
+  }
+
+  .gate pre {
+    white-space: pre;
+  }
+
+  .guards {
+    list-style: none;
+    display: grid;
+    gap: 4px;
+  }
+
+  .guard {
+    display: flex;
+    gap: 14px;
+    padding: 16px 16px 16px 14px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .guard:hover {
+    background: var(--surface);
+    border-color: var(--bdr);
+  }
+
+  .g-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--green) 36%, transparent);
+    background: color-mix(in srgb, var(--green) 10%, transparent);
+    color: var(--green);
+  }
+
+  .guard h3 {
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 5px;
+  }
+
+  .guard p {
+    font-size: 13px;
+    line-height: 1.68;
+    color: var(--txt-2);
+  }
+
+  @media (max-width: 980px) {
+    .trust-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+    .gate { position: static; }
+  }
+</style>

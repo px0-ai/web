@@ -1,0 +1,257 @@
+---
+import { COMPOSIO } from '../data/links';
+
+const apps = [
+  'GitHub', 'Slack', 'Gmail', 'Google Calendar', 'Notion', 'Linear', 'Jira',
+  'Google Sheets', 'Stripe', 'Zendesk', 'Sentry', 'Salesforce', 'HubSpot',
+  'Asana', 'Airtable', 'Discord', 'Trello', 'Dropbox', 'Figma', 'PagerDuty',
+];
+
+const harnesses = ['claude', 'gemini', 'pi', 'opencode'];
+
+const small = [
+  {
+    tag: 'guidelines',
+    title: 'Conventions that sharpen themselves',
+    body: 'px0 notices patterns in what you read and how you edit its output, then proposes a guideline change with the evidence behind it. It never edits your files on its own — you accept, rewrite, or dismiss.',
+    accent: 'var(--violet)',
+  },
+  {
+    tag: 'px0 skills build',
+    title: 'Your conventions, inside your editor',
+    body: 'Compile guidelines into agent skill bundles and px0 symlinks them where Claude Code looks, so the same rules apply in an ordinary interactive session — not just inside px0 runs.',
+    accent: 'var(--cyan)',
+  },
+  {
+    tag: 'retrieval',
+    title: 'Keyword by default, semantic when you want it',
+    body: 'SQLite FTS5 with BM25 ships built in, nothing to install. Switch the backend to qmd for hybrid vector search with reranking — it prints the model download size and waits for a yes.',
+    accent: 'var(--green)',
+  },
+  {
+    tag: 'px0 doctor',
+    title: 'One command that says if it is healthy',
+    body: 'Credentials, locks, schema, connections, index, daemon, and whether your model backend actually answers. Exit 0 when it all passes, 4 when it does not — so it drops into a health check.',
+    accent: 'var(--amber)',
+  },
+  {
+    tag: 'pipes',
+    title: 'Built to be piped',
+    body: 'Colour and spinners on a terminal; nothing but greppable text through a pipe, where status glyphs become [OK] and [FAIL]. --json implies plain output everywhere.',
+    accent: 'var(--rose)',
+  },
+  {
+    tag: 'px0 update',
+    title: 'Upgrades that migrate and roll back',
+    body: 'Detects how px0 was installed, applies pending store-schema migrations, restarts the daemon if it was running, and runs a doctor pass. A failed migration never half-lands.',
+    accent: 'var(--violet)',
+  },
+];
+---
+
+<section class="section" id="capabilities">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">what else is in the box</span>
+      <h2 class="h-section">Small surface. Long reach.</h2>
+      <p class="sub">
+        One CLI, one directory, one API key for the outside world — and everything else is
+        already on your machine.
+      </p>
+    </div>
+
+    <div class="bento">
+      <article class="b-card b-wide reveal">
+        <header>
+          <span class="b-tag" style="--accent: var(--amber)">connections</span>
+          <h3>Reaches the apps you already live in</h3>
+        </header>
+        <p>
+          Tools route through <a href={COMPOSIO} target="_blank" rel="noopener noreferrer">Composio</a>,
+          so there is exactly one key to set up and no per-app connect command to hunt for. Apps
+          authorize themselves: the first time a workflow needs Gmail, px0 prepares Gmail’s
+          authorization and hands you the URL. You never connect a service you turn out not to need.
+        </p>
+        <div class="app-cloud" aria-hidden="true">
+          {apps.map((a) => <span class="chip">{a}</span>)}
+          <span class="chip chip-more">+1,000 more</span>
+        </div>
+      </article>
+
+      <article class="b-card reveal">
+        <header>
+          <span class="b-tag" style="--accent: var(--cyan)">model backend</span>
+          <h3>Runs on the agent CLI you already sign into</h3>
+        </header>
+        <p>
+          px0 shells out to a coding agent CLI in non-interactive mode, reusing its login, its
+          model choice, and its rate limits. There is no separate API key to add and no bill to
+          split.
+        </p>
+        <div class="harness-list">
+          {harnesses.map((h) => (
+            <span class="harness">
+              <span class="h-dot"></span>{h}
+            </span>
+          ))}
+        </div>
+        <code class="b-cmd">px0 config model</code>
+        <p class="b-foot">
+          It invokes the backend before saving, so a typo’d model name fails there instead of
+          mid-workflow.
+        </p>
+      </article>
+
+      {small.map((s) => (
+        <article class="b-card reveal" style={`--accent:${s.accent}`}>
+          <header>
+            <span class="b-tag">{s.tag}</span>
+            <h3>{s.title}</h3>
+          </header>
+          <p>{s.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .b-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 26px 26px 24px;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s, background 0.25s;
+    --accent: var(--amber);
+  }
+
+  .b-card::before {
+    content: '';
+    position: absolute;
+    inset: -40% 40% auto -20%;
+    height: 140px;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 22%, transparent), transparent);
+    opacity: 0;
+    transition: opacity 0.35s;
+    pointer-events: none;
+  }
+
+  .b-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  }
+
+  .b-card:hover::before { opacity: 1; }
+
+  .b-wide { grid-column: span 2; }
+
+  .b-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .b-card h3 {
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.28;
+  }
+
+  .b-card p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--txt-2);
+  }
+
+  .b-card p a {
+    color: var(--amber);
+    border-bottom: 1px solid var(--amber-line);
+  }
+
+  .b-card p a:hover { border-bottom-color: currentColor; }
+
+  .app-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 6px;
+  }
+
+  .chip-more {
+    color: var(--amber);
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+  }
+
+  .harness-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 4px 0 2px;
+  }
+
+  .harness {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-sm);
+    background: var(--code-bg);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--txt);
+  }
+
+  .h-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--cyan) 60%, transparent);
+  }
+
+  .b-cmd {
+    align-self: flex-start;
+    padding: 5px 10px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--txt-2);
+  }
+
+  .b-foot {
+    font-size: 12px !important;
+    color: var(--txt-3) !important;
+    line-height: 1.65 !important;
+  }
+
+  @media (max-width: 980px) {
+    .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .b-wide { grid-column: span 2; }
+  }
+
+  @media (max-width: 620px) {
+    .bento { grid-template-columns: minmax(0, 1fr); }
+    .b-wide { grid-column: auto; }
+  }
+</style>

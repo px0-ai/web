@@ -1,0 +1,271 @@
+---
+import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
+
+const needs = [
+  { k: 'Python 3.11+', v: 'the installer bootstraps pipx if you do not have it' },
+  { k: 'A coding agent CLI', v: 'claude, gemini, pi, or opencode — whichever you already sign into' },
+  { k: 'A Composio API key', v: 'only for workflows that reach other apps; add it whenever' },
+];
+
+const steps = [
+  { n: '1', cmd: 'px0 init', note: 'scaffolds ~/.px0 and asks for your Composio key' },
+  { n: '2', cmd: 'px0 workflows new "…"', note: 'describe the job; px0 writes the file' },
+  { n: '3', cmd: 'px0 workflows run <id> --dry-run', note: 'resolve every input, call nothing' },
+  { n: '4', cmd: 'px0 daemon install', note: 'let the schedule fire on its own' },
+];
+---
+
+<section class="section" id="install">
+  <div class="container">
+    <div class="cta card reveal">
+      <div class="cta-glow" aria-hidden="true"></div>
+
+      <div class="cta-inner">
+        <span class="eyebrow">install</span>
+        <h2 class="cta-h">
+          Your next recurring chore<br />
+          <span class="grad">should write itself.</span>
+        </h2>
+        <p class="cta-sub">
+          One command to install. One sentence to your first workflow. Everything it creates stays
+          on your machine, in files you can read.
+        </p>
+
+        <div class="cta-cmd" data-copy={INSTALL_CMD} role="button" tabindex="0" aria-label="Copy install command">
+          <span class="cc-prompt">$</span>
+          <code>{INSTALL_CMD}</code>
+          <span class="cc-copy">
+            <svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <svg class="i-done" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </span>
+        </div>
+
+        <div class="cta-btns">
+          <a class="btn btn-primary" href={DOCS} target="_blank" rel="noopener noreferrer">
+            Read the docs
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+          <a class="btn btn-ghost" href={GITHUB} target="_blank" rel="noopener noreferrer">Browse the source</a>
+        </div>
+
+        <div class="cta-cols">
+          <div class="cta-col">
+            <h3>What you need</h3>
+            <ul class="needs">
+              {needs.map((n) => (
+                <li>
+                  <strong>{n.k}</strong>
+                  <span>{n.v}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="cta-col">
+            <h3>First four commands</h3>
+            <ol class="steps">
+              {steps.map((s) => (
+                <li>
+                  <span class="s-n">{s.n}</span>
+                  <code>{s.cmd}</code>
+                  <span class="s-note">{s.note}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        <p class="cta-tail">
+          Want to try it without connecting anything? The knowledge library needs nothing beyond
+          <code class="inline-code">px0 init</code> — add a post with
+          <code class="inline-code">px0 knowledge add &lt;url&gt;</code> and ask it a question.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-xl);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-float);
+  }
+
+  .cta-glow {
+    position: absolute;
+    inset: -40% -10% auto -10%;
+    height: 480px;
+    background: radial-gradient(48% 60% at 50% 40%, var(--amber-glow), transparent 70%);
+    filter: blur(50px);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .cta-inner {
+    position: relative;
+    padding: 64px 56px 56px;
+  }
+
+  .cta-h {
+    font-family: var(--display);
+    font-size: clamp(28px, 3.6vw, 44px);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+    margin-bottom: 16px;
+  }
+
+  .cta-sub {
+    font-size: 15.5px;
+    line-height: 1.72;
+    color: var(--txt-2);
+    max-width: 560px;
+  }
+
+  .cta-cmd {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 760px;
+    margin: 30px 0 22px;
+    padding: 15px 18px;
+    border: 1px solid var(--amber-line);
+    border-radius: var(--r);
+    background: var(--code-bg);
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .cta-cmd:hover,
+  .cta-cmd:focus-visible {
+    background: var(--amber-wash);
+    outline: none;
+  }
+
+  .cc-prompt { color: var(--amber); flex-shrink: 0; }
+
+  .cta-cmd code {
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--txt);
+    word-break: break-all;
+  }
+
+  .cc-copy { display: inline-flex; color: var(--txt-3); flex-shrink: 0; }
+  .cta-cmd .i-done { display: none; }
+  .cta-cmd.copied .i-copy { display: none; }
+  .cta-cmd.copied .i-done { display: block; color: var(--green); }
+
+  .cta-btns {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .cta-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 44px;
+    margin-top: 52px;
+    padding-top: 40px;
+    border-top: 1px solid var(--bdr);
+  }
+
+  .cta-col h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-bottom: 18px;
+  }
+
+  .needs {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .needs li {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .needs strong {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .needs span {
+    font-size: 13px;
+    color: var(--txt-2);
+    line-height: 1.6;
+  }
+
+  .steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: 20px minmax(0, auto) minmax(0, 1fr);
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .s-n {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+  }
+
+  .steps code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--txt);
+    white-space: nowrap;
+  }
+
+  .s-note {
+    font-size: 12.5px;
+    color: var(--txt-3);
+    line-height: 1.6;
+  }
+
+  .cta-tail {
+    margin-top: 40px;
+    padding-top: 26px;
+    border-top: 1px dashed var(--bdr);
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--txt-2);
+    max-width: 720px;
+  }
+
+  @media (max-width: 900px) {
+    .cta-inner { padding: 44px 26px 40px; }
+    .cta-cols { grid-template-columns: minmax(0, 1fr); gap: 34px; margin-top: 40px; }
+    .steps li { grid-template-columns: 18px minmax(0, 1fr); }
+    .steps .s-note { grid-column: 2; }
+    .steps code { white-space: normal; word-break: break-word; }
+  }
+</style>

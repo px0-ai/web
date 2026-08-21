@@ -1,197 +1,212 @@
-# px0 - Open Source Prompt, Skill & Tool Infrastructure
+# px0 - A local-first CLI where everything is a workflow
 
-> Prompts, agent skills, and tools are code. Treat them like it. px0 brings versioned template management, a secure skill registry, a dynamic tool registry, and OpenTelemetry observability to your AI stack so you can iterate faster and deploy with confidence.
+> px0 is a local-first open-source utility to build custom agents and workflows. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.
 
-## Core Philosophy
+## Positioning
 
-Modern AI applications suffer from hardcoding logic—whether it is prompt spaghetti scattered across dozens of codebase files, raw agent tools/skills hardcoded inside application layers, or static schemas defining agent interfaces. Updating a single prompt, skill logic, or tool schema requires a git PR, code review, CI/CD run, and a service restart.
+Most people have a handful of jobs they redo by hand every week: the Friday digest of pull requests they reviewed, the morning brief of meetings and unanswered mail, the release notes drafted from commits, the finance sheet updated from payments. Each one is a sequence of the same steps, done slightly differently every time.
 
-px0 decouples prompts, skills, and tools from application code:
+px0 takes one sentence describing that job and writes it as a workflow file. The file carries its own schedule, its own inputs, the tools it may call, and the conventions it should write in. It runs when you ask, or on its own once the scheduler is installed.
 
-- Prompt Registry: Prompts live as version-controlled templates.
-- Skill Registry: Agent tools and functional skills live in multi-file version-controlled workspaces.
-- Tool Registry: Agent tool specifications live as dynamic, version-controlled JSON schemas.
-- Standardized SDKs: Applications render templates, invoke skills, and retrieve tool schemas using an ultra-simple SDK available in Python, Node.js, and Go.
-- Instant Rollout: Push changes live without deploying code.
-- OTEL Observability: Trace and evaluate every prompt render, skill execution, and tool schema lookup.
+Workflows do not stop at the laptop. Through Composio, a workflow can reach hundreds of apps already in use: GitHub, Slack, Gmail, Google Calendar, Notion, Linear, Jira, Google Sheets, Salesforce, Stripe, Zendesk, Sentry, and over a thousand more.
 
-## Technical Features
+## What px0 is for
 
-### Self-Hosted & Private
+- Recurring reports assembled by hand every week.
+- Chores that follow the same steps every time: draft the release notes, precheck a pull request, triage overnight alerts, file the standup update.
+- Work that has to sound like you, because px0 follows conventions you write down once.
+- A searchable library of everything you read, so you can ask questions across it later.
 
-- Flexible Deployment: Deploy px0 inside your own cloud, private VPC, or completely on-premises (air-gapped).
-- Data Ownership: Retain 100% control and ownership of your prompt templates, telemetry data, and access logs.
-- Compliance Ready: Meet strict security requirements like SOC2, HIPAA, and GDPR by keeping all prompt operations in-house.
+## How a workflow gets built
 
-### No Hardcoded Strings
+`px0 workflows new "<sentence>"` runs four model passes, each with a job small enough to do well, and stops at the two points where a wrong answer would cost something.
 
-- Decoupled Architecture: Prompts live in version-controlled templates, not scattered across your codebase.
-- Searchability: No more nested search-and-replace to update prompt logic.
+1. Clarify — it asks only what would change the generated file: which channel, which repository, how often, where output goes. Anything with a sensible default is not asked. Pressing Enter skips a question; at most three rounds run. `--no-clarify` skips the pass.
+2. Discover — it writes searches (a toolkit plus a capability phrase, e.g. "github: list pull requests"), not tool names, and px0 looks them up in Composio's catalogue. A slug that does not appear in the search results is discarded, so nothing is invented. `--no-discover` restricts the plan to px0's curated tools.
+3. Confirm — the selected tools are printed with their access level, and you accept all, drop some by number, or abort. Nothing is authorized before this point.
+4. Plan — the workflow is written against exactly those tools, then validated: a tool that does not exist, an input with no tool, or an invalid cron expression stops the build with nothing saved.
 
-### Deploy-Free Updates
+Read tools land in `inputs` and run before the prompt. Write tools land in `tools` and are callable by the model during the run. px0 enforces that split, because inputs run unconditionally.
 
-- Zero Pipeline Overhead: Push a prompt template version update and it goes live instantly.
-- No Rebuilds: No git commits, pull requests, CI/CD pipelines, or container restarts are needed to update a prompt.
+## The workflow file
 
-### Standardized SDK Integration
+A workflow is Markdown: YAML frontmatter as the machine contract, the body as the prompt the model receives.
 
-- Unified API signatures: Use the same patterns across Python, Node.js, and Go.
-- Simple Rendering: A single render function abstracts all communication and cache-management logic.
-- Flexible Configuration: Swap template names or roll out dynamic version flags without updating calling code.
-
-### Advanced Sandboxed Templating
-
-- Jinja Syntax: Prompts are formulated using standard Jinja2 syntax.
-- Full Control: Supports advanced language constructs including variables, conditionals, loops, custom filters, and reusable macros.
-- Safe Execution: Sandboxed rendering ensures untrusted inputs or bad structures never crash the main application.
-
-### Atomic Versioning and Rollbacks
-
-- Immutable Revisions: Every published prompt template version is immutable.
-- Atomic Deployments: Changes are rolled out atomically across all active SDK instances.
-- Instant Recovery: Roll back to any previous healthy template version in one click.
-
-### Team-Level RBAC
-
-- Granular Access Control: Define role-based access controls for developers, reviewers, and publishers.
-- Team Permissions: Manage template access and modification rights across different engineering teams.
-- Granular Policies: Fine-grained permissions on who can view, edit, draft, or publish prompt templates.
-
-### Draft and Review Workflows
-
-- Lifecycle Management: Draft, review, and publish cycles ensure that prompt revisions undergo checks.
-- Comparison Tooling: Interactive visual diffs between any two template versions.
-- Change Tracking: Detailed log of every change capturing what was modified, by whom, and when.
-
-### Native OpenTelemetry Observability
-
-- Built-In Tracing: Every prompt rendering is traced and measured natively.
-- Standard Exporters: Supports out-of-the-box exporting for latency, performance, and render error metrics.
-- Multi-Backend Integration: Send tracing spans and metric data to any standard OpenTelemetry collector or backend.
-
-### Skill Registry & Workspace Files
-
-- Multi-File Workspaces: Every skill version maintains a complete, structured file tree. Edit files in-place or upload/download ZIP packages of your logic.
-- Flexible Asset Handling: Read, write, or delete individual code assets within draft skill versions before promotion.
-
-### Skill Version Promotion Pipelines
-
-- Safe Lifecycle States: Manage skills using distinct operational states: `draft` -> `stable` -> `live`.
-- Safe Iteration: Only `draft` versions can be modified or deleted. Stable and live versions are immutable.
-- Dynamic Duplication: Create new draft iterations by duplicating any version's file tree in one click.
-
-### Skill Template Rendering
-
-- Dynamic Code Templating: Render skill source/configuration templates dynamically prior to execution.
-- Sandboxed Jinja Support: Securely inject real-time system context, active parameters, or environment variables into your tool/skill execution context.
-
-### Tool Registry & JSON Schema Definitions
-
-- Input & Output Schemas: Define exact JSON Schema structures for tool inputs and outputs. Ensure full validation of parameters and returned results.
-- LLM Discovery Ready: Expose structured tool metadata and descriptions so that LLM orchestration systems can discover and invoke tools dynamically.
-
-### Tool Version Promotion Pipelines
-
-- Immutable Schema Versions: Promoting tool schemas from `draft` to `stable` makes them immutable. No more downstream drift or accidental API updates.
-- Automatic Demotion on Promotion: Promoting a tool version to `live` automatically demotes any previous active version to `stable`. Roll back atomically with a single API request.
-
-## SDK Integration Examples
-
-Below are standard examples demonstrating how a Jinja template is set up and rendered across various backend SDKs.
-
-### Prompt Template: customer_support.j2
-
-```jinja
-{# customer_support - v7 #}
-{% set tone = "formal" if user.tier == "enterprise" else "friendly" %}
-
-You are a {{ tone }} assistant for {{ company.name }}.
-User: {{ query }}
-Lang: {{ lang | default("English") }}
+```yaml
+---
+id: friday-pr-digest
+kind: workflow
+version: 1
+description: Every Friday at 5pm, summarize the GitHub PRs I reviewed this week
+trigger: {schedule: "0 17 * * 5"}
+guidelines: [summarization.md]
+inputs:
+  - id: recent_prs
+    tool: composio:GITHUB_LIST_PULL_REQUESTS
+    args: {owner: razorpay, repo: api, state: all}
+tools: [composio:SLACK_SEND_MESSAGE]
+output: {target: file, path: digests/pr-{date}.md}
+timeout: 120s
+---
+Summarize {{recent_prs}} as a short digest, then post it to #eng-standup.
 ```
 
-### Python SDK Usage
+Field meanings:
 
-```python
-import px0
+- `request` — the sentence originally typed, kept verbatim for `px0 workflows edit`.
+- `trigger.schedule` — a standard five-field cron expression, evaluated in machine local time.
+- `guidelines` — files inlined into the prompt verbatim by name, never retrieved by similarity.
+- `inputs` — resolved before the prompt; each is a `tool`, `retrieve`, `source`, or `workflow`.
+- `tools` — what the model may call during the run.
+- `output` — `{target: stdout}`, or `{target: file, path: ...}`. A workflow with a schedule must write to a file, since a scheduled run has no terminal to print to. Paths are relative to the store and confined under `output/`; `{date}`, `{datetime}`, and `{time}` are substituted.
+- `timeout` — wall-clock cap on the run.
 
-# Render the prompt template directly
-prompt = px0.render("customer_support", {
-    "user": user,
-    "company": company,
-    "query": query,
-})
+A `composio:` prefix marks a tool discovered from the catalogue; `provider.action` ids are px0's curated ones. Both execute identically. There is no compile step: hand-edit the file and the next run picks it up.
+
+## Guardrails
+
+- Access per tool comes from Composio's own metadata — `read`, `write`, or `destructive`. px0 never infers access from a tool's name.
+- The confirm gate runs before anything is authorized or written, and write tools are named again once the plan is concrete.
+- px0 minting an authorization URL grants nothing; access exists only after a human consents in the browser.
+- `px0 workflows run --dry-run` resolves real inputs and stubs every write tool.
+- Any run that called a write tool is marked `[write]` in the run list.
+- Anything under `knowledge/work/` is excluded from every retrieval — a hard exclusion, not a ranking penalty — and guidelines under `guidelines/work/` are never compiled into an agent bundle.
+- px0 never edits a file under `guidelines/` on its own; changes arrive as proposals you accept, edit, or dismiss.
+
+## The store
+
+Everything px0 knows lives in `~/.px0` (override with `PX0_HOME`).
+
+| Folder | What is in it |
+| --- | --- |
+| `workflows/` | The jobs px0 can run |
+| `guidelines/` | How you work |
+| `knowledge/` | What you have read and kept |
+| `output/` | What runs produced |
+| `config.toml` | Every setting |
+
+All of it is plain Markdown, readable in any editor. px0 keeps its own version history, so the store works as a bare directory with nothing else installed alongside it — no git required. `px0 versions list`, `px0 versions diff`, `px0 versions revert`, and `px0 changes list` walk that history; `px0 store export` copies content and history elsewhere.
+
+## Guidelines
+
+Guidelines are prescriptive prose: how commit messages are worded, what a Go review checks, the voice a summary is written in. A workflow declares which guideline files it uses, and those files are inlined into the prompt deterministically at run time.
+
+px0 notices patterns in what you read and how you edit its output, then files a proposal with the evidence behind it. `px0 guidelines review` accepts, edits, or dismisses each one. `px0 guidelines consolidate` is a wider sweep: pending proposals, claims that have not been reinforced in a while, contradictions between guidelines, and guideline files no workflow lists.
+
+Every guideline claim is addressable as `<path>#<heading-slug>`, so `px0 guidelines log` walks a single claim's history and `px0 guidelines revert` restores just that section.
+
+`px0 skills build` compiles guidelines into agent skill bundles under `~/.px0/skills/<name>/SKILL.md`, and symlinks them where Claude Code discovers them, so the same conventions apply in ordinary interactive sessions.
+
+## Knowledge and retrieval
+
+`px0 knowledge add` ingests a web page, PDF, document, or video transcript; extraction runs locally and the destination folder follows the source type (`blogs/`, `papers/`, `docs/`). A YouTube link with no transcript is filed as an indexed metadata-only stub and can be upgraded later with `px0 knowledge refresh`. Playlist URLs are queued and drained by the daemon's nightly pass.
+
+`px0 knowledge ask` retrieves the relevant passages and answers from them, citing what it used with `--sources`. Every ask is recorded as a run, so `px0 runs why` can explain which passages fed an answer.
+
+Two retrieval backends:
+
+| Backend | What you get | Cost |
+| --- | --- | --- |
+| `local` (default) | SQLite FTS5 keyword matching with BM25 ranking, embedded | Nothing to install |
+| `qmd` | Hybrid keyword + vector search with LLM reranking | Needs the qmd CLI and about 2GB of local models |
+
+Switching to `qmd` prints the model download sizes and waits for explicit consent; declining keeps keyword indexing rather than breaking.
+
+## Connections
+
+Every tool routes through Composio. There is one API key to set (`px0 config composio <key>`, also asked for by `px0 init`) and no per-app connect command. Apps authorize themselves: the first time a workflow needs Gmail, px0 prepares Gmail's authorization and prints the URL to approve. The key needs write access to `auth_configs`, which is the permission that lets px0 prepare an authorization on your behalf.
+
+`px0 tools list` shows every tool a workflow can call and whether it reads or writes; `--status` adds authorization state per provider (`ready`, `not authorized`, `consent pending`, `authorization failed`, `authorization gone`). `px0 doctor` fails with exit code 4 on any stored authorization that is not active.
+
+Transient connector failures are retried per `connectors.retries` (default 3) so a network blip does not fail a scheduled workflow. On a TLS-intercepting corporate network, px0 detects the interception, retries against a system CA bundle that trusts it, and records the bundle — it never silently disables verification.
+
+## Scheduling
+
+A workflow with `trigger.schedule` needs something watching the clock: `px0d`, installed with `px0 daemon install`. px0 picks launchd on macOS, systemd (user session) on Linux where available, and cron elsewhere (`--fallback-cron` forces it).
+
+The loop polls every 30 seconds, spawns anything due, and runs one housekeeping pass a day: a checkpoint scan for hand edits, a reindex of `knowledge/`, draining the ingest queue, log retention, and a weekly update check. Each step is fault-isolated.
+
+Missed fires are not dropped. On startup and every tick, px0 compares each workflow's schedule against its last recorded fire and runs what it owes you, marking anything discovered well after it was due as late.
+
+## Runs and provenance
+
+Every run — manual, scheduled, or an ask — leaves a record: the inputs it resolved, the guideline versions it inlined, every tool call with its timing, and the outcome. `px0 runs` opens an interactive browser over those records with filters for workflow, outcome, age, and write activity; every view has a plain-text equivalent (`px0 runs list`, `px0 runs show`, `px0 runs output`, `px0 runs logs`, `px0 runs rerun`). `px0 runs why <run-id>` walks the whole provenance chain.
+
+## Model backend
+
+px0 shells out to a coding agent CLI in non-interactive mode, reusing that CLI's own auth, model choice, and rate limits. There is no direct-API backend. `claude -p` is the default; `px0 init --harness gemini|pi|opencode` picks the right invocation for another, and any command works when set directly as `model.harness_cmd` in `config.toml`. `px0 config model` switches it interactively and invokes the result before saving, so a typo'd model name or missing key fails there rather than mid-workflow.
+
+## Output conventions
+
+On a terminal px0 uses colour sparingly and shows a spinner while something slow happens. Piped anywhere, all of that disappears: no escape sequences, no spinner redraws, and status glyphs become `[OK]` / `[FAIL]` so output stays greppable. `--json` implies plain output everywhere. `--no-color` and `NO_COLOR=1` force plain on a terminal; `FORCE_COLOR=1` keeps colour through a pipe.
+
+## Installation
+
+Requirements: Python 3.11 or newer; a coding agent CLI (`claude`, `gemini`, `pi`, or `opencode`) as the model backend; optionally a Composio API key for workflows that reach other apps.
+
+```shell
+curl -fsSL https://raw.githubusercontent.com/arpitbbhayani/px0/main/install.sh | sh
+px0 doctor
 ```
 
-### Node.js SDK Usage
+The installer bootstraps pipx if missing, installs px0 from PyPI, runs `px0 init`, and offers to install the scheduler daemon. Environment knobs: `PX0_VERSION` pins a version, `PX0_CHANNEL=beta` installs pre-releases, `PX0_PREFIX` sets the binary directory, `PX0_NO_DAEMON=true` skips the daemon offer. `sh install.sh --uninstall` removes the binary and leaves the store alone.
 
-```typescript
-import { px0 } from "px0";
+From a clone:
 
-// Render prompt template asynchronously
-const prompt = await px0.render("customer_support", {
-  user,
-  company,
-  query,
-});
+```shell
+python -m venv venv
+source venv/bin/activate
+pip install -e '.[dev]'
 ```
 
-### Go SDK Usage
+## First steps
 
-```go
-import "github.com/px0-ai/px0-go"
-
-// Render the prompt template using maps
-prompt, err := px0.Render("customer_support",
-    map[string]any{
-        "user":    user,
-        "company": company,
-        "query":   query,
-    },
-)
+```shell
+px0 init
+px0 workflows new "every friday at 5pm, summarize the github pull requests I reviewed this week and post it to #eng-standup"
+px0 workflows run friday-pr-digest --dry-run
+px0 workflows run friday-pr-digest
+px0 daemon install
 ```
 
-### Skill Execution SDK Usage
+The fastest path that needs no app setup at all is the knowledge library:
 
-Invoke and run skills from the registry dynamically using simple, unified SDK methods across languages:
-
-#### Python SDK Usage
-
-```python
-# Execute a live skill by slug
-result = px0.execute_skill(
-    slug="data_analyzer",
-    version="live",
-    input={"data": [1, 2, 3]}
-)
+```shell
+px0 knowledge add https://example.com/some-post
+px0 knowledge ask "what did that post say about caching?"
 ```
 
-#### Node.js SDK Usage
+## Command surface
 
-```typescript
-// Execute a live skill by slug
-const result = await px0.executeSkill("data_analyzer", {
-  version: "live",
-  input: { data: [1, 2, 3] }
-});
-```
+The shape is entity first, then the verb. The only flat commands are the four that act on the install rather than on anything in the store: `init`, `doctor`, `version`, `update`.
 
-#### Go SDK Usage
+| Command | What it does |
+| --- | --- |
+| `px0 workflows new` | Turn a sentence into a workflow |
+| `px0 workflows run` | Run one now, or pick from a list |
+| `px0 workflows edit` | Revise the request and rebuild the workflow |
+| `px0 workflows list` | Every workflow in the store |
+| `px0 knowledge add` | Ingest a URL or file |
+| `px0 knowledge ask` | Answer a question from the library |
+| `px0 knowledge search` | Retrieve matching passages |
+| `px0 knowledge reindex` | Rebuild the retrieval index |
+| `px0 guidelines review` | Accept or reject proposed conventions |
+| `px0 guidelines consolidate` | Merge overlap, surface stale files |
+| `px0 guidelines log` | One claim's edit history |
+| `px0 skills build` | Compile guidelines into agent bundles |
+| `px0 runs` | Browse, filter, and re-run past runs |
+| `px0 runs why` | How a run reached its result |
+| `px0 versions diff` | What changed between two versions |
+| `px0 changes revert` | Undo a recorded change |
+| `px0 tools list --status` | What can be called, and what is authorized |
+| `px0 daemon install` | Run workflows on a schedule |
+| `px0 config list` | Every setting, with its default |
+| `px0 store export` | Copy content and history elsewhere |
+| `px0 doctor` | Check that everything is wired up |
+| `px0 update` | Upgrade, with store migrations and rollback |
 
-```go
-// Execute a live skill by slug
-res, _, _ := client.SkillsAPI.
-  Execute(nil, "data_analyzer").
-  Version("live").
-  Input(map[string]interface{}{
-    "data": []int{1, 2, 3},
-  }).
-  Execute()
-```
+Every command takes `--help`.
 
-## Project Status
+## Licensing and authorship
 
-- Status: px0 is actively building its core platform. Early access and private hosting options are available.
-- GitHub Repository: [github.com/px0-ai/px0](https://github.com/px0-ai/px0)
-- Early Access Waitlist: [forms.gle/RguHzh3Eua4eGJXx5](https://forms.gle/RguHzh3Eua4eGJXx5)
-- Contact and Support: Reach out directly at [arpit@arpitbhayani.me](mailto:arpit@arpitbhayani.me).
+px0 is released under the MIT License. It is built by Arpit Bhayani (https://arpitbhayani.me).
