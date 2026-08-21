@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   px0 — design tokens
+   px0 - design tokens
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
@@ -30,7 +30,7 @@
   --amber-wash: rgba(251, 191, 36, 0.08);
   --amber-line: rgba(251, 191, 36, 0.22);
 
-  /* fixed brand fill — same amber in both themes, unlike --amber/-soft/-deep
+  /* fixed brand fill, same amber in both themes, unlike --amber/-soft/-deep
      above which get darkened for light-mode text contrast */
   --amber-fill: #fbbf24;
   --amber-fill-hover: #fcd34d;
@@ -201,7 +201,7 @@ a {
 }
 
 ::selection {
-  background: var(--amber);
+  background: var(--amber-fill);
   color: #08080b;
 }
 

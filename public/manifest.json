@@ -1,7 +1,7 @@
 {
  "name": "px0",
  "short_name": "px0",
- "description": "A local-first CLI where everything is a workflow.",
+ "description": "Automate your recurring chores in plain English, completely local.",
  "start_url": "/",
  "display": "standalone",
  "background_color": "#07070a",

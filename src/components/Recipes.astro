@@ -45,7 +45,7 @@ const recipes = [
     sentence: 'draft release notes from the commits since the last tag and file them as a page',
     apps: ['GitHub', 'Notion'],
     cron: null,
-    when: 'manual — run it when you cut a release',
+    when: 'manual: run it when you cut a release',
     reads: ['github: list commits', 'github: list tags'],
     writes: ['notion: create a page'],
     output: 'stdout',
@@ -73,7 +73,7 @@ const recipes = [
   {
     id: 'reading-library',
     sentence: 'save every newsletter I star to my reading library',
-    apps: ['Gmail', 'px0 knowledge'],
+    apps: ['Gmail', 'px0 brain'],
     cron: '0 22 * * *',
     when: 'daily, 22:00 local',
     reads: ['gmail: list starred messages'],
@@ -145,7 +145,7 @@ const recipes = [
                 <dt>tools</dt>
                 <dd class="rx-tools">
                   {r.writes.length === 0 ? (
-                    <span class="rx-none">none — this one only reads</span>
+                    <span class="rx-none">none: this one only reads</span>
                   ) : (
                     r.writes.map((t) => (
                       <span class="rx-tool">

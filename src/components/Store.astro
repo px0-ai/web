@@ -1,17 +1,16 @@
 ---
 const tree = [
-  { pad: 0, glyph: '', name: '~/.px0', note: 'your store — move it with PX0_HOME', kind: 'root' },
+  { pad: 0, glyph: '', name: '~/.px0', note: 'your store, move it with PX0_HOME', kind: 'root' },
   { pad: 1, glyph: '├──', name: 'workflows/', note: 'the jobs px0 can run', kind: 'dir' },
   { pad: 2, glyph: '│   ├──', name: 'friday-pr-digest.md', note: '', kind: 'file' },
   { pad: 2, glyph: '│   └──', name: 'morning-brief.md', note: '', kind: 'file' },
   { pad: 1, glyph: '├──', name: 'guidelines/', note: 'how you work', kind: 'dir' },
   { pad: 2, glyph: '│   ├──', name: 'commit-messages.md', note: '', kind: 'file' },
   { pad: 2, glyph: '│   └──', name: 'code-review/go.md', note: '', kind: 'file' },
-  { pad: 1, glyph: '├──', name: 'knowledge/', note: 'what you have read and kept', kind: 'dir' },
+  { pad: 1, glyph: '├──', name: 'brain/', note: 'what you have read and kept', kind: 'dir' },
   { pad: 2, glyph: '│   ├──', name: 'blogs/  papers/  docs/', note: '', kind: 'file' },
   { pad: 2, glyph: '│   └──', name: 'work/', note: 'never leaves this machine', kind: 'private' },
   { pad: 1, glyph: '├──', name: 'output/', note: 'what runs produced', kind: 'dir' },
-  { pad: 1, glyph: '├──', name: 'skills/', note: 'guidelines compiled for your agent', kind: 'dir' },
   { pad: 1, glyph: '└──', name: 'config.toml', note: '', kind: 'file' },
 ];
 
@@ -19,22 +18,22 @@ const pillars = [
   {
     tag: 'guidelines/',
     title: 'It writes in your voice',
-    body: 'Guidelines are Markdown files describing your conventions — how you word a commit message, what your Go reviews check. A workflow that needs one inlines it verbatim, so output comes back sounding like you instead of like a model.',
-    cmd: 'px0 guidelines review',
+    body: 'Guidelines are Markdown files describing your conventions: how you word a commit message, what your Go reviews check. A workflow that needs one inlines it verbatim, so output comes back sounding like you instead of like a model.',
+    cmd: 'px0 guidelines edit',
     accent: 'var(--violet)',
   },
   {
-    tag: 'knowledge/',
+    tag: 'brain/',
     title: 'A library you can question',
-    body: 'Add posts, papers, docs, and video transcripts as you read them. Text is extracted locally and indexed, so you can ask questions across everything you kept — with the passages it used cited back.',
-    cmd: 'px0 knowledge ask "…"',
+    body: 'Add posts, papers, docs, and video transcripts as you read them. Text is extracted locally and indexed, so you can ask questions across everything you kept, with the passages it used cited back.',
+    cmd: 'px0 brain ask "…"',
     accent: 'var(--cyan)',
   },
   {
     tag: '.state/',
     title: 'Its own history, no git',
     body: 'Every version of every file is kept by px0 itself, so the store works as a bare directory. Hand-edit a workflow and the next run picks it up; the edit still shows up in the log, and still reverts.',
-    cmd: 'px0 versions revert --to v2',
+    cmd: 'px0 changes revert <id>',
     accent: 'var(--green)',
   },
 ];
@@ -48,7 +47,7 @@ const pillars = [
         <h2 class="h-section">A directory, not a dashboard</h2>
         <p class="sub">
           There is no server to sign into and no hosted state to lose. Everything px0 knows is
-          plain Markdown in one directory you own — open it in any editor, grep it, back it up,
+          plain Markdown in one directory you own: open it in any editor, grep it, back it up,
           delete it. Edit a workflow by hand and the next run picks it up, with no compile step
           in between.
         </p>
@@ -57,6 +56,7 @@ const pillars = [
           <li><strong>Runs locally.</strong> The model backend is a coding agent CLI you already sign into.</li>
           <li><strong>No account.</strong> Nothing to create, nothing to cancel, no seat to pay for.</li>
           <li><strong>Portable.</strong> <code class="inline-code">px0 store export</code> copies content and history anywhere.</li>
+          <li><strong>Traceable.</strong> <code class="inline-code">px0 runs why</code> retraces a result to the guidelines, passages, and tool calls behind it, and a fire your laptop slept through still runs when it wakes.</li>
         </ul>
       </div>
 

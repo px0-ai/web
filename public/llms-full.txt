@@ -1,6 +1,6 @@
-# px0 - A local-first CLI where everything is a workflow
+# px0 - Automate your recurring chores in plain English, completely local
 
-> px0 is a local-first open-source utility to build custom agents and workflows. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.
+> px0 is a local-first open-source CLI where everything the system does is a workflow. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.
 
 ## Positioning
 
@@ -21,10 +21,10 @@ Workflows do not stop at the laptop. Through Composio, a workflow can reach hund
 
 `px0 workflows new "<sentence>"` runs four model passes, each with a job small enough to do well, and stops at the two points where a wrong answer would cost something.
 
-1. Clarify — it asks only what would change the generated file: which channel, which repository, how often, where output goes. Anything with a sensible default is not asked. Pressing Enter skips a question; at most three rounds run. `--no-clarify` skips the pass.
-2. Discover — it writes searches (a toolkit plus a capability phrase, e.g. "github: list pull requests"), not tool names, and px0 looks them up in Composio's catalogue. A slug that does not appear in the search results is discarded, so nothing is invented. `--no-discover` restricts the plan to px0's curated tools.
-3. Confirm — the selected tools are printed with their access level, and you accept all, drop some by number, or abort. Nothing is authorized before this point.
-4. Plan — the workflow is written against exactly those tools, then validated: a tool that does not exist, an input with no tool, or an invalid cron expression stops the build with nothing saved.
+1. Clarify: it asks only what would change the generated file: which channel, which repository, how often, where output goes. Anything with a sensible default is not asked. Pressing Enter skips a question; at most three rounds run. `--no-clarify` skips the pass.
+2. Discover: it writes searches (a toolkit plus a capability phrase, e.g. "github: list pull requests"), not tool names, and px0 looks them up in Composio's catalogue. A slug that does not appear in the search results is discarded, so nothing is invented. `--no-discover` restricts the plan to px0's curated tools.
+3. Confirm: the selected tools are printed with their access level, and you accept all, drop some by number, or abort. Nothing is authorized before this point.
+4. Plan: the workflow is written against exactly those tools, then validated: a tool that does not exist, an input with no tool, or an invalid cron expression stops the build with nothing saved.
 
 Read tools land in `inputs` and run before the prompt. Write tools land in `tools` and are callable by the model during the run. px0 enforces that split, because inputs run unconditionally.
 
@@ -53,25 +53,25 @@ Summarize {{recent_prs}} as a short digest, then post it to #eng-standup.
 
 Field meanings:
 
-- `request` — the sentence originally typed, kept verbatim for `px0 workflows edit`.
-- `trigger.schedule` — a standard five-field cron expression, evaluated in machine local time.
-- `guidelines` — files inlined into the prompt verbatim by name, never retrieved by similarity.
-- `inputs` — resolved before the prompt; each is a `tool`, `retrieve`, `source`, or `workflow`.
-- `tools` — what the model may call during the run.
-- `output` — `{target: stdout}`, or `{target: file, path: ...}`. A workflow with a schedule must write to a file, since a scheduled run has no terminal to print to. Paths are relative to the store and confined under `output/`; `{date}`, `{datetime}`, and `{time}` are substituted.
-- `timeout` — wall-clock cap on the run.
+- `request`: the sentence originally typed, kept verbatim for `px0 workflows edit`.
+- `trigger.schedule`: a standard five-field cron expression, evaluated in machine local time.
+- `guidelines`: files inlined into the prompt verbatim by name, never retrieved by similarity.
+- `inputs`: resolved before the prompt; each is a `tool`, `retrieve`, `source`, or `workflow`.
+- `tools`: what the model may call during the run.
+- `output`: `{target: stdout}`, or `{target: file, path: ...}`. A workflow with a schedule must write to a file, since a scheduled run has no terminal to print to. Paths are relative to the store and confined under `output/`; `{date}`, `{datetime}`, and `{time}` are substituted.
+- `timeout`: wall-clock cap on the run.
 
 A `composio:` prefix marks a tool discovered from the catalogue; `provider.action` ids are px0's curated ones. Both execute identically. There is no compile step: hand-edit the file and the next run picks it up.
 
 ## Guardrails
 
-- Access per tool comes from Composio's own metadata — `read`, `write`, or `destructive`. px0 never infers access from a tool's name.
+- Access per tool comes from Composio's own metadata: `read`, `write`, or `destructive`. px0 never infers access from a tool's name.
 - The confirm gate runs before anything is authorized or written, and write tools are named again once the plan is concrete.
 - px0 minting an authorization URL grants nothing; access exists only after a human consents in the browser.
 - `px0 workflows run --dry-run` resolves real inputs and stubs every write tool.
 - Any run that called a write tool is marked `[write]` in the run list.
-- Anything under `knowledge/work/` is excluded from every retrieval — a hard exclusion, not a ranking penalty — and guidelines under `guidelines/work/` are never compiled into an agent bundle.
-- px0 never edits a file under `guidelines/` on its own; changes arrive as proposals you accept, edit, or dismiss.
+- Anything under `brain/work/` is excluded from every retrieval (a hard exclusion, not a ranking penalty).
+- px0 never edits a file under `guidelines/` on its own. The only way a guideline is created is as a draft `px0 workflows new` writes when a build leans on a convention with no file yet; you keep, redraft, or skip it, and `px0 guidelines edit` is how it becomes yours afterward.
 
 ## The store
 
@@ -81,27 +81,26 @@ Everything px0 knows lives in `~/.px0` (override with `PX0_HOME`).
 | --- | --- |
 | `workflows/` | The jobs px0 can run |
 | `guidelines/` | How you work |
-| `knowledge/` | What you have read and kept |
+| `brain/` | What you have read and kept |
 | `output/` | What runs produced |
+| `tools/` | Tools you declared yourself, one TOML file each |
 | `config.toml` | Every setting |
 
-All of it is plain Markdown, readable in any editor. px0 keeps its own version history, so the store works as a bare directory with nothing else installed alongside it — no git required. `px0 versions list`, `px0 versions diff`, `px0 versions revert`, and `px0 changes list` walk that history; `px0 store export` copies content and history elsewhere.
+All of it is plain Markdown, readable in any editor. px0 keeps its own version history, so the store works as a bare directory with nothing else installed alongside it: no git required. `px0 changes list`, `px0 changes show <id>`, and `px0 changes revert <id>` walk and undo that history; `px0 store export` copies content and history elsewhere, and `px0 store import` loads it back.
 
 ## Guidelines
 
 Guidelines are prescriptive prose: how commit messages are worded, what a Go review checks, the voice a summary is written in. A workflow declares which guideline files it uses, and those files are inlined into the prompt deterministically at run time.
 
-px0 notices patterns in what you read and how you edit its output, then files a proposal with the evidence behind it. `px0 guidelines review` accepts, edits, or dismisses each one. `px0 guidelines consolidate` is a wider sweep: pending proposals, claims that have not been reinforced in a while, contradictions between guidelines, and guideline files no workflow lists.
+There is no `px0 guidelines new`. The only way a guideline is created is a draft `px0 workflows new` writes when the build it is running leans on a convention no file yet covers: it drafts the guideline from the workflow itself, shows it to you, and lists it on the workflow so every run inlines it. `px0 guidelines edit <name>` is how a draft becomes yours.
 
-Every guideline claim is addressable as `<path>#<heading-slug>`, so `px0 guidelines log` walks a single claim's history and `px0 guidelines revert` restores just that section.
+Every guideline claim (each `##` heading) is addressable as `<path>#<heading-slug>`, so `px0 guidelines log <claim-id>` walks a single claim's version history; hand edits are picked up too. `px0 guidelines list`, `px0 guidelines show <name>`, and `px0 guidelines rm <name>` round out the group.
 
-`px0 skills build` compiles guidelines into agent skill bundles under `~/.px0/skills/<name>/SKILL.md`, and symlinks them where Claude Code discovers them, so the same conventions apply in ordinary interactive sessions.
+## The brain and retrieval
 
-## Knowledge and retrieval
+`px0 brain add` ingests a web page, PDF, document, or video transcript; extraction runs locally and the destination folder follows the source type (`blogs/`, `papers/`, `docs/`). A YouTube link with no transcript is filed as an indexed metadata-only stub and can be upgraded later with `px0 brain refresh`. Playlist URLs are queued and drained by the daemon's nightly pass.
 
-`px0 knowledge add` ingests a web page, PDF, document, or video transcript; extraction runs locally and the destination folder follows the source type (`blogs/`, `papers/`, `docs/`). A YouTube link with no transcript is filed as an indexed metadata-only stub and can be upgraded later with `px0 knowledge refresh`. Playlist URLs are queued and drained by the daemon's nightly pass.
-
-`px0 knowledge ask` retrieves the relevant passages and answers from them, citing what it used with `--sources`. Every ask is recorded as a run, so `px0 runs why` can explain which passages fed an answer.
+`px0 brain ask` retrieves the relevant passages and answers from them, citing what it used with `--sources`. Every ask is recorded as a run, so `px0 runs why` can explain which passages fed an answer. `brain.path` can point outside the store entirely, at an existing Obsidian vault or any folder of Markdown; px0 reads it in place and never writes to it.
 
 Two retrieval backends:
 
@@ -118,19 +117,23 @@ Every tool routes through Composio. There is one API key to set (`px0 config com
 
 `px0 tools list` shows every tool a workflow can call and whether it reads or writes; `--status` adds authorization state per provider (`ready`, `not authorized`, `consent pending`, `authorization failed`, `authorization gone`). `px0 doctor` fails with exit code 4 on any stored authorization that is not active.
 
-Transient connector failures are retried per `connectors.retries` (default 3) so a network blip does not fail a scheduled workflow. On a TLS-intercepting corporate network, px0 detects the interception, retries against a system CA bundle that trusts it, and records the bundle — it never silently disables verification.
+Transient connector failures are retried per `connectors.retries` (default 3) so a network blip does not fail a scheduled workflow. On a TLS-intercepting corporate network, px0 detects the interception, retries against a system CA bundle that trusts it, and records the bundle; it never silently disables verification.
 
 ## Scheduling
 
 A workflow with `trigger.schedule` needs something watching the clock: `px0d`, installed with `px0 daemon install`. px0 picks launchd on macOS, systemd (user session) on Linux where available, and cron elsewhere (`--fallback-cron` forces it).
 
-The loop polls every 30 seconds, spawns anything due, and runs one housekeeping pass a day: a checkpoint scan for hand edits, a reindex of `knowledge/`, draining the ingest queue, log retention, and a weekly update check. Each step is fault-isolated.
+The loop polls every 30 seconds, spawns anything due, and runs one housekeeping pass a day: a checkpoint scan for hand edits, a reindex of `brain/`, draining the ingest queue, log retention, and a weekly update check. Each step is fault-isolated.
 
 Missed fires are not dropped. On startup and every tick, px0 compares each workflow's schedule against its last recorded fire and runs what it owes you, marking anything discovered well after it was due as late.
 
 ## Runs and provenance
 
-Every run — manual, scheduled, or an ask — leaves a record: the inputs it resolved, the guideline versions it inlined, every tool call with its timing, and the outcome. `px0 runs` opens an interactive browser over those records with filters for workflow, outcome, age, and write activity; every view has a plain-text equivalent (`px0 runs list`, `px0 runs show`, `px0 runs output`, `px0 runs logs`, `px0 runs rerun`). `px0 runs why <run-id>` walks the whole provenance chain.
+Every run (manual, scheduled, or an ask) leaves a record: the inputs it resolved, the guideline versions it inlined, every tool call with its timing, and the outcome. `px0 runs` opens an interactive browser over those records with filters for workflow, outcome, age, and write activity; every view has a plain-text equivalent (`px0 runs list`, `px0 runs show`, `px0 runs output`, `px0 runs logs`, `px0 runs rerun`). `px0 runs why <run-id>` walks the whole provenance chain.
+
+## MCP
+
+`px0 mcp serve` speaks the Model Context Protocol over stdin and stdout, no MCP SDK, just `initialize`, `tools/list`, and `tools/call`. It exposes `brain_ask`, `brain_search`, `workflows_list`, `guidelines_list`, and `guideline_read` by default; `workflow_run` is listed and callable only with `--allow-runs`, since running a workflow can post, send, or file something. Claude Code and most MCP clients register it as a command: `px0 mcp serve`, with `PX0_HOME` set in its environment when that client's environment differs from the shell it was installed from.
 
 ## Model backend
 
@@ -145,7 +148,7 @@ On a terminal px0 uses colour sparingly and shows a spinner while something slow
 Requirements: Python 3.11 or newer; a coding agent CLI (`claude`, `gemini`, `pi`, or `opencode`) as the model backend; optionally a Composio API key for workflows that reach other apps.
 
 ```shell
-curl -fsSL https://raw.githubusercontent.com/arpitbbhayani/px0/main/install.sh | sh
+curl -fsSL https://px0.ai/install.sh | sh
 px0 doctor
 ```
 
@@ -169,16 +172,16 @@ px0 workflows run friday-pr-digest
 px0 daemon install
 ```
 
-The fastest path that needs no app setup at all is the knowledge library:
+The fastest path that needs no app setup at all is the brain:
 
 ```shell
-px0 knowledge add https://example.com/some-post
-px0 knowledge ask "what did that post say about caching?"
+px0 brain add https://example.com/some-post
+px0 brain ask "what did that post say about caching?"
 ```
 
 ## Command surface
 
-The shape is entity first, then the verb. The only flat commands are the four that act on the install rather than on anything in the store: `init`, `doctor`, `version`, `update`.
+The shape is entity first, then the verb. The only flat commands are the ones that act on the install rather than on anything in the store: `init`, `doctor`, `status`, `version`, `update`, `completion`.
 
 | Command | What it does |
 | --- | --- |
@@ -186,22 +189,23 @@ The shape is entity first, then the verb. The only flat commands are the four th
 | `px0 workflows run` | Run one now, or pick from a list |
 | `px0 workflows edit` | Revise the request and rebuild the workflow |
 | `px0 workflows list` | Every workflow in the store |
-| `px0 knowledge add` | Ingest a URL or file |
-| `px0 knowledge ask` | Answer a question from the library |
-| `px0 knowledge search` | Retrieve matching passages |
-| `px0 knowledge reindex` | Rebuild the retrieval index |
-| `px0 guidelines review` | Accept or reject proposed conventions |
-| `px0 guidelines consolidate` | Merge overlap, surface stale files |
+| `px0 brain add` | Ingest a URL or file |
+| `px0 brain ask` | Answer a question from the library |
+| `px0 brain search` | Retrieve matching passages |
+| `px0 brain reindex` | Rebuild the retrieval index |
+| `px0 guidelines list` | Every guideline, numbered |
+| `px0 guidelines edit` | Reword a draft into your voice |
 | `px0 guidelines log` | One claim's edit history |
-| `px0 skills build` | Compile guidelines into agent bundles |
+| `px0 mcp serve` | Serve the brain and workflows over MCP |
 | `px0 runs` | Browse, filter, and re-run past runs |
 | `px0 runs why` | How a run reached its result |
-| `px0 versions diff` | What changed between two versions |
+| `px0 changes list` | What changed, across the store |
 | `px0 changes revert` | Undo a recorded change |
 | `px0 tools list --status` | What can be called, and what is authorized |
 | `px0 daemon install` | Run workflows on a schedule |
 | `px0 config list` | Every setting, with its default |
 | `px0 store export` | Copy content and history elsewhere |
+| `px0 status` | Whether anything needs attention |
 | `px0 doctor` | Check that everything is wired up |
 | `px0 update` | Upgrade, with store migrations and rollback |
 

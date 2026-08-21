@@ -8,8 +8,8 @@ interface Props {
 }
 
 const {
-  title = "px0 - Build custom agents and workflows using natural language, then run them on a schedule.",
-  description = "px0 is a local-first open-source utility to build custom agents and workflows. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.",
+  title = "px0 - Automate your recurring chores in plain English, completely local.",
+  description = "px0 turns a plain-English sentence into a workflow you can run, schedule, and edit - a Markdown file on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
@@ -71,7 +71,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <meta name="description" content={description} />
     <meta
       name="keywords"
-      content="px0, local-first CLI, workflow automation, plain English automation, markdown workflows, personal automation, cron workflows, Composio, agent CLI, claude code automation, knowledge library, provenance, open source automation"
+      content="px0, local-first CLI, workflow automation, plain English automation, markdown workflows, personal automation, cron workflows, Composio, agent CLI, claude code automation, MCP server, brain library, provenance, open source automation"
     />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Arpit Bhayani" />
@@ -97,7 +97,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
       '@type': 'SoftwareApplication',
       name: 'px0',
       description:
-        'px0 is a local-first open-source utility to build custom agents and workflows. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.',
+        'px0 automates your recurring chores in plain English, completely local. Describe a recurring job and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.',
       applicationCategory: 'DeveloperApplication',
       applicationSubCategory: 'Workflow Automation, Personal Automation, AI Agent Tooling',
       operatingSystem: 'macOS, Linux',

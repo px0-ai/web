@@ -1,4 +1,4 @@
-# px0 - A local-first CLI where everything is a workflow
+# px0 - Automate your recurring chores in plain English, completely local
 
 > px0 turns a plain-English description of a recurring job into a Markdown workflow you can run, schedule, and edit. Everything lives in one directory on your machine (`~/.px0`). There is no server, no account, and no hosted state. Workflows reach 1,000+ external apps through Composio, and the model backend is a coding agent CLI you already sign into (claude, gemini, pi, or opencode).
 
@@ -8,23 +8,24 @@ This index is written for large language models and AI agents. It maps the px0 p
 
 - [Home page](https://px0.ai): what px0 is, how a workflow gets built, and how to install it.
 - [Documentation](https://docs.px0.ai): tutorials, workflow file format, CLI reference, configuration.
-- [GitHub repository](https://github.com/px0-ai/px0-cli): source, issues, and the install script.
+- [GitHub repository](https://github.com/px0-ai/px0): source, issues, and the install script.
 - [PyPI package](https://pypi.org/project/px0/): the published `px0` distribution.
 
 ## What px0 is
 
 - A single CLI (`px0`), installed with pipx, running entirely on the user's machine.
-- A store at `~/.px0` (override with `PX0_HOME`) holding `workflows/`, `guidelines/`, `knowledge/`, and `output/` — all plain Markdown.
+- A store at `~/.px0` (override with `PX0_HOME`) holding `workflows/`, `guidelines/`, `brain/`, and `output/`, all plain Markdown.
 - A workflow builder: `px0 workflows new "<sentence>"` runs four passes (clarify, discover, confirm, plan) and writes a workflow file.
 - A scheduler: `px0 daemon install` picks launchd, systemd, or cron, fires due workflows, and backfills fires the machine slept through.
-- A knowledge library: `px0 knowledge add` ingests URLs, PDFs, docs, and video transcripts; `px0 knowledge ask` answers questions over them with citations.
+- A brain: `px0 brain add` ingests URLs, PDFs, docs, and video transcripts; `px0 brain ask` answers questions over them with citations.
+- An MCP server: `px0 mcp serve` exposes the brain and the workflow list over the Model Context Protocol, so an agent can query and run them without being told how the CLI works.
 - A provenance trail: every run records its inputs, the guideline versions inlined, and every tool call; `px0 runs why <run-id>` explains how an output came to be.
 
 ## What px0 is not
 
 - Not a hosted service, SaaS dashboard, or prompt registry.
 - Not an SDK you embed in an application.
-- Not a direct-API LLM client — it shells out to a coding agent CLI as its model backend.
+- Not a direct-API LLM client: it shells out to a coding agent CLI as its model backend.
 
 ## Full context
 

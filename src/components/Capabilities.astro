@@ -12,39 +12,21 @@ const harnesses = ['claude', 'gemini', 'pi', 'opencode'];
 const small = [
   {
     tag: 'guidelines',
-    title: 'Conventions that sharpen themselves',
-    body: 'px0 notices patterns in what you read and how you edit its output, then proposes a guideline change with the evidence behind it. It never edits your files on its own — you accept, rewrite, or dismiss.',
+    title: 'Guidelines you never write from scratch',
+    body: 'When a build leans on a convention you have not written down (a commit format, a review rubric), px0 drafts the guideline from the workflow itself and shows it to you before saving. Reword it once and every run inlines your version, verbatim.',
     accent: 'var(--violet)',
   },
   {
-    tag: 'px0 skills build',
-    title: 'Your conventions, inside your editor',
-    body: 'Compile guidelines into agent skill bundles and px0 symlinks them where Claude Code looks, so the same rules apply in an ordinary interactive session — not just inside px0 runs.',
+    tag: 'px0 mcp serve',
+    title: 'Speaks MCP, not just CLI',
+    body: 'Point Claude Code, or any MCP client, at px0 and it can ask your brain a question, list your workflows, and run one, all over stdio with no SDK involved. Running a workflow stays off until you pass --allow-runs.',
     accent: 'var(--cyan)',
   },
   {
     tag: 'retrieval',
     title: 'Keyword by default, semantic when you want it',
-    body: 'SQLite FTS5 with BM25 ships built in, nothing to install. Switch the backend to qmd for hybrid vector search with reranking — it prints the model download size and waits for a yes.',
+    body: 'SQLite FTS5 with BM25 ships built in, nothing to install. Switch the backend to qmd for hybrid vector search with reranking. It prints the model download size and waits for a yes.',
     accent: 'var(--green)',
-  },
-  {
-    tag: 'px0 doctor',
-    title: 'One command that says if it is healthy',
-    body: 'Credentials, locks, schema, connections, index, daemon, and whether your model backend actually answers. Exit 0 when it all passes, 4 when it does not — so it drops into a health check.',
-    accent: 'var(--amber)',
-  },
-  {
-    tag: 'pipes',
-    title: 'Built to be piped',
-    body: 'Colour and spinners on a terminal; nothing but greppable text through a pipe, where status glyphs become [OK] and [FAIL]. --json implies plain output everywhere.',
-    accent: 'var(--rose)',
-  },
-  {
-    tag: 'px0 update',
-    title: 'Upgrades that migrate and roll back',
-    body: 'Detects how px0 was installed, applies pending store-schema migrations, restarts the daemon if it was running, and runs a doctor pass. A failed migration never half-lands.',
-    accent: 'var(--violet)',
   },
 ];
 ---
@@ -55,7 +37,7 @@ const small = [
       <span class="eyebrow">what else is in the box</span>
       <h2 class="h-section">Small surface. Long reach.</h2>
       <p class="sub">
-        One CLI, one directory, one API key for the outside world — and everything else is
+        One CLI, one directory, one API key for the outside world, and everything else is
         already on your machine.
       </p>
     </div>

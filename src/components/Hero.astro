@@ -63,19 +63,20 @@ const facts = [
       </span>
 
       <h1>
-        Describe it once.<br />
-        <span class="grad">It runs forever.</span>
+        Automate your chores.<br />
+        <span class="grad">In plain English.</span>
       </h1>
 
       <p class="hero-sub">
-        px0 turns one plain-English sentence into a workflow you can run, schedule,
-        and edit &mdash; a Markdown file on <em>your</em> machine, wired to 1,000+ apps
-        you already use. No server. No dashboard. Nothing hosted.
+        <em>Completely local.</em> Describe a recurring job once and px0 writes it as
+        a workflow you can run, schedule, and edit: a Markdown file on your
+        machine, wired to 1,000+ apps you already use. No server. No dashboard.
+        Nothing hosted.
       </p>
 
-      <div class="install" data-copy="pipx install px0" role="button" tabindex="0" aria-label="Copy install command">
+      <div class="install" data-copy="curl -fsSL https://px0.ai/install.sh | sh" role="button" tabindex="0" aria-label="Copy install command">
         <span class="install-prompt">$</span>
-        <code class="install-cmd">pipx install px0</code>
+        <code class="install-cmd">curl -fsSL https://px0.ai/install.sh | sh</code>
         <span class="install-copy">
           <svg class="i-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="9" y="9" width="13" height="13" rx="2"></rect>
@@ -144,10 +145,6 @@ const facts = [
           <pre set:html={workflowFile}></pre>
         </div>
       </div>
-
-      <p class="demo-note">
-        Four model passes. One file you own. Edit it by hand any time &mdash; there is no compile step.
-      </p>
     </div>
   </div>
 </section>
@@ -197,7 +194,7 @@ const facts = [
     gap: 10px;
     margin: 30px 0 14px;
     padding: 12px 14px;
-    max-width: 340px;
+    width: 100%;
     border: 1px solid var(--bdr);
     border-radius: var(--r);
     background: var(--code-bg);
@@ -393,15 +390,6 @@ const facts = [
     font-size: 12px;
     line-height: 1.8;
     white-space: pre;
-  }
-
-  .demo-note {
-    margin-top: 16px;
-    font-family: var(--mono);
-    font-size: 11.5px;
-    line-height: 1.7;
-    color: var(--txt-3);
-    text-align: center;
   }
 
   @media (max-width: 1040px) {
