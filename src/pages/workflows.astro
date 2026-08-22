@@ -1,0 +1,809 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+type Row = [string, string, string]; // sentence, "reads -> writes" (+ guideline), cadence
+type Category = { id: string; title: string; blurb: string; rows: Row[] };
+
+const LOCAL = new Set(['retrieve', 'file']);
+
+function parseApps(s: string) {
+  const guideline = / \+ guideline$/.test(s);
+  const clean = s.replace(/ \+ guideline$/, '');
+  const [readsPart, writesPart] = clean.split('->').map((p) => p.trim());
+  const reads = readsPart.split(',').map((a) => a.trim());
+  const writes = writesPart.split(',').map((a) => a.trim());
+  return { reads, writes, guideline };
+}
+
+const howToRead = [
+  {
+    title: 'The sentence',
+    body: 'Write it the way you would ask a colleague: what should happen, to what, and when.',
+  },
+  {
+    title: 'reads → writes',
+    body: 'Left of the arrow is read-only, resolved as an inputs entry. Right of it is the only place the workflow may post, send, or file anything.',
+  },
+  {
+    title: 'retrieve and file',
+    body: 'retrieve means brain retrieval rather than a connector. file means the output lands under output/ and nothing leaves the machine.',
+  },
+  {
+    title: '+ guideline',
+    body: 'The output only lands if it sounds like you, so it inlines a file from guidelines/ verbatim.',
+  },
+  {
+    title: 'Cadence',
+    body: '“on demand” means no trigger.schedule is set: you run it yourself, whenever it is useful.',
+  },
+];
+
+const moves = [
+  ['inputs: tool', 'Pull facts before the model runs: PRs, tickets, events, rows.', 'Read-only tools only — a write tool in inputs fails validation.'],
+  ['inputs: retrieve', 'Ground the answer in your brain, cited by path and anchor.', 'Nothing under brain/work/ is retrieved.'],
+  ['inputs: workflow', 'One workflow calls another and uses its text as context.', "The sub-run's output stays in memory and is never written."],
+  ['tools:', 'The only place a workflow may post, send, file, or update.', 'Shown to you as writes at build time, so delivery stays explicit.'],
+  ['guidelines:', 'Inlines your conventions verbatim, so output sounds like you.', 'The file must exist under guidelines/ or the workflow is invalid.'],
+  ['trigger.schedule', 'Cron, run by the daemon.', "A scheduled workflow's output.target must be file."],
+  ['pipeline:', 'Chains whole workflows into one job.', 'One level deep — a stage that is itself a pipeline is rejected.'],
+];
+
+const categories: Category[] = [
+  {
+    id: 'engineering-code',
+    title: 'Engineering: code and change',
+    blurb: "Repository chores: reviews, releases, CI, and the reports nobody writes by hand twice. github alone exposes 871 tools, so the digest shape generalises well past a Friday summary.",
+    rows: [
+      ['Summarize the pull requests I reviewed this week and post it to #eng-standup', 'github -> slack', 'Fri 17:00'],
+      ['List PRs open more than three days with no review and nudge each author in a DM', 'github -> slack', 'daily 10:00'],
+      ['Draft release notes from the commits since the last tag and file them as a page', 'github -> notion', 'on demand'],
+      ['Precheck my open PR against my Go review conventions and leave inline comments', 'github -> github + guideline', 'on demand'],
+      ['Report which merge queues stalled this week and what blocked them', 'github -> slack', 'Mon 09:00'],
+      ["Turn last week's failed CI runs into a flaky-test list with counts, and file the top three", 'github -> linear', 'Mon 09:30'],
+      ["Write this month's changelog page from merged PR titles, grouped by user-visible change", 'github -> confluence', '1st of month'],
+      ['Flag feature flags still on after 60 days, with the PR that introduced each', 'launch_darkly, github -> slack', 'Wed weekly'],
+      ['List merge requests waiting on my group and rank them by how long they have waited', 'gitlab -> slack', 'daily 09:00'],
+      ['Tell me what shipped to production yesterday, per service, with the deploy author', 'vercel, github -> slack', 'daily 08:30'],
+      ['Diff our Postman collection against the committed OpenAPI spec and open an issue per drift', 'postman -> github', 'Thu weekly'],
+      ['Report strings added this week that have no translation yet, per locale', 'crowdin -> jira', 'Fri 12:00'],
+      ['Summarize the review comments I received this month into what I keep getting wrong', 'github -> file', 'monthly'],
+    ],
+  },
+  {
+    id: 'developer-productivity',
+    title: 'Developer productivity',
+    blurb: "One engineer's own day rather than reports about code. These assemble the context before you sit down, so the first twenty minutes go to work instead of to reconstructing where you left off.",
+    rows: [
+      ['Restore my context: the branches, PRs, and tickets I touched yesterday, and what each was waiting on', 'github, linear -> file', 'daily 08:00'],
+      ['Build one ranked queue for today from my assigned tickets, review requests, and mentions', 'github, jira, slack -> file', 'daily 08:30'],
+      ['List what I am blocked on and who owns each unblock, so I can chase it in one message', 'github, jira -> slack', 'daily 09:30'],
+      ['Triage my GitHub notifications into act now, read later, and ignore, with reasons', 'github -> file', 'daily 09:00, 15:00'],
+      ["Draft the PR description from this branch's diff, following my PR conventions", 'github -> github + guideline', 'on demand'],
+      ["Write my standup update from my commits, reviews, and yesterday's messages", 'github, slack -> slack + guideline', 'daily 09:45'],
+      ['Tell me which of my branches are merged, stale, or duplicated, and which to delete', 'github -> file', 'Fri 17:30'],
+      ['Report my review load: how many reviews I owe versus how many I am owed', 'github -> slack', 'Mon, Thu 10:00'],
+      ["Batch this week's dependency PRs into one note: what upgraded, what looks risky, what to skip", 'github -> github', 'Tue 11:00'],
+      ['Summarize test failures on my branches and separate mine from flaky infrastructure', 'github -> file', 'daily 12:00'],
+      ['Turn this ticket into a design-doc skeleton, pulling in what I have already read on the topic', 'retrieve, jira -> notion', 'on demand'],
+      ['Give me a tour of this repository: entry points, hot files, who last touched what', 'github -> outline', 'on demand'],
+      ['Report where my coding hours actually went last week against what I planned', 'wakatime, googlecalendar -> googlesheets', 'Fri 18:00'],
+      ['Find two focus blocks in next week’s calendar and hold them before anyone else does', 'googlecalendar -> googlecalendar', 'Fri 16:00'],
+      ['Extract the recurring lessons from review comments I received this month', 'github -> file', 'monthly'],
+      ['Assemble my brag doc entry for the quarter: what I shipped, reviewed, fixed, and unblocked', 'github, jira -> googledocs + guideline', 'quarterly'],
+    ],
+  },
+  {
+    id: 'engineering-management',
+    title: 'Engineering management',
+    blurb: "A manager's recurring work is assembly: the same facts out of four systems, shaped into a status, a one-on-one, or a decision. Automate the assembly and keep the judgement.",
+    rows: [
+      ['Post a Monday sprint status: what is done, what slipped, and what nobody has started', 'jira -> slack', 'Mon 09:00'],
+      ["Prepare my one-on-one pack for each report: their week's work, wins, blockers, and open threads", 'github, jira -> file', 'daily 07:30'],
+      ['Write the weekly team report for leadership: shipped, at risk, incidents, and asks', 'jira, github, pagerduty -> googledocs + guideline', 'Thu 17:00'],
+      ['List cross-team dependencies we are waiting on and how long each has been waiting', 'jira -> slack', 'Tue, Fri 10:00'],
+      ["Report the team's cycle time and review latency this sprint against the last three", 'github, jira -> slack', 'sprint end'],
+      ['Flag work in progress that has stalled: assigned, untouched for a week, still open', 'linear -> slack', 'Wed 10:00'],
+      ["Check next sprint's capacity against booked leave, holidays, and on-call rotation", 'bamboohr, pagerduty, jira -> slack', 'Thu before planning'],
+      ['Show how pages were distributed across the team last month and whether it was fair', 'pagerduty -> googlesheets', 'monthly'],
+      ['Chase overdue action items from every postmortem, with the owner and the original incident', 'notion, jira -> slack', 'Mon 11:00'],
+      ['Report which epics slipped their target date this week and what moved them', 'jira -> confluence', 'Fri 14:00'],
+      ['Age the tech-debt backlog and name the three items that keep causing incidents', 'github, sentry -> notion', 'monthly'],
+      ['Audit our recurring meetings: attendee hours per week, and the three cheapest to cancel', 'googlecalendar -> googlesheets', 'monthly'],
+      ['Summarize the retro into themes and open one issue per agreed action', 'dovetail, miro -> linear', 'sprint end'],
+      ["Report interviewer load and which loops are short of a panel this week", 'greenhouse, googlecalendar -> slack', 'Mon 08:00'],
+      ['Track each new joiner at day seven, thirty, and sixty: first PR, first deploy, gaps', 'github, bamboohr -> file', 'weekly'],
+      ["Assemble the evidence pack for each report's review from their own shipped work this half", 'github, jira -> googledocs + guideline', 'review cycle'],
+      ['Report seats and spend on our developer tools and what is unused', 'ramp, github -> slack', 'monthly'],
+      ['Draft the project update our stakeholders keep asking for, from the tracker and the incident log', 'clickup, sentry -> notion + guideline', 'Wed 16:00'],
+    ],
+  },
+  {
+    id: 'incidents-reliability',
+    title: 'Incidents and reliability',
+    blurb: 'pagerduty carries 356 tools and sentry 209, which covers the whole on-call paper trail: handover, triage, and the weekly review pack.',
+    rows: [
+      ["Turn last night's error spike into a triaged bug ticket with the stack trace summarized", 'sentry -> linear', 'daily 07:00'],
+      ['Write my on-call handover: what paged in the last twelve hours and what is still open', 'pagerduty, sentry -> slack', 'daily 09:00'],
+      ['Build the weekly incident review pack: pages, time to acknowledge, worst services', 'pagerduty -> googledocs', 'Mon 08:00'],
+      ['Report error-budget burn per service and name the two closest to breach', 'datadog -> slack', 'daily 08:00'],
+      ["Group this week's alerts by likely root cause instead of by alert name", 'new_relic -> jira', 'Fri 16:00'],
+      ['Draft the post-incident timeline from the incident channel and the page log', 'slack, pagerduty -> notion', 'on demand'],
+      ['List every downtime window last week and the endpoint that caused it', 'better_stack -> slack', 'Mon 07:30'],
+      ['Find the twenty loudest log lines this week and open one cleanup issue for the worst', 'datadog -> github', 'Wed weekly'],
+      ['Cross-check open incidents against the change log and say which deploy likely caused each', 'servicenow, github -> slack', 'daily 10:00'],
+    ],
+  },
+  {
+    id: 'product-analytics',
+    title: 'Product and analytics',
+    blurb: 'The dashboards already exist. What nobody writes weekly is the sentence explaining what moved, which is the shape a guideline improves most.',
+    rows: [
+      ["Report the funnel's three biggest drop-offs this week against last, and what changed near them", 'posthog -> slack', 'Mon 09:00'],
+      ['Fourteen days after launch, tell me who adopted the new feature and who bounced off it', 'amplitude -> notion', 'on demand'],
+      ["Append yesterday's core numbers to the metrics sheet and flag anything outside two sigma", 'googlebigquery -> googlesheets', 'daily 06:00'],
+      ['Turn our Metabase weekly questions into a written readout, not a screenshot', 'metabase -> slack', 'Mon 08:30'],
+      ['Say which running experiments crossed significance and which should be stopped', 'posthog -> linear', 'Tue weekly'],
+      ['List search queries that returned nothing this week, ranked by volume', 'algolia -> jira', 'Fri 11:00'],
+      ['Summarize rage-click and dead-click hotspots by page', 'posthog -> slack', 'Wed weekly'],
+      ['Flag traffic anomalies against the four-week baseline, by channel and landing page', 'google_analytics -> slack', 'daily 07:30'],
+      ["Compile the quarterly board metrics narrative from the warehouse and last quarter's doc", 'databricks -> googledocs', 'quarterly'],
+    ],
+  },
+  {
+    id: 'customer-support',
+    title: 'Customer support and customer voice',
+    blurb: 'zendesk is the second-deepest toolkit in the catalogue at 451 tools. The useful automations convert ticket volume into engineering intent: themes, not counts.',
+    rows: [
+      ["Group this week's support tickets by theme and open issues for the top three", 'zendesk -> linear', 'Fri 15:00'],
+      ['List first-response SLA breaches by queue and who owns each', 'freshdesk -> slack', 'daily 09:30'],
+      ['Turn repeated how-do-I questions into a docs backlog, one page stub each', 'intercom -> notion', 'Mon weekly'],
+      ["Cluster this month's survey verbatims by cause and quote the sharpest three", 'delighted -> slack', 'monthly'],
+      ["Flag open tickets from enterprise accounts and attach the account's renewal date", 'zendesk, salesforce -> slack', 'daily 08:00'],
+      ['Find feature requests mentioned by three or more customers this month', 'canny -> linear', 'monthly'],
+      ['Write the customer-facing note for what we fixed that customers actually asked for', 'zendesk, github -> notion', 'Thu weekly'],
+      ["Summarize what the shop's angry reviews and tickets agree on", 'gorgias, shopify -> slack', 'Fri weekly'],
+    ],
+  },
+  {
+    id: 'sales-crm',
+    title: 'Sales, CRM, and revenue',
+    blurb: 'Pipeline hygiene and call preparation, assembled from the CRM plus whatever else touched the account.',
+    rows: [
+      ['Report which deals changed stage this week and which slipped out of the quarter', 'hubspot -> slack', 'Mon 08:00'],
+      ['Nudge owners about deals with no activity in fourteen days, one DM per owner', 'pipedrive -> slack', 'Tue 09:00'],
+      ['Before each call today, brief me on the account: history, open tickets, last emails', 'salesforce, zendesk, gmail -> gmail', 'daily 07:00'],
+      ['Write the won-and-lost review with the reason each deal actually turned', 'hubspot -> googledocs', 'Fri 16:00'],
+      ["Enrich this week's inbound signups and drop the ones with no company match", 'hunter, peopledatalabs -> hubspot', 'daily 11:00'],
+      ["Pull yesterday's call recordings into CRM notes and next steps", 'gong, fireflies -> salesforce', 'daily 20:00'],
+      ['List contracts sent but unsigned for more than five days, with who to chase', 'docusign -> slack', 'daily 10:00'],
+      ['Draft the follow-up email for every meeting I had yesterday, in my voice', 'googlecalendar, gong -> gmail + guideline', 'daily 08:00'],
+    ],
+  },
+  {
+    id: 'finance-billing',
+    title: 'Finance and billing',
+    blurb: 'stripe carries 425 tools and workday 567, so coverage is rarely the constraint. These are the workflows whose write tool deserves the most scrutiny before you authorize it.',
+    rows: [
+      ["Log this week's revenue and refunds into the finance sheet", 'stripe -> googlesheets', 'Fri 18:00'],
+      ['List failed payments worth retrying and draft the recovery email for each', 'stripe -> gmail', 'daily 09:00'],
+      ['Write the monthly recurring-revenue movement: new, expansion, contraction, churn', 'stripe, maxio -> notion', '1st of month'],
+      ['Report invoice aging and who to chase, oldest first', 'quickbooks -> slack', 'Mon 09:00'],
+      ["Flag card spend outside each team's monthly budget, with the merchant", 'ramp, brex -> slack', 'weekly'],
+      ["Reconcile yesterday's settlements against our ledger and report only the gaps", 'razorpay -> googlesheets', 'daily 07:00'],
+      ['Summarize the accounts closing this month and which have unsigned paperwork', 'xero, docusign -> slack', 'monthly'],
+    ],
+  },
+  {
+    id: 'operations-people',
+    title: 'Operations, people, hiring',
+    blurb: 'Recruiting loops, leave, timesheets, and vendor paperwork: high-friction, low-judgement, and almost entirely assembly.',
+    rows: [
+      ['Name candidates stuck in a stage for more than five days and whose action it is', 'greenhouse -> slack', 'daily 09:00'],
+      ['Report the hiring funnel by role with pass-through rates per stage', 'lever -> googlesheets', 'Mon weekly'],
+      ['Assemble the day-one pack for each new joiner: accounts, docs, first-week meetings', 'bamboohr -> notion, googlecalendar', 'daily 06:00'],
+      ["Check next sprint's dates against booked time off and flag the collisions", 'bamboohr, jira -> slack', 'Thu weekly'],
+      ['Chase whoever has not logged hours, one DM each, no channel shaming', 'clockify -> slack', 'Fri 17:00'],
+      ['List vendor contracts expiring in the next forty-five days and their owner', 'docusign -> slack', 'Mon weekly'],
+      ["Summarize this week's interview scorecards into a hiring-committee brief", 'ashby -> googledocs', 'Thu 18:00'],
+    ],
+  },
+  {
+    id: 'marketing-content',
+    title: 'Marketing and content',
+    blurb: 'Campaign reporting, competitor watching, and turning one published piece into the versions each platform wants.',
+    rows: [
+      ['Draft next week’s content calendar from the backlog, in the voice I write in', 'notion -> notion + guideline', 'Fri 14:00'],
+      ['Turn the post I published into five platform-specific versions, queued not sent', 'firecrawl -> typefully, buffer', 'on demand'],
+      ['Report campaign performance: opens, clicks, unsubscribes, and the subject that won', 'mailchimp, klaviyo -> slack', 'Tue weekly'],
+      ['List keywords that dropped more than three positions this week', 'dataforseo -> googlesheets', 'Mon 07:00'],
+      ["Watch our competitors' pricing pages and report only what actually changed", 'firecrawl -> slack', 'daily 08:00'],
+      ['Split webinar registrants into attendees and no-shows and draft each follow-up', 'zoom -> mailchimp', 'on demand'],
+      ['Summarize what people said about us on Reddit and Hacker News this week', 'reddit, exa -> slack', 'Fri 12:00'],
+      ['Report which paid campaigns are burning budget below target conversion', 'metaads -> slack', 'daily 09:00'],
+    ],
+  },
+  {
+    id: 'personal-operations',
+    title: 'Personal operations',
+    blurb: 'The smallest workflows, and day to day the ones you notice most. They also need the fewest connectors to cover nearly all of this section.',
+    rows: [
+      ['Brief me on today’s meetings and the emails I have not replied to', 'googlecalendar, gmail -> file', 'daily 07:00'],
+      ['At the end of the day, list everything I said I would do in Slack today', 'slack -> todoist', 'daily 18:30'],
+      ['Show inbox debt: threads waiting on me for more than three days, oldest first', 'gmail -> slack', 'daily 16:00'],
+      ['Audit last week’s calendar: meeting hours, focus hours, and the worst offender', 'googlecalendar -> googlesheets', 'Mon 08:00'],
+      ['For each meeting tomorrow, attach the last three emails with those people', 'googlecalendar, gmail -> file', 'daily 19:00'],
+      ['Pull receipts out of my mail this week and add a row per expense', 'gmail -> googlesheets', 'Sun 20:00'],
+      ["Assemble the travel pack for tomorrow's trip: flights, hotel, times, documents", 'gmail, googlecalendar -> file', 'daily 20:00'],
+    ],
+  },
+  {
+    id: 'brain-grounded',
+    title: 'Brain-grounded workflows',
+    blurb: 'These need no connector. inputs: retrieve and a guideline are the whole apparatus, so they run offline and cost nothing to authorize. Start here.',
+    rows: [
+      ['Digest what I saved this week and name the thread running through it', 'retrieve -> file', 'Sun 18:00'],
+      ['Review this design doc against the notes I have kept on distributed systems', 'retrieve, github -> github', 'on demand'],
+      ['Draft a blog post from the three papers I read on backpressure, citing each', 'retrieve -> file + guideline', 'on demand'],
+      ['Build an interview question sheet from my saved system-design notes', 'retrieve -> file', 'on demand'],
+      ['Tell me what I have read that contradicts the claim in this PR description', 'retrieve, github -> file', 'on demand'],
+      ['Answer support questions in my words, using only what my brain actually says', 'retrieve, zendesk -> zendesk', 'on demand'],
+    ],
+  },
+];
+
+const totalRows = categories.reduce((n, c) => n + c.rows.length, 0);
+
+const pipelines = [
+  {
+    name: 'Friday wrap',
+    stages: ['pr-digest', 'incident-digest', 'ticket-themes', 'weekly-post'],
+    why: 'Three read-only collectors and one write. Each stage survives mid-week on its own.',
+  },
+  {
+    name: 'Release train',
+    stages: ['commits-since-tag', 'changelog-draft', 'release-page'],
+    why: 'The draft stage holds the guideline, so the voice is fixed in one place.',
+  },
+  {
+    name: 'Morning desk',
+    stages: ['calendar-brief', 'inbox-debt', 'overnight-alerts', 'morning-brief'],
+    why: 'One 07:00 cron instead of four, and one file to read.',
+  },
+  {
+    name: 'Manager Monday',
+    stages: ['sprint-status', 'blocked-list', 'stalled-wip', 'team-status'],
+    why: 'The collectors are the ones an engineer runs alone, reused at team scope.',
+  },
+  {
+    name: 'Monthly business review',
+    stages: ['revenue-movement', 'funnel-movement', 'support-themes', 'mbr-doc'],
+    why: 'Only the writer stage touches a document, so the write surface is one tool.',
+  },
+];
+---
+
+<Layout
+  title="Workflow catalogue — px0"
+  description={`Here are some jobs you could build with px0, each written as the one sentence you would type into px0 workflows new.`}
+>
+  <Nav />
+  <main>
+    <header class="section wf-hero">
+      <div class="container">
+        <span class="eyebrow reveal">workflow catalogue</span>
+        <h1 class="wf-h1 reveal">Some workflows you could build with px0</h1>
+        <p class="sub wf-lede reveal">
+          Each row is one sentence you would type into <code class="inline-code">px0 workflows new</code>.
+          This page is a catalogue and inspiration of ideas, not a set of shipped workflows: px0 ships none, and
+          every row here is one command away from existing in your store.
+        </p>
+      </div>
+    </header>
+
+    <hr class="rule" />
+
+    <section class="section section--tight" id="how-to-read">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">how to read a row</span>
+          <h2 class="h-section">Five things every row tells you</h2>
+        </div>
+        <div class="htr-grid reveal">
+          {howToRead.map((h) => (
+            <div class="htr-item">
+              <h3>{h.title}</h3>
+              <p>{h.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="section section--tight" id="moves">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">what the format supports</span>
+          <h2 class="h-section">Five moves, one constraint each</h2>
+          <p class="sub">
+            Every row below is a variation on these. The constraint column is what decides whether
+            an idea is buildable.
+          </p>
+        </div>
+
+        <div class="moves-wrap reveal">
+          <table class="moves-table">
+            <thead>
+              <tr><th>move</th><th>what it gives a workflow</th><th>the constraint that shapes it</th></tr>
+            </thead>
+            <tbody>
+              {moves.map(([move, gives, constraint]) => (
+                <tr>
+                  <td><code class="inline-code">{move}</code></td>
+                  <td>{gives}</td>
+                  <td class="s-dim">{constraint}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="section" id="catalogue">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">the catalogue</span>
+          <h2 class="h-section">Twelve categories, {totalRows} rows</h2>
+          <p class="sub">
+            Reads are cyan, writes are amber, and anything that stays on this machine — <code class="inline-code">retrieve</code>,
+            <code class="inline-code">file</code> — is left uncoloured.
+          </p>
+        </div>
+
+        <nav class="wf-jump reveal" aria-label="Jump to category">
+          {categories.map((c) => (
+            <a href={`#${c.id}`} class="wf-jump-pill">
+              {c.title}<span class="wf-jump-count">{c.rows.length}</span>
+            </a>
+          ))}
+          <a href="#pipelines" class="wf-jump-pill wf-jump-pill--pipe">Pipelines</a>
+        </nav>
+
+        {categories.map((c) => (
+          <div class="wf-cat reveal" id={c.id}>
+            <div class="wf-cat-head">
+              <h3>{c.title}</h3>
+              <span class="chip">{c.rows.length} workflows</span>
+            </div>
+            <p class="wf-cat-blurb">{c.blurb}</p>
+
+            <div class="wf-table-wrap">
+              <table class="wf-table">
+                <thead>
+                  <tr><th>what you would type</th><th>reads</th><th>writes</th><th>cadence</th></tr>
+                </thead>
+                <tbody>
+                  {c.rows.map(([ask, apps, cadence]) => {
+                    const { reads, writes, guideline } = parseApps(apps);
+                    return (
+                      <tr>
+                        <td class="wf-ask">“{ask}”</td>
+                        <td class="wf-apps">
+                          {reads.map((a) => (
+                            LOCAL.has(a) ? <span class="wf-local">{a}</span> : <span class="mark mark--read">{a}</span>
+                          ))}
+                        </td>
+                        <td class="wf-apps">
+                          {writes.map((a) => (
+                            LOCAL.has(a) ? <span class="wf-local">{a}</span> : <span class="mark mark--write">{a}</span>
+                          ))}
+                          {guideline && <span class="wf-guideline">+ guideline</span>}
+                        </td>
+                        <td>
+                          <span class:list={['wf-cadence', { 'wf-cadence--demand': cadence === 'on demand' }]}>{cadence}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="section" id="pipelines">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">compositions</span>
+          <h2 class="h-section">Worth building as pipelines</h2>
+          <p class="sub">
+            A pipeline is one job made of workflows, one level deep. That constraint suits a
+            specific shape: several narrow collectors, then one writer that reads all of them.
+          </p>
+        </div>
+
+        <div class="pipe-grid reveal">
+          {pipelines.map((p) => (
+            <article class="pipe-card">
+              <h3>{p.name}</h3>
+              <div class="pipe-stages">
+                {p.stages.map((s, i) => (
+                  <>
+                    <code>{s}</code>
+                    {i < p.stages.length - 1 && (
+                      <svg class="pipe-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    )}
+                  </>
+                ))}
+              </div>
+              <p>{p.why}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="section section--tight" id="build-one">
+      <div class="container">
+        <div class="wf-cta reveal">
+          <div>
+            <span class="eyebrow">pick one</span>
+            <h2 class="h-section">Every row is one command away</h2>
+            <p class="sub">
+              Type the sentence, review the tools px0 resolved, and check it before it touches
+              anything real.
+            </p>
+          </div>
+          <div class="term wf-cta-term">
+            <div class="term-bar">
+              <div class="term-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <span class="term-title">terminal</span>
+            </div>
+            <div class="term-body"><pre><span class="s-var">›</span> px0 workflows new
+<span class="s-dim">answer in your own words; press Enter on a blank line to stop</span>
+<span class="s-var">›</span> What do you want px0 to do for you?
+<span class="s-str">summarize the PRs I reviewed this week and post it to #eng-standup</span>
+
+<span class="s-var">›</span> px0 workflows run friday-pr-digest <span class="s-fn">--dry-run</span></pre></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .wf-hero {
+    padding-top: 128px;
+    padding-bottom: 48px;
+  }
+
+  .wf-h1 {
+    font-family: var(--display);
+    font-size: clamp(34px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 18px;
+  }
+
+  .wf-lede {
+    max-width: 660px;
+    font-size: 16px;
+  }
+
+  /* ── how to read ── */
+  .htr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+  }
+
+  .htr-item {
+    padding: 18px 18px 20px;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+  }
+
+  .htr-item h3 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    color: var(--amber);
+    font-family: var(--mono);
+  }
+
+  .htr-item p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  /* ── moves table ── */
+  .moves-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .moves-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  .moves-table th,
+  .moves-table td {
+    padding: 13px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--bdr);
+    vertical-align: top;
+  }
+
+  .moves-table tbody tr:last-child td { border-bottom: 0; }
+
+  .moves-table thead th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .moves-table td:not(:first-child) { color: var(--txt-2); line-height: 1.6; }
+  .moves-table tbody tr:hover { background: var(--surface-2); }
+
+  /* ── jump nav ── */
+  .wf-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 44px;
+  }
+
+  .wf-jump-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 12px 0 14px;
+    border: 1px solid var(--bdr);
+    border-radius: 100px;
+    background: var(--surface);
+    font-size: 12.5px;
+    color: var(--txt-2);
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .wf-jump-pill:hover {
+    border-color: var(--amber-line);
+    color: var(--txt);
+    background: var(--amber-wash);
+  }
+
+  .wf-jump-count {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--txt-4);
+    background: var(--code-bg);
+    border-radius: 100px;
+    padding: 1px 6px;
+  }
+
+  .wf-jump-pill--pipe {
+    border-color: var(--amber-line);
+    color: var(--amber);
+  }
+
+  /* ── category blocks ── */
+  .wf-cat {
+    margin-bottom: 56px;
+    scroll-margin-top: 96px;
+  }
+
+  .wf-cat:last-child { margin-bottom: 0; }
+
+  .wf-cat-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .wf-cat-head h3 {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .wf-cat-blurb {
+    max-width: 720px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--txt-3);
+    margin-bottom: 20px;
+  }
+
+  .wf-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+  }
+
+  .wf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .wf-table th,
+  .wf-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--bdr);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .wf-table tbody tr:last-child td { border-bottom: 0; }
+  .wf-table tbody tr:hover { background: var(--surface-2); }
+
+  .wf-table thead th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .wf-ask {
+    min-width: 300px;
+    max-width: 460px;
+    color: var(--txt);
+    line-height: 1.55;
+  }
+
+  .wf-apps {
+    min-width: 150px;
+  }
+
+  .wf-apps .mark {
+    margin: 2px 4px 2px 0;
+    font-size: 10px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .wf-local {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 7px;
+    margin: 2px 4px 2px 0;
+    border: 1px dashed var(--bdr-hi);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--txt-3);
+  }
+
+  .wf-guideline {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 7px;
+    margin: 2px 0;
+    border: 1px solid color-mix(in srgb, var(--violet) 32%, transparent);
+    background: color-mix(in srgb, var(--violet) 9%, transparent);
+    color: var(--violet);
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+
+  .wf-cadence {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--amber);
+    white-space: nowrap;
+  }
+
+  .wf-cadence--demand {
+    color: var(--txt-3);
+  }
+
+  /* ── pipelines ── */
+  .pipe-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pipe-card {
+    padding: 22px 24px;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .pipe-card h3 {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 14px;
+  }
+
+  .pipe-stages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .pipe-stages code {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 5px 10px;
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    color: var(--txt);
+  }
+
+  .pipe-arrow {
+    color: var(--txt-4);
+    flex-shrink: 0;
+  }
+
+  .pipe-card p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  /* ── build one CTA ── */
+  .wf-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
+    gap: 40px;
+    align-items: center;
+  }
+
+  .wf-cta-term .term-body pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  @media (max-width: 980px) {
+    .pipe-grid { grid-template-columns: minmax(0, 1fr); }
+    .wf-cta { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .wf-hero { padding-top: 108px; }
+    .wf-ask { min-width: 220px; }
+  }
+</style>

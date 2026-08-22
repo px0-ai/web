@@ -1,0 +1,506 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const cols = [
+  'px0',
+  'Hermes Agent',
+  'OpenClaw',
+  'CrewAI / LangGraph',
+  'n8n / Dify',
+  'Open-Interpreter',
+  'Khoj / PKM Copilot',
+];
+
+type Row = { factor: string; def: string; vals: boolean[] };
+
+const rows: Row[] = [
+  {
+    factor: 'Natural language workflow creation',
+    def: 'Describe an end-to-end multi-step job in plain English and have the system synthesize a complete, runnable routine.',
+    vals: [true, false, false, false, false, false, false],
+  },
+  {
+    factor: 'Human-editable Markdown workflows',
+    def: 'Workflows live on disk as Markdown/YAML you can open, hand-edit, or version, with no compiler or database in the way.',
+    vals: [true, false, false, false, false, false, false],
+  },
+  {
+    factor: 'Zero-server, local-first CLI operation',
+    def: 'Runs entirely on your laptop or workstation, with no cloud infrastructure, hosted account, or control plane.',
+    vals: [true, false, false, false, false, true, true],
+  },
+  {
+    factor: 'Native unattended scheduler',
+    def: 'A built-in background scheduler triggers tasks at scheduled times without a terminal session left open.',
+    vals: [true, true, false, false, true, false, false],
+  },
+  {
+    factor: 'Reactive tool polling / event watcher',
+    def: 'Polls read-only tools or feeds at intervals and fires a workflow only when a new event or condition appears.',
+    vals: [true, false, false, false, true, false, false],
+  },
+  {
+    factor: '1,000+ external SaaS connectors',
+    def: 'Native integration with hundreds of apps (GitHub, Slack, Jira, Linear, Sentry, Notion, Sheets) with no custom API client to write.',
+    vals: [true, false, false, false, false, false, false],
+  },
+  {
+    factor: 'Local vault / second-brain ingest',
+    def: 'Indexes and searches local Markdown note repositories, PDFs, and saved pages natively, with no cloud lock-in.',
+    vals: [true, false, false, false, false, false, true],
+  },
+  {
+    factor: 'Reuses existing coding CLI logins',
+    def: 'Executes model inference through a CLI you already have logged in (claude, gemini, pi, opencode) instead of a separate API key.',
+    vals: [true, false, false, false, false, false, false],
+  },
+  {
+    factor: 'Custom style guidelines inlined verbatim',
+    def: 'Dedicated guideline files (commit rules, review tone) get inlined into prompts verbatim, so output matches your voice.',
+    vals: [true, false, false, false, false, false, false],
+  },
+  {
+    factor: 'Local custom tool definitions (TOML/CLI)',
+    def: 'Exposes local bash scripts and terminal commands as modular tools through lightweight declarative definitions.',
+    vals: [true, true, true, true, true, false, false],
+  },
+  {
+    factor: 'Dry-run mode for workflow verification',
+    def: 'Tests structure, resolves real inputs, and previews planned actions before any real external API is called.',
+    vals: [true, false, false, false, true, false, false],
+  },
+  {
+    factor: 'Workflow change history & rollback',
+    def: 'Snapshots every modification automatically, so you can inspect prior versions and revert an accidental edit.',
+    vals: [true, false, false, false, false, false, false],
+  },
+  {
+    factor: 'Multi-channel chat gateway',
+    def: 'Connects agents into team chat platforms as persistent bots, conversing across Discord, Telegram, and similar channels.',
+    vals: [false, true, true, false, true, false, false],
+  },
+  {
+    factor: 'Autonomous self-mutating memory loop',
+    def: 'An agentic memory architecture where the model rewrites its own memory, habits, and skills across long-running sessions.',
+    vals: [false, true, false, false, false, false, false],
+  },
+  {
+    factor: 'Multi-agent orchestration & delegation',
+    def: 'Native primitives for running distinct agents (research, coder, reviewer) that pass messages and sub-tasks to each other.',
+    vals: [false, true, true, true, false, false, false],
+  },
+  {
+    factor: 'Full Python / TypeScript code framework',
+    def: 'A developer-centric SDK that requires code, class inheritance, and custom logic to build an agent workflow.',
+    vals: [false, false, false, true, false, false, false],
+  },
+  {
+    factor: 'Drag-and-drop visual graph canvas',
+    def: 'A web UI for connecting nodes, routers, and logic branches on a visual canvas.',
+    vals: [false, false, false, false, true, false, false],
+  },
+  {
+    factor: 'Interactive terminal REPL pair coding',
+    def: 'An interactive command-line session where an agent plans, executes shell commands, and iterates with you in real time.',
+    vals: [false, false, false, false, false, true, false],
+  },
+];
+
+const offerings = [
+  {
+    name: 'px0',
+    tag: 'you are here',
+    overview: 'A local-first workflow compiler, scheduler, and knowledge assistant CLI.',
+    use: 'Personal recurring automations and unattended chores — triage reports, sprint summaries, release notes — plus querying your own Obsidian vault alongside 1,000+ apps via Composio.',
+    strength: 'Turns plain English into transparent, editable Markdown files that run locally on a schedule using a CLI login you already have.',
+  },
+  {
+    name: 'Hermes Agent',
+    sub: 'Nous Research',
+    overview: 'An autonomous, self-improving persistent AI agent framework.',
+    use: 'Long-running "digital employee" workflows where the agent curates its own memory, learns skills from experience, and keeps running across sessions.',
+    strength: 'Deep autonomous memory loops, mixture-of-agents reasoning, and persistent agent evolution.',
+  },
+  {
+    name: 'OpenClaw',
+    overview: 'An orchestration gateway that manages and routes multi-agent teams across messaging channels.',
+    use: 'Running a team of specialized bots — research, coding, operations — across Slack, Discord, Telegram, and WhatsApp.',
+    strength: 'Centralized multi-agent routing, gateway management, and cross-channel messaging adapters.',
+  },
+  {
+    name: 'CrewAI / LangGraph',
+    overview: 'Developer-first code frameworks for building multi-agent architectures and stateful agent graphs.',
+    use: 'Custom enterprise AI applications, complex branching pipelines, and bespoke multi-agent systems written in Python or TypeScript.',
+    strength: 'Maximum programmatic flexibility, granular control over state machines, and a rich ecosystem.',
+  },
+  {
+    name: 'n8n / Dify',
+    overview: 'Low-code visual workflow automation platforms and LLM app builders.',
+    use: 'Visual API orchestration, company-wide webhooks, ETL pipelines, and node-based AI chaining.',
+    strength: 'An accessible drag-and-drop canvas, a vast visual node ecosystem, and a team-accessible web UI.',
+  },
+  {
+    name: 'Open-Interpreter',
+    overview: 'An open-source, interactive terminal copilot for local code execution and system control.',
+    use: 'Interactive pair programming, running local scripts, analyzing local datasets, and controlling desktop apps via chat.',
+    strength: 'A real-time terminal execution loop and interactive local machine pair-working.',
+  },
+  {
+    name: 'Khoj / PKM Copilots',
+    sub: 'Obsidian, Logseq',
+    overview: 'AI assistants embedded in personal knowledge management tools.',
+    use: 'Semantic search, question-answering across personal notes, and drafting content based on local notes.',
+    strength: 'Deep note-level integration and local document retrieval for personal knowledge.',
+  },
+];
+---
+
+<Layout
+  title="px0 vs. the field — comparisons"
+  description="How px0 compares to Hermes Agent, OpenClaw, CrewAI/LangGraph, n8n/Dify, Open-Interpreter, and Khoj across 18 capability factors."
+>
+  <Nav />
+  <main>
+    <header class="section cmp-hero">
+      <div class="container">
+        <span class="eyebrow reveal">comparisons</span>
+        <h1 class="cmp-h1 reveal">px0 vs. the field</h1>
+        <p class="sub cmp-lede reveal">
+          px0 sits at the intersection of a few categories — agent frameworks, workflow
+          automation, and personal knowledge tools — without quite being any one of them. This
+          page lays out where it overlaps with each, and where it doesn’t, factor by factor.
+        </p>
+      </div>
+    </header>
+
+    <hr class="rule" />
+
+    <section class="section" id="matrix">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">the full matrix</span>
+          <h2 class="h-section">18 factors, 7 tools</h2>
+          <p class="sub">
+            Scroll sideways on smaller screens. Hover a factor’s definition below the table if the
+            name alone isn’t enough.
+          </p>
+        </div>
+
+        <div class="cmp-table-wrap reveal">
+          <table class="cmp-table">
+            <thead>
+              <tr>
+                <th scope="col"><span class="s-dim">factor</span></th>
+                {cols.map((c, i) => (
+                  <th scope="col" class={i === 0 ? 'is-px0' : ''}>{c}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr>
+                  <th scope="row">{r.factor}</th>
+                  {r.vals.map((v) => (
+                    <td>
+                      {v ? (
+                        <span class="cmp-yes" aria-label="yes">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </span>
+                      ) : (
+                        <span class="cmp-no" aria-hidden="true">&ndash;</span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p class="cmp-caveat reveal">
+          Reflects each project’s public documentation and behavior at time of writing. Fast-moving
+          projects change; verify a factor yourself before it drives a decision.
+        </p>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="section" id="glossary">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">what each factor means</span>
+          <h2 class="h-section">The matrix, spelled out</h2>
+        </div>
+
+        <dl class="glossary reveal">
+          {rows.map((r) => (
+            <div class="gl-item">
+              <dt>{r.factor}</dt>
+              <dd>{r.def}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section class="section" id="offerings">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">the offerings</span>
+          <h2 class="h-section">Who’s who in this table</h2>
+          <p class="sub">
+            Same shape for each: what it is, what it’s for, and the one thing it does better than
+            the rest of this list.
+          </p>
+        </div>
+
+        <div class="off-grid">
+          {offerings.map((o) => (
+            <article class:list={['off-card', 'reveal', { 'off-card--px0': o.name === 'px0' }]}>
+              <header class="off-head">
+                <h3>{o.name}{o.sub && <span class="off-sub">{o.sub}</span>}</h3>
+                {o.tag && <span class="off-tag">{o.tag}</span>}
+              </header>
+              <p class="off-row"><span>overview</span>{o.overview}</p>
+              <p class="off-row"><span>use case</span>{o.use}</p>
+              <p class="off-row off-strength"><span>strength</span>{o.strength}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .cmp-hero {
+    padding-top: 128px;
+    padding-bottom: 48px;
+  }
+
+  .cmp-h1 {
+    font-family: var(--display);
+    font-size: clamp(34px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 18px;
+  }
+
+  .cmp-lede {
+    max-width: 640px;
+    font-size: 16px;
+  }
+
+  /* ── matrix table (shared shape with the index teaser) ── */
+  .cmp-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .cmp-table th,
+  .cmp-table td {
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--bdr);
+    white-space: nowrap;
+  }
+
+  .cmp-table tbody tr:last-child th,
+  .cmp-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .cmp-table thead th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--txt-3);
+    font-weight: 500;
+  }
+
+  .cmp-table thead th.is-px0 {
+    color: var(--amber);
+  }
+
+  .cmp-table th[scope='row'] {
+    text-align: left;
+    white-space: normal;
+    min-width: 240px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--txt-2);
+    position: sticky;
+    left: 0;
+    background: var(--bg-elev);
+  }
+
+  .cmp-table tbody tr:hover {
+    background: var(--surface-2);
+  }
+
+  .cmp-yes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: var(--green);
+    border: 1px solid color-mix(in srgb, var(--green) 34%, transparent);
+    background: color-mix(in srgb, var(--green) 10%, transparent);
+  }
+
+  .cmp-no {
+    color: var(--txt-4);
+  }
+
+  .cmp-caveat {
+    margin-top: 16px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--txt-3);
+    max-width: 620px;
+  }
+
+  /* ── glossary ── */
+  .glossary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 32px;
+  }
+
+  .gl-item {
+    padding: 16px 0;
+    border-bottom: 1px dashed var(--bdr);
+  }
+
+  .gl-item dt {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 5px;
+  }
+
+  .gl-item dd {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  /* ── offering cards ── */
+  .off-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .off-card {
+    padding: 24px 26px;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.25s, transform 0.25s;
+  }
+
+  .off-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--bdr-hi);
+  }
+
+  .off-card--px0 {
+    border-color: var(--amber-line);
+    background: linear-gradient(180deg, var(--amber-wash), transparent 60%), var(--surface);
+  }
+
+  .off-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .off-head h3 {
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .off-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--txt-3);
+    margin-left: 8px;
+  }
+
+  .off-tag {
+    flex-shrink: 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid var(--amber-line);
+    background: var(--amber-wash);
+    padding: 3px 8px;
+  }
+
+  .off-row {
+    display: flex;
+    gap: 12px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--txt-2);
+    padding: 10px 0;
+    border-top: 1px dashed var(--bdr);
+  }
+
+  .off-row:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .off-row > span {
+    flex-shrink: 0;
+    width: 68px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--txt-4);
+    padding-top: 2px;
+  }
+
+  @media (max-width: 900px) {
+    .glossary { grid-template-columns: minmax(0, 1fr); }
+    .off-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .cmp-hero { padding-top: 108px; }
+    .cmp-table th[scope='row'] { min-width: 180px; }
+    .off-row { flex-direction: column; gap: 4px; }
+    .off-row > span { width: auto; }
+  }
+</style>

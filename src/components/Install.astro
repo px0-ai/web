@@ -9,7 +9,7 @@ const needs = [
 
 const steps = [
   { n: '1', cmd: 'px0 init', note: 'scaffolds ~/.px0 and asks for your Composio key' },
-  { n: '2', cmd: 'px0 workflows new "…"', note: 'describe the job; px0 writes the file' },
+  { n: '2', cmd: 'px0 workflows new', note: 'answer "what do you want px0 to do?"; it writes the file' },
   { n: '3', cmd: 'px0 workflows run <id> --dry-run', note: 'resolve every input, call nothing' },
   { n: '4', cmd: 'px0 daemon install', note: 'let the schedule fire on its own' },
 ];

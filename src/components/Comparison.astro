@@ -1,0 +1,174 @@
+---
+const cols = ['px0', 'Hermes Agent', 'CrewAI / LangGraph', 'n8n / Dify', 'Khoj / PKM Copilot'];
+
+const rows: [string, boolean[]][] = [
+  ['Natural language workflow creation', [true, false, false, false, false]],
+  ['Human-editable Markdown workflows', [true, false, false, false, false]],
+  ['Zero-server, local-first operation', [true, false, false, false, true]],
+  ['Native unattended scheduler', [true, true, false, true, false]],
+  ['Local vault / second-brain ingest', [true, false, false, false, true]],
+  ['Dry-run mode for verification', [true, false, false, true, false]],
+  ['Workflow change history & rollback', [true, false, false, false, false]],
+  ['Multi-agent orchestration', [false, true, true, false, false]],
+];
+---
+
+<section class="section" id="compare">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">how it stacks up</span>
+      <h2 class="h-section">Not another agent framework</h2>
+      <p class="sub">
+        px0 isn’t trying to out-orchestrate CrewAI or out-chat Hermes. It occupies a narrower
+        spot: turn one sentence into a scheduled, editable, local Markdown workflow.
+      </p>
+    </div>
+
+    <div class="cmp-table-wrap reveal">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th scope="col"><span class="s-dim">factor</span></th>
+            {cols.map((c, i) => (
+              <th scope="col" class={i === 0 ? 'is-px0' : ''}>{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([factor, vals]) => (
+            <tr>
+              <th scope="row">{factor}</th>
+              {vals.map((v) => (
+                <td>
+                  {v ? (
+                    <span class="cmp-yes" aria-label="yes">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                  ) : (
+                    <span class="cmp-no" aria-hidden="true">&ndash;</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cmp-foot reveal">
+      <p>8 of 18 factors shown, against 4 of 7 tools compared.</p>
+      <a class="cmp-link" href="/comparisons">
+        See the full comparison
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cmp-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--bdr);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .cmp-table th,
+  .cmp-table td {
+    padding: 13px 18px;
+    text-align: center;
+    border-bottom: 1px solid var(--bdr);
+    white-space: nowrap;
+  }
+
+  .cmp-table tbody tr:last-child th,
+  .cmp-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .cmp-table thead th {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--txt-3);
+    font-weight: 500;
+  }
+
+  .cmp-table thead th.is-px0 {
+    color: var(--amber);
+  }
+
+  .cmp-table th[scope='row'] {
+    text-align: left;
+    white-space: normal;
+    min-width: 220px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--txt-2);
+    position: sticky;
+    left: 0;
+    background: var(--bg-elev);
+  }
+
+  .cmp-table tbody tr:hover {
+    background: var(--surface-2);
+  }
+
+  .cmp-yes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: var(--green);
+    border: 1px solid color-mix(in srgb, var(--green) 34%, transparent);
+    background: color-mix(in srgb, var(--green) 10%, transparent);
+  }
+
+  .cmp-no {
+    color: var(--txt-4);
+  }
+
+  .cmp-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+
+  .cmp-foot p {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--txt-3);
+  }
+
+  .cmp-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--amber);
+    transition: gap 0.18s;
+  }
+
+  .cmp-link:hover {
+    gap: 11px;
+  }
+
+  @media (max-width: 640px) {
+    .cmp-table th[scope='row'] { min-width: 170px; }
+  }
+</style>

@@ -1,10 +1,14 @@
 ---
 import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
 
-const typed = 'px0 workflows new "every friday at 5pm, summarize the PRs I reviewed and post it to #eng-standup"';
+const typed = 'px0 workflows new';
 
 /* The build session, streamed line by line. */
 const session = [
+  { d: 160, h: '<span class="s-dim">answer in your own words; press Enter on a blank line to stop</span>' },
+  { d: 220, h: '<span class="s-var">›</span> What do you want px0 to do for you?' },
+  { d: 320, h: '<span class="s-str">every friday at 5pm, summarize the PRs I reviewed and post it to #eng-standup</span>' },
+  { d: 200, h: '' },
   { d: 260, h: '<span class="s-ok">✓</span> Checking the request for gaps' },
   { d: 520, h: '<span class="s-dim">a few questions</span>' },
   { d: 200, h: '<span class="s-var">›</span> Which Slack channel should the digest go to?  <span class="s-str">#eng-standup</span>' },
