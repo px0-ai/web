@@ -41,13 +41,13 @@ const howToRead = [
 ];
 
 const moves = [
-  ['inputs: tool', 'Pull facts before the model runs: PRs, tickets, events, rows.', 'Read-only tools only — a write tool in inputs fails validation.'],
+  ['inputs: tool', 'Pull facts before the model runs: PRs, tickets, events, rows.', 'Read-only tools only: a write tool in inputs fails validation.'],
   ['inputs: retrieve', 'Ground the answer in your brain, cited by path and anchor.', 'Nothing under brain/work/ is retrieved.'],
   ['inputs: workflow', 'One workflow calls another and uses its text as context.', "The sub-run's output stays in memory and is never written."],
   ['tools:', 'The only place a workflow may post, send, file, or update.', 'Shown to you as writes at build time, so delivery stays explicit.'],
   ['guidelines:', 'Inlines your conventions verbatim, so output sounds like you.', 'The file must exist under guidelines/ or the workflow is invalid.'],
   ['trigger.schedule', 'Cron, run by the daemon.', "A scheduled workflow's output.target must be file."],
-  ['pipeline:', 'Chains whole workflows into one job.', 'One level deep — a stage that is itself a pipeline is rejected.'],
+  ['pipeline:', 'Chains whole workflows into one job.', 'One level deep: a stage that is itself a pipeline is rejected.'],
 ];
 
 const categories: Category[] = [
@@ -285,7 +285,7 @@ const pipelines = [
 ---
 
 <Layout
-  title="Workflow catalogue — px0"
+  title="Workflow catalogue: px0"
   description={`Here are some jobs you could build with px0, each written as the one sentence you would type into px0 workflows new.`}
 >
   <Nav />
@@ -308,7 +308,11 @@ const pipelines = [
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">how to read a row</span>
-          <h2 class="h-section">Five things every row tells you</h2>
+          <h2 class="h-section">How to read a row</h2>
+          <p class="sub">
+            Each row packs a whole workflow into one line. Here's the shorthand, so you can
+            scan the catalogue instead of decoding it.
+          </p>
         </div>
         <div class="htr-grid reveal">
           {howToRead.map((h) => (
@@ -326,11 +330,11 @@ const pipelines = [
     <section class="section section--tight" id="moves">
       <div class="container">
         <div class="section-head reveal">
-          <span class="eyebrow">what the format supports</span>
+          <span class="eyebrow">what you can build with</span>
           <h2 class="h-section">Five moves, one constraint each</h2>
           <p class="sub">
-            Every row below is a variation on these. The constraint column is what decides whether
-            an idea is buildable.
+            Every workflow in this catalogue is built from these five moves. Know the constraint
+            column and you'll know whether your own idea is buildable before you sit down to write it.
           </p>
         </div>
 
@@ -359,10 +363,16 @@ const pipelines = [
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">the catalogue</span>
-          <h2 class="h-section">Twelve categories, {totalRows} rows</h2>
+          <h2 class="h-section">{totalRows} workflows across twelve categories</h2>
           <p class="sub">
-            Reads are cyan, writes are amber, and anything that stays on this machine — <code class="inline-code">retrieve</code>,
-            <code class="inline-code">file</code> — is left uncoloured.
+            Skim the reads and writes columns first: cyan is what a workflow reads, amber is
+            where it's allowed to write, and anything that never leaves this machine (<code class="inline-code">retrieve</code>,
+            <code class="inline-code">file</code>) is left uncoloured.
+          </p>
+          <p class="sub">
+            And this is nowhere near the ceiling. px0 connects to 1000+ apps, so the sky's the
+            limit: chain three tools instead of one, five steps instead of two, and write a
+            workflow as complex as the job actually needs.
           </p>
         </div>
 
