@@ -295,67 +295,12 @@ const pipelines = [
         <span class="eyebrow reveal">workflow catalogue</span>
         <h1 class="wf-h1 reveal">Some workflows you could build with px0</h1>
         <p class="sub wf-lede reveal">
-          Each row is one sentence you would type into <code class="inline-code">px0 workflows new</code>.
+          Each workflow is one sentence you would type into <code class="inline-code">px0 workflows new</code>.
           This page is a catalogue and inspiration of ideas, not a set of shipped workflows: px0 ships none, and
-          every row here is one command away from existing in your store.
+          every workflow here is one command away from existing in your store.
         </p>
       </div>
     </header>
-
-    <hr class="rule" />
-
-    <section class="section section--tight" id="how-to-read">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="eyebrow">how to read a row</span>
-          <h2 class="h-section">How to read a row</h2>
-          <p class="sub">
-            Each row packs a whole workflow into one line. Here's the shorthand, so you can
-            scan the catalogue instead of decoding it.
-          </p>
-        </div>
-        <div class="htr-grid reveal">
-          {howToRead.map((h) => (
-            <div class="htr-item">
-              <h3>{h.title}</h3>
-              <p>{h.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <hr class="rule" />
-
-    <section class="section section--tight" id="moves">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="eyebrow">what you can build with</span>
-          <h2 class="h-section">Five moves, one constraint each</h2>
-          <p class="sub">
-            Every workflow in this catalogue is built from these five moves. Know the constraint
-            column and you'll know whether your own idea is buildable before you sit down to write it.
-          </p>
-        </div>
-
-        <div class="moves-wrap reveal">
-          <table class="moves-table">
-            <thead>
-              <tr><th>move</th><th>what it gives a workflow</th><th>the constraint that shapes it</th></tr>
-            </thead>
-            <tbody>
-              {moves.map(([move, gives, constraint]) => (
-                <tr>
-                  <td><code class="inline-code">{move}</code></td>
-                  <td>{gives}</td>
-                  <td class="s-dim">{constraint}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
 
     <hr class="rule" />
 
@@ -364,16 +309,6 @@ const pipelines = [
         <div class="section-head reveal">
           <span class="eyebrow">the catalogue</span>
           <h2 class="h-section">{totalRows} workflows across twelve categories</h2>
-          <p class="sub">
-            Skim the reads and writes columns first: cyan is what a workflow reads, amber is
-            where it's allowed to write, and anything that never leaves this machine (<code class="inline-code">retrieve</code>,
-            <code class="inline-code">file</code>) is left uncoloured.
-          </p>
-          <p class="sub">
-            And this is nowhere near the ceiling. px0 connects to 1000+ apps, so the sky's the
-            limit: chain three tools instead of one, five steps instead of two, and write a
-            workflow as complex as the job actually needs.
-          </p>
         </div>
 
         <nav class="wf-jump reveal" aria-label="Jump to category">
@@ -429,48 +364,14 @@ const pipelines = [
       </div>
     </section>
 
-    <hr class="rule" />
 
-    <section class="section" id="pipelines">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="eyebrow">compositions</span>
-          <h2 class="h-section">Worth building as pipelines</h2>
-          <p class="sub">
-            A pipeline is one job made of workflows, one level deep. That constraint suits a
-            specific shape: several narrow collectors, then one writer that reads all of them.
-          </p>
-        </div>
-
-        <div class="pipe-grid reveal">
-          {pipelines.map((p) => (
-            <article class="pipe-card">
-              <h3>{p.name}</h3>
-              <div class="pipe-stages">
-                {p.stages.map((s, i) => (
-                  <>
-                    <code>{s}</code>
-                    {i < p.stages.length - 1 && (
-                      <svg class="pipe-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                    )}
-                  </>
-                ))}
-              </div>
-              <p>{p.why}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <hr class="rule" />
 
     <section class="section section--tight" id="build-one">
       <div class="container">
         <div class="wf-cta reveal">
           <div>
             <span class="eyebrow">pick one</span>
-            <h2 class="h-section">Every row is one command away</h2>
+            <h2 class="h-section">Every workflow is one command away</h2>
             <p class="sub">
               Type the sentence, review the tools px0 resolved, and check it before it touches
               anything real.

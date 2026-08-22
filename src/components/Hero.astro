@@ -1,188 +1,81 @@
 ---
 import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
-
-const typed = 'px0 workflows new';
-
-/* The build session, streamed line by line. */
-const session = [
-  { d: 160, h: '<span class="s-dim">answer in your own words; press Enter on a blank line to stop</span>' },
-  { d: 220, h: '<span class="s-var">›</span> What do you want px0 to do for you?' },
-  { d: 320, h: '<span class="s-str">every friday at 5pm, summarize the PRs I reviewed and post it to #eng-standup</span>' },
-  { d: 200, h: '' },
-  { d: 260, h: '<span class="s-ok">✓</span> Checking the request for gaps' },
-  { d: 520, h: '<span class="s-dim">a few questions</span>' },
-  { d: 200, h: '<span class="s-var">›</span> Which Slack channel should the digest go to?  <span class="s-str">#eng-standup</span>' },
-  { d: 200, h: '<span class="s-var">›</span> Which repositories should it look at?  <span class="s-str">razorpay/api</span>' },
-  { d: 620, h: '<span class="s-ok">✓</span> Searching Composio\'s catalogue <span class="s-dim">(3 queries)</span>' },
-  { d: 420, h: '<span class="s-ok">✓</span> Choosing from 18 candidates' },
-  { d: 260, h: '' },
-  { d: 120, h: '<span class="s-dim">tools selected (3)</span>' },
-  { d: 160, h: '  <span class="mark mark--read">read</span>  <span class="s-fn">GITHUB_LIST_PULL_REQUESTS</span>' },
-  { d: 160, h: '  <span class="mark mark--read">read</span>  <span class="s-fn">GITHUB_LIST_REVIEWS_FOR_A_PULL_REQUEST</span>' },
-  { d: 160, h: '  <span class="mark mark--write">write</span> <span class="s-fn">SLACK_SEND_MESSAGE</span>' },
-  { d: 420, h: '<span class="s-warn">!</span> this workflow could change things outside px0' },
-  { d: 260, h: '<span class="s-var">›</span> keep all? <span class="s-str">y</span>' },
-  { d: 260, h: '' },
-  { d: 300, h: '<span class="s-ok">created</span> <span class="s-str">friday-pr-digest</span>' },
-  { d: 140, h: '<span class="s-ok">✓</span> workflow    <span class="s-dim">~/.px0/workflows/friday-pr-digest.md</span>' },
-  { d: 140, h: '<span class="s-ok">✓</span> schedule    <span class="s-dim">0 17 * * 5</span>' },
-  { d: 140, h: '<span class="s-ok">✓</span> guidelines  <span class="s-dim">summarization.md</span>' },
-  { d: 140, h: '<span class="s-ok">✓</span> output      <span class="s-dim">output/digests/pr-{date}.md</span>' },
-];
-
-const workflowFile = [
-  '<span class="s-dim">---</span>',
-  '<span class="s-key">id</span>: friday-pr-digest',
-  '<span class="s-key">kind</span>: workflow',
-  '<span class="s-key">description</span>: <span class="s-str">Friday digest of the PRs I reviewed</span>',
-  '<span class="s-key">trigger</span>: {<span class="s-key">schedule</span>: <span class="s-str">"0 17 * * 5"</span>}',
-  '<span class="s-key">guidelines</span>: [summarization.md]',
-  '<span class="s-key">inputs</span>:',
-  '  - <span class="s-key">id</span>: reviewed_prs',
-  '    <span class="s-key">tool</span>: <span class="s-fn">composio:GITHUB_LIST_PULL_REQUESTS</span>',
-  '    <span class="s-key">args</span>: {owner: razorpay, repo: api, state: all}',
-  '<span class="s-key">tools</span>: [<span class="s-fn">composio:SLACK_SEND_MESSAGE</span>]',
-  '<span class="s-key">output</span>: {<span class="s-key">target</span>: file, <span class="s-key">path</span>: <span class="s-str">digests/pr-{date}.md</span>}',
-  '<span class="s-key">timeout</span>: <span class="s-num">120s</span>',
-  '<span class="s-dim">---</span>',
-  '',
-  'Summarize <span class="s-var">{{reviewed_prs}}</span> as a short digest of what',
-  'I reviewed this week, then post it to <span class="s-str">#eng-standup</span>.',
-].join('\n');
-
-const facts = [
-  'Python 3.11+',
-  'macOS &amp; Linux',
-  'MIT licensed',
-  'no account, ever',
-];
 ---
 
 <section class="hero">
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <span class="pill">
-        <span class="dot" aria-hidden="true"></span>
-        local-first &middot; open source &middot; everything is a workflow
+  <div class="container hero-inner">
+    <span class="pill">
+      <span class="dot" aria-hidden="true"></span>
+      local-first &middot; open source
+    </span>
+
+    <h1>
+      An agent that works the way<br />
+      <span class="grad">you work.</span>
+    </h1>
+
+    <p class="hero-sub">
+      px0 is a local, open-source agent built around the way you work. Tell it a chore
+      in plain English and it writes, schedules, and runs the workflow itself, wired to 1,000+ apps you already use.
+      <em> No server. No dashboard. Nothing hosted.</em>
+    </p>
+
+    <div class="install" data-copy={INSTALL_CMD} role="button" tabindex="0" aria-label="Copy install command">
+      <span class="install-prompt">$</span>
+      <code class="install-cmd">{INSTALL_CMD}</code>
+      <span class="install-copy">
+        <svg class="i-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <svg class="i-done" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
       </span>
-
-      <h1>
-        Automate your chores.<br />
-        <span class="grad">In plain English.</span>
-      </h1>
-
-      <p class="hero-sub">
-        <em>Completely local.</em> Describe a recurring job once and px0 writes it as
-        a workflow you can run, schedule, and edit: a Markdown file on your
-        machine, wired to 1,000+ apps you already use. No server. No dashboard.
-        Nothing hosted.
-      </p>
-
-      <div class="install" data-copy="curl -fsSL https://px0.ai/install.sh | sh" role="button" tabindex="0" aria-label="Copy install command">
-        <span class="install-prompt">$</span>
-        <code class="install-cmd">curl -fsSL https://px0.ai/install.sh | sh</code>
-        <span class="install-copy">
-          <svg class="i-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          <svg class="i-done" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </span>
-      </div>
-
-      <a class="install-alt" href="#install">or run the one-liner installer &rarr;</a>
-
-      <div class="hero-cta">
-        <a class="btn btn-primary" href="#install">
-          Get started
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
-        <a class="btn btn-ghost" href={DOCS} target="_blank" rel="noopener noreferrer">Read the docs</a>
-        <a class="btn btn-quiet" href={GITHUB} target="_blank" rel="noopener noreferrer">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-          Star on GitHub
-        </a>
-      </div>
-
-      <ul class="facts">
-        {facts.map((f) => <li set:html={f}></li>)}
-      </ul>
     </div>
 
-    <div class="hero-demo">
-      <div class="demo-halo" aria-hidden="true"></div>
-      <div class="term" id="hero-term">
-        <div class="term-bar">
-          <div class="term-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-          <div class="term-tabs" role="tablist">
-            <button class="term-tab active" data-pane="build" role="tab">build</button>
-            <button class="term-tab" data-pane="file" role="tab">friday-pr-digest.md</button>
-          </div>
-          <button class="term-replay" id="hero-replay" aria-label="Replay the demo">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M3 12a9 9 0 1 0 3-6.7"></path>
-              <polyline points="3 4 3 10 9 10"></polyline>
-            </svg>
-          </button>
-        </div>
-
-        <div class="term-body pane pane-build active" data-pane="build">
-          <div class="cmd-line">
-            <span class="s-warn">$</span>
-            <span class="cmd" id="hero-cmd" data-text={typed}></span><span class="cmd-caret caret" id="hero-caret"></span>
-          </div>
-          <div class="stream" id="hero-stream">
-            {session.map((l, i) => (
-              <div class="ln" data-delay={l.d} data-i={i} set:html={l.h || '&nbsp;'}></div>
-            ))}
-          </div>
-        </div>
-
-        <div class="term-body pane pane-file" data-pane="file">
-          <pre set:html={workflowFile}></pre>
-        </div>
-      </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#workflows">
+        See it build a workflow
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+      <a class="btn btn-ghost" href={DOCS} target="_blank" rel="noopener noreferrer">Read the docs</a>
+      <a class="btn btn-quiet" href={GITHUB} target="_blank" rel="noopener noreferrer">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        Star on GitHub
+      </a>
     </div>
   </div>
 </section>
 
 <style>
   .hero {
-    padding: 132px 0 72px;
+    padding: 156px 0 96px;
   }
 
-  .hero-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
-    gap: 60px;
-    align-items: center;
-  }
-
-  .hero-copy {
-    min-width: 0;
+  .hero-inner {
+    max-width: 980px;
   }
 
   h1 {
     font-family: var(--display);
-    font-size: clamp(38px, 5vw, 66px);
+    font-size: clamp(52px, 9vw, 118px);
     font-weight: 700;
-    line-height: 1.02;
-    letter-spacing: -0.045em;
-    margin: 22px 0 22px;
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+    margin: 26px 0 26px;
   }
 
   .hero-sub {
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.72;
     color: var(--txt-2);
-    max-width: 500px;
+    max-width: 720px;
   }
 
   .hero-sub em {
@@ -196,8 +89,9 @@ const facts = [
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 30px 0 14px;
-    padding: 12px 14px;
+    margin: 34px 0 22px;
+    padding: 14px 16px;
+    max-width: 640px;
     width: 100%;
     border: 1px solid var(--bdr);
     border-radius: var(--r);
@@ -231,17 +125,6 @@ const facts = [
     text-overflow: ellipsis;
   }
 
-  .install-alt {
-    display: inline-block;
-    margin: -14px 0 26px;
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--txt-3);
-    transition: color 0.15s;
-  }
-
-  .install-alt:hover { color: var(--amber); }
-
   .install-copy {
     display: inline-flex;
     color: var(--txt-3);
@@ -259,255 +142,7 @@ const facts = [
     flex-wrap: wrap;
   }
 
-  .facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 18px;
-    list-style: none;
-    margin-top: 32px;
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--txt-3);
-  }
-
-  .facts li {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .facts li:not(:first-child)::before {
-    content: '';
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--txt-4);
-  }
-
-  /* ── demo ── */
-  .hero-demo {
-    position: relative;
-    min-width: 0;
-  }
-
-  .demo-halo {
-    position: absolute;
-    inset: -14% -8% -22% -8%;
-    background: radial-gradient(60% 50% at 60% 30%, var(--amber-glow), transparent 70%);
-    filter: blur(60px);
-    opacity: 0.7;
-    pointer-events: none;
-  }
-
-  .term-tabs {
-    flex: 1;
-    display: flex;
-    gap: 4px;
-    justify-content: center;
-    min-width: 0;
-  }
-
-  .term-tab {
-    border: 1px solid transparent;
-    background: none;
-    border-radius: var(--r-sm);
-    padding: 3px 10px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--txt-3);
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: color 0.15s, background 0.15s, border-color 0.15s;
-  }
-
-  .term-tab:hover { color: var(--txt-2); }
-
-  .term-tab.active {
-    color: var(--amber);
-    border-color: var(--amber-line);
-    background: var(--amber-wash);
-  }
-
-  .term-replay {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border: 1px solid var(--bdr);
-    border-radius: var(--r-sm);
-    background: none;
-    color: var(--txt-3);
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: color 0.15s, border-color 0.15s;
-  }
-
-  .term-replay:hover {
-    color: var(--txt);
-    border-color: var(--bdr-hi);
-  }
-
-  .pane {
-    display: none;
-    min-height: 430px;
-  }
-
-  .pane.active { display: block; }
-
-  .pane-build {
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .cmd-line {
-    display: block;
-    color: var(--txt);
-    margin-bottom: 12px;
-  }
-
-  .cmd-line > .s-warn {
-    margin-right: 8px;
-  }
-
-  .cmd {
-    color: var(--txt);
-  }
-
-  .cmd-caret { display: none; }
-  .cmd-caret.on { display: inline; }
-
-  .stream .ln {
-    opacity: 0;
-    transform: translateY(3px);
-    transition: opacity 0.24s ease, transform 0.24s ease;
-  }
-
-  .stream .ln.on {
-    opacity: 1;
-    transform: none;
-  }
-
-  .pane-file pre {
-    font-size: 12px;
-    line-height: 1.8;
-    white-space: pre;
-  }
-
-  @media (max-width: 1040px) {
-    .hero-grid {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 48px;
-    }
-    .hero-sub { max-width: 620px; }
-    .pane { min-height: 0; }
-  }
-
   @media (max-width: 640px) {
-    .hero { padding: 104px 0 48px; }
-    .term-tab:last-child { display: none; }
+    .hero { padding: 116px 0 64px; }
   }
 </style>
-
-<script>
-  const term = document.getElementById('hero-term');
-  const cmdEl = document.getElementById('hero-cmd');
-  const caret = document.getElementById('hero-caret');
-  const stream = document.getElementById('hero-stream');
-  const replay = document.getElementById('hero-replay');
-
-  if (term && cmdEl && caret && stream) {
-    const lines = Array.from(stream.querySelectorAll<HTMLElement>('.ln'));
-    const text = cmdEl.dataset.text || '';
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let timers: number[] = [];
-    let running = false;
-
-    const clear = () => {
-      timers.forEach((t) => window.clearTimeout(t));
-      timers = [];
-    };
-
-    const showAll = () => {
-      cmdEl.textContent = text;
-      caret.classList.remove('on');
-      lines.forEach((l) => l.classList.add('on'));
-    };
-
-    const play = () => {
-      if (running) return;
-      running = true;
-      clear();
-      cmdEl.textContent = '';
-      caret.classList.add('on');
-      lines.forEach((l) => l.classList.remove('on'));
-
-      let i = 0;
-      const type = () => {
-        if (i <= text.length) {
-          cmdEl.textContent = text.slice(0, i);
-          i += 1;
-          timers.push(window.setTimeout(type, i < 4 ? 90 : 17));
-        } else {
-          let t = 340;
-          lines.forEach((line) => {
-            t += Number(line.dataset.delay || 150);
-            timers.push(
-              window.setTimeout(() => {
-                line.classList.add('on');
-              }, t)
-            );
-          });
-          timers.push(
-            window.setTimeout(() => {
-              caret.classList.remove('on');
-              running = false;
-            }, t + 200)
-          );
-        }
-      };
-      type();
-    };
-
-    if (reduced) {
-      showAll();
-    } else {
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              play();
-              io.disconnect();
-            }
-          });
-        },
-        { threshold: 0.35 }
-      );
-      io.observe(term);
-    }
-
-    replay?.addEventListener('click', () => {
-      if (reduced) {
-        showAll();
-        return;
-      }
-      running = false;
-      document.querySelector('.term-tab[data-pane="build"]')?.dispatchEvent(new Event('click'));
-      play();
-    });
-
-    // tabs
-    const tabs = term.querySelectorAll<HTMLElement>('.term-tab');
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        tabs.forEach((t) => t.classList.remove('active'));
-        tab.classList.add('active');
-        term.querySelectorAll<HTMLElement>('.pane').forEach((p) => {
-          p.classList.toggle('active', p.dataset.pane === tab.dataset.pane);
-        });
-      });
-    });
-  }
-</script>

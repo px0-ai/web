@@ -6,7 +6,6 @@ const cols = [
   {
     title: 'product',
     links: [
-      { label: 'How it works', href: '#how' },
       { label: 'Recipes', href: '#recipes' },
       { label: 'Your store', href: '#store' },
       { label: 'Guardrails', href: '#trust' },
@@ -61,6 +60,8 @@ const cols = [
   <div class="container f-base">
     <span>&copy; {year} px0 &middot; MIT licensed</span>
   </div>
+
+  <div class="f-wordmark" aria-hidden="true">px0</div>
 </footer>
 
 <style>
@@ -143,5 +144,22 @@ const cols = [
       gap: 32px;
     }
     .f-brand { grid-column: span 2; }
+  }
+
+  .f-wordmark {
+    width: 100%;
+    overflow: hidden;
+    padding: 0 28px;
+    margin-top: 8px;
+    font-family: var(--display);
+    font-size: clamp(120px, 22vw, 320px);
+    font-weight: 700;
+    line-height: 0.78;
+    letter-spacing: -0.05em;
+    text-align: center;
+    color: var(--txt);
+    opacity: 0.06;
+    user-select: none;
+    pointer-events: none;
   }
 </style>

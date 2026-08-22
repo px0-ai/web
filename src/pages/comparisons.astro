@@ -169,8 +169,7 @@ const offerings = [
         <h1 class="cmp-h1 reveal">px0 vs. the field</h1>
         <p class="sub cmp-lede reveal">
           px0 sits at the intersection of a few categories: agent frameworks, workflow
-          automation, and personal knowledge tools, without quite being any one of them. This
-          page lays out where it overlaps with each, and where it doesn’t, factor by factor.
+          automation, and personal knowledge tools, without quite being any one of them.
         </p>
       </div>
     </header>
@@ -179,14 +178,6 @@ const offerings = [
 
     <section class="section" id="matrix">
       <div class="container">
-        <div class="section-head reveal">
-          <span class="eyebrow">the full matrix</span>
-          <h2 class="h-section">18 factors, 7 tools</h2>
-          <p class="sub">
-            Scroll sideways on smaller screens. Hover a factor’s definition below the table if the
-            name alone isn’t enough.
-          </p>
-        </div>
 
         <div class="cmp-table-wrap reveal">
           <table class="cmp-table">
@@ -201,7 +192,10 @@ const offerings = [
             <tbody>
               {rows.map((r) => (
                 <tr>
-                  <th scope="row">{r.factor}</th>
+                  <th scope="row" class="factor-cell">
+                    <span class="has-tooltip">{r.factor}</span>
+                    <div class="cmp-tooltip" role="tooltip">{r.def}</div>
+                  </th>
                   {r.vals.map((v) => (
                     <td>
                       {v ? (
@@ -228,54 +222,7 @@ const offerings = [
       </div>
     </section>
 
-    <hr class="rule" />
 
-    <section class="section" id="glossary">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="eyebrow">what each factor means</span>
-          <h2 class="h-section">The matrix, spelled out</h2>
-        </div>
-
-        <dl class="glossary reveal">
-          {rows.map((r) => (
-            <div class="gl-item">
-              <dt>{r.factor}</dt>
-              <dd>{r.def}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    </section>
-
-    <hr class="rule" />
-
-    <section class="section" id="offerings">
-      <div class="container">
-        <div class="section-head reveal">
-          <span class="eyebrow">the offerings</span>
-          <h2 class="h-section">Who’s who in this table</h2>
-          <p class="sub">
-            Same shape for each: what it is, what it’s for, and the one thing it does better than
-            the rest of this list.
-          </p>
-        </div>
-
-        <div class="off-grid">
-          {offerings.map((o) => (
-            <article class:list={['off-card', 'reveal', { 'off-card--px0': o.name === 'px0' }]}>
-              <header class="off-head">
-                <h3>{o.name}{o.sub && <span class="off-sub">{o.sub}</span>}</h3>
-                {o.tag && <span class="off-tag">{o.tag}</span>}
-              </header>
-              <p class="off-row"><span>overview</span>{o.overview}</p>
-              <p class="off-row"><span>use case</span>{o.use}</p>
-              <p class="off-row off-strength"><span>strength</span>{o.strength}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
   </main>
   <Footer />
 </Layout>
@@ -380,127 +327,49 @@ const offerings = [
     max-width: 620px;
   }
 
-  /* ── glossary ── */
-  .glossary {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px 32px;
+  /* ── tooltips ── */
+  .factor-cell {
+    position: relative;
+    cursor: help;
   }
 
-  .gl-item {
-    padding: 16px 0;
-    border-bottom: 1px dashed var(--bdr);
+  .has-tooltip {
+    border-bottom: 1px dotted var(--txt-3);
   }
 
-  .gl-item dt {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    margin-bottom: 5px;
-  }
-
-  .gl-item dd {
-    font-size: 13px;
-    line-height: 1.65;
-    color: var(--txt-2);
-  }
-
-  /* ── offering cards ── */
-  .off-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  .off-card {
-    padding: 24px 26px;
+  .cmp-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 16px;
+    margin-bottom: 8px;
+    width: 280px;
+    padding: 12px 14px;
+    background: var(--surface-solid);
     border: 1px solid var(--bdr);
-    border-radius: var(--r-lg);
-    background: var(--surface);
-    box-shadow: var(--shadow-card);
-    transition: border-color 0.25s, transform 0.25s;
-  }
-
-  .off-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--bdr-hi);
-  }
-
-  .off-card--px0 {
-    border-color: var(--amber-line);
-    background: linear-gradient(180deg, var(--amber-wash), transparent 60%), var(--surface);
-  }
-
-  .off-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .off-head h3 {
-    font-family: var(--display);
-    font-size: 19px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-
-  .off-sub {
-    font-family: var(--mono);
-    font-size: 11px;
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-float);
+    font-size: 13px;
     font-weight: 400;
-    color: var(--txt-3);
-    margin-left: 8px;
+    line-height: 1.5;
+    color: var(--txt);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+    z-index: 10;
+    pointer-events: none;
+    text-transform: none;
+    letter-spacing: normal;
   }
 
-  .off-tag {
-    flex-shrink: 0;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--amber);
-    border: 1px solid var(--amber-line);
-    background: var(--amber-wash);
-    padding: 3px 8px;
-  }
-
-  .off-row {
-    display: flex;
-    gap: 12px;
-    font-size: 13.5px;
-    line-height: 1.65;
-    color: var(--txt-2);
-    padding: 10px 0;
-    border-top: 1px dashed var(--bdr);
-  }
-
-  .off-row:first-of-type {
-    border-top: 0;
-    padding-top: 0;
-  }
-
-  .off-row > span {
-    flex-shrink: 0;
-    width: 68px;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--txt-4);
-    padding-top: 2px;
-  }
-
-  @media (max-width: 900px) {
-    .glossary { grid-template-columns: minmax(0, 1fr); }
-    .off-grid { grid-template-columns: minmax(0, 1fr); }
+  .factor-cell:hover .cmp-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
 
   @media (max-width: 640px) {
     .cmp-hero { padding-top: 108px; }
     .cmp-table th[scope='row'] { min-width: 180px; }
-    .off-row { flex-direction: column; gap: 4px; }
-    .off-row > span { width: auto; }
   }
 </style>
