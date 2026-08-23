@@ -43,7 +43,7 @@ guidelines: [summarization.md]
 inputs:
   - id: recent_prs
     tool: composio:GITHUB_LIST_PULL_REQUESTS
-    args: {owner: razorpay, repo: api, state: all}
+    args: {owner: px0-ai, repo: px0, state: all}
 tools: [composio:SLACK_SEND_MESSAGE]
 output: {target: file, path: digests/pr-{date}.md}
 timeout: 120s

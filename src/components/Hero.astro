@@ -1,5 +1,10 @@
 ---
 import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
+
+const facts = [
+  'macOS &amp; Linux',
+  'MIT licensed',
+];
 ---
 
 <section class="hero">
@@ -50,6 +55,10 @@ import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
         Star on GitHub
       </a>
     </div>
+
+    <ul class="facts">
+      {facts.map((f) => <li set:html={f}></li>)}
+    </ul>
   </div>
 </section>
 
@@ -140,6 +149,31 @@ import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
+  }
+
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    list-style: none;
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--txt-3);
+  }
+
+  .facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .facts li:not(:first-child)::before {
+    content: '';
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--txt-4);
   }
 
   @media (max-width: 640px) {
