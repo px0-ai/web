@@ -1,7 +1,7 @@
 {
  "name": "px0",
  "short_name": "px0",
- "description": "Automate your recurring chores in plain English, completely local.",
+ "description": "An agent that works the way you work.",
  "start_url": "/",
  "display": "standalone",
  "background_color": "#07070a",

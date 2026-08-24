@@ -17,29 +17,6 @@ function parseApps(s: string) {
   return { reads, writes, guideline };
 }
 
-const howToRead = [
-  {
-    title: 'The sentence',
-    body: 'Write it the way you would ask a colleague: what should happen, to what, and when.',
-  },
-  {
-    title: 'reads → writes',
-    body: 'Left of the arrow is read-only, resolved as an inputs entry. Right of it is the only place the workflow may post, send, or file anything.',
-  },
-  {
-    title: 'retrieve and file',
-    body: 'retrieve means brain retrieval rather than a connector. file means the output lands under output/ and nothing leaves the machine.',
-  },
-  {
-    title: '+ guideline',
-    body: 'The output only lands if it sounds like you, so it inlines a file from guidelines/ verbatim.',
-  },
-  {
-    title: 'Cadence',
-    body: '“on demand” means no trigger.schedule is set: you run it yourself, whenever it is useful.',
-  },
-];
-
 const moves = [
   ['inputs: tool', 'Pull facts before the model runs: PRs, tickets, events, rows.', 'Read-only tools only: a write tool in inputs fails validation.'],
   ['inputs: retrieve', 'Ground the answer in your brain, cited by path and anchor.', 'Nothing under brain/work/ is retrieved.'],
@@ -54,7 +31,7 @@ const categories: Category[] = [
   {
     id: 'engineering-code',
     title: 'Engineering: code and change',
-    blurb: "Repository chores: reviews, releases, CI, and the reports nobody writes by hand twice. github alone exposes 871 tools, so the digest shape generalises well past a Friday summary.",
+    blurb: "Repository chores: reviews, releases, CI, and the reports nobody writes by hand twice. github alone exposes 846 tools, so the digest shape generalises well past a Friday summary.",
     rows: [
       ['Summarize the pull requests I reviewed this week and post it to #eng-standup', 'github -> slack', 'Fri 17:00'],
       ['List PRs open more than three days with no review and nudge each author in a DM', 'github -> slack', 'daily 10:00'],
@@ -69,6 +46,9 @@ const categories: Category[] = [
       ['Diff our Postman collection against the committed OpenAPI spec and open an issue per drift', 'postman -> github', 'Thu weekly'],
       ['Report strings added this week that have no translation yet, per locale', 'crowdin -> jira', 'Fri 12:00'],
       ['Summarize the review comments I received this month into what I keep getting wrong', 'github -> file', 'monthly'],
+      ['Report which CI pipelines got slower this month and what step is eating the time', 'circleci -> slack', 'Mon 10:00'],
+      ['Cross-check every merged PR this week against a linked ticket and list the orphans', 'github, jira -> slack', 'Fri 16:00'],
+      ['When a PR touches a design-linked component, comment with the frame and who owns it', 'figma, github -> github', 'on demand'],
     ],
   },
   {
@@ -92,6 +72,8 @@ const categories: Category[] = [
       ['Find two focus blocks in next week’s calendar and hold them before anyone else does', 'googlecalendar -> googlecalendar', 'Fri 16:00'],
       ['Extract the recurring lessons from review comments I received this month', 'github -> file', 'monthly'],
       ['Assemble my brag doc entry for the quarter: what I shipped, reviewed, fixed, and unblocked', 'github, jira -> googledocs + guideline', 'quarterly'],
+      ['Collect every TODO and FIXME I added this month and turn the stale ones into tickets', 'github -> linear', 'monthly'],
+      ['Write down what I learned today from the commits, comments, and docs I touched', 'github, slack -> file + guideline', 'daily 19:00'],
     ],
   },
   {
@@ -117,12 +99,14 @@ const categories: Category[] = [
       ["Assemble the evidence pack for each report's review from their own shipped work this half", 'github, jira -> googledocs + guideline', 'review cycle'],
       ['Report seats and spend on our developer tools and what is unused', 'ramp, github -> slack', 'monthly'],
       ['Draft the project update our stakeholders keep asking for, from the tracker and the incident log', 'clickup, sentry -> notion + guideline', 'Wed 16:00'],
+      ['Tell me who has not taken leave in three months, to me only, no channel', 'bamboohr -> file', 'monthly'],
+      ['Name the reports I have not had a one-on-one with in two weeks and hold the slot', 'googlecalendar -> googlecalendar', 'Mon 08:30'],
     ],
   },
   {
     id: 'incidents-reliability',
     title: 'Incidents and reliability',
-    blurb: 'pagerduty carries 356 tools and sentry 209, which covers the whole on-call paper trail: handover, triage, and the weekly review pack.',
+    blurb: 'pagerduty carries 363 tools and sentry 205, which covers the whole on-call paper trail: handover, triage, and the weekly review pack.',
     rows: [
       ["Turn last night's error spike into a triaged bug ticket with the stack trace summarized", 'sentry -> linear', 'daily 07:00'],
       ['Write my on-call handover: what paged in the last twelve hours and what is still open', 'pagerduty, sentry -> slack', 'daily 09:00'],
@@ -133,6 +117,8 @@ const categories: Category[] = [
       ['List every downtime window last week and the endpoint that caused it', 'better_stack -> slack', 'Mon 07:30'],
       ['Find the twenty loudest log lines this week and open one cleanup issue for the worst', 'datadog -> github', 'Wed weekly'],
       ['Cross-check open incidents against the change log and say which deploy likely caused each', 'servicenow, github -> slack', 'daily 10:00'],
+      ['Report alerts that fired more than ten times and nobody acted on, so we can delete them', 'grafana -> slack', 'monthly'],
+      ['Check that every incident this month has an owner, an RCA, and a linked fix', 'pagerduty, notion -> slack', 'monthly'],
     ],
   },
   {
@@ -149,12 +135,14 @@ const categories: Category[] = [
       ['Summarize rage-click and dead-click hotspots by page', 'posthog -> slack', 'Wed weekly'],
       ['Flag traffic anomalies against the four-week baseline, by channel and landing page', 'google_analytics -> slack', 'daily 07:30'],
       ["Compile the quarterly board metrics narrative from the warehouse and last quarter's doc", 'databricks -> googledocs', 'quarterly'],
+      ['Tell me which cohort retained best last month and what they did in week one', 'mixpanel -> notion', 'monthly'],
+      ['Post the one number that moved most yesterday and the likeliest reason', 'posthog, github -> slack', 'daily 09:00'],
     ],
   },
   {
     id: 'customer-support',
     title: 'Customer support and customer voice',
-    blurb: 'zendesk is the second-deepest toolkit in the catalogue at 451 tools. The useful automations convert ticket volume into engineering intent: themes, not counts.',
+    blurb: 'zendesk is one of the deepest toolkits in the catalogue at 452 tools. The useful automations convert ticket volume into engineering intent: themes, not counts.',
     rows: [
       ["Group this week's support tickets by theme and open issues for the top three", 'zendesk -> linear', 'Fri 15:00'],
       ['List first-response SLA breaches by queue and who owns each', 'freshdesk -> slack', 'daily 09:30'],
@@ -164,6 +152,8 @@ const categories: Category[] = [
       ['Find feature requests mentioned by three or more customers this month', 'canny -> linear', 'monthly'],
       ['Write the customer-facing note for what we fixed that customers actually asked for', 'zendesk, github -> notion', 'Thu weekly'],
       ["Summarize what the shop's angry reviews and tickets agree on", 'gorgias, shopify -> slack', 'Fri weekly'],
+      ['Draft a reply for every ticket waiting on us, saved as a draft, never sent', 'help_scout -> help_scout + guideline', 'daily 09:00'],
+      ["Match this week's churned accounts to the tickets they filed first", 'intercom, hubspot -> slack', 'Mon 10:00'],
     ],
   },
   {
@@ -179,12 +169,14 @@ const categories: Category[] = [
       ["Pull yesterday's call recordings into CRM notes and next steps", 'gong, fireflies -> salesforce', 'daily 20:00'],
       ['List contracts sent but unsigned for more than five days, with who to chase', 'docusign -> slack', 'daily 10:00'],
       ['Draft the follow-up email for every meeting I had yesterday, in my voice', 'googlecalendar, gong -> gmail + guideline', 'daily 08:00'],
+      ['Find accounts that went quiet for thirty days and rank them by what they are worth', 'attio -> slack', 'Mon 09:00'],
+      ['Check the CRM against reality: deals with no contact, no amount, or no close date', 'salesforce -> googlesheets', 'Fri 15:00'],
     ],
   },
   {
     id: 'finance-billing',
     title: 'Finance and billing',
-    blurb: 'stripe carries 425 tools and workday 567, so coverage is rarely the constraint. These are the workflows whose write tool deserves the most scrutiny before you authorize it.',
+    blurb: 'stripe alone carries 415 tools, so coverage is rarely the constraint. These are the workflows whose write tool deserves the most scrutiny before you authorize it.',
     rows: [
       ["Log this week's revenue and refunds into the finance sheet", 'stripe -> googlesheets', 'Fri 18:00'],
       ['List failed payments worth retrying and draft the recovery email for each', 'stripe -> gmail', 'daily 09:00'],
@@ -193,6 +185,8 @@ const categories: Category[] = [
       ["Flag card spend outside each team's monthly budget, with the merchant", 'ramp, brex -> slack', 'weekly'],
       ["Reconcile yesterday's settlements against our ledger and report only the gaps", 'razorpay -> googlesheets', 'daily 07:00'],
       ['Summarize the accounts closing this month and which have unsigned paperwork', 'xero, docusign -> slack', 'monthly'],
+      ["Report software renewals due in the next sixty days and last month's actual usage", 'ramp, stripe -> slack', 'monthly'],
+      ['Assemble the quarterly tax pack from invoices and receipts, and list what is missing', 'xero, gmail -> googledrive', 'quarterly'],
     ],
   },
   {
@@ -207,6 +201,8 @@ const categories: Category[] = [
       ['Chase whoever has not logged hours, one DM each, no channel shaming', 'clockify -> slack', 'Fri 17:00'],
       ['List vendor contracts expiring in the next forty-five days and their owner', 'docusign -> slack', 'Mon weekly'],
       ["Summarize this week's interview scorecards into a hiring-committee brief", 'ashby -> googledocs', 'Thu 18:00'],
+      ['Book each interview panel from who is genuinely free and send every interviewer the resume', 'ashby, googlecalendar -> googlecalendar, gmail', 'daily 07:00'],
+      ['List offers sent but unsigned, how long each has waited, and who owns the chase', 'docusign, greenhouse -> slack', 'daily 10:00'],
     ],
   },
   {
@@ -222,6 +218,8 @@ const categories: Category[] = [
       ['Split webinar registrants into attendees and no-shows and draft each follow-up', 'zoom -> mailchimp', 'on demand'],
       ['Summarize what people said about us on Reddit and Hacker News this week', 'reddit, exa -> slack', 'Fri 12:00'],
       ['Report which paid campaigns are burning budget below target conversion', 'metaads -> slack', 'daily 09:00'],
+      ['List pages that lost impressions this week despite ranking in the same position', 'google_search_console -> googlesheets', 'Mon 08:00'],
+      ['Report which of my posts drove signups rather than likes', 'linkedin, posthog -> slack', 'Mon 09:00'],
     ],
   },
   {
@@ -236,6 +234,28 @@ const categories: Category[] = [
       ['For each meeting tomorrow, attach the last three emails with those people', 'googlecalendar, gmail -> file', 'daily 19:00'],
       ['Pull receipts out of my mail this week and add a row per expense', 'gmail -> googlesheets', 'Sun 20:00'],
       ["Assemble the travel pack for tomorrow's trip: flights, hotel, times, documents", 'gmail, googlecalendar -> file', 'daily 20:00'],
+      ['Draft the replies I owe, in my voice, saved as drafts so nothing sends without me', 'gmail -> gmail + guideline', 'daily 17:00'],
+      ["Split this trip's expenses from the receipts and tell each person what they owe", 'gmail -> splitwise', 'on demand'],
+      ['Tell me what I said yes to this week and what it cost me in hours', 'googlecalendar, slack -> file', 'Sun 19:00'],
+    ],
+  },
+  {
+    id: 'everyday-life',
+    title: 'Everyday life, no code involved',
+    blurb: 'None of this is work. The people who need it most have never written a script, so the whole interface is one sentence and a time of day: the bills, the birthdays, the school mail, the weekend photos.',
+    rows: [
+      ["Every Sunday, plan the week: everyone's events, who drives, and what clashes", 'googlecalendar -> whatsapp', 'Sun 18:00'],
+      ['Remind me a week before every birthday and anniversary, with what I gave last year', 'googlecalendar, gmail -> whatsapp', 'daily 08:00'],
+      ['List the bills due in the next ten days and how much each one is', 'gmail -> todoist', 'Mon 07:00'],
+      ['Track every subscription quietly charging my card and flag the ones I stopped using', 'gmail -> googlesheets', 'monthly'],
+      ['Summarize the school and society mail into what actually needs me to do something', 'gmail -> whatsapp', 'daily 18:00'],
+      ['Turn everything I said I needed this week into one shopping list, sorted by aisle', 'whatsapp -> todoist', 'Sat 09:00'],
+      ['Before I travel, tell me the weather where I am going and what that means for packing', 'weathermap, googlecalendar -> whatsapp', 'daily 20:00'],
+      ["Split this month's shared household spend and tell everyone what they owe", 'gmail -> splitwise', 'monthly'],
+      ["Make one album from last weekend's photos and share it with whoever was there", 'googlephotos, googlecalendar -> googlephotos', 'Mon 09:00'],
+      ['Log this week’s runs against my goal and tell me plainly whether I am behind', 'strava -> googlesheets', 'Sun 20:00'],
+      ['Find an evening next week that works for these four people and send the invite', 'googlecalendar, calendly -> googlecalendar', 'on demand'],
+      ['Tell me what my savings and holdings did this week in one sentence, no charts', 'coinbase, alpha_vantage -> gmail', 'Fri 18:00'],
     ],
   },
   {
@@ -249,11 +269,11 @@ const categories: Category[] = [
       ['Build an interview question sheet from my saved system-design notes', 'retrieve -> file', 'on demand'],
       ['Tell me what I have read that contradicts the claim in this PR description', 'retrieve, github -> file', 'on demand'],
       ['Answer support questions in my words, using only what my brain actually says', 'retrieve, zendesk -> zendesk', 'on demand'],
+      ['Tell me what I already decided about this, before I decide it again', 'retrieve -> file', 'on demand'],
+      ['Turn my scattered notes on this topic into one page that does not contradict itself', 'retrieve -> file + guideline', 'on demand'],
     ],
   },
 ];
-
-const totalRows = categories.reduce((n, c) => n + c.rows.length, 0);
 
 const pipelines = [
   {
@@ -290,25 +310,12 @@ const pipelines = [
 >
   <Nav />
   <main>
-    <header class="section wf-hero">
+    <section class="section wf-catalogue" id="catalogue">
       <div class="container">
-        <span class="eyebrow reveal">workflow catalogue</span>
-        <h1 class="wf-h1 reveal">Some workflows you could build with px0</h1>
-        <p class="sub wf-lede reveal">
-          Each workflow is one sentence you would type into <code class="inline-code">px0 workflows new</code>.
-          This page is a catalogue and inspiration of ideas, not a set of shipped workflows: px0 ships none, and
-          every workflow here is one command away from existing in your store.
-        </p>
-      </div>
-    </header>
+        <h1 class="wf-sr-title">Workflows you could build with px0</h1>
 
-    <hr class="rule" />
-
-    <section class="section" id="catalogue">
-      <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head wf-head reveal">
           <span class="eyebrow">the catalogue</span>
-          <h2 class="h-section">{totalRows} workflows across twelve categories</h2>
         </div>
 
         <nav class="wf-jump reveal" aria-label="Jump to category">
@@ -317,7 +324,6 @@ const pipelines = [
               {c.title}<span class="wf-jump-count">{c.rows.length}</span>
             </a>
           ))}
-          <a href="#pipelines" class="wf-jump-pill wf-jump-pill--pipe">Pipelines</a>
         </nav>
 
         {categories.map((c) => (
@@ -338,7 +344,26 @@ const pipelines = [
                     const { reads, writes, guideline } = parseApps(apps);
                     return (
                       <tr>
-                        <td class="wf-ask">“{ask}”</td>
+                        <td class="wf-ask">
+                          <div class="wf-ask-inner">
+                            <button
+                              type="button"
+                              class="wf-copy"
+                              data-copy={ask}
+                              title="Copy this sentence"
+                              aria-label={`Copy: ${ask}`}
+                            >
+                              <svg class="i-copy" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                              </svg>
+                              <svg class="i-done" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                            </button>
+                            <span>{ask}</span>
+                          </div>
+                        </td>
                         <td class="wf-apps">
                           {reads.map((a) => (
                             LOCAL.has(a) ? <span class="wf-local">{a}</span> : <span class="mark mark--read">{a}</span>
@@ -385,7 +410,7 @@ const pipelines = [
             <div class="term-body"><pre><span class="s-var">›</span> px0 workflows new
 <span class="s-dim">answer in your own words; press Enter on a blank line to stop</span>
 <span class="s-var">›</span> What do you want px0 to do for you?
-<span class="s-str">summarize the PRs I reviewed this week and post it to #eng-standup</span>
+<span class="s-str">everyday at 9pm summarize all the commits I made and PRs I reviewed and post it to #eng-standup</span>
 
 <span class="s-var">›</span> px0 workflows run friday-pr-digest <span class="s-fn">--dry-run</span></pre></div>
           </div>
@@ -397,52 +422,21 @@ const pipelines = [
 </Layout>
 
 <style>
-  .wf-hero {
-    padding-top: 128px;
-    padding-bottom: 48px;
+  .wf-catalogue {
+    padding-top: 118px;
   }
 
-  .wf-h1 {
-    font-family: var(--display);
-    font-size: clamp(34px, 5vw, 56px);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 18px;
-  }
-
-  .wf-lede {
-    max-width: 660px;
-    font-size: 16px;
-  }
-
-  /* ── how to read ── */
-  .htr-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 14px;
-  }
-
-  .htr-item {
-    padding: 18px 18px 20px;
-    border: 1px solid var(--bdr);
-    border-radius: var(--r-lg);
-    background: var(--surface);
-  }
-
-  .htr-item h3 {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    margin-bottom: 8px;
-    color: var(--amber);
-    font-family: var(--mono);
-  }
-
-  .htr-item p {
-    font-size: 13px;
-    line-height: 1.65;
-    color: var(--txt-2);
+  /* the page keeps an h1 for search and screen readers without showing one */
+  .wf-sr-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   /* ── moves table ── */
@@ -482,6 +476,15 @@ const pipelines = [
 
   .moves-table td:not(:first-child) { color: var(--txt-2); line-height: 1.6; }
   .moves-table tbody tr:hover { background: var(--surface-2); }
+
+  /* the catalogue eyebrow now stands alone, so it needs less room beneath it */
+  .wf-head {
+    margin-bottom: 26px;
+  }
+
+  .wf-head .eyebrow {
+    margin-bottom: 0;
+  }
 
   /* ── jump nav ── */
   .wf-jump {
@@ -595,6 +598,55 @@ const pipelines = [
     color: var(--txt);
     line-height: 1.55;
   }
+
+  .wf-ask-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .wf-copy {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-top: 1px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--txt-3);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .wf-table tbody tr:hover .wf-copy {
+    color: var(--txt-3);
+    border-color: var(--bdr);
+    background: var(--surface);
+  }
+
+  .wf-copy:hover,
+  .wf-copy:focus-visible {
+    color: var(--amber);
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+    outline: none;
+  }
+
+  .wf-copy .i-done { display: none; }
+
+  .wf-copy.copied,
+  .wf-table tbody tr:hover .wf-copy.copied {
+    color: var(--green);
+    border-color: color-mix(in srgb, var(--green) 34%, transparent);
+    background: color-mix(in srgb, var(--green) 10%, transparent);
+  }
+
+  .wf-copy.copied .i-copy { display: none; }
+  .wf-copy.copied .i-done { display: block; }
 
   .wf-apps {
     min-width: 150px;
@@ -714,7 +766,7 @@ const pipelines = [
   }
 
   @media (max-width: 640px) {
-    .wf-hero { padding-top: 108px; }
+    .wf-catalogue { padding-top: 96px; }
     .wf-ask { min-width: 220px; }
   }
 </style>

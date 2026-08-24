@@ -1,4 +1,4 @@
-# px0 - Automate your recurring chores in plain English, completely local
+# px0 - An agent that works the way you work
 
 > px0 is a local-first open-source CLI where everything the system does is a workflow. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.
 

@@ -1,4 +1,4 @@
-# px0 - Automate your recurring chores in plain English, completely local
+# px0 - An agent that works the way you work
 
 > px0 turns a plain-English description of a recurring job into a Markdown workflow you can run, schedule, and edit. Everything lives in one directory on your machine (`~/.px0`). There is no server, no account, and no hosted state. Workflows reach 1,000+ external apps through Composio, and the model backend is a coding agent CLI you already sign into (claude, gemini, pi, or opencode).
 
