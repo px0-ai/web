@@ -1,7 +1,10 @@
 ---
 const cols = ['px0', 'Hermes Agent', 'CrewAI / LangGraph', 'n8n / Dify', 'Khoj / PKM Copilot'];
 
-const rows: [string, boolean[]][] = [
+// true = yes, false = no, null = not verified for that product. The px0 column
+// is checked against the CLI; the rest were compiled when this page was written
+// and a new factor is marked unknown rather than guessed at.
+const rows: [string, (boolean | null)[]][] = [
   ['Natural language workflow creation', [true, false, false, false, false]],
   ['Human-editable Markdown workflows', [true, false, false, false, false]],
   ['Zero-server, local-first operation', [true, false, false, false, true]],
@@ -10,6 +13,9 @@ const rows: [string, boolean[]][] = [
   ['Dry-run mode for verification', [true, false, false, true, false]],
   ['Workflow change history & rollback', [true, false, false, false, false]],
   ['Multi-agent orchestration', [false, true, true, false, false]],
+  ['Writes held for human approval', [true, null, null, null, null]],
+  ['Self-review from its own run history', [true, null, null, null, null]],
+  ['Persistent memory of the user', [true, true, false, false, null]],
 ];
 ---
 
@@ -40,12 +46,14 @@ const rows: [string, boolean[]][] = [
               <th scope="row">{factor}</th>
               {vals.map((v) => (
                 <td>
-                  {v ? (
+                  {v === true ? (
                     <span class="cmp-yes" aria-label="yes">
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
                     </span>
+                  ) : v === null ? (
+                    <span class="cmp-unk" aria-label="not verified">?</span>
                   ) : (
                     <span class="cmp-no" aria-hidden="true">&ndash;</span>
                   )}
@@ -58,7 +66,10 @@ const rows: [string, boolean[]][] = [
     </div>
 
     <div class="cmp-foot reveal">
-      <p>8 of 18 factors shown, against 4 of 7 tools compared.</p>
+      <p>
+        11 of 21 factors shown, against 4 of 7 tools compared.
+        <span class="s-dim">? means we have not re-verified that product.</span>
+      </p>
       <a class="cmp-link" href="/comparisons">
         See the full comparison
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -137,6 +148,12 @@ const rows: [string, boolean[]][] = [
 
   .cmp-no {
     color: var(--txt-4);
+  }
+
+  .cmp-unk {
+    color: var(--txt-4);
+    font-size: 0.78rem;
+    font-weight: 600;
   }
 
   .cmp-foot {

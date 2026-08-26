@@ -10,6 +10,15 @@ const groups = [
     ],
   },
   {
+    name: 'ask &amp; memory',
+    rows: [
+      ['px0 ask', 'Ask anything, and px0 routes it'],
+      ['px0 ask --continue', 'Carry on the last conversation'],
+      ['px0 memory list', 'What px0 knows about you'],
+      ['px0 memory suggest', 'What it thinks it should remember'],
+    ],
+  },
+  {
     name: 'brain',
     rows: [
       ['px0 brain add', 'Save a URL, PDF, doc, or transcript'],
@@ -32,8 +41,26 @@ const groups = [
     rows: [
       ['px0 runs', 'Browse, filter, and re-run past runs'],
       ['px0 runs why', 'How a run reached its result'],
-      ['px0 changes list', 'What changed, across the store'],
+      ['px0 runs mark', 'Say whether the output was any good'],
       ['px0 changes revert', 'Undo a recorded change'],
+    ],
+  },
+  {
+    name: 'inbox &amp; approvals',
+    rows: [
+      ['px0 inbox', 'What your scheduled workflows produced'],
+      ['px0 approvals', 'Writes drafted and waiting for you'],
+      ['px0 approvals show', 'Exactly what would be sent'],
+      ['px0 approvals approve', 'Send precisely that'],
+    ],
+  },
+  {
+    name: 'getting better',
+    rows: [
+      ['px0 workflows health', 'What a workflow\u2019s own runs say about it'],
+      ['px0 workflows improve', 'Revise it from what those runs did'],
+      ['px0 workflows replay', 'Check a revision against real past inputs'],
+      ['px0 store sync', 'Share a store between your machines'],
     ],
   },
   {
@@ -56,8 +83,9 @@ const groups = [
         <h2 class="h-section">Entity first, then the verb</h2>
       </div>
       <p class="sub">
-        Twenty-odd commands, all shaped the same way, and <code class="inline-code">--help</code> on
-        every one of them.
+        Every command reads as entity then verb, and <code class="inline-code">--help</code> works on
+        every one of them. The one exception is <code class="inline-code">px0 ask</code>, which routes
+        across all of them and so names none.
       </p>
     </div>
 

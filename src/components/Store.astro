@@ -7,6 +7,8 @@ const tree = [
   { pad: 1, glyph: '├──', name: 'guidelines/', note: 'how you work', kind: 'dir' },
   { pad: 2, glyph: '│   ├──', name: 'commit-messages.md', note: '', kind: 'file' },
   { pad: 2, glyph: '│   └──', name: 'code-review/go.md', note: '', kind: 'file' },
+  { pad: 1, glyph: '├──', name: 'memory/', note: 'what px0 knows about you', kind: 'dir' },
+  { pad: 2, glyph: '│   └──', name: 'standup-timing.md', note: '', kind: 'file' },
   { pad: 1, glyph: '├──', name: 'brain/', note: 'what you have read and kept', kind: 'dir' },
   { pad: 2, glyph: '│   ├──', name: 'blogs/  papers/  docs/', note: '', kind: 'file' },
   { pad: 2, glyph: '│   └──', name: 'work/', note: 'never leaves this machine', kind: 'private' },
@@ -28,6 +30,13 @@ const pillars = [
     body: 'Add posts, papers, docs, and video transcripts as you read them. Text is extracted locally and indexed, so you can ask questions across everything you kept, with the passages it used cited back.',
     cmd: 'px0 brain ask "…"',
     accent: 'var(--cyan)',
+  },
+  {
+    tag: 'memory/',
+    title: 'Tell it once',
+    body: 'That standup goes out before 09:30. That the API repo means acme/api. One file per fact, carried into every run, and mostly written for you: when you mark a run bad or correct px0 in a conversation, it offers to keep the part still true next month. It proposes, you accept.',
+    cmd: 'px0 memory list',
+    accent: 'var(--amber)',
   },
   {
     tag: '.state/',

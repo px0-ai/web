@@ -13,7 +13,11 @@ const cols = [
   'Khoj / PKM Copilot',
 ];
 
-type Row = { factor: string; def: string; vals: boolean[] };
+// true = yes, false = no, null = not verified for that product. The px0 column
+// is checked against the CLI and kept current with it; the other columns were
+// compiled when this page was written, so a factor added later is marked
+// unknown rather than guessed at.
+type Row = { factor: string; def: string; vals: (boolean | null)[] };
 
 const rows: Row[] = [
   {
@@ -82,9 +86,19 @@ const rows: Row[] = [
     vals: [false, true, true, false, true, false, false],
   },
   {
-    factor: 'Autonomous self-mutating memory loop',
-    def: 'An agentic memory architecture where the model rewrites its own memory, habits, and skills across long-running sessions.',
-    vals: [false, true, false, false, false, false, false],
+    factor: 'Persistent memory of the user',
+    def: 'Standing facts about you (preferences, people, projects) carried into every later run rather than re-established each time. px0 keeps one versioned Markdown file per fact and drafts new ones from your corrections, but never writes one without being asked. That limit is the design, not a gap: an assistant that silently accumulates unreviewable beliefs about you is the failure mode it avoids.',
+    vals: [true, true, false, false, false, false, null],
+  },
+  {
+    factor: 'Writes held for human approval',
+    def: 'A tool call that would leave a mark can be drafted rather than fired, shown in full with the output that prompted it, and sent only once a person agrees. The run itself still completes.',
+    vals: [true, null, null, null, null, false, false],
+  },
+  {
+    factor: 'Self-review from its own run history',
+    def: 'The system reads its own past runs to say what is wrong with a workflow, and proposes a revision you can replay against the inputs a real past run had before accepting it.',
+    vals: [true, null, null, null, null, false, false],
   },
   {
     factor: 'Multi-agent orchestration & delegation',
@@ -159,7 +173,7 @@ const offerings = [
 
 <Layout
   title="px0 vs. the field: comparisons"
-  description="How px0 compares to Hermes Agent, OpenClaw, CrewAI/LangGraph, n8n/Dify, Open-Interpreter, and Khoj across 18 capability factors."
+  description="How px0 compares to Hermes Agent, OpenClaw, CrewAI/LangGraph, n8n/Dify, Open-Interpreter, and Khoj across 21 capability factors."
 >
   <Nav />
   <main>
@@ -198,12 +212,14 @@ const offerings = [
                   </th>
                   {r.vals.map((v) => (
                     <td>
-                      {v ? (
+                      {v === true ? (
                         <span class="cmp-yes" aria-label="yes">
                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                           </svg>
                         </span>
+                      ) : v === null ? (
+                        <span class="cmp-unk" aria-label="not verified">?</span>
                       ) : (
                         <span class="cmp-no" aria-hidden="true">&ndash;</span>
                       )}
@@ -216,7 +232,9 @@ const offerings = [
         </div>
 
         <p class="cmp-caveat reveal">
-          Reflects each project’s public documentation and behavior at time of writing. Fast-moving
+          The px0 column is checked against the CLI and kept current with it. The other columns
+          reflect each project’s public documentation and behavior at time of writing, and a
+          factor added since is marked <strong>?</strong> rather than guessed at. Fast-moving
           projects change; verify a factor yourself before it drives a decision.
         </p>
       </div>
@@ -317,6 +335,12 @@ const offerings = [
 
   .cmp-no {
     color: var(--txt-4);
+  }
+
+  .cmp-unk {
+    color: var(--txt-4);
+    font-size: 0.78rem;
+    font-weight: 600;
   }
 
   .cmp-caveat {
