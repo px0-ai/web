@@ -13,167 +13,133 @@ const cols = [
   'Khoj / PKM Copilot',
 ];
 
-// true = yes, false = no, null = not verified for that product. The px0 column
-// is checked against the CLI and kept current with it; the other columns were
-// compiled when this page was written, so a factor added later is marked
-// unknown rather than guessed at.
-type Row = { factor: string; def: string; vals: (boolean | null)[] };
+// The px0 column is checked against the CLI and kept current with it. The other
+// columns were verified in August 2026 against each project's own docs, listed
+// at the foot of the page. `no` means the capability was not found there, not
+// that it has been proven absent; `partial` covers a capability that is reached
+// by a different mechanism than the row describes, and the definition says how.
+type Cell = 'yes' | 'partial' | 'no' | 'unknown';
+const [Y, P, N, U]: Cell[] = ['yes', 'partial', 'no', 'unknown'];
+
+type Row = { factor: string; def: string; vals: Cell[] };
 
 const rows: Row[] = [
   {
     factor: 'Natural language workflow creation',
-    def: 'Describe an end-to-end multi-step job in plain English and have the system synthesize a complete, runnable routine.',
-    vals: [true, false, false, false, false, false, false],
+    def: 'Describe an end-to-end multi-step job in plain English and have the system synthesize a complete, runnable routine. px0 does this through a deliberate interview that settles the job, sources, delivery, cadence, and definition of done before writing anything. Hermes Agent and OpenClaw arrive from the other direction: both observe repeated work and draft a reusable skill from it, rather than taking a specification up front.',
+    vals: [Y, P, P, N, N, N, N],
   },
   {
     factor: 'Human-editable Markdown workflows',
-    def: 'Workflows live on disk as Markdown/YAML you can open, hand-edit, or version, with no compiler or database in the way.',
-    vals: [true, false, false, false, false, false, false],
+    def: 'Workflows live on disk as Markdown/YAML you can open, hand-edit, or version, with no compiler or database in the way. Hermes Agent and OpenClaw both store hand-editable SKILL.md files with YAML frontmatter, but a skill is a reusable capability rather than a scheduled, input-bound workflow definition, and neither is versioned by the tool.',
+    vals: [Y, P, P, N, N, N, N],
   },
   {
     factor: 'Zero-server, local-first CLI operation',
-    def: 'Runs entirely on your laptop or workstation, with no cloud infrastructure, hosted account, or control plane.',
-    vals: [true, false, false, false, false, true, true],
+    def: 'Runs entirely on your laptop or workstation, with no cloud infrastructure, hosted account, or control plane. Hermes Agent and OpenClaw are both self-hostable and keep their data locally, but both are built around a persistent gateway process rather than a one-shot command, and both need a provider API key of their own.',
+    vals: [Y, P, P, N, N, Y, Y],
   },
   {
     factor: 'Native unattended scheduler',
-    def: 'A built-in background scheduler triggers tasks at scheduled times without a terminal session left open.',
-    vals: [true, true, false, false, true, false, false],
+    def: 'A built-in background scheduler triggers tasks at scheduled times without a terminal session left open. Hermes Agent, OpenClaw, and Khoj all ship cron scheduling of their own.',
+    vals: [Y, Y, Y, N, Y, N, Y],
   },
   {
     factor: 'Reactive tool polling / event watcher',
-    def: 'Polls read-only tools or feeds at intervals and fires a workflow only when a new event or condition appears.',
-    vals: [true, false, false, false, true, false, false],
+    def: 'Polls read-only tools or feeds at intervals and fires a workflow only when a new event or condition appears. px0 polls rather than receiving webhooks because a laptop has no public endpoint to deliver to. OpenClaw reaches the same outcome largely by the opposite mechanism: its scheduler also takes event-driven triggers such as webhooks, Gmail PubSub, and command output streams.',
+    vals: [Y, N, P, N, Y, N, N],
   },
   {
-    factor: '1,000+ external SaaS connectors',
-    def: 'Native integration with hundreds of apps (GitHub, Slack, Jira, Linear, Sentry, Notion, Sheets) with no custom API client to write.',
-    vals: [true, false, false, false, false, false, false],
+    factor: 'Large prebuilt SaaS connector catalogue',
+    def: 'Out-of-the-box integration with a wide catalogue of enterprise and developer apps (GitHub, Slack, Jira, Linear, Sentry, Notion, Sheets) with no custom API client to write. px0 reaches Composio’s catalogue, advertised as 1,000+ integrations, and searches it during a build rather than shipping a fixed node list; n8n advertises over 2,000. Hermes Agent, OpenClaw, and Open-Interpreter each ship built-in tools or a bundled skill library and extend through MCP, but not a curated, auth-managed catalogue of that size.',
+    vals: [Y, P, P, Y, Y, P, N],
   },
   {
     factor: 'Local vault / second-brain ingest',
-    def: 'Indexes and searches local Markdown note repositories, PDFs, and saved pages natively, with no cloud lock-in.',
-    vals: [true, false, false, false, false, false, true],
+    def: 'Indexes, parses, and searches local Markdown note repositories such as Obsidian and Logseq folders, local PDFs, and saved web pages natively, with no cloud lock-in.',
+    vals: [Y, N, N, N, N, N, Y],
   },
   {
     factor: 'Reuses existing coding CLI logins',
-    def: 'Executes model inference through a CLI you already have logged in (claude, gemini, pi, opencode) instead of a separate API key.',
-    vals: [true, false, false, false, false, false, false],
+    def: 'Executes model inference through a CLI you already have logged in (claude, gemini, pi, opencode) instead of a separate API key. px0 has no direct-API backend and never stores a provider key.',
+    vals: [Y, N, N, N, N, N, N],
   },
   {
     factor: 'Custom style guidelines inlined verbatim',
-    def: 'Dedicated guideline files (commit rules, review tone) get inlined into prompts verbatim, so output matches your voice.',
-    vals: [true, false, false, false, false, false, false],
+    def: 'Dedicated guideline files (commit rules, review tone) get inlined into prompts verbatim, so output matches your voice. px0’s are selected per workflow at build time by their frontmatter description, and recorded on each run with the version used. Hermes Agent (MEMORY.md, USER.md), OpenClaw (SKILL.md bodies), and Open-Interpreter (AGENTS.md) each inline hand-editable Markdown instructions too, but as one global set rather than per-job selections.',
+    vals: [Y, P, P, N, N, P, N],
   },
   {
     factor: 'Local custom tool definitions (TOML/CLI)',
-    def: 'Exposes local bash scripts and terminal commands as modular tools through lightweight declarative definitions.',
-    vals: [true, true, true, true, true, false, false],
+    def: 'Exposes local bash scripts and terminal commands as modular tools through lightweight declarative definitions. px0 reads one TOML file per tool from the store at run time; the others reach the same place through skills and MCP servers.',
+    vals: [Y, Y, Y, Y, Y, Y, U],
   },
   {
     factor: 'Dry-run mode for workflow verification',
-    def: 'Tests structure, resolves real inputs, and previews planned actions before any real external API is called.',
-    vals: [true, false, false, false, true, false, false],
+    def: 'Tests structure, resolves real inputs, and previews planned actions before any real external API is called or change written. px0’s --dry-run resolves inputs for real and stubs every write, and the resulting run is marked a rehearsal everywhere it is later reported.',
+    vals: [Y, N, U, U, Y, N, N],
   },
   {
     factor: 'Workflow change history & rollback',
-    def: 'Snapshots every modification automatically, so you can inspect prior versions and revert an accidental edit.',
-    vals: [true, false, false, false, false, false, false],
+    def: 'Snapshots every modification automatically, so you can inspect prior versions and revert an accidental edit. px0 versions workflows, guidelines, memory, and config.toml, including hand edits made outside the tool, with no retention limit. n8n has workflow history with restore, but retention is plan-gated: 24 hours for all users, five days on Cloud Pro, and unlimited only on Enterprise.',
+    vals: [Y, N, U, N, P, N, N],
   },
   {
     factor: 'Multi-channel chat gateway',
-    def: 'Connects agents into team chat platforms as persistent bots, conversing across Discord, Telegram, and similar channels.',
-    vals: [false, true, true, false, true, false, false],
+    def: 'Connects agents into team chat platforms as persistent bots, conversing with several people across Discord, Telegram, and similar channels. px0 can send through Slack or Gmail and can accept approval replies from a named sender on a polled channel, but it is not a chat gateway and holds no conversation there. Khoj is reachable from WhatsApp alongside its browser, Emacs, Obsidian, and desktop clients, but as a personal interface rather than a team bot.',
+    vals: [N, Y, Y, N, Y, N, P],
   },
   {
     factor: 'Persistent memory of the user',
-    def: 'Standing facts about you (preferences, people, projects) carried into every later run rather than re-established each time. px0 keeps one versioned Markdown file per fact and drafts new ones from your corrections, but never writes one without being asked. That limit is the design, not a gap: an assistant that silently accumulates unreviewable beliefs about you is the failure mode it avoids.',
-    vals: [true, true, false, false, false, false, null],
+    def: 'Standing facts about you (preferences, people, projects) carried into every later run rather than re-established each time. px0 keeps one versioned Markdown file per fact, inlined into every run under a budget, and drafts new ones from your corrections, but every write comes from something you authorized, and every memory is a file you can read, edit, and revert. That limit is the design, not a gap: an assistant that silently accumulates unreviewable beliefs about you is the failure mode it avoids. Hermes Agent stores an equivalent memory as Markdown and saves it automatically by default, with write approval available to gate it. LangGraph exposes long-term cross-thread memory through its Store interface.',
+    vals: [P, Y, Y, Y, N, N, U],
   },
   {
     factor: 'Writes held for human approval',
-    def: 'A tool call that would leave a mark can be drafted rather than fired, shown in full with the output that prompted it, and sent only once a person agrees. The run itself still completes.',
-    vals: [true, null, null, null, null, false, false],
+    def: 'A tool call that would leave a mark can be drafted rather than fired, shown in full with the output that prompted it, and sent only once a person agrees. The run itself still completes, and approving executes the drafted call rather than re-running the workflow. What matters here is whether the gate covers writes to external systems, not just dangerous local commands. LangGraph pauses on interrupt, and n8n shows the tool name and parameters and waits, across nine channels. Hermes Agent gates risky terminal commands, memory writes, and skill writes, but an MCP tool that writes to an external system executes immediately, an acknowledged open gap. OpenClaw ships exec approvals, while gating an arbitrary tool call needs a plugin author to implement a before_tool_call hook. Open-Interpreter is partial for its permissions system.',
+    vals: [Y, P, P, Y, Y, P, N],
   },
   {
     factor: 'Self-review from its own run history',
-    def: 'The system reads its own past runs to say what is wrong with a workflow, and proposes a revision you can replay against the inputs a real past run had before accepting it.',
-    vals: [true, null, null, null, null, false, false],
+    def: 'The system reads its own past runs to say what is wrong with a workflow (arithmetic over run records, no model call) and to propose a revision, which you can replay against the inputs a real past run had before accepting it. Hermes Agent runs a background self-improvement review after each turn that updates skills and memory from repeated corrections. OpenClaw’s Skill Workshop drafts proposals from observed work, without a deterministic report or replay.',
+    vals: [Y, Y, P, N, N, N, N],
   },
   {
     factor: 'Multi-agent orchestration & delegation',
-    def: 'Native primitives for running distinct agents (research, coder, reviewer) that pass messages and sub-tasks to each other.',
-    vals: [false, true, true, true, false, false, false],
+    def: 'Native primitives for running distinct agents (research, coder, reviewer) that pass messages and sub-tasks to each other. px0 can chain workflows as a pipeline, piping each stage’s output into the next, and can run a sub-workflow as an input, but the stages are sequential and there is no peer message passing or concurrency.',
+    vals: [P, Y, Y, Y, N, N, N],
   },
   {
     factor: 'Full Python / TypeScript code framework',
     def: 'A developer-centric SDK that requires code, class inheritance, and custom logic to build an agent workflow.',
-    vals: [false, false, false, true, false, false, false],
+    vals: [N, N, N, Y, N, N, N],
   },
   {
     factor: 'Drag-and-drop visual graph canvas',
     def: 'A web UI for connecting nodes, routers, and logic branches on a visual canvas.',
-    vals: [false, false, false, false, true, false, false],
+    vals: [N, N, N, N, Y, N, N],
   },
   {
     factor: 'Interactive terminal REPL pair coding',
-    def: 'An interactive command-line session where an agent plans, executes shell commands, and iterates with you in real time.',
-    vals: [false, false, false, false, false, true, false],
+    def: 'An interactive command-line session where an agent plans, executes shell commands, and iterates with you in real time. px0 ask holds a conversation and can route a question to a workflow or a read tool, but it does not execute code interactively.',
+    vals: [N, N, N, N, N, Y, N],
   },
 ];
 
-const offerings = [
-  {
-    name: 'px0',
-    tag: 'you are here',
-    overview: 'A local-first workflow compiler, scheduler, and knowledge assistant CLI.',
-    use: 'Personal recurring automations and unattended chores (triage reports, sprint summaries, release notes), plus querying your own Obsidian vault alongside 1,000+ apps via Composio.',
-    strength: 'Turns plain English into transparent, editable Markdown files that run locally on a schedule using a CLI login you already have.',
-  },
-  {
-    name: 'Hermes Agent',
-    sub: 'Nous Research',
-    overview: 'An autonomous, self-improving persistent AI agent framework.',
-    use: 'Long-running "digital employee" workflows where the agent curates its own memory, learns skills from experience, and keeps running across sessions.',
-    strength: 'Deep autonomous memory loops, mixture-of-agents reasoning, and persistent agent evolution.',
-  },
-  {
-    name: 'OpenClaw',
-    overview: 'An orchestration gateway that manages and routes multi-agent teams across messaging channels.',
-    use: 'Running a team of specialized bots (research, coding, operations) across Slack, Discord, Telegram, and WhatsApp.',
-    strength: 'Centralized multi-agent routing, gateway management, and cross-channel messaging adapters.',
-  },
-  {
-    name: 'CrewAI / LangGraph',
-    overview: 'Developer-first code frameworks for building multi-agent architectures and stateful agent graphs.',
-    use: 'Custom enterprise AI applications, complex branching pipelines, and bespoke multi-agent systems written in Python or TypeScript.',
-    strength: 'Maximum programmatic flexibility, granular control over state machines, and a rich ecosystem.',
-  },
-  {
-    name: 'n8n / Dify',
-    overview: 'Low-code visual workflow automation platforms and LLM app builders.',
-    use: 'Visual API orchestration, company-wide webhooks, ETL pipelines, and node-based AI chaining.',
-    strength: 'An accessible drag-and-drop canvas, a vast visual node ecosystem, and a team-accessible web UI.',
-  },
-  {
-    name: 'Open-Interpreter',
-    overview: 'An open-source, interactive terminal copilot for local code execution and system control.',
-    use: 'Interactive pair programming, running local scripts, analyzing local datasets, and controlling desktop apps via chat.',
-    strength: 'A real-time terminal execution loop and interactive local machine pair-working.',
-  },
-  {
-    name: 'Khoj / PKM Copilots',
-    sub: 'Obsidian, Logseq',
-    overview: 'AI assistants embedded in personal knowledge management tools.',
-    use: 'Semantic search, question-answering across personal notes, and drafting content based on local notes.',
-    strength: 'Deep note-level integration and local document retrieval for personal knowledge.',
-  },
+const sources = [
+  { name: 'Hermes Agent', href: 'https://github.com/NousResearch/hermes-agent' },
+  { name: 'OpenClaw', href: 'https://docs.openclaw.ai/tools/skills' },
+  { name: 'LangGraph', href: 'https://docs.langchain.com/oss/python/langgraph/persistence' },
+  { name: 'n8n', href: 'https://docs.n8n.io/build/manage-workflows/view-change-history' },
+  { name: 'Open Interpreter', href: 'https://github.com/openinterpreter/openinterpreter' },
+  { name: 'Khoj', href: 'https://docs.khoj.dev/features/all-features/' },
+  { name: 'Composio', href: 'https://composio.dev' },
 ];
 ---
 
 <Layout
   title="px0 vs. the field: comparisons"
-  description="How px0 compares to Hermes Agent, OpenClaw, CrewAI/LangGraph, n8n/Dify, Open-Interpreter, and Khoj across 21 capability factors."
+  description="How px0 compares to Hermes Agent, OpenClaw, CrewAI/LangGraph, n8n/Dify, Open-Interpreter, and Khoj across 20 capability factors."
 >
   <Nav />
   <main>
@@ -212,16 +178,18 @@ const offerings = [
                   </th>
                   {r.vals.map((v) => (
                     <td>
-                      {v === true ? (
-                        <span class="cmp-yes" aria-label="yes">
+                      {v === 'yes' ? (
+                        <span class="cmp-yes" aria-label="supported">
                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                           </svg>
                         </span>
-                      ) : v === null ? (
+                      ) : v === 'partial' ? (
+                        <span class="cmp-part" aria-label="partly, or by a different mechanism">~</span>
+                      ) : v === 'unknown' ? (
                         <span class="cmp-unk" aria-label="not verified">?</span>
                       ) : (
-                        <span class="cmp-no" aria-hidden="true">&ndash;</span>
+                        <span class="cmp-no" aria-label="not found">&ndash;</span>
                       )}
                     </td>
                   ))}
@@ -231,11 +199,30 @@ const offerings = [
           </table>
         </div>
 
+        <ul class="cmp-legend reveal">
+          <li><span class="cmp-yes" aria-hidden="true"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span> supported</li>
+          <li><span class="cmp-part" aria-hidden="true">~</span> partly, or reached by a different mechanism than the row describes</li>
+          <li><span class="cmp-no" aria-hidden="true">&ndash;</span> not found in that project’s own docs</li>
+          <li><span class="cmp-unk" aria-hidden="true">?</span> not verified</li>
+        </ul>
+
         <p class="cmp-caveat reveal">
           The px0 column is checked against the CLI and kept current with it. The other columns
-          reflect each project’s public documentation and behavior at time of writing, and a
-          factor added since is marked <strong>?</strong> rather than guessed at. Fast-moving
-          projects change; verify a factor yourself before it drives a decision.
+          were verified in August 2026 against each project’s own documentation, and a dash means
+          a capability was not found there, not that it has been proven absent. Where a column
+          covers two products, a mark may hold for only one of them, and the factor’s definition
+          says which. These are fast-moving projects, and several of them shipped capabilities in
+          this table within the last year, so verify a factor yourself before it drives a decision.
+        </p>
+
+        <p class="cmp-sources reveal">
+          <span class="s-dim">sources:</span>
+          {sources.map((s, i) => (
+            <>
+              {i > 0 ? <span class="cmp-sep"> · </span> : null}
+              <a href={s.href} rel="noopener noreferrer" target="_blank">{s.name}</a>
+            </>
+          ))}
         </p>
       </div>
     </section>
@@ -333,6 +320,21 @@ const offerings = [
     background: color-mix(in srgb, var(--green) 10%, transparent);
   }
 
+  .cmp-part {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1;
+    color: var(--txt-2);
+    border: 1px dashed var(--bdr-hi);
+    background: var(--surface-2);
+  }
+
   .cmp-no {
     color: var(--txt-4);
   }
@@ -343,12 +345,63 @@ const offerings = [
     font-weight: 600;
   }
 
+  /* ── legend ── */
+  .cmp-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 16px;
+    list-style: none;
+    padding: 0;
+    font-size: 12px;
+    color: var(--txt-3);
+  }
+
+  .cmp-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .cmp-legend .cmp-yes,
+  .cmp-legend .cmp-part {
+    width: 16px;
+    height: 16px;
+    flex: none;
+  }
+
+  .cmp-legend .cmp-part {
+    font-size: 11px;
+  }
+
   .cmp-caveat {
     margin-top: 16px;
     font-size: 12px;
     line-height: 1.6;
     color: var(--txt-3);
     max-width: 620px;
+  }
+
+  .cmp-sources {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--txt-3);
+    max-width: 620px;
+  }
+
+  .cmp-sources a {
+    color: var(--txt-2);
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .cmp-sources a:hover {
+    color: var(--amber);
+    border-bottom-color: var(--amber-line);
+  }
+
+  .cmp-sep {
+    color: var(--txt-4);
   }
 
   /* ── tooltips ── */
@@ -366,15 +419,15 @@ const offerings = [
     bottom: 100%;
     left: 16px;
     margin-bottom: 8px;
-    width: 280px;
+    width: 320px;
     padding: 12px 14px;
     background: var(--surface-solid);
     border: 1px solid var(--bdr);
     border-radius: var(--r-md);
     box-shadow: var(--shadow-float);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--txt);
     opacity: 0;
     visibility: hidden;
@@ -395,5 +448,6 @@ const offerings = [
   @media (max-width: 640px) {
     .cmp-hero { padding-top: 108px; }
     .cmp-table th[scope='row'] { min-width: 180px; }
+    .cmp-tooltip { width: 240px; }
   }
 </style>

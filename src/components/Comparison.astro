@@ -1,21 +1,25 @@
 ---
 const cols = ['px0', 'Hermes Agent', 'CrewAI / LangGraph', 'n8n / Dify', 'Khoj / PKM Copilot'];
 
-// true = yes, false = no, null = not verified for that product. The px0 column
-// is checked against the CLI; the rest were compiled when this page was written
-// and a new factor is marked unknown rather than guessed at.
-const rows: [string, (boolean | null)[]][] = [
-  ['Natural language workflow creation', [true, false, false, false, false]],
-  ['Human-editable Markdown workflows', [true, false, false, false, false]],
-  ['Zero-server, local-first operation', [true, false, false, false, true]],
-  ['Native unattended scheduler', [true, true, false, true, false]],
-  ['Local vault / second-brain ingest', [true, false, false, false, true]],
-  ['Dry-run mode for verification', [true, false, false, true, false]],
-  ['Workflow change history & rollback', [true, false, false, false, false]],
-  ['Multi-agent orchestration', [false, true, true, false, false]],
-  ['Writes held for human approval', [true, null, null, null, null]],
-  ['Self-review from its own run history', [true, null, null, null, null]],
-  ['Persistent memory of the user', [true, true, false, false, null]],
+// The px0 column is checked against the CLI; the rest were verified in August
+// 2026 against each project's own docs. `no` means the capability was not found
+// there, `partial` means it is reached by a different mechanism than the factor
+// describes, and the full matrix on /comparisons says which.
+type Cell = 'yes' | 'partial' | 'no' | 'unknown';
+const [Y, P, N, U]: Cell[] = ['yes', 'partial', 'no', 'unknown'];
+
+const rows: [string, Cell[]][] = [
+  ['Natural language workflow creation', [Y, P, N, N, N]],
+  ['Human-editable Markdown workflows', [Y, P, N, N, N]],
+  ['Zero-server, local-first operation', [Y, P, N, N, Y]],
+  ['Native unattended scheduler', [Y, Y, N, Y, Y]],
+  ['Local vault / second-brain ingest', [Y, N, N, N, Y]],
+  ['Dry-run mode for verification', [Y, N, U, Y, N]],
+  ['Workflow change history & rollback', [Y, N, N, P, N]],
+  ['Multi-agent orchestration', [P, Y, Y, N, N]],
+  ['Writes held for human approval', [Y, P, Y, Y, N]],
+  ['Self-review from its own run history', [Y, Y, N, N, N]],
+  ['Persistent memory of the user', [P, Y, Y, N, U]],
 ];
 ---
 
@@ -46,16 +50,18 @@ const rows: [string, (boolean | null)[]][] = [
               <th scope="row">{factor}</th>
               {vals.map((v) => (
                 <td>
-                  {v === true ? (
-                    <span class="cmp-yes" aria-label="yes">
+                  {v === 'yes' ? (
+                    <span class="cmp-yes" aria-label="supported">
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
                     </span>
-                  ) : v === null ? (
+                  ) : v === 'partial' ? (
+                    <span class="cmp-part" aria-label="partly, or by a different mechanism">~</span>
+                  ) : v === 'unknown' ? (
                     <span class="cmp-unk" aria-label="not verified">?</span>
                   ) : (
-                    <span class="cmp-no" aria-hidden="true">&ndash;</span>
+                    <span class="cmp-no" aria-label="not found">&ndash;</span>
                   )}
                 </td>
               ))}
@@ -67,8 +73,8 @@ const rows: [string, (boolean | null)[]][] = [
 
     <div class="cmp-foot reveal">
       <p>
-        11 of 21 factors shown, against 4 of 7 tools compared.
-        <span class="s-dim">? means we have not re-verified that product.</span>
+        11 of 20 factors shown, against 4 of 7 tools compared.
+        <span class="s-dim">~ means partly, or by another mechanism. ? means not verified.</span>
       </p>
       <a class="cmp-link" href="/comparisons">
         See the full comparison
@@ -144,6 +150,21 @@ const rows: [string, (boolean | null)[]][] = [
     color: var(--green);
     border: 1px solid color-mix(in srgb, var(--green) 34%, transparent);
     background: color-mix(in srgb, var(--green) 10%, transparent);
+  }
+
+  .cmp-part {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1;
+    color: var(--txt-2);
+    border: 1px dashed var(--bdr-hi);
+    background: var(--surface-2);
   }
 
   .cmp-no {
