@@ -1,5 +1,5 @@
 ---
-import { GITHUB, RELEASES, ISSUES, LICENSE, MAILTO, AUTHOR, VERSION, repoDoc } from '../data/links';
+import { GITHUB, RELEASES, ISSUES, LICENSE, MAILTO, VERSION, repoDoc } from '../data/links';
 const year = new Date().getFullYear();
 const base = Astro.url.pathname === '/' ? '' : '/';
 
@@ -36,7 +36,7 @@ const cols = [
         <img src="/logo/px0-logo-dark.png" alt="px0" class="logo-img logo-dark" />
         <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
       </a>
-      <p>The read-only IDE for the AI-agent era. Agents write, you verify. Starts in under a millisecond, idles at about 16 MB.</p>
+      <p>The read-only IDE for the AI-agent era. Starts in under a millisecond, idles at about 16 MB.</p>
       <span class="f-ver"><i></i>v{VERSION} · stable channel</span>
     </div>
 
@@ -56,7 +56,6 @@ const cols = [
 
   <div class="wrap f-base">
     <span>&copy; {year} px0 · MIT licensed</span>
-    <span>built by <a href={AUTHOR} target="_blank" rel="noopener noreferrer">Arpit Bhayani</a></span>
   </div>
 
   <div class="f-wordmark" aria-hidden="true">px<span>[</span>0<span>]</span></div>
