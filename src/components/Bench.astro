@@ -1,0 +1,542 @@
+---
+import { CORPUS, VSCODE_TREE, MEM_TRACE, LSP_OPS } from '../data/px0';
+import { repoDoc } from '../data/links';
+
+const n = (v: number) => v.toLocaleString('en-US');
+const f1 = (v: number | null) => (v === null ? 'n/a' : v.toFixed(1));
+const pct = (v: number, max: number) => `${Math.max((v / max) * 100, 0.6).toFixed(2)}%`;
+
+// Memory: one linear scale, so the gap is the story.
+const SCALE = 1500;
+const vsTotal = VSCODE_TREE.reduce((a, b) => a + b.mb, 0);
+const ticks = [0, 250, 500, 750, 1000, 1250, 1500];
+
+const max = {
+  index: Math.max(...CORPUS.map((r) => r.index)),
+  fuzzy: Math.max(...CORPUS.map((r) => r.fuzzy)),
+  scan: Math.max(...CORPUS.map((r) => r.scan)),
+  mem: Math.max(...CORPUS.map((r) => r.mem)),
+};
+
+const traceMax = 100;
+const labelled = new Set([0, 4, 6]);
+const lspMax = 6;
+---
+
+<section class="sec" id="bench">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">01</span><span>/bench</span></div>
+      <div>
+        <h2 class="sec-title">Measured, <em>not claimed.</em></h2>
+        <p class="sec-sub">
+          Every number here comes from <code class="inline-code">./benchmark.sh</code> against shallow clones of
+          seven real repositories. Linux, language servers off, fastest of five requests. Run it on your
+          machine and paste the table anywhere.
+        </p>
+      </div>
+    </header>
+
+    <!-- A: memory -->
+    <div class="pnl ticks reveal">
+      <div class="pnl-h">
+        <span>resident memory · same workspace · linear scale</span>
+        <span><b>~90x</b> lighter</span>
+      </div>
+      <div class="pnl-b">
+        <div class="mem">
+          <div class="mem-row">
+            <div class="mem-name">px0<span>1 go process</span></div>
+            <div class="mem-track">
+              <div class="mem-fill" style={`width:${pct(16, SCALE)}`} title="px0: 16 MB"></div>
+            </div>
+            <div class="mem-val">16 MB</div>
+          </div>
+          <div class="mem-row">
+            <div class="mem-name">VS Code<span>15+ processes</span></div>
+            <div class="mem-track">
+              <div class="mem-stack" style={`width:${pct(vsTotal, SCALE)}`}>
+                {VSCODE_TREE.map((p, i) => (
+                  <div class="mem-seg" style={`flex-grow:${p.mb}`} title={`${p.name}: ~${p.mb} MB`}>{i + 1}</div>
+                ))}
+              </div>
+            </div>
+            <div class="mem-val">~1,440 MB</div>
+          </div>
+          <div class="mem-axis" aria-hidden="true">
+            <span></span>
+            <div class="mem-ticks">
+              {ticks.map((t) => <span style={`left:${(t / SCALE) * 100}%`}>{n(t)}</span>)}
+            </div>
+            <span class="mem-unit">MB</span>
+          </div>
+        </div>
+
+        <ol class="mem-legend">
+          {VSCODE_TREE.map((p, i) => (
+            <li><i>{i + 1}</i><span>{p.name}</span><b>~{p.mb} MB</b></li>
+          ))}
+        </ol>
+      </div>
+    </div>
+
+    <!-- B: corpus -->
+    <div class="pnl reveal bench-gap">
+      <div class="pnl-h">
+        <span>real corpus · px0 standalone</span>
+        <span>sorted by files indexed</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl corpus">
+          <thead>
+            <tr>
+              <th>repo</th>
+              <th>lang</th>
+              <th class="num">source</th>
+              <th class="num">files</th>
+              <th class="num">index</th>
+              <th class="num">fuzzy</th>
+              <th class="num">full scan</th>
+              <th class="num">open big</th>
+              <th class="num">reopen</th>
+              <th class="num">rss</th>
+              <th class="num">peak</th>
+            </tr>
+          </thead>
+          <tbody>
+            {CORPUS.map((r) => (
+              <tr>
+                <td class="repo">{r.repo}</td>
+                <td>{r.lang}</td>
+                <td class="num">{n(r.source)} MB</td>
+                <td class="num">{n(r.files)}</td>
+                <td class="num">{n(r.index)} ms<span class="cbar" style={`--w:${pct(r.index, max.index)}`}></span></td>
+                <td class="num">{f1(r.fuzzy)} ms<span class="cbar" style={`--w:${pct(r.fuzzy, max.fuzzy)}`}></span></td>
+                <td class="num">{f1(r.scan)} ms<span class="cbar" style={`--w:${pct(r.scan, max.scan)}`}></span></td>
+                <td class="num">{r.open === null ? 'n/a' : `${f1(r.open)} ms`}</td>
+                <td class="num">{r.reopen === null ? 'n/a' : `${f1(r.reopen)} ms`}</td>
+                <td class="num hi">{r.mem} MB<span class="cbar" style={`--w:${pct(r.mem, max.mem)}`}></span></td>
+                <td class="num">{r.peak} MB</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="pnl-foot">
+        <span><b>full scan</b> searches for a string that matches nothing, so every indexed byte is read. the worst case.</span>
+        <span><b>open big</b> is the largest source file, cold. file length does not matter: only the visible window is lexed.</span>
+      </div>
+    </div>
+
+    <!-- C + D -->
+    <div class="bench-duo bench-gap">
+      <div class="pnl reveal">
+        <div class="pnl-h">
+          <span>linux kernel · rss across a session</span>
+          <span><b>−37 MB</b> after idle</span>
+        </div>
+        <div class="pnl-b">
+          <div class="cols" role="img" aria-label={MEM_TRACE.map((s) => `${s.step} ${s.mb} MB`).join(', ')}>
+            <span class="cols-grid" aria-hidden="true"><i>100</i><i>50</i><i>0 MB</i></span>
+            {MEM_TRACE.map((s, i) => (
+              <div class:list={['col', { hi: i === MEM_TRACE.length - 1 }]} title={`${s.step}: ${s.mb} MB`}>
+                <span class="col-v">{labelled.has(i) ? `${s.mb}` : ''}</span>
+                <span class="col-b" style={`height:${(s.mb / traceMax) * 100}%`}></span>
+              </div>
+            ))}
+          </div>
+          <div class="cols-k" aria-hidden="true">
+            {MEM_TRACE.map((s) => <span>{s.step}</span>)}
+          </div>
+          <p class="note">
+            Go keeps freed pages until asked. px0 calls <code class="inline-code">FreeOSMemory</code> after 15 s
+            without requests, so an open session settles back down.
+          </p>
+        </div>
+      </div>
+
+      <div class="pnl reveal">
+        <div class="pnl-h">
+          <span>language server path · gopls</span>
+          <span>server ready <b>374 ms</b>, paid once</span>
+        </div>
+        <div class="pnl-b">
+          <div class="hbars">
+            {LSP_OPS.map((o) => (
+              <div class="hbar">
+                <span class="hbar-k">{o.op}</span>
+                <span class="hbar-t"><span style={`width:${pct(o.ms, lspMax)}`}></span></span>
+                <span class="hbar-v">{o.ms.toFixed(1)} ms</span>
+              </div>
+            ))}
+          </div>
+          <div class="hbars hbars--mem">
+            <div class="hbar">
+              <span class="hbar-k">px0 memory</span>
+              <span class="hbar-t"><span style={`width:${pct(18, 130)}`}></span></span>
+              <span class="hbar-v">18 MB</span>
+            </div>
+            <div class="hbar hbar--muted">
+              <span class="hbar-k">gopls memory</span>
+              <span class="hbar-t"><span style={`width:${pct(122, 130)}`}></span></span>
+              <span class="hbar-v">122 MB</span>
+            </div>
+          </div>
+          <p class="note">
+            Servers are separate processes, spawned on the first request for their language and shut down on exit.
+            Without one, px0 falls back to a regex outline instantly.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="repro reveal">
+      <code><span class="s-dim">$</span> ./benchmark.sh --clone <span class="s-dim">&amp;&amp;</span> ./benchmark.sh</code>
+      <a href={repoDoc('BENCHMARKS.md')} target="_blank" rel="noopener noreferrer">methodology → BENCHMARKS.md</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bench-gap {
+    margin-top: 16px;
+  }
+
+  /* memory comparison */
+  .mem-row,
+  .mem-axis {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr) 96px;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mem-row {
+    padding: 8px 0;
+  }
+
+  .mem-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--txt);
+  }
+
+  .mem-name span {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--txt-3);
+  }
+
+  .mem-track {
+    height: 26px;
+    background-image: linear-gradient(90deg, var(--bdr) 1px, transparent 1px);
+    background-size: calc(100% / 6) 100%;
+  }
+
+  .mem-fill {
+    height: 100%;
+    min-width: 3px;
+    background: var(--bar);
+  }
+
+  .mem-stack {
+    display: flex;
+    gap: 2px;
+    height: 100%;
+  }
+
+  .mem-seg {
+    flex-basis: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    background: var(--bar-muted);
+    font-size: 10.5px;
+    color: var(--txt);
+  }
+
+  .mem-val {
+    text-align: right;
+    font-weight: 600;
+    color: var(--txt);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mem-ticks {
+    position: relative;
+    height: 16px;
+    border-top: 1px solid var(--bdr-hi);
+  }
+
+  .mem-ticks span {
+    position: absolute;
+    top: 3px;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--txt-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mem-ticks span:first-child { transform: none; }
+  .mem-ticks span:last-child { transform: translateX(-100%); }
+
+  .mem-unit {
+    font-size: 10px;
+    color: var(--txt-3);
+  }
+
+  .mem-legend {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px 24px;
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--bdr);
+    list-style: none;
+    font-size: 11.5px;
+    color: var(--txt-2);
+  }
+
+  .mem-legend li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mem-legend i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: var(--bar-muted);
+    font-style: normal;
+    font-size: 10px;
+    color: var(--txt);
+  }
+
+  .mem-legend b {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--txt);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* corpus */
+  .corpus {
+    min-width: 920px;
+  }
+
+  .corpus .repo {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .corpus td.hi {
+    color: var(--txt);
+  }
+
+  .cbar {
+    position: relative;
+    display: block;
+    height: 2px;
+    margin-top: 4px;
+    background: var(--track);
+  }
+
+  .cbar::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--w);
+    background: var(--bar);
+  }
+
+  .pnl-foot {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--bdr);
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .pnl-foot b {
+    color: var(--txt-2);
+    font-weight: 500;
+  }
+
+  .bench-duo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  /* session columns */
+  .cols {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    height: 190px;
+    margin-left: 44px;
+    border-bottom: 1px solid var(--bdr-hi);
+  }
+
+  .cols-grid {
+    position: absolute;
+    inset: 0 0 0 -44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .cols-grid i {
+    display: block;
+    height: 0;
+    border-top: 1px solid var(--bdr);
+    font-style: normal;
+    font-size: 10px;
+    line-height: 0;
+    color: var(--txt-3);
+  }
+
+  .cols-grid i::before {
+    content: '';
+  }
+
+  .cols-grid i:last-child {
+    border-top: 0;
+  }
+
+  .col {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+  }
+
+  .col-v {
+    margin-bottom: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--txt);
+  }
+
+  .col-b {
+    width: min(24px, 100%);
+    background: var(--bar-muted);
+  }
+
+  .col.hi .col-b {
+    background: var(--bar);
+  }
+
+  .cols-k {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    margin: 6px 0 0 44px;
+    font-size: 10px;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--txt-3);
+  }
+
+  .note {
+    margin-top: 16px;
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: var(--txt-3);
+  }
+
+  /* horizontal bars */
+  .hbars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hbars--mem {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--bdr);
+  }
+
+  .hbar {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) 64px;
+    align-items: center;
+    gap: 12px;
+    font-size: 11.5px;
+  }
+
+  .hbar-k {
+    color: var(--txt-2);
+  }
+
+  .hbar-t {
+    height: 12px;
+    background: var(--track);
+  }
+
+  .hbar-t span {
+    display: block;
+    height: 100%;
+    background: var(--bar);
+  }
+
+  .hbar--muted .hbar-t span {
+    background: var(--bar-muted);
+  }
+
+  .hbar-v {
+    text-align: right;
+    color: var(--txt);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .repro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    border: 1px dashed var(--bdr-hi);
+    font-size: 12px;
+  }
+
+  .repro a {
+    color: var(--amber);
+  }
+
+  .repro a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 960px) {
+    .bench-duo { grid-template-columns: minmax(0, 1fr); }
+    .mem-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 640px) {
+    .mem-row,
+    .mem-axis { grid-template-columns: 70px minmax(0, 1fr) 70px; gap: 10px; }
+    .mem-name span { display: none; }
+    .mem-val { font-size: 11px; }
+    .mem-ticks span:nth-child(even) { display: none; }
+    .mem-legend { grid-template-columns: minmax(0, 1fr); }
+    .pnl-foot { grid-template-columns: minmax(0, 1fr); }
+    .cols, .cols-k { gap: 4px; }
+    .cols-k { font-size: 9px; }
+    .hbar { grid-template-columns: 110px minmax(0, 1fr) 56px; }
+  }
+</style>

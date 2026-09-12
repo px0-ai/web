@@ -1,0 +1,111 @@
+---
+import { FLAGS } from '../data/px0';
+import { VERSION } from '../data/links';
+---
+
+<section class="sec" id="cli">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">06</span><span>/cli</span></div>
+      <div>
+        <h2 class="sec-title">Point it at a directory. <em>That's the setup.</em></h2>
+        <p class="sec-sub">
+          <code class="inline-code">px0</code> starts the local viewer, prints the URL, and opens your browser while the
+          index builds in the background. Multiple instances walk forward to the next free port.
+        </p>
+      </div>
+    </header>
+
+    <div class="cli-grid">
+      <div class="term reveal">
+        <div class="term-bar">
+          <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="term-title">~ · zsh</span>
+        </div>
+        <div class="term-body">
+<pre><span class="s-warn">$</span> px0 ~/src/linux
+
+<b class="t-strong">px0 {VERSION}</b>
+  <span class="s-dim">workspace:</span>  /home/you/src/linux
+  <span class="s-dim">url:</span>        <span class="t-accent">http://127.0.0.1:7777</span>
+
+<span class="s-dim">ctrl-c to stop</span>
+<span class="s-ok">✓</span> indexed 95710 files  <span class="s-dim">370ms</span>
+  <span class="t-faint">·</span> language servers: clangd (started on first use)
+
+<span class="s-warn">$</span> px0 -version
+px0 {VERSION} (linux/amd64)
+
+<span class="s-warn">$</span> px0 -no-open -port 0 ~/src/api | cat
+<span class="s-dim">...</span>
+[OK] indexed 1855 files  13ms<span class="caret"></span></pre>
+        </div>
+      </div>
+
+      <div class="pnl reveal">
+        <div class="pnl-h"><span>flags</span><span>usage: px0 [flags] [directory]</span></div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr><th>flag</th><th>default</th><th>does</th></tr>
+            </thead>
+            <tbody>
+              {FLAGS.map((f) => (
+                <tr>
+                  <td class="flag">{f.flag}</td>
+                  <td>{f.def}</td>
+                  <td class="desc">{f.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cli-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .t-strong {
+    color: var(--txt);
+    font-weight: 700;
+  }
+
+  .t-accent {
+    color: var(--amber);
+  }
+
+  .t-faint {
+    color: var(--txt-4);
+  }
+
+  .term-body pre {
+    color: var(--txt);
+  }
+
+  .flag {
+    color: var(--cyan) !important;
+  }
+
+  .desc {
+    white-space: normal !important;
+    min-width: 220px;
+  }
+
+  @media (max-width: 1040px) {
+    .cli-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .desc { min-width: 0; }
+    .cli-grid :global(.tbl td),
+    .cli-grid :global(.tbl th) { padding-inline: 8px; }
+  }
+</style>

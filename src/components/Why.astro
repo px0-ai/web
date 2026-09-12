@@ -1,0 +1,318 @@
+---
+const shift = [
+  {
+    n: '01',
+    who: 'terminal',
+    what: 'drives generation',
+    body: 'Agents, harnesses, and orchestrators write the code, run the tests, and move the workflow along.',
+    tty: ['<span class="s-dim">agent</span> 14 files changed', '<span class="s-ok">✓</span> 212 tests passed'],
+  },
+  {
+    n: '02',
+    who: 'you',
+    what: 'drive verification',
+    body: 'Follow symbol references, read the surrounding context, and check the architecture the change landed in.',
+    tty: ['<span class="s-warn">F12</span> definition  <span class="s-warn">Shift F12</span> refs', '<span class="s-warn">Ctrl Shift F</span> every call site'],
+    hi: true,
+  },
+  {
+    n: '03',
+    who: 'the old ide',
+    what: 'is overkill',
+    body: 'Booting an Electron suite with an extension host and a gigabyte-plus heap just to read agent output.',
+    tty: ['<span class="s-bad">1,440 MB</span> rss, 15+ processes', '<span class="s-bad">4 - 10 s</span> to index the workspace'],
+    no: true,
+  },
+];
+
+const hunks = [
+  { h: 'built for', del: 'typing code character by character, hosting plugins', add: 'reading, exploring, and verifying code' },
+  { h: 'base memory (rss)', del: '~1,440 MB', add: '~16 MB', note: '80x to 90x lighter' },
+  { h: 'startup cpu spike', del: '35% - 50%', add: '< 1%' },
+  { h: 'cold start', del: 'several seconds', add: 'sub-millisecond' },
+  { h: 'process tree', del: '15+ Node.js / Electron processes', add: '1 static Go binary' },
+  { h: 'workspace indexing', del: 'multi-second background churn', add: '13 ms for redis, 370 ms for the linux kernel' },
+  { h: 'setup', del: 'config files, plugins, node, npm', add: 'zero config, zero runtime' },
+];
+
+const does = [
+  ['+', 'fuzzy file search, symbols, regex across the tree'],
+  ['+', 'go to definition, hover, find references (with an LSP)'],
+  ['+', 'jump into stdlib and module-cache sources the server points at'],
+  ['+', '14 themes, word wrap, back and forward history'],
+];
+
+const doesnt = [
+  ['-', 'no write endpoints: the HTTP API reads, searches, and asks language servers'],
+  ['-', 'no extension host, no plugin marketplace, no Electron'],
+  ['-', 'no telemetry. the one outbound call is a daily release check to GitHub'],
+  ['-', 'binds 127.0.0.1 unless you pass -host'],
+];
+---
+
+<section class="sec" id="why">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">02</span><span>/why</span></div>
+      <div>
+        <h2 class="sec-title">Agents write. <em>You verify.</em></h2>
+        <p class="sec-sub">
+          Code now arrives from the terminal, not the keyboard. What is left for you is review, audit, and
+          navigation, and that job needs one thing done exceptionally well: a zero-latency, distraction-free place
+          to read, explore, and verify. Not an editor that takes seconds to boot and gigabytes to idle.
+        </p>
+      </div>
+    </header>
+
+    <ol class="shift reveal">
+      {shift.map((s) => (
+        <li class:list={['sh', { 'sh--hi': s.hi, 'sh--no': s.no }]}>
+          <div class="sh-top"><span class="sh-n">{s.n}</span><span class="sh-who">{s.who}</span></div>
+          <p class="sh-what">{s.what}</p>
+          <p class="sh-body">{s.body}</p>
+          <pre class="sh-tty" set:html={s.tty.join('\n')}></pre>
+        </li>
+      ))}
+    </ol>
+
+    <div class="why-grid">
+      <div class="diff pnl reveal" role="table" aria-label="Traditional IDE compared with px0">
+        <div class="pnl-h"><span>diff --git a/traditional-ide b/px0</span><span><b class="s-bad">-7</b> <b class="s-ok">+7</b></span></div>
+        <div class="diff-b">
+          {hunks.map((x) => (
+            <div class="hunk" role="rowgroup">
+              <div class="hh">@@ {x.h} @@</div>
+              <div class="dl del" role="row"><span class="sg">-</span><span>{x.del}</span></div>
+              <div class="dl add" role="row"><span class="sg">+</span><span>{x.add}</span>{x.note && <span class="note">{x.note}</span>}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="why-side">
+        <div class="pnl ticks reveal">
+          <div class="pnl-h"><span>read-only is the feature</span></div>
+          <ul class="ro">
+            {does.map(([g, t]) => <li><span class="g s-ok">{g}</span>{t}</li>)}
+          </ul>
+          <ul class="ro ro--no">
+            {doesnt.map(([g, t]) => <li><span class="g s-bad">{g}</span>{t}</li>)}
+          </ul>
+        </div>
+
+        <div class="pnl reveal">
+          <div class="pnl-h"><span>where it fits</span></div>
+          <ul class="fit">
+            <li><b>verifying agent output</b> open the worktree, trace the references, close the tab</li>
+            <li><b>auditing a codebase</b> read a 25,000-file monorepo on a laptop without the fans spinning up</li>
+            <li><b>remote boxes</b> run on the server, tunnel one port, read in any browser</li>
+            <li><b>beside your editor</b> keep vim or VS Code for the edits you still type</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* the shift: generation, verification, bloat */
+  .shift {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin-bottom: 16px;
+    border: 1px solid var(--bdr);
+    background: var(--bdr);
+    list-style: none;
+  }
+
+  .sh {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 20px 20px;
+    background: var(--bg-elev);
+  }
+
+  .sh:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    z-index: 1;
+    top: 18px;
+    right: -9px;
+    width: 17px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border: 1px solid var(--bdr-hi);
+    font-size: 10px;
+    color: var(--txt-3);
+  }
+
+  .sh:nth-child(2)::after {
+    content: '×';
+    color: var(--rose);
+  }
+
+  .sh-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+  }
+
+  .sh-n {
+    color: var(--txt-2);
+  }
+
+  .sh-what {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    color: var(--txt);
+  }
+
+  .sh-body {
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  .sh-tty {
+    margin-top: auto;
+    padding: 8px 10px;
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--txt-2);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .sh--hi {
+    background: linear-gradient(180deg, var(--amber-wash), transparent 70%), var(--bg-elev);
+    box-shadow: inset 0 2px 0 var(--amber);
+  }
+
+  .sh--hi .sh-n,
+  .sh--hi .sh-who {
+    color: var(--amber);
+  }
+
+  .sh--no .sh-what {
+    color: var(--txt-3);
+    text-decoration: line-through;
+    text-decoration-color: var(--rose);
+    text-decoration-thickness: 1px;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .diff-b {
+    padding: 6px 0 10px;
+    font-size: 12.5px;
+  }
+
+  .hh {
+    padding: 8px 16px 4px;
+    color: var(--cyan);
+    font-size: 11.5px;
+  }
+
+  .dl {
+    display: grid;
+    grid-template-columns: 2ch minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 3px 16px;
+  }
+
+  .dl.del {
+    background: color-mix(in srgb, var(--rose) 9%, transparent);
+    color: var(--txt-3);
+  }
+
+  .dl.add {
+    background: color-mix(in srgb, var(--green) 10%, transparent);
+    color: var(--txt);
+  }
+
+  .del .sg { color: var(--rose); }
+  .add .sg { color: var(--green); }
+
+  .dl .note {
+    font-size: 11px;
+    color: var(--amber);
+  }
+
+  .why-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ro {
+    list-style: none;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--txt-2);
+  }
+
+  .ro--no {
+    border-top: 1px solid var(--bdr);
+  }
+
+  .ro li {
+    display: grid;
+    grid-template-columns: 2ch minmax(0, 1fr);
+    gap: 8px;
+    padding: 3px 0;
+  }
+
+  .fit {
+    list-style: none;
+    padding: 6px 0;
+  }
+
+  .fit li {
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--txt-3);
+  }
+
+  .fit li + li {
+    border-top: 1px solid var(--bdr);
+  }
+
+  .fit b {
+    display: block;
+    font-weight: 600;
+    color: var(--txt);
+  }
+
+  @media (max-width: 960px) {
+    .why-grid { grid-template-columns: minmax(0, 1fr); }
+    .shift { grid-template-columns: minmax(0, 1fr); }
+    .sh:not(:last-child)::after {
+      top: auto;
+      right: 20px;
+      bottom: -9px;
+      transform: rotate(90deg);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .dl { grid-template-columns: 2ch minmax(0, 1fr); }
+    .dl .note { grid-column: 2; }
+  }
+</style>

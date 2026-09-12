@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { GITHUB, AUTHOR, EMAIL } from '../data/links';
+import { GITHUB, RELEASES, AUTHOR, EMAIL, VERSION } from '../data/links';
 
 interface Props {
   title?: string;
@@ -8,8 +8,8 @@ interface Props {
 }
 
 const {
-  title = "px0 - An agent that works the way you work.",
-  description = "px0 is a local, open-source agent built around the way you work. Tell it a chore in plain English and it writes, schedules, and runs the workflow itself, wired to 1,000+ apps you already use. No server. No dashboard. Nothing hosted.",
+  title = "px0 - Read-only IDE for the AI-agent era",
+  description = "px0 is a browser-based, read-only IDE in a single Go binary: an instant verification console for code your agents write. It starts in under 1 ms, idles at ~16 MB, and gives you fuzzy file search, symbol navigation, project-wide regex search, ~280 languages of syntax highlighting, and optional LSP go-to-definition across repositories with tens of thousands of files.",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
@@ -43,10 +43,10 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <link rel="manifest" href="/manifest.json" />
 
     <!-- Windows Tiles -->
-    <meta name="msapplication-TileColor" content="#07070a" />
+    <meta name="msapplication-TileColor" content="#06070b" />
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
-    <meta name="theme-color" content="#07070a" />
+    <meta name="theme-color" content="#06070b" />
     <meta name="generator" content={Astro.generator} />
 
     <script is:inline>
@@ -71,7 +71,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <meta name="description" content={description} />
     <meta
       name="keywords"
-      content="px0, local-first CLI, workflow automation, plain English automation, markdown workflows, personal automation, cron workflows, Composio, agent CLI, claude code automation, MCP server, brain library, provenance, open source automation"
+      content="px0, read-only IDE, code viewer, code navigator, lightweight IDE, code reading, code review, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, project search, regex search, single binary, Go, open source, VS Code alternative"
     />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Arpit Bhayani" />
@@ -96,13 +96,14 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
       '@context': 'https://schema.org',
       '@type': 'SoftwareApplication',
       name: 'px0',
+      softwareVersion: VERSION,
       description:
-        'px0 is an agent that works the way you work. Describe a recurring job and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.',
+        'px0 is a lightweight, browser-based, read-only IDE packaged as a single static Go binary. Fuzzy file search, symbol navigation, project-wide regex search, syntax highlighting for ~280 languages, and optional LSP go-to-definition, hover, and references. Starts in under 1 ms and idles at ~16 MB.',
       applicationCategory: 'DeveloperApplication',
-      applicationSubCategory: 'Workflow Automation, Personal Automation, AI Agent Tooling',
-      operatingSystem: 'macOS, Linux',
+      applicationSubCategory: 'Code Viewer, Code Navigation, IDE',
+      operatingSystem: 'macOS, Linux, FreeBSD, OpenBSD, NetBSD, Windows',
       url: 'https://px0.ai',
-      downloadUrl: 'https://pypi.org/project/px0/',
+      downloadUrl: RELEASES,
       codeRepository: GITHUB,
       license: 'https://opensource.org/licenses/MIT',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -117,15 +118,15 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
     <div class="atmos" aria-hidden="true">
-      <div class="atmos-aurora"></div>
+      <div class="atmos-glow"></div>
       <div class="atmos-grid"></div>
-      <div class="atmos-grain"></div>
+      <div class="atmos-scan"></div>
     </div>
     <slot />
 
@@ -142,10 +143,10 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
               }
             });
           },
-          { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.05 }
         );
         items.forEach((el, i) => {
-          (el as HTMLElement).style.transitionDelay = `${Math.min(i % 6, 5) * 60}ms`;
+          (el as HTMLElement).style.transitionDelay = `${Math.min(i % 6, 5) * 50}ms`;
           io.observe(el);
         });
       } else {
@@ -165,6 +166,14 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
           window.setTimeout(() => el.classList.remove('copied'), 1600);
         });
       });
+
+      // Show Mac modifier glyphs to Mac visitors.
+      if (/Mac|iPhone|iPad/.test(navigator.userAgent)) {
+        const glyphs: Record<string, string> = { 'mod-key': '⌘', 'shift-key': '⇧', 'alt-key': '⌥' };
+        for (const [cls, glyph] of Object.entries(glyphs)) {
+          document.querySelectorAll(`.${cls}`).forEach((el) => (el.textContent = glyph));
+        }
+      }
     </script>
   </body>
 </html>

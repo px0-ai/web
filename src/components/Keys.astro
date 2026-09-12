@@ -1,0 +1,183 @@
+---
+// 'mod', 'shift', and 'alt' render as Ctrl / Shift / Alt, swapped to Mac glyphs on Macs.
+const shortcuts = [
+  { keys: ['mod', 'K'], act: 'universal palette, quick open' },
+  { keys: ['mod', 'P'], act: 'go to file' },
+  { keys: ['mod', 'shift', 'P'], act: 'command palette' },
+  { keys: ['mod', 'shift', 'O'], act: 'go to symbol in file' },
+  { keys: ['mod', 'shift', 'F'], act: 'search the whole workspace' },
+  { keys: ['mod', 'F'], act: 'find in active file' },
+  { keys: ['mod', 'G'], act: 'jump to line' },
+  { keys: ['F12'], alt: ['mod', 'click'], act: 'go to definition' },
+  { keys: ['shift', 'F12'], act: 'find all references' },
+  { keys: ['hover'], act: 'type signature and docs' },
+  { keys: ['mod', 'hover'], act: 'inspect identifier link' },
+  { keys: ['alt', '←'], alt: ['alt', '→'], act: 'back, forward through history' },
+];
+
+const cap = (k: string) => {
+  if (k === 'mod') return { cls: 'kbd mod-key', t: 'Ctrl' };
+  if (k === 'shift') return { cls: 'kbd shift-key', t: 'Shift' };
+  if (k === 'alt') return { cls: 'kbd alt-key', t: 'Alt' };
+  if (k === 'hover' || k === 'click') return { cls: 'kbd kbd--ghost', t: k };
+  return { cls: 'kbd', t: k };
+};
+
+const prefixes = [
+  { p: '', name: 'files', ex: 'lspsrv', res: 'lspservers.go' },
+  { p: '>', name: 'commands', ex: '>wrap', res: 'Toggle Word Wrap' },
+  { p: '@', name: 'symbols', ex: '@score', res: 'fuzzyScore' },
+  { p: ':', name: 'line', ex: ':120', res: 'go to line 120' },
+];
+---
+
+<section class="sec" id="keys">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">05</span><span>/keys</span></div>
+      <div>
+        <h2 class="sec-title">Hands stay on <em>the keyboard.</em></h2>
+        <p class="sec-sub">The chords you already know from your editor, plus one palette that switches mode on its first character. Press <span class="kbd">?</span> inside px0 for the full sheet.</p>
+      </div>
+    </header>
+
+    <div class="keys-grid">
+      <div class="pnl reveal">
+        <div class="pnl-h"><span>shortcuts</span><span>{shortcuts.length} bindings</span></div>
+        <ul class="sc">
+          {shortcuts.map((s) => (
+            <li>
+              <span class="caps">
+                {s.keys.map((k) => { const c = cap(k); return <span class={c.cls}>{c.t}</span>; })}
+                {s.alt && <span class="or">/</span>}
+                {s.alt && s.alt.map((k) => { const c = cap(k); return <span class={c.cls}>{c.t}</span>; })}
+              </span>
+              <span class="act">{s.act}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="pnl ticks reveal">
+        <div class="pnl-h"><span>palette prefixes</span><span><span class="mod-key">Ctrl</span> K</span></div>
+        <ul class="px">
+          {prefixes.map((x) => (
+            <li>
+              <span class="px-p">{x.p || '∅'}</span>
+              <span class="px-n">{x.name}</span>
+              <code class="px-ex">{x.ex}</code>
+              <span class="px-r">→ {x.res}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .keys-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .sc {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+  }
+
+  .sc li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--bdr);
+    font-size: 12px;
+  }
+
+  .sc li:nth-child(odd) {
+    border-right: 1px solid var(--bdr);
+  }
+
+  .sc li:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
+  .caps {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+    min-width: 150px;
+  }
+
+  .or {
+    padding: 0 3px;
+    color: var(--txt-4);
+  }
+
+  .act {
+    color: var(--txt-2);
+  }
+
+  .px {
+    list-style: none;
+  }
+
+  .px li {
+    display: grid;
+    grid-template-columns: 34px 80px auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--bdr);
+    font-size: 12px;
+  }
+
+  .px li:last-child {
+    border-bottom: 0;
+  }
+
+  .px-p {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    border: 1px solid var(--amber-line);
+    background: var(--amber-wash);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--amber);
+  }
+
+  .px-n {
+    color: var(--txt);
+  }
+
+  .px-ex {
+    color: var(--cyan);
+  }
+
+  .px-r {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--txt-3);
+  }
+
+  @media (max-width: 1100px) {
+    .keys-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 720px) {
+    .sc { grid-template-columns: minmax(0, 1fr); }
+    .sc li:nth-child(odd) { border-right: 0; }
+    .sc li:nth-last-child(2) { border-bottom: 1px solid var(--bdr); }
+    .caps { min-width: 120px; }
+    .px li { grid-template-columns: 34px minmax(0, 1fr) auto; }
+    .px-r { grid-column: 2 / -1; }
+  }
+</style>

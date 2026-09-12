@@ -1,40 +1,43 @@
 ---
-import { GITHUB, DOCS, PYPI, LICENSE, MAILTO, COMPOSIO } from '../data/links';
+import { GITHUB, RELEASES, ISSUES, LICENSE, MAILTO, AUTHOR, VERSION, repoDoc } from '../data/links';
 const year = new Date().getFullYear();
+const base = Astro.url.pathname === '/' ? '' : '/';
 
 const cols = [
   {
-    title: 'product',
-    links: [
-      { label: 'Recipes', href: '#recipes' },
-      { label: 'Your store', href: '#store' },
-      { label: 'Guardrails', href: '#trust' },
-      { label: 'Workflows', href: '/usecases' },
-      { label: 'Comparisons', href: '/comparisons' },
-      { label: 'Commands', href: '#commands' },
-    ],
+    title: 'site',
+    links: ['bench', 'why', 'features', 'arch', 'keys', 'cli', 'install'].map((s) => ({ label: s, href: `${base}#${s}` })),
   },
   {
-    title: 'resources',
+    title: 'docs',
+    links: ['README.md', 'BENCHMARKS.md', 'ARCHITECTURE.md', 'STYLING.md', 'CONTRIBUTING.md'].map((d) => ({
+      label: d,
+      href: repoDoc(d),
+      ext: true,
+    })),
+  },
+  {
+    title: 'project',
     links: [
-      { label: 'Documentation', href: DOCS, ext: true },
       { label: 'GitHub', href: GITHUB, ext: true },
-      { label: 'PyPI', href: PYPI, ext: true },
-      { label: 'Composio', href: COMPOSIO, ext: true },
+      { label: 'Releases', href: RELEASES, ext: true },
+      { label: 'Issues', href: ISSUES, ext: true },
       { label: 'MIT License', href: LICENSE, ext: true },
+      { label: 'Email', href: MAILTO },
     ],
   },
 ];
 ---
 
 <footer>
-  <div class="container footer-inner">
+  <div class="wrap footer-inner">
     <div class="f-brand">
       <a href="/" class="logo-link" aria-label="px0 home">
         <img src="/logo/px0-logo-dark.png" alt="px0" class="logo-img logo-dark" />
         <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
       </a>
-      <p>An agent that works the way you work.</p>
+      <p>The read-only IDE for the AI-agent era. Agents write, you verify. Starts in under a millisecond, idles at about 16 MB.</p>
+      <span class="f-ver"><i></i>v{VERSION} · stable channel</span>
     </div>
 
     {cols.map((c) => (
@@ -43,31 +46,27 @@ const cols = [
         {c.links.map((l) => (
           <a
             href={l.href}
-            target={l.ext ? '_blank' : undefined}
-            rel={l.ext ? 'noopener noreferrer' : undefined}
+            target={'ext' in l && l.ext ? '_blank' : undefined}
+            rel={'ext' in l && l.ext ? 'noopener noreferrer' : undefined}
           >{l.label}</a>
         ))}
       </nav>
     ))}
-
-    <div class="f-col">
-      <h3>contact</h3>
-      <a href={MAILTO}>Email</a>
-    </div>
   </div>
 
-  <div class="container f-base">
-    <span>&copy; {year} px0 &middot; MIT licensed</span>
+  <div class="wrap f-base">
+    <span>&copy; {year} px0 · MIT licensed</span>
+    <span>built by <a href={AUTHOR} target="_blank" rel="noopener noreferrer">Arpit Bhayani</a></span>
   </div>
 
-  <div class="f-wordmark" aria-hidden="true">px0</div>
+  <div class="f-wordmark" aria-hidden="true">px<span>[</span>0<span>]</span></div>
 </footer>
 
 <style>
   footer {
+    padding: 56px 0 0;
     border-top: 1px solid var(--bdr);
-    margin-top: 40px;
-    padding: 56px 0 28px;
+    overflow: hidden;
   }
 
   .footer-inner {
@@ -77,82 +76,98 @@ const cols = [
     padding-bottom: 40px;
   }
 
-  .f-brand .logo-img { height: 24px; }
-
   .f-brand p {
+    max-width: 320px;
     margin-top: 14px;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.7;
     color: var(--txt-2);
-    max-width: 300px;
+  }
+
+  .f-ver {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .f-ver i {
+    width: 6px;
+    height: 6px;
+    background: var(--green);
   }
 
   .f-col {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .f-col h3 {
-    font-family: var(--mono);
+    margin-bottom: 4px;
     font-size: 10.5px;
-    letter-spacing: 0.16em;
+    font-weight: 500;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--txt-4);
-    margin-bottom: 2px;
+    color: var(--txt-3);
   }
 
   .f-col a {
-    font-size: 13px;
+    width: fit-content;
+    font-size: 12px;
     color: var(--txt-2);
     transition: color 0.15s;
-    width: fit-content;
   }
 
-  .f-col a:hover { color: var(--amber); }
+  .f-col a:hover {
+    color: var(--amber);
+  }
 
   .f-base {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 16px;
     flex-wrap: wrap;
-    padding-top: 22px;
+    gap: 12px;
+    padding-top: 18px;
+    padding-bottom: 18px;
     border-top: 1px solid var(--bdr);
-    font-family: var(--mono);
     font-size: 11px;
-    color: var(--txt-4);
+    color: var(--txt-3);
   }
 
   .f-base a {
-    color: var(--txt-3);
-    border-bottom: 1px solid var(--bdr);
+    color: var(--txt-2);
   }
 
-  .f-base a:hover { color: var(--amber); }
-
-  @media (max-width: 860px) {
-    .footer-inner {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 32px;
-    }
-    .f-brand { grid-column: span 2; }
+  .f-base a:hover {
+    color: var(--amber);
   }
 
   .f-wordmark {
-    width: 100%;
-    overflow: hidden;
-    padding: 0 28px;
-    margin-top: 8px;
-    font-family: var(--display);
-    font-size: clamp(120px, 22vw, 320px);
-    font-weight: 700;
-    line-height: 0.78;
-    letter-spacing: -0.05em;
+    padding-inline: 16px;
+    font-size: clamp(90px, 21vw, 300px);
+    font-weight: 800;
+    line-height: 0.8;
+    letter-spacing: -0.07em;
     text-align: center;
     color: var(--txt);
-    opacity: 0.06;
+    opacity: 0.05;
     user-select: none;
     pointer-events: none;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 860px) {
+    .footer-inner {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+    }
+    .f-brand { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 480px) {
+    .footer-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

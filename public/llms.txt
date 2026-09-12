@@ -1,32 +1,32 @@
-# px0 - An agent that works the way you work
+# px0 - Read-only IDE for the AI-agent era
 
-> px0 turns a plain-English description of a recurring job into a Markdown workflow you can run, schedule, and edit. Everything lives in one directory on your machine (`~/.px0`). There is no server, no account, and no hosted state. Workflows reach 1,000+ external apps through Composio, and the model backend is a coding agent CLI you already sign into (claude, gemini, pi, or opencode).
+> px0 is a browser-based, read-only IDE and code navigator packaged as a single static Go binary. It is built for reviewing, auditing, and navigating code that coding agents generate from the terminal. It starts in under 1 ms, idles at ~16 MB of resident memory, and provides fuzzy file search, document symbols, project-wide regex search, syntax highlighting for ~280 languages, and optional LSP go-to-definition, hover, and references across repositories with tens of thousands of files.
 
-This index is written for large language models and AI agents. It maps the px0 product, its concepts, and its command surface.
+This index is written for large language models and AI agents. It maps the px0 product, its performance characteristics, and its command surface.
 
 ## Core resources
 
-- [Home page](https://px0.ai): what px0 is, how a workflow gets built, and how to install it.
-- [Documentation](https://docs.px0.ai): tutorials, workflow file format, CLI reference, configuration.
-- [GitHub repository](https://github.com/px0-ai/px0): source, issues, and the install script.
-- [PyPI package](https://pypi.org/project/px0/): the published `px0` distribution.
+- [Home page](https://px0.ai): what px0 is, benchmarks, features, architecture, shortcuts, and installation.
+- [GitHub repository](https://github.com/px0-ai/px0): source, issues, releases, and the install script.
+- [README](https://github.com/px0-ai/px0/blob/master/README.md): installation, features, flags, shortcuts.
+- [BENCHMARKS.md](https://github.com/px0-ai/px0/blob/master/BENCHMARKS.md): methodology and full results.
+- [ARCHITECTURE.md](https://github.com/px0-ai/px0/blob/master/ARCHITECTURE.md): internals and performance optimizations.
+- [STYLING.md](https://github.com/px0-ai/px0/blob/master/STYLING.md): theme token reference.
 
 ## What px0 is
 
-- A single CLI (`px0`), installed with pipx, running entirely on the user's machine.
-- A store at `~/.px0` (override with `PX0_HOME`) holding `workflows/`, `guidelines/`, `brain/`, and `output/`, all plain Markdown.
-- A workflow builder: `px0 workflows new "<sentence>"` runs four passes (clarify, discover, confirm, plan) and writes a workflow file.
-- A scheduler: `px0 daemon install` picks launchd, systemd, or cron, fires due workflows, and backfills fires the machine slept through.
-- A brain: `px0 brain add` ingests URLs, PDFs, docs, and video transcripts; `px0 brain ask` answers questions over them with citations.
-- An MCP server: `px0 mcp serve` exposes the brain and the workflow list over the Model Context Protocol, so an agent can query and run them without being told how the CLI works.
-- A provenance trail: every run records its inputs, the guideline versions inlined, and every tool call; `px0 runs why <run-id>` explains how an output came to be.
+- A single static Go binary (no Electron, no Node, no CGO) that embeds its HTML, CSS, and JS UI.
+- Run `px0 [directory]`: it starts a local server on 127.0.0.1:7777, prints the URL, and opens the browser while indexing runs in the background.
+- Navigation: fuzzy go-to-file, go-to-symbol, full-workspace regex search, find in file, go to line, back and forward history.
+- Optional language servers (gopls, rust-analyzer, typescript-language-server, pyright or ruff, clangd, zls, lua-language-server, solargraph) are detected on `$PATH`, spawned lazily, and fall back to a regex outline when absent.
+- 14 built-in themes; Tokyo Night is the default.
 
 ## What px0 is not
 
-- Not a hosted service, SaaS dashboard, or prompt registry.
-- Not an SDK you embed in an application.
-- Not a direct-API LLM client: it shells out to a coding agent CLI as its model backend.
+- Not an editor: it has no write endpoints and does not modify files.
+- Not a plugin host: there is no extension marketplace.
+- Not a hosted service: it runs locally; the only outbound request is a daily release check against the GitHub API.
 
 ## Full context
 
-- [Full site content](/llms-full.txt): a single consolidated Markdown file covering positioning, concepts, guardrails, store layout, and the command surface.
+- [Full site content](/llms-full.txt): a single consolidated Markdown file covering positioning, benchmarks, architecture, flags, shortcuts, and installation.

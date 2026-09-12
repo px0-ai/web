@@ -1,271 +1,251 @@
 ---
-import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
+import { GITHUB, RELEASES, INSTALL_CMD, VERSION } from '../data/links';
+import { TARGETS, LSP_SERVERS } from '../data/px0';
 
-const needs = [
-  { k: 'Python 3.11+', v: 'the installer bootstraps pipx if you do not have it' },
-  { k: 'A coding agent CLI', v: 'claude, gemini, pi, or opencode, whichever you already sign into' },
-  { k: 'A Composio API key', v: 'only for workflows that reach other apps; add it whenever' },
-];
-
-const steps = [
-  { n: '1', cmd: 'px0 init', note: 'scaffolds ~/.px0 and asks for your Composio key' },
-  { n: '2', cmd: 'px0 workflows new', note: 'answer "what do you want px0 to do?"; it writes the file' },
-  { n: '3', cmd: 'px0 workflows run <id> --dry-run', note: 'resolve every input, call nothing' },
-  { n: '4', cmd: 'px0 daemon install', note: 'let the schedule fire on its own' },
-];
+const count = TARGETS.reduce((a, t) => a + t.arch.length, 0);
+const fromSource = `git clone ${GITHUB}.git
+cd px0
+make build
+sudo install px0 /usr/local/bin/`;
 ---
 
-<section class="section" id="install">
-  <div class="container">
-    <div class="cta card reveal">
-      <div class="cta-glow" aria-hidden="true"></div>
+<section class="sec" id="install">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">07</span><span>/install</span></div>
+      <div>
+        <h2 class="sec-title">One binary. <em>Pick a way in.</em></h2>
+        <p class="sec-sub">Install, point it at a repository, and read. Language servers are optional and picked up from your <code class="inline-code">$PATH</code> whenever they exist.</p>
+      </div>
+    </header>
 
-      <div class="cta-inner">
-        <span class="eyebrow">install</span>
-        <h2 class="cta-h">
-          Your next recurring chore<br />
-          <span class="grad">should write itself.</span>
-        </h2>
-        <p class="cta-sub">
-          One command to install. One sentence to your first workflow. Everything it creates stays
-          on your machine, in files you can read.
-        </p>
-
-        <div class="cta-cmd" data-copy={INSTALL_CMD} role="button" tabindex="0" aria-label="Copy install command">
-          <span class="cc-prompt">$</span>
-          <code>{INSTALL_CMD}</code>
-          <span class="cc-copy">
-            <svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <svg class="i-done" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </span>
+    <div class="opts">
+      <div class="pnl ticks reveal">
+        <div class="pnl-h"><span><b>a</b> · quick install</span><span>macos · linux · bsd</span></div>
+        <div class="pnl-b opt">
+          <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
+            <span class="copyline-p">$</span>
+            <code><span>{INSTALL_CMD}</span></code>
+            <span class="copyline-s"></span>
+          </button>
+          <p>Installs or upgrades to the latest release.</p>
+          <dl class="env">
+            <div><dt>VERSION</dt><dd>pin a release, default <code>latest</code></dd></div>
+            <div><dt>INSTALL_DIR</dt><dd><code>/usr/local/bin</code> or <code>~/.local/bin</code></dd></div>
+          </dl>
         </div>
+      </div>
 
-        <div class="cta-btns">
-          <a class="btn btn-primary" href={DOCS} target="_blank" rel="noopener noreferrer">
-            Read the docs
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </a>
-          <a class="btn btn-ghost" href={GITHUB} target="_blank" rel="noopener noreferrer">Browse the source</a>
-        </div>
-
-        <div class="cta-cols">
-          <div class="cta-col">
-            <h3>What you need</h3>
-            <ul class="needs">
-              {needs.map((n) => (
-                <li>
-                  <strong>{n.k}</strong>
-                  <span>{n.v}</span>
-                </li>
-              ))}
-            </ul>
+      <div class="pnl reveal">
+        <div class="pnl-h"><span><b>b</b> · prebuilt binary</span><span>{count} targets</span></div>
+        <div class="pnl-b opt">
+          <div class="targets">
+            {TARGETS.map((t) => (
+              <div class="tg"><span class="tg-os">{t.os}</span><span class="tg-arch">{t.arch.map((a) => <span>{a}</span>)}</span></div>
+            ))}
           </div>
-
-          <div class="cta-col">
-            <h3>First four commands</h3>
-            <ol class="steps">
-              {steps.map((s) => (
-                <li>
-                  <span class="s-n">{s.n}</span>
-                  <code>{s.cmd}</code>
-                  <span class="s-note">{s.note}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
+          <pre class="snip"><span class="s-dim">$</span> sudo install px0-{VERSION}-darwin-arm64 /usr/local/bin/px0</pre>
+          <a class="more" href={RELEASES} target="_blank" rel="noopener noreferrer">GitHub releases →</a>
         </div>
+      </div>
 
-        <p class="cta-tail">
-          Want to try it without connecting anything? The brain needs nothing beyond
-          <code class="inline-code">px0 init</code>. Add a post with
-          <code class="inline-code">px0 brain add &lt;url&gt;</code> and ask it a question.
-        </p>
+      <div class="pnl reveal">
+        <div class="pnl-h"><span><b>c</b> · from source</span><span>go 1.24+</span></div>
+        <div class="pnl-b opt">
+          <pre class="snip">{fromSource}</pre>
+          <p>No npm, no node, no CGO, no system libraries. <code class="inline-code">make dist</code> cross-compiles all {count} targets.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pnl reveal lsp">
+      <div class="pnl-h"><span>optional · language servers for go to definition, hover, references</span><span>click a command to copy</span></div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>language</th><th>server</th><th>install</th></tr></thead>
+          <tbody>
+            {LSP_SERVERS.map((s) => (
+              <tr>
+                <td>{s.lang}</td>
+                <td class="srv">{s.server}</td>
+                <td><button class="cmd" type="button" data-copy={s.cmd}><span class="s-dim">$</span> {s.cmd}</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="final ticks reveal">
+      <p class="final-cmd"><span class="s-dim">$</span> px0<span class="caret"></span></p>
+      <p class="final-sub">Your codebase, open in the time it takes to read this line.</p>
+      <div class="final-cta">
+        <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">Star on GitHub</a>
+        <a class="btn btn-ghost" href={RELEASES} target="_blank" rel="noopener noreferrer">Download v{VERSION}</a>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .cta {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--r-xl);
-    background: var(--bg-elev);
-    box-shadow: var(--shadow-float);
-  }
-
-  .cta-glow {
-    position: absolute;
-    inset: -40% -10% auto -10%;
-    height: 480px;
-    background: radial-gradient(48% 60% at 50% 40%, var(--amber-glow), transparent 70%);
-    filter: blur(50px);
-    opacity: 0.8;
-    pointer-events: none;
-  }
-
-  .cta-inner {
-    position: relative;
-    padding: 64px 56px 56px;
-  }
-
-  .cta-h {
-    font-family: var(--display);
-    font-size: clamp(28px, 3.6vw, 44px);
-    font-weight: 700;
-    line-height: 1.06;
-    letter-spacing: -0.035em;
-    margin-bottom: 16px;
-  }
-
-  .cta-sub {
-    font-size: 15.5px;
-    line-height: 1.72;
-    color: var(--txt-2);
-    max-width: 560px;
-  }
-
-  .cta-cmd {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    max-width: 760px;
-    margin: 30px 0 22px;
-    padding: 15px 18px;
-    border: 1px solid var(--amber-line);
-    border-radius: var(--r);
-    background: var(--code-bg);
-    font-family: var(--mono);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .cta-cmd:hover,
-  .cta-cmd:focus-visible {
-    background: var(--amber-wash);
-    outline: none;
-  }
-
-  .cc-prompt { color: var(--amber); flex-shrink: 0; }
-
-  .cta-cmd code {
-    flex: 1;
-    min-width: 0;
-    font-size: 12.5px;
-    line-height: 1.6;
-    color: var(--txt);
-    word-break: break-all;
-  }
-
-  .cc-copy { display: inline-flex; color: var(--txt-3); flex-shrink: 0; }
-  .cta-cmd .i-done { display: none; }
-  .cta-cmd.copied .i-copy { display: none; }
-  .cta-cmd.copied .i-done { display: block; color: var(--green); }
-
-  .cta-btns {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-
-  .cta-cols {
+  .opts {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-    gap: 44px;
-    margin-top: 52px;
-    padding-top: 40px;
-    border-top: 1px solid var(--bdr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
   }
 
-  .cta-col h3 {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--txt-3);
-    margin-bottom: 18px;
-  }
-
-  .needs {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .needs li {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .needs strong {
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  .needs span {
-    font-size: 13px;
-    color: var(--txt-2);
-    line-height: 1.6;
-  }
-
-  .steps {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .steps li {
-    display: grid;
-    grid-template-columns: 20px minmax(0, auto) minmax(0, 1fr);
-    align-items: baseline;
-    gap: 12px;
-  }
-
-  .s-n {
-    font-family: var(--mono);
-    font-size: 11px;
+  .pnl-h b {
     color: var(--amber);
   }
 
-  .steps code {
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--txt);
-    white-space: nowrap;
+  .opt {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: calc(100% - 37px);
   }
 
-  .s-note {
-    font-size: 12.5px;
-    color: var(--txt-3);
-    line-height: 1.6;
-  }
-
-  .cta-tail {
-    margin-top: 40px;
-    padding-top: 26px;
-    border-top: 1px dashed var(--bdr);
-    font-size: 13.5px;
-    line-height: 1.75;
+  .opt p {
+    font-size: 12px;
+    line-height: 1.65;
     color: var(--txt-2);
-    max-width: 720px;
   }
 
-  @media (max-width: 900px) {
-    .cta-inner { padding: 44px 26px 40px; }
-    .cta-cols { grid-template-columns: minmax(0, 1fr); gap: 34px; margin-top: 40px; }
-    .steps li { grid-template-columns: 18px minmax(0, 1fr); }
-    .steps .s-note { grid-column: 2; }
-    .steps code { white-space: normal; word-break: break-word; }
+  .env div {
+    display: flex;
+    gap: 12px;
+    padding: 5px 0;
+    border-top: 1px solid var(--bdr);
+    font-size: 11.5px;
+  }
+
+  .env dt {
+    width: 11ch;
+    flex-shrink: 0;
+    color: var(--cyan);
+  }
+
+  .env dd {
+    color: var(--txt-3);
+  }
+
+  .env code {
+    color: var(--txt);
+  }
+
+  .targets {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tg {
+    display: flex;
+    gap: 10px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--bdr);
+    font-size: 11.5px;
+  }
+
+  .tg-os {
+    width: 8ch;
+    color: var(--txt);
+  }
+
+  .tg-arch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .tg-arch span {
+    padding: 0 5px;
+    background: var(--surface-2);
+    color: var(--txt-2);
+    font-size: 10.5px;
+  }
+
+  .snip {
+    padding: 10px 12px;
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--txt);
+    overflow-x: auto;
+  }
+
+  .more {
+    margin-top: auto;
+    font-size: 11.5px;
+    color: var(--amber);
+  }
+
+  .more:hover {
+    text-decoration: underline;
+  }
+
+  .lsp {
+    margin-top: 16px;
+  }
+
+  .lsp .tbl {
+    min-width: 640px;
+  }
+
+  .lsp .srv {
+    color: var(--txt);
+  }
+
+  .cmd {
+    border: 0;
+    background: none;
+    font-size: 11.5px;
+    color: var(--txt-2);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .cmd:hover {
+    color: var(--amber);
+  }
+
+  .cmd.copied::after {
+    content: '  copied';
+    color: var(--green);
+  }
+
+  .final {
+    margin-top: 56px;
+    padding: 56px 24px;
+    border: 1px solid var(--bdr);
+    background: radial-gradient(60% 100% at 50% 100%, var(--amber-wash), transparent 70%), var(--bg-elev);
+    text-align: center;
+  }
+
+  .final-cmd {
+    font-size: clamp(40px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .final-sub {
+    margin-top: 16px;
+    font-size: 13.5px;
+    color: var(--txt-2);
+  }
+
+  .final-cta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 26px;
+  }
+
+  @media (max-width: 1100px) {
+    .opts { grid-template-columns: minmax(0, 1fr); }
+    .opt { height: auto; }
   }
 </style>

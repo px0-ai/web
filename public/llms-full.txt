@@ -1,216 +1,121 @@
-# px0 - An agent that works the way you work
+# px0 - Read-only IDE for the AI-agent era
 
-> px0 is a local-first open-source CLI where everything the system does is a workflow. Describe a recurring job in plain English and px0 writes it as a Markdown workflow you can run, schedule, and edit - on your machine, wired to 1,000+ apps through Composio. No server, no account, no hosted state.
+> px0 is a lightning-fast, zero-bloat, browser-based, read-only IDE built for the AI-agent era. It starts in under 1 ms, uses ~16 MB of RAM, and turns the browser into an instant verification console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.
 
 ## Positioning
 
-Most people have a handful of jobs they redo by hand every week: the Friday digest of pull requests they reviewed, the morning brief of meetings and unanswered mail, the release notes drafted from commits, the finance sheet updated from payments. Each one is a sequence of the same steps, done slightly differently every time.
+Coding agents, harnesses, and orchestrators now generate code directly from the terminal. Developers spend less time typing and more time in review, audit, and navigation mode:
 
-px0 takes one sentence describing that job and writes it as a workflow file. The file carries its own schedule, its own inputs, the tools it may call, and the conventions it should write in. It runs when you ask, or on its own once the scheduler is installed.
+- Terminals drive generation: agents write the code, run tests, and manage workflows.
+- Developers drive verification: inspecting changes, verifying symbol references, browsing surrounding context, and reviewing architecture.
+- Traditional IDEs are overkill for this: booting an Electron app or a resource-intensive IDE suite just to inspect agent output costs gigabytes of memory and seconds of startup.
 
-Workflows do not stop at the laptop. Through Composio, a workflow can reach hundreds of apps already in use: GitHub, Slack, Gmail, Google Calendar, Notion, Linear, Jira, Google Sheets, Salesforce, Stripe, Zendesk, Sentry, and over a thousand more.
+px0 does the remaining job exceptionally well: an instant, distraction-free environment to read, explore, and verify code, with full LSP intelligence and search at near-zero overhead.
 
-## What px0 is for
+| Parameter | Traditional IDE (such as VS Code) | px0 |
+| --------- | --------------------------------- | --- |
+| Primary purpose | Manual code authoring and plugin host | Instant code reading and navigation |
+| Base memory (RSS) | ~1,440 MB | ~16 MB |
+| Startup CPU spike | 35% - 50% | < 1% |
+| Cold startup | Several seconds | Sub-millisecond |
+| Process tree | 15+ Node.js / Electron processes | 1 static Go binary |
+| Setup | Config files, plugins, node, npm | Zero config, zero runtime |
 
-- Recurring reports assembled by hand every week.
-- Chores that follow the same steps every time: draft the release notes, precheck a pull request, triage overnight alerts, file the standup update.
-- Work that has to sound like you, because px0 follows conventions you write down once.
-- A searchable library of everything you read, so you can ask questions across it later.
+## Features
 
-## How a workflow gets built
+- Fuzzy file search (Cmd/Ctrl+P), document symbols (Cmd/Ctrl+Shift+O), and full project regex search (Cmd/Ctrl+Shift+F) in milliseconds.
+- Syntax highlighting for ~280 languages via Chroma, lexed in bounded windows rather than whole files.
+- 14 built-in themes: Tokyo Night (default), Paper, Catppuccin Latte, Catppuccin Mocha, Dracula, GitHub Dark, Gruvbox Dark, Gruvbox Light, Monokai, Nord, One Dark, Rose Pine, Solarized Dark, Solarized Light.
+- Optional LSP: zero-config detection of gopls, rust-analyzer, pyright, ruff, typescript-language-server, clangd, zls, lua-language-server, and solargraph for go-to-definition (F12), hover, and references (Shift+F12). Falls back to regex outlines when no server is installed.
+- Virtualized rendering: opening a 400,000-line file costs the same as a 10-line file; only visible lines are in the DOM.
+- A terminal-friendly CLI with a 256-colour palette, pipe detection, NO_COLOR support, and a -quiet mode.
+- Self-contained: a single static binary embedding HTML, CSS, and JS.
+- Self-updating: `px0 --update`, plus an asynchronous daily check that never delays startup.
 
-`px0 workflows new "<sentence>"` runs four model passes, each with a job small enough to do well, and stops at the two points where a wrong answer would cost something.
+## Benchmarks
 
-1. Clarify: it asks only what would change the generated file: which channel, which repository, how often, where output goes. Anything with a sensible default is not asked. Pressing Enter skips a question; at most three rounds run. `--no-clarify` skips the pass.
-2. Discover: it writes searches (a toolkit plus a capability phrase, e.g. "github: list pull requests"), not tool names, and px0 looks them up in Composio's catalogue. A slug that does not appear in the search results is discarded, so nothing is invented. `--no-discover` restricts the plan to px0's curated tools.
-3. Confirm: the selected tools are printed with their access level, and you accept all, drop some by number, or abort. Nothing is authorized before this point.
-4. Plan: the workflow is written against exactly those tools, then validated: a tool that does not exist, an input with no tool, or an invalid cron expression stops the build with nothing saved.
+Measured on Linux with language servers disabled (`-no-lsp`), fastest of 5 requests, using `./benchmark.sh` on shallow clones.
 
-Read tools land in `inputs` and run before the prompt. Write tools land in `tools` and are callable by the model during the run. px0 enforces that split, because inputs run unconditionally.
+| Repository | Source | Files | Index | Fuzzy | Full scan | Open big | Reopen | RSS | Peak |
+| ---------- | ------ | ----- | ----- | ----- | --------- | -------- | ------ | --- | ---- |
+| flask | 3 MB | 235 | 1 ms | 0.8 ms | 2.3 ms | n/a | n/a | 16 MB | 18 MB |
+| redis | 26 MB | 1,855 | 13 ms | 1.0 ms | 18.2 ms | 80.8 ms | 1.2 ms | 17 MB | 27 MB |
+| django | 74 MB | 7,014 | 39 ms | 1.3 ms | 26.8 ms | 166.8 ms | 1.0 ms | 20 MB | 29 MB |
+| react | 63 MB | 7,178 | 52 ms | 2.7 ms | 32.2 ms | 57.7 ms | 0.7 ms | 21 MB | 28 MB |
+| kubernetes | 370 MB | 25,926 | 150 ms | 13.5 ms | 84.6 ms | 199.0 ms | 0.9 ms | 30 MB | 44 MB |
+| typescript | 414 MB | 66,533 | 566 ms | 6.2 ms | 150.3 ms | 40.9 ms | 6.5 ms | 69 MB | 105 MB |
+| linux | 1,809 MB | 95,710 | 370 ms | 6.0 ms | 451.8 ms | 26.7 ms | 0.6 ms | 55 MB | 73 MB |
 
-## The workflow file
+Language server path with gopls: server ready after 374 ms (paid once), go to definition 1.5 ms, find all references 3.0 ms, hover 5.1 ms, document outline 1.4 ms. px0 itself stays at 18 MB; gopls runs as a separate process at 122 MB.
 
-A workflow is Markdown: YAML frontmatter as the machine contract, the body as the prompt the model receives.
+Memory is returned to the OS after 15 seconds of inactivity. On the linux kernel, resident memory rises to 94 MB after searching and scrolling, then settles to 57 MB after 30 seconds idle.
 
-```yaml
----
-id: friday-pr-digest
-kind: workflow
-version: 1
-description: Every Friday at 5pm, summarize the GitHub PRs I reviewed this week
-trigger: {schedule: "0 17 * * 5"}
-guidelines: [summarization.md]
-inputs:
-  - id: recent_prs
-    tool: composio:GITHUB_LIST_PULL_REQUESTS
-    args: {owner: px0-ai, repo: px0, state: all}
-tools: [composio:SLACK_SEND_MESSAGE]
-output: {target: file, path: digests/pr-{date}.md}
-timeout: 120s
----
-Summarize {{recent_prs}} as a short digest, then post it to #eng-standup.
+## Architecture
+
+- Single binary distribution: the web UI (~74 KB) is embedded with go:embed.
+- In-memory path index with a bounded parallel directory walk (NumCPU x 4) and a specialized .gitignore engine.
+- Windowed syntax highlighting: 1,000-line chunks with 400 lines of context, a 512 KB window cap, and a 512 MB LRU cache of rendered HTML.
+- Parallel search: whole-file rejection with bytes.Contains, per-worker buffer reuse, and in-place ASCII case folding.
+- Two-pass fuzzy matching in linear time, weighting consecutive runs, word boundaries, camelCase humps, and basename hits.
+- Lazy LSP manager: servers are spawned on the first request for a language and shut down on exit.
+- Frontend DOM virtualization: about 60 live rows with 24 rows of overscan, painted inside requestAnimationFrame.
+
+## Usage
+
+```bash
+px0                 # view the current workspace
+px0 ~/src/kernel    # view another repository
+px0 --update        # upgrade to the latest release
 ```
 
-Field meanings:
+| Flag | Default | Description |
+| ---- | ------- | ----------- |
+| -port N | 7777 | Port to listen on (0 picks an ephemeral free port) |
+| -host H | 127.0.0.1 | Local address to bind |
+| -no-open | false | Do not launch the web browser automatically |
+| -no-lsp | false | Disable language server discovery and use regex-based outline |
+| -no-color | false | Strip ANSI escape sequences from terminal output |
+| -quiet | false | Suppress CLI narration (errors still print to stderr) |
+| -update | false | Check for updates and install the latest version |
+| -version | false | Print version and architecture and exit |
 
-- `request`: the sentence originally typed, kept verbatim for `px0 workflows edit`.
-- `trigger.schedule`: a standard five-field cron expression, evaluated in machine local time.
-- `guidelines`: files inlined into the prompt verbatim by name, never retrieved by similarity.
-- `inputs`: resolved before the prompt; each is a `tool`, `retrieve`, `source`, or `workflow`.
-- `tools`: what the model may call during the run.
-- `output`: `{target: stdout}`, or `{target: file, path: ...}`. A workflow with a schedule must write to a file, since a scheduled run has no terminal to print to. Paths are relative to the store and confined under `output/`; `{date}`, `{datetime}`, and `{time}` are substituted.
-- `timeout`: wall-clock cap on the run.
+## Keyboard shortcuts
 
-A `composio:` prefix marks a tool discovered from the catalogue; `provider.action` ids are px0's curated ones. Both execute identically. There is no compile step: hand-edit the file and the next run picks it up.
+| Key | Action |
+| --- | ------ |
+| Cmd/Ctrl+K | Universal palette / quick open |
+| Cmd/Ctrl+P | Go to file |
+| Cmd/Ctrl+Shift+P | Command palette |
+| Cmd/Ctrl+Shift+O | Go to symbol in file |
+| Cmd/Ctrl+Shift+F | Full workspace search |
+| Cmd/Ctrl+F | Find in active file |
+| Cmd/Ctrl+G | Jump to line |
+| F12, Cmd/Ctrl+Click | Go to definition |
+| Shift+F12 | Find all references |
+| Hover | Type signature and doc hover |
+| Alt+Left / Alt+Right | Navigate back / forward in history |
 
-## Guardrails
-
-- Access per tool comes from Composio's own metadata: `read`, `write`, or `destructive`. px0 never infers access from a tool's name.
-- The confirm gate runs before anything is authorized or written, and write tools are named again once the plan is concrete.
-- px0 minting an authorization URL grants nothing; access exists only after a human consents in the browser.
-- `px0 workflows run --dry-run` resolves real inputs and stubs every write tool.
-- Any run that called a write tool is marked `[write]` in the run list.
-- Anything under `brain/work/` is excluded from every retrieval (a hard exclusion, not a ranking penalty).
-- px0 never edits a file under `guidelines/` on its own. The only way a guideline is created is as a draft `px0 workflows new` writes when a build leans on a convention with no file yet; you keep, redraft, or skip it, and `px0 guidelines edit` is how it becomes yours afterward.
-
-## The store
-
-Everything px0 knows lives in `~/.px0` (override with `PX0_HOME`).
-
-| Folder | What is in it |
-| --- | --- |
-| `workflows/` | The jobs px0 can run |
-| `guidelines/` | How you work |
-| `brain/` | What you have read and kept |
-| `output/` | What runs produced |
-| `tools/` | Tools you declared yourself, one TOML file each |
-| `config.toml` | Every setting |
-
-All of it is plain Markdown, readable in any editor. px0 keeps its own version history, so the store works as a bare directory with nothing else installed alongside it: no git required. `px0 changes list`, `px0 changes show <id>`, and `px0 changes revert <id>` walk and undo that history; `px0 store export` copies content and history elsewhere, and `px0 store import` loads it back.
-
-## Guidelines
-
-Guidelines are prescriptive prose: how commit messages are worded, what a Go review checks, the voice a summary is written in. A workflow declares which guideline files it uses, and those files are inlined into the prompt deterministically at run time.
-
-There is no `px0 guidelines new`. The only way a guideline is created is a draft `px0 workflows new` writes when the build it is running leans on a convention no file yet covers: it drafts the guideline from the workflow itself, shows it to you, and lists it on the workflow so every run inlines it. `px0 guidelines edit <name>` is how a draft becomes yours.
-
-Every guideline claim (each `##` heading) is addressable as `<path>#<heading-slug>`, so `px0 guidelines log <claim-id>` walks a single claim's version history; hand edits are picked up too. `px0 guidelines list`, `px0 guidelines show <name>`, and `px0 guidelines rm <name>` round out the group.
-
-## The brain and retrieval
-
-`px0 brain add` ingests a web page, PDF, document, or video transcript; extraction runs locally and the destination folder follows the source type (`blogs/`, `papers/`, `docs/`). A YouTube link with no transcript is filed as an indexed metadata-only stub and can be upgraded later with `px0 brain refresh`. Playlist URLs are queued and drained by the daemon's nightly pass.
-
-`px0 brain ask` retrieves the relevant passages and answers from them, citing what it used with `--sources`. Every ask is recorded as a run, so `px0 runs why` can explain which passages fed an answer. `brain.path` can point outside the store entirely, at an existing Obsidian vault or any folder of Markdown; px0 reads it in place and never writes to it.
-
-Two retrieval backends:
-
-| Backend | What you get | Cost |
-| --- | --- | --- |
-| `local` (default) | SQLite FTS5 keyword matching with BM25 ranking, embedded | Nothing to install |
-| `qmd` | Hybrid keyword + vector search with LLM reranking | Needs the qmd CLI and about 2GB of local models |
-
-Switching to `qmd` prints the model download sizes and waits for explicit consent; declining keeps keyword indexing rather than breaking.
-
-## Connections
-
-Every tool routes through Composio. There is one API key to set (`px0 config composio <key>`, also asked for by `px0 init`) and no per-app connect command. Apps authorize themselves: the first time a workflow needs Gmail, px0 prepares Gmail's authorization and prints the URL to approve. The key needs write access to `auth_configs`, which is the permission that lets px0 prepare an authorization on your behalf.
-
-`px0 tools list` shows every tool a workflow can call and whether it reads or writes; `--status` adds authorization state per provider (`ready`, `not authorized`, `consent pending`, `authorization failed`, `authorization gone`). `px0 doctor` fails with exit code 4 on any stored authorization that is not active.
-
-Transient connector failures are retried per `connectors.retries` (default 3) so a network blip does not fail a scheduled workflow. On a TLS-intercepting corporate network, px0 detects the interception, retries against a system CA bundle that trusts it, and records the bundle; it never silently disables verification.
-
-## Scheduling
-
-A workflow with `trigger.schedule` needs something watching the clock: `px0d`, installed with `px0 daemon install`. px0 picks launchd on macOS, systemd (user session) on Linux where available, and cron elsewhere (`--fallback-cron` forces it).
-
-The loop polls every 30 seconds, spawns anything due, and runs one housekeeping pass a day: a checkpoint scan for hand edits, a reindex of `brain/`, draining the ingest queue, log retention, and a weekly update check. Each step is fault-isolated.
-
-Missed fires are not dropped. On startup and every tick, px0 compares each workflow's schedule against its last recorded fire and runs what it owes you, marking anything discovered well after it was due as late.
-
-## Runs and provenance
-
-Every run (manual, scheduled, or an ask) leaves a record: the inputs it resolved, the guideline versions it inlined, every tool call with its timing, and the outcome. `px0 runs` opens an interactive browser over those records with filters for workflow, outcome, age, and write activity; every view has a plain-text equivalent (`px0 runs list`, `px0 runs show`, `px0 runs output`, `px0 runs logs`, `px0 runs rerun`). `px0 runs why <run-id>` walks the whole provenance chain.
-
-## MCP
-
-`px0 mcp serve` speaks the Model Context Protocol over stdin and stdout, no MCP SDK, just `initialize`, `tools/list`, and `tools/call`. It exposes `brain_ask`, `brain_search`, `workflows_list`, `guidelines_list`, and `guideline_read` by default; `workflow_run` is listed and callable only with `--allow-runs`, since running a workflow can post, send, or file something. Claude Code and most MCP clients register it as a command: `px0 mcp serve`, with `PX0_HOME` set in its environment when that client's environment differs from the shell it was installed from.
-
-## Model backend
-
-px0 shells out to a coding agent CLI in non-interactive mode, reusing that CLI's own auth, model choice, and rate limits. There is no direct-API backend. `claude -p` is the default; `px0 init --harness gemini|pi|opencode` picks the right invocation for another, and any command works when set directly as `model.harness_cmd` in `config.toml`. `px0 config model` switches it interactively and invokes the result before saving, so a typo'd model name or missing key fails there rather than mid-workflow.
-
-## Output conventions
-
-On a terminal px0 uses colour sparingly and shows a spinner while something slow happens. Piped anywhere, all of that disappears: no escape sequences, no spinner redraws, and status glyphs become `[OK]` / `[FAIL]` so output stays greppable. `--json` implies plain output everywhere. `--no-color` and `NO_COLOR=1` force plain on a terminal; `FORCE_COLOR=1` keeps colour through a pipe.
+The palette switches mode on its first character: `>` for commands, `@` for symbols, `:` for a line number, and no prefix for fuzzy file paths.
 
 ## Installation
 
-Requirements: Python 3.11 or newer; a coding agent CLI (`claude`, `gemini`, `pi`, or `opencode`) as the model backend; optionally a Composio API key for workflows that reach other apps.
+Quick install (macOS, Linux, BSD):
 
-```shell
-curl -fsSL https://px0.ai/install.sh | sh
-px0 doctor
+```bash
+curl -fsSL https://raw.githubusercontent.com/px0-ai/px0/master/install.sh | bash
 ```
 
-The installer bootstraps pipx if missing, installs px0 from PyPI, runs `px0 init`, and offers to install the scheduler daemon. Environment knobs: `PX0_VERSION` pins a version, `PX0_CHANNEL=beta` installs pre-releases, `PX0_PREFIX` sets the binary directory, `PX0_NO_DAEMON=true` skips the daemon offer. `sh install.sh --uninstall` removes the binary and leaves the store alone.
+Prebuilt binaries for 15 OS and architecture combinations (darwin, linux, freebsd, openbsd, netbsd, windows) are on GitHub Releases.
 
-From a clone:
+From source (Go 1.24 or newer, no npm, no node, no CGO):
 
-```shell
-python -m venv venv
-source venv/bin/activate
-pip install -e '.[dev]'
+```bash
+git clone https://github.com/px0-ai/px0.git
+cd px0
+make build
+sudo install px0 /usr/local/bin/
 ```
 
-## First steps
+## License
 
-```shell
-px0 init
-px0 workflows new "every friday at 5pm, summarize the github pull requests I reviewed this week and post it to #eng-standup"
-px0 workflows run friday-pr-digest --dry-run
-px0 workflows run friday-pr-digest
-px0 daemon install
-```
-
-The fastest path that needs no app setup at all is the brain:
-
-```shell
-px0 brain add https://example.com/some-post
-px0 brain ask "what did that post say about caching?"
-```
-
-## Command surface
-
-The shape is entity first, then the verb. The only flat commands are the ones that act on the install rather than on anything in the store: `init`, `doctor`, `status`, `version`, `update`, `completion`.
-
-| Command | What it does |
-| --- | --- |
-| `px0 workflows new` | Turn a sentence into a workflow |
-| `px0 workflows run` | Run one now, or pick from a list |
-| `px0 workflows edit` | Revise the request and rebuild the workflow |
-| `px0 workflows list` | Every workflow in the store |
-| `px0 brain add` | Ingest a URL or file |
-| `px0 brain ask` | Answer a question from the library |
-| `px0 brain search` | Retrieve matching passages |
-| `px0 brain reindex` | Rebuild the retrieval index |
-| `px0 guidelines list` | Every guideline, numbered |
-| `px0 guidelines edit` | Reword a draft into your voice |
-| `px0 guidelines log` | One claim's edit history |
-| `px0 mcp serve` | Serve the brain and workflows over MCP |
-| `px0 runs` | Browse, filter, and re-run past runs |
-| `px0 runs why` | How a run reached its result |
-| `px0 changes list` | What changed, across the store |
-| `px0 changes revert` | Undo a recorded change |
-| `px0 tools list --status` | What can be called, and what is authorized |
-| `px0 daemon install` | Run workflows on a schedule |
-| `px0 config list` | Every setting, with its default |
-| `px0 store export` | Copy content and history elsewhere |
-| `px0 status` | Whether anything needs attention |
-| `px0 doctor` | Check that everything is wired up |
-| `px0 update` | Upgrade, with store migrations and rollback |
-
-Every command takes `--help`.
-
-## Licensing and authorship
-
-px0 is released under the MIT License. It is built by Arpit Bhayani (https://arpitbhayani.me).
+MIT License. Created by Arpit Bhayani.

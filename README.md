@@ -1,6 +1,6 @@
 # px0 web
 
-Source for [px0.ai](https://px0.ai) - the landing page for [px0](https://github.com/px0-ai/px0), the Open Source Prompt Infrastructure.
+Source for [px0.ai](https://px0.ai) - the landing page for [px0](https://github.com/px0-ai/px0), the read-only IDE for the AI-agent era.
 
 ## Getting started
 
@@ -34,8 +34,8 @@ npm run preview
 
 ```
 src/
-  components/   # Nav, Hero, Features, Footer
-  data/         # Shared constants (links, URLs)
+  components/   # Nav, Hero (interactive IDE mock), Bench, Why, Features, Arch, Keys, Cli, Install, Footer
+  data/         # links, px0 facts and benchmark numbers, IDE themes
   layouts/      # Base HTML layout
   pages/        # index.astro
   styles/       # global.css

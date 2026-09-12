@@ -1,0 +1,415 @@
+---
+import { repoDoc } from '../data/links';
+
+const engines = [
+  { k: 'router', v: 'HTTP · JSON · pooled gzip' },
+  { k: 'index', v: 'paths + tree, .gitignore aware' },
+  { k: 'search', v: 'parallel worker pool' },
+  { k: 'highlight', v: 'chroma, windowed, LRU' },
+  { k: 'lsp manager', v: 'lazy spawn, regex fallback' },
+  { k: 'scavenger', v: 'FreeOSMemory after 15 s idle' },
+];
+
+const groups = [
+  {
+    t: 'index',
+    rows: [
+      ['walk semaphore', 'NumCPU × 4'],
+      ['ignore rules', 'segment · suffix · path, regex last'],
+      ['dir symlinks', 'skipped, no cycles'],
+      ['startup', 'listen first, index in background'],
+    ],
+  },
+  {
+    t: 'highlight',
+    rows: [
+      ['hlChunk', '1,000 lines'],
+      ['hlContext', '400 lines'],
+      ['hlWindowBytes', '512 KB'],
+      ['bgLimit', '2 MB exact pass'],
+      ['cacheBudget', '512 MB LRU'],
+    ],
+  },
+  {
+    t: 'search',
+    rows: [
+      ['fast reject', 'bytes.Contains on whole file'],
+      ['buffers', 'reused per worker'],
+      ['case fold', 'in-place ASCII lower'],
+      ['snipLead', '32 runes'],
+    ],
+  },
+  {
+    t: 'frontend',
+    rows: [
+      ['live rows', '~60'],
+      ['OVERSCAN', '24 rows'],
+      ['paint', 'requestAnimationFrame'],
+      ['measure', 'offscreen, sub-pixel ch'],
+    ],
+  },
+];
+
+const weights = [
+  { k: 'query verbatim in basename', w: 40 },
+  { k: 'basename starts with query', w: 20 },
+  { k: 'start of a path or word', w: 16 },
+  { k: 'camelCase hump', w: 14 },
+  { k: 'inside the basename', w: 14 },
+  { k: 'consecutive run', w: 12 },
+  { k: 'exact case', w: 4 },
+];
+const penalties = [
+  ['gap between hits', '−min(gap, 12)'],
+  ['path length', '−len / 8'],
+  ['depth', '−2 per /'],
+];
+---
+
+<section class="sec" id="arch">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">04</span><span>/arch</span></div>
+      <div>
+        <h2 class="sec-title">One process. <em>No runtime.</em></h2>
+        <p class="sec-sub">
+          A Go server that owns indexing, search, highlighting, and language servers, talking JSON to a
+          zero-dependency ES module frontend. The speed comes from a pile of small, boring decisions.
+        </p>
+      </div>
+    </header>
+
+    <div class="arch reveal">
+      <div class="node">
+        <div class="node-h"><span>browser</span><span>vanilla js</span></div>
+        <ul>
+          <li>virtual rows <em>~60 nodes</em></li>
+          <li>fuzzy & tree cache</li>
+          <li>offscreen font measure</li>
+          <li>rAF-throttled paint</li>
+        </ul>
+      </div>
+
+      <div class="link" aria-hidden="true">
+        <span>json · gzip</span>
+        <span class="wire"><i></i><i></i><i></i></span>
+        <span>127.0.0.1:7777</span>
+      </div>
+
+      <div class="node node--core ticks">
+        <div class="node-h"><span>px0 · one go process</span><span class="s-warn">~16 MB</span></div>
+        <div class="engines">
+          {engines.map((e) => (
+            <div class="eng"><b>{e.k}</b><span>{e.v}</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div class="link" aria-hidden="true">
+        <span>read · stdio</span>
+        <span class="wire wire--rev"><i></i><i></i><i></i></span>
+        <span>json-rpc</span>
+      </div>
+
+      <div class="node">
+        <div class="node-h"><span>host</span><span>yours</span></div>
+        <ul>
+          <li>source tree <em>+ .gitignore</em></li>
+          <li>gopls · clangd · … <em>on first use</em></li>
+          <li>stdlib & module cache <em>allowlisted</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="arch-lower">
+      <div class="consts">
+        {groups.map((g) => (
+          <div class="pnl reveal">
+            <div class="pnl-h"><span>{g.t}</span></div>
+            <dl>
+              {g.rows.map(([k, v]) => (
+                <div><dt>{k}</dt><dd>{v}</dd></div>
+              ))}
+            </dl>
+          </div>
+        ))}
+      </div>
+
+      <div class="pnl ticks reveal">
+        <div class="pnl-h"><span>fuzzyScore() · weights</span><span>O(n) two-pass</span></div>
+        <div class="pnl-b">
+          <div class="wts">
+            {weights.map((w) => (
+              <div class="wt">
+                <span class="wt-k">{w.k}</span>
+                <span class="wt-t"><span style={`width:${(w.w / 40) * 100}%`}></span></span>
+                <span class="wt-v">+{w.w}</span>
+              </div>
+            ))}
+          </div>
+          <dl class="pen">
+            {penalties.map(([k, v]) => (
+              <div><dt>{k}</dt><dd>{v}</dd></div>
+            ))}
+          </dl>
+          <p class="note">
+            Pass one proves every query rune is present. Pass two walks back from the last hit to pull matches
+            as tight as possible. The same ranking feel as a dynamic program, in a linear scan. <a href={repoDoc('ARCHITECTURE.md')} target="_blank" rel="noopener noreferrer">ARCHITECTURE.md →</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .arch {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px minmax(0, 1.5fr) 120px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .node {
+    border: 1px solid var(--bdr-hi);
+    background: var(--bg-elev);
+  }
+
+  .node-h {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--bdr);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+  }
+
+  .node-h span:first-child {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .node ul {
+    list-style: none;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--txt-2);
+  }
+
+  .node li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 3px 0;
+  }
+
+  .node li em {
+    font-style: normal;
+    color: var(--txt-3);
+    white-space: nowrap;
+  }
+
+  .node--core {
+    border-color: var(--amber-line);
+    background: linear-gradient(180deg, var(--amber-wash), transparent 60%), var(--bg-elev);
+  }
+
+  .engines {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--bdr);
+  }
+
+  .eng {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    background: var(--bg-elev);
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .eng b {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--txt);
+  }
+
+  .link {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 0 8px;
+    font-size: 10px;
+    text-align: center;
+    color: var(--txt-3);
+  }
+
+  .wire {
+    position: relative;
+    height: 1px;
+    background: var(--bdr-hi);
+    overflow: hidden;
+  }
+
+  .wire i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 1px;
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber);
+    animation: packet 2.4s linear infinite;
+  }
+
+  .wire i:nth-child(2) { animation-delay: -0.8s; }
+  .wire i:nth-child(3) { animation-delay: -1.6s; }
+  .wire--rev i { animation-direction: reverse; }
+
+  @keyframes packet {
+    from { transform: translateX(-8px); left: 0; }
+    to   { transform: translateX(0); left: 100%; }
+  }
+
+  .arch-lower {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    align-items: start;
+  }
+
+  .consts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .consts dl,
+  .pen {
+    padding: 6px 0;
+  }
+
+  .consts dl div,
+  .pen div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 16px;
+    font-size: 11.5px;
+  }
+
+  .consts dt,
+  .pen dt {
+    color: var(--txt-3);
+  }
+
+  .consts dd,
+  .pen dd {
+    color: var(--txt);
+    text-align: right;
+  }
+
+  .consts dt {
+    color: var(--cyan);
+  }
+
+  .wts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .wt {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr) 34px;
+    align-items: center;
+    gap: 10px;
+    font-size: 11.5px;
+  }
+
+  .wt-k {
+    color: var(--txt-2);
+  }
+
+  .wt-t {
+    height: 10px;
+    background: var(--track);
+  }
+
+  .wt-t span {
+    display: block;
+    height: 100%;
+    background: var(--bar);
+  }
+
+  .wt-v {
+    text-align: right;
+    color: var(--txt);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pen {
+    margin: 14px -16px 0;
+    border-top: 1px solid var(--bdr);
+  }
+
+  .pen dd {
+    color: var(--rose);
+  }
+
+  .note {
+    margin-top: 12px;
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: var(--txt-3);
+  }
+
+  .note a {
+    color: var(--amber);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1100px) {
+    .arch {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .link {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+    }
+
+    .wire {
+      width: 1px;
+      height: 100%;
+    }
+
+    .wire i {
+      width: 1px;
+      height: 8px;
+      animation-name: packet-y;
+    }
+
+    @keyframes packet-y {
+      from { transform: translateY(-8px); top: 0; }
+      to   { transform: translateY(0); top: 100%; }
+    }
+
+    .arch-lower { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .engines { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .consts { grid-template-columns: minmax(0, 1fr); }
+    .wt { grid-template-columns: 130px minmax(0, 1fr) 30px; font-size: 10.5px; }
+  }
+</style>

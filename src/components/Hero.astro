@@ -1,182 +1,1355 @@
 ---
-import { DOCS, GITHUB, INSTALL_CMD } from '../data/links';
+import { GITHUB, INSTALL_CMD, VERSION } from '../data/links';
+import { THEMES } from '../data/themes';
+import { FILES, SYMBOLS, COMMANDS, FUZZY_EXCERPT } from '../data/px0';
 
-const facts = [
-  'macOS &amp; Linux',
-  'MIT licensed',
+const stats = [
+  { v: '<1', u: 'ms', k: 'cold start', d: 'listener binds before the index is built' },
+  { v: '16', u: 'MB', k: 'resident memory', d: 'VS Code on the same tree: ~1,440 MB', hi: true },
+  { v: '6.0', u: 'ms', k: 'fuzzy find', d: 'linux kernel, 95,710 files' },
+  { v: '~280', u: '', k: 'languages', d: 'tokenized natively by Chroma' },
+  { v: '14', u: '', k: 'themes', d: 'one CSS file each' },
+  { v: '0', u: '', k: 'runtime deps', d: 'no Electron, no Node, no CGO' },
 ];
+
+// A small Go tokenizer, enough to colour the excerpt with the IDE's own token classes.
+const GO_KW = new Set('break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var'.split(' '));
+const GO_TYPES = new Set('any bool byte error float32 float64 int int16 int32 int64 int8 rune string uint uint16 uint32 uint64 uint8 uintptr'.split(' '));
+const GO_CONST = new Set(['nil', 'true', 'false', 'iota']);
+const GO_BUILTIN = new Set('append cap clear close copy delete len make max min new panic print println recover'.split(' '));
+
+type Tok = { c: string; v: string };
+function tokenizeGo(line: string): Tok[] {
+  const out: Tok[] = [];
+  const re = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')|(\b\d+\b)|([A-Za-z_]\w*)|(\s+)|([-+*/%=!<>&|^:]+)|([()[\]{}.,;])/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(line))) {
+    const v = m[0];
+    if (m[1]) out.push({ c: 'c', v });
+    else if (m[2] || m[3]) out.push({ c: 's', v });
+    else if (m[4]) out.push({ c: 'm', v });
+    else if (m[5]) {
+      let c = 'nv';
+      if (GO_KW.has(v)) c = 'k';
+      else if (GO_TYPES.has(v)) c = 'kt';
+      else if (GO_CONST.has(v)) c = 'no';
+      else if (GO_BUILTIN.has(v)) c = 'nb';
+      else if (line[re.lastIndex] === '(') c = 'nf';
+      if (v === 'isBoundary') c += ' occ';
+      out.push({ c, v });
+    } else if (m[6]) out.push({ c: '', v });
+    else if (m[7]) out.push({ c: 'o', v });
+    else out.push({ c: 'p', v });
+  }
+  return out;
+}
+
+const CURSOR_LINE = 65;
+const rows = FUZZY_EXCERPT.lines.map((text, i) => {
+  const n = FUZZY_EXCERPT.start + i;
+  const toks = tokenizeGo(text);
+  if (n === CURSOR_LINE) {
+    const at = toks.findIndex((t) => t.v === 'isBoundary');
+    if (at >= 0) toks.splice(at + 1, 0, { c: 'caret', v: '' });
+  }
+  return { n, toks, cur: n === CURSOR_LINE };
+});
+const hoverRow = CURSOR_LINE - FUZZY_EXCERPT.start;
+
+const tree = [
+  ...['.github', 'scripts', 'web'].map((name) => ({ name, dir: true })),
+  ...['.gitignore', 'AGENT.md', 'ARCHITECTURE.md', 'benchmark.sh', 'BENCHMARKS.md', 'build.sh', 'CONTRIBUTING.md', 'fuzzy.go', 'go.mod', 'go.sum', 'highlight.go', 'highlight_test.go', 'ignore.go', 'index.go', 'install.sh', 'LICENSE', 'lsp.go', 'lsp_test.go', 'lspnav.go', 'lspservers.go', 'main.go', 'Makefile', 'metrics.go', 'px0_test.go', 'README.md', 'search.go', 'server.go'].map((name) => ({ name, dir: false })),
+];
+const ext = (name: string) => (name.split('.').pop() || '').toLowerCase();
+
+const themeStyle = (vars: Record<string, string>) =>
+  Object.entries(vars).map(([k, v]) => `--t-${k}:${v}`).join(';');
+
+const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: THEMES };
 ---
 
 <section class="hero">
-  <div class="container hero-inner">
-    <span class="pill">
-      <span class="dot" aria-hidden="true"></span>
-      local-first &middot; open source
-    </span>
-
-    <h1>
-      An agent that works the way<br />
-      <span class="grad">you work.</span>
-    </h1>
-
-    <p class="hero-sub">
-      px0 is a local, open-source agent built around the way you work. Tell it a chore
-      in plain English and it writes, schedules, and runs the workflow itself, wired to 1,000+ apps you already use.
-      <em> No server. No dashboard. Nothing hosted.</em>
-    </p>
-
-    <div class="install" data-copy={INSTALL_CMD} role="button" tabindex="0" aria-label="Copy install command">
-      <span class="install-prompt">$</span>
-      <code class="install-cmd">{INSTALL_CMD}</code>
-      <span class="install-copy">
-        <svg class="i-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-        </svg>
-        <svg class="i-done" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </span>
+  <div class="wrap">
+    <div class="hero-meta">
+      <span><b>px0</b> v{VERSION}</span>
+      <span>read-only ide for the ai-agent era</span>
+      <span>single static go binary</span>
+      <span>15 os/arch targets</span>
+      <span>mit</span>
     </div>
 
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="#workflows">
-        See it build a workflow
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </a>
-      <a class="btn btn-ghost" href={DOCS} target="_blank" rel="noopener noreferrer">Read the docs</a>
-      <a class="btn btn-quiet" href={GITHUB} target="_blank" rel="noopener noreferrer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-        </svg>
-        Star on GitHub
-      </a>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker"><span>//</span> agents write the code. you verify it.</p>
+        <h1>Read any<br />codebase.<br /><span class="hl">Instantly.</span><i class="h1-cur" aria-hidden="true"></i></h1>
+        <p class="hero-sub">
+          px0 is a read-only IDE for the AI-agent era. It turns your browser into an instant verification
+          console for whatever your agents just wrote: symbol-level navigation, full LSP intelligence, and
+          deep search. One binary, zero config. It starts in <strong>under 1 ms</strong>,
+          idles at <strong>~16 MB</strong>, and fuzzy-finds across the Linux kernel's <strong>95,710 files in 6 ms</strong>.
+        </p>
+
+        <div class="hero-actions">
+          <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
+            <span class="copyline-p">$</span>
+            <code><span>{INSTALL_CMD}</span></code>
+            <span class="copyline-s"></span>
+          </button>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">
+              Star on GitHub
+            </a>
+            <a class="btn btn-ghost" href="#bench">See the benchmarks ↓</a>
+          </div>
+        </div>
+      </div>
+
+      <dl class="hero-stats">
+        {stats.map((s) => (
+          <div class:list={['stat', { 'stat--hi': s.hi }]}>
+            <dt class="stat-k">{s.k}</dt>
+            <dd class="stat-v">{s.v}{s.u && <small>{s.u}</small>}</dd>
+            <dd class="stat-d">{s.d}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
 
-    <ul class="facts">
-      {facts.map((f) => <li set:html={f}></li>)}
-    </ul>
+    <div class="stage">
+      <div class="stage-bar">
+        <span class="lbl">live mock<span class="stage-hint"> · press the <span class="mod-key">Ctrl</span> K button, type, use arrows</span></span>
+        <span class="lbl">~/src/px0 · fuzzy.go</span>
+      </div>
+
+      <div class="ide" id="ide" style={themeStyle(THEMES[0].vars)}>
+        <div class="ide-chrome">
+          <span class="ide-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ide-url">127.0.0.1:7777</span>
+          <button class="ide-k" type="button" data-pal-open aria-label="Open palette"><span class="mod-key">Ctrl</span> K</button>
+        </div>
+
+        <div class="ide-body">
+          <aside class="ide-side" aria-hidden="true">
+            <header class="ide-phead"><span>px0</span><span>↻</span></header>
+            <ul class="ide-tree">
+              {tree.map((f) => (
+                <li class:list={[{ dir: f.dir, on: f.name === 'fuzzy.go' }]}>
+                  <span class="chev">{f.dir ? '▸' : ''}</span>
+                  {!f.dir && <i class={`fi x-${ext(f.name)}`}></i>}
+                  {f.name}
+                </li>
+              ))}
+            </ul>
+          </aside>
+
+          <div class="ide-main">
+            <div class="ide-tabs" aria-hidden="true">
+              <span class="ide-tab on">fuzzy.go <span class="x">×</span></span>
+              <span class="ide-tab">search.go</span>
+              <span class="ide-tab">index.go</span>
+              <span class="ide-tab">README.md</span>
+            </div>
+            <div class="ide-crumbs" aria-hidden="true">px0 <span>›</span> fuzzy.go <span>›</span> <b>fuzzyScore</b></div>
+
+            <div class="ide-editor">
+              <div class="ide-code" aria-label="fuzzy.go, lines 50 to 85">
+                {rows.map((r) => (
+                  <div class:list={['row', { cur: r.cur }]}>
+                    <span class="ln">{r.n}</span>
+                    <span class="tx">{r.toks.map((t) => (t.c === 'caret' ? <i class="ide-caret"></i> : <span class={t.c || undefined}>{t.v}</span>))}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div class="ide-hover" style={`--row:${hoverRow}`} aria-hidden="true">
+                <div class="hv-sig"><span class="k">func</span> <span class="nf">isBoundary</span><span class="p">(</span>b <span class="kt">byte</span><span class="p">)</span> <span class="kt">bool</span></div>
+                <div class="hv-meta">fuzzy.go:17 · gopls</div>
+                <div class="hv-act"><span><kbd>F12</kbd> definition</span><span><kbd>Shift F12</kbd> references</span></div>
+              </div>
+
+              <div class="ide-scroll" aria-hidden="true">
+                <span class="thumb" style={`top:${(FUZZY_EXCERPT.start / FUZZY_EXCERPT.total) * 100}%;height:${(28 / FUZZY_EXCERPT.total) * 100}%`}></span>
+                <span class="hit" style={`top:${(17 / FUZZY_EXCERPT.total) * 100}%`}></span>
+                <span class="hit" style={`top:${(65 / FUZZY_EXCERPT.total) * 100}%`}></span>
+              </div>
+
+              <div class="ide-pal" hidden>
+                <div class="ide-pal-in">
+                  <span class="ide-pal-mode">files</span>
+                  <input type="text" spellcheck="false" autocomplete="off" aria-label="Palette query" placeholder="path, or > command, @ symbol, : line" />
+                </div>
+                <div class="ide-pal-list" role="listbox"></div>
+                <div class="ide-pal-hint"><span>↑↓ move</span><span>enter open</span><span>esc close</span><span class="ide-pal-meta"></span></div>
+              </div>
+
+              <div class="ide-toast" hidden></div>
+            </div>
+
+            <footer class="ide-status">
+              <button class="st" type="button" data-pal-open>Files <kbd><span class="mod-key">Ctrl</span> P</kbd></button>
+              <span class="st opt">Search <kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> F</kbd></span>
+              <span class="st opt">Symbols <kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> O</kbd></span>
+              <span class="st grow"></span>
+              <span class="st opt">156 lines</span>
+              <span class="st"><i class="ok"></i>gopls</span>
+              <span class="st">CPU 0.0% · RAM 16 MB</span>
+              <span class="st opt" data-theme-name>{THEMES[0].name}</span>
+            </footer>
+          </div>
+
+          <aside class="ide-insp" aria-hidden="true">
+            <div class="insp-tabs"><span class="insp-tab on">References</span><span class="insp-tab">Symbols</span></div>
+            <div class="insp-bar"><b>isBoundary</b><span class="badge">2</span></div>
+            <div class="ref-file">fuzzy.go</div>
+            <div class="ref"><span class="l">17</span><span class="t"><span class="k">func</span> isBoundary(b <span class="kt">byte</span>) <span class="kt">bool</span> {'{'}</span><span class="tag">def</span></div>
+            <div class="ref on"><span class="l">65</span><span class="t"><span class="k">if</span> i == 0 || isBoundary(p[i-1]) {'{'}</span></div>
+            <div class="insp-sec">outline · fuzzy.go</div>
+            {SYMBOLS.map((s) => (
+              <div class:list={['sym', { on: s.name === 'fuzzyScore' }]}><span class="kd">{s.kind}</span><span class="nm">{s.name}</span><span class="l">{s.line}</span></div>
+            ))}
+          </aside>
+        </div>
+      </div>
+
+      <div class="theme-strip" role="group" aria-label="Preview a theme in the mock">
+        <span class="lbl">14 themes</span>
+        {THEMES.map((t, i) => (
+          <button
+            class="th"
+            type="button"
+            data-ide-theme={t.id}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            style={`--sw-bg:${t.vars.bg};--sw-a:${t.vars.k};--sw-b:${t.vars.s};--sw-c:${t.vars.nf}`}
+          ><i class="sw" aria-hidden="true"><em></em><em></em><em></em></i>{t.name}</button>
+        ))}
+      </div>
+    </div>
   </div>
+
+  <script type="application/json" id="ide-data" is:inline set:html={JSON.stringify(ideData)}></script>
 </section>
 
 <style>
   .hero {
-    padding: 156px 0 96px;
+    padding-top: 80px;
   }
 
-  .hero-inner {
-    max-width: 980px;
+  /* ── meta strip ── */
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid var(--bdr);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+  }
+
+  .hero-meta span {
+    padding: 7px 12px;
+    border-right: 1px solid var(--bdr);
+    white-space: nowrap;
+  }
+
+  .hero-meta b {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  /* ── copy + stats ── */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    border: 1px solid var(--bdr);
+    border-top: 0;
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+  }
+
+  .hero-copy {
+    padding: 44px 40px 40px;
+    border-right: 1px solid var(--bdr);
+  }
+
+  .kicker {
+    font-size: 12px;
+    color: var(--txt-3);
+  }
+
+  .kicker span {
+    color: var(--amber);
   }
 
   h1 {
-    font-family: var(--display);
-    font-size: clamp(52px, 9vw, 118px);
-    font-weight: 700;
-    line-height: 0.98;
-    letter-spacing: -0.05em;
-    margin: 26px 0 26px;
+    margin: 18px 0 24px;
+    font-size: clamp(42px, 6.6vw, 92px);
+    font-weight: 800;
+    line-height: 0.94;
+    letter-spacing: -0.06em;
+  }
+
+  h1 .hl {
+    color: var(--amber);
+  }
+
+  .h1-cur {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.78em;
+    margin-left: 0.06em;
+    background: var(--amber);
+    vertical-align: -0.04em;
+    animation: blink 1.05s step-end infinite;
   }
 
   .hero-sub {
-    font-size: 17px;
-    line-height: 1.72;
+    max-width: 620px;
+    font-size: 14px;
+    line-height: 1.75;
     color: var(--txt-2);
-    max-width: 720px;
   }
 
-  .hero-sub em {
-    font-style: normal;
+  .hero-sub strong {
     color: var(--txt);
     font-weight: 600;
   }
 
-  /* ── install line ── */
-  .install {
+  .hero-actions {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 34px 0 22px;
-    padding: 14px 16px;
-    max-width: 640px;
-    width: 100%;
-    border: 1px solid var(--bdr);
-    border-radius: var(--r);
-    background: var(--code-bg);
-    font-family: var(--mono);
-    font-size: 13px;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 660px;
+    margin-top: 28px;
   }
-
-  .install:hover,
-  .install:focus-visible {
-    border-color: var(--amber-line);
-    background: var(--amber-wash);
-    outline: none;
-  }
-
-  .install-prompt {
-    color: var(--amber);
-    flex-shrink: 0;
-  }
-
-  .install-cmd {
-    flex: 1;
-    min-width: 0;
-    color: var(--txt);
-    font-size: 13px;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .install-copy {
-    display: inline-flex;
-    color: var(--txt-3);
-    flex-shrink: 0;
-  }
-
-  .install .i-done { display: none; }
-  .install.copied .i-copy { display: none; }
-  .install.copied .i-done { display: block; color: var(--green); }
 
   .hero-cta {
     display: flex;
-    align-items: center;
-    gap: 14px;
     flex-wrap: wrap;
+    gap: 10px;
   }
 
-  .facts {
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px 18px;
-    list-style: none;
-    margin-top: 24px;
-    font-family: var(--mono);
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: 20px 22px;
+    border-right: 1px solid var(--bdr);
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .stat:nth-child(2n) { border-right: 0; }
+  .stat:nth-last-child(-n + 2) { border-bottom: 0; }
+
+  .stat-k {
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+  }
+
+  .stat-v {
+    font-size: clamp(30px, 3.2vw, 46px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--txt);
+  }
+
+  .stat-v small {
+    margin-left: 0.15em;
+    font-size: 0.4em;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--txt-3);
+  }
+
+  .stat--hi .stat-v {
+    color: var(--amber);
+  }
+
+  .stat-d {
     font-size: 11.5px;
     color: var(--txt-3);
   }
 
-  .facts li {
+  /* ── stage ── */
+  .stage {
+    margin-top: 28px;
+  }
+
+  .stage-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-bottom: 10px;
+  }
+
+  .stage-bar .mod-key {
+    color: var(--amber);
+  }
+
+  /* ── the IDE mock: every colour comes from a px0 theme, as --t-* ── */
+  .ide {
+    --lh: 18px;
+    position: relative;
+    border: 1px solid var(--bdr-hi);
+    background: var(--t-bg);
+    color: var(--t-fg);
+    font-size: 12px;
+    box-shadow: var(--shadow-float);
+    overflow: hidden;
+    transition: background-color 0.25s, color 0.25s;
+  }
+
+  .ide .k { color: var(--t-k); }
+  .ide .kt { color: var(--t-kt); }
+  .ide .nf { color: var(--t-nf); }
+  .ide .nb { color: var(--t-nb); }
+  .ide .no { color: var(--t-no); }
+  .ide .nv { color: var(--t-nv); }
+  .ide .s { color: var(--t-s); }
+  .ide .m { color: var(--t-m); }
+  .ide .o { color: var(--t-o); }
+  .ide .p { color: var(--t-p); }
+  .ide .c { color: var(--t-c); font-style: italic; }
+
+  .ide-chrome {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 34px;
+    padding: 0 10px 0 12px;
+    background: var(--t-bg2);
+    border-bottom: 1px solid var(--t-line);
+    color: var(--t-faint);
+    font-size: 11px;
+  }
+
+  .ide-dots {
+    display: flex;
+    gap: 6px;
+    width: 120px;
+  }
+
+  .ide-dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--t-bg4);
+  }
+
+  .ide-url {
+    flex: 0 1 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    margin: 0 auto;
+    border: 1px solid var(--t-line);
+    background: var(--t-bg);
+    color: var(--t-dim);
+  }
+
+  .ide-k {
+    width: 120px;
+    display: flex;
+    justify-content: flex-end;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .ide-k::before {
+    content: 'search';
+    margin-right: 8px;
+    color: var(--t-faint);
+  }
+
+  .ide-k .mod-key,
+  .ide-k {
+    color: var(--t-accent);
+  }
+
+  .ide-body {
+    display: grid;
+    grid-template-columns: 208px minmax(0, 1fr) 250px;
+    height: 600px;
+  }
+
+  /* sidebar */
+  .ide-side {
+    overflow: hidden;
+    background: var(--t-bg2);
+    border-right: 1px solid var(--t-line);
+  }
+
+  .ide-phead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--t-line);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--t-faint);
+  }
+
+  .ide-tree {
+    list-style: none;
+    padding: 4px 0;
+  }
+
+  .ide-tree li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 21px;
+    padding: 0 12px;
+    white-space: nowrap;
+    color: var(--t-fg);
+  }
+
+  .ide-tree li.dir {
+    color: var(--t-dim);
+  }
+
+  .ide-tree li.on {
+    background: var(--t-sel);
+    box-shadow: inset 2px 0 0 var(--t-accent);
+  }
+
+  .chev {
+    width: 8px;
+    color: var(--t-faint);
+  }
+
+  .fi {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    background: var(--t-faint);
+  }
+
+  .fi.x-go { background: var(--t-kt); }
+  .fi.x-md { background: var(--t-nc); }
+  .fi.x-sh { background: var(--t-s); }
+  .fi.x-mod,
+  .fi.x-sum { background: var(--t-k); }
+
+  /* main column */
+  .ide-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .ide-tabs {
+    display: flex;
+    height: 32px;
+    overflow: hidden;
+    background: var(--t-bg2);
+    border-bottom: 1px solid var(--t-line);
+  }
+
+  .ide-tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border-right: 1px solid var(--t-line);
+    white-space: nowrap;
+    color: var(--t-faint);
+  }
+
+  .ide-tab.on {
+    margin-bottom: -1px;
+    background: var(--t-bg);
+    color: var(--t-fg);
+    box-shadow: inset 0 1px 0 var(--t-accent);
+  }
+
+  .ide-tab .x {
+    color: var(--t-faint);
+  }
+
+  .ide-crumbs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--t-line);
+    font-size: 11px;
+    color: var(--t-faint);
+  }
+
+  .ide-crumbs b {
+    color: var(--t-fg);
+    font-weight: 500;
+  }
+
+  .ide-editor {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .ide-code {
+    padding: 8px 0;
+    tab-size: 4;
+  }
+
+  .row {
+    display: flex;
+    height: var(--lh);
+    line-height: var(--lh);
+    white-space: pre;
+  }
+
+  .row .ln {
+    flex: 0 0 6ch;
+    padding-right: 2ch;
+    text-align: right;
+    color: var(--t-faint);
+    user-select: none;
+  }
+
+  .row.cur {
+    background: var(--t-cur);
+  }
+
+  .row.cur .ln {
+    color: var(--t-fg);
+  }
+
+  .occ {
+    background: var(--t-mark);
+  }
+
+  .row.cur .occ {
+    box-shadow: inset 0 -1px 0 var(--t-mark-active);
+  }
+
+  .ide-caret {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    vertical-align: -3px;
+    background: var(--t-accent);
+    animation: blink 1.05s step-end infinite;
+  }
+
+  .ide-hover {
+    position: absolute;
+    z-index: 3;
+    top: calc(8px + var(--row) * var(--lh));
+    left: calc(6ch + 21ch);
+    transform: translateY(calc(-100% - 2px));
+    min-width: 290px;
+    border: 1px solid var(--t-line);
+    background: var(--t-bg3);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    font-size: 12px;
+  }
+
+  .hv-sig {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--t-line);
+    white-space: nowrap;
+  }
+
+  .hv-meta {
+    padding: 6px 12px 0;
+    font-size: 11px;
+    color: var(--t-faint);
+  }
+
+  .hv-act {
+    display: flex;
+    gap: 14px;
+    padding: 6px 12px 8px;
+    font-size: 11px;
+    color: var(--t-dim);
+    white-space: nowrap;
+  }
+
+  .hv-act kbd {
+    font: inherit;
+    padding: 0 4px;
+    border: 1px solid var(--t-line);
+    color: var(--t-fg);
+  }
+
+  .ide-scroll {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    border-left: 1px solid var(--t-line);
+  }
+
+  .ide-scroll .thumb {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    background: var(--t-bg4);
+  }
+
+  .ide-scroll .hit {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--t-mark-active);
+  }
+
+  /* palette */
+  .ide-pal {
+    position: absolute;
+    z-index: 5;
+    top: 12px;
+    left: 50%;
+    width: min(560px, calc(100% - 24px));
+    transform: translateX(-50%);
+    border: 1px solid var(--t-line);
+    background: var(--t-bg3);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  }
+
+  .ide-pal-in {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--t-line);
+  }
+
+  .ide-pal-mode {
+    padding: 2px 6px;
+    background: var(--t-accent);
+    color: var(--t-bg);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ide-pal-in input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: var(--t-fg);
+    font: inherit;
+    font-size: 13px;
+    caret-color: var(--t-accent);
+  }
+
+  .ide-pal-in input::placeholder {
+    color: var(--t-faint);
+  }
+
+  .ide-pal-list {
+    min-height: 26px;
+  }
+
+  .ide-pal-list :global(.pal-row) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 26px;
+    padding: 0 12px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .ide-pal-list :global(.pal-row.on) {
+    background: var(--t-sel);
+    box-shadow: inset 2px 0 0 var(--t-accent);
+  }
+
+  .ide-pal-list :global(.n) { color: var(--t-fg); }
+  .ide-pal-list :global(.kd) { width: 6ch; color: var(--t-k); }
+  .ide-pal-list :global(.d) {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--t-faint);
+  }
+  .ide-pal-list :global(.sc) {
+    margin-left: auto;
+    font-size: 10.5px;
+    color: var(--t-faint);
+  }
+  .ide-pal-list :global(b) {
+    color: var(--t-accent-fg);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .ide-pal-list :global(.pal-empty) {
+    padding: 6px 12px;
+    color: var(--t-faint);
+  }
+
+  .ide-pal-hint {
+    display: flex;
+    gap: 14px;
+    padding: 6px 12px;
+    border-top: 1px solid var(--t-line);
+    font-size: 10.5px;
+    color: var(--t-faint);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .ide-pal-meta {
+    margin-left: auto;
+  }
+
+  .ide-toast {
+    position: absolute;
+    z-index: 6;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    border: 1px solid var(--t-line);
+    background: var(--t-bg3);
+    color: var(--t-fg);
+    font-size: 11.5px;
+    white-space: nowrap;
+  }
+
+  /* status bar */
+  .ide-status {
+    display: flex;
+    align-items: center;
+    height: 26px;
+    overflow: hidden;
+    background: var(--t-bg2);
+    border-top: 1px solid var(--t-line);
+    font-size: 10.5px;
+    color: var(--t-faint);
+    white-space: nowrap;
+  }
+
+  .st {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    padding: 0 10px;
+    border: 0;
+    border-right: 1px solid var(--t-line);
+    background: none;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  button.st {
+    cursor: pointer;
+  }
+
+  button.st:hover {
+    background: var(--t-bg4);
+    color: var(--t-fg);
+  }
+
+  .st kbd {
+    font: inherit;
+    color: var(--t-dim);
+  }
+
+  .st.grow {
+    flex: 1;
+    border-right: 0;
+  }
+
+  .st:last-child {
+    border-right: 0;
+  }
+
+  .st .ok {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--t-gi);
+  }
+
+  /* inspector */
+  .ide-insp {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--t-bg2);
+    border-left: 1px solid var(--t-line);
+  }
+
+  .insp-tabs {
+    display: flex;
+    height: 32px;
+    border-bottom: 1px solid var(--t-line);
+  }
+
+  .insp-tab {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 11px;
+    color: var(--t-faint);
+  }
+
+  .insp-tab.on {
+    color: var(--t-fg);
+    box-shadow: inset 0 -1px 0 var(--t-accent);
+  }
+
+  .insp-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--t-line);
+  }
+
+  .insp-bar b {
+    color: var(--t-nf);
+    font-weight: 600;
+  }
+
+  .badge {
+    padding: 0 6px;
+    background: var(--t-bg4);
+    font-size: 10.5px;
+  }
+
+  .ref-file {
+    padding: 8px 12px 4px;
+    font-size: 11px;
+    color: var(--t-dim);
+  }
+
+  .ref,
+  .sym {
+    display: flex;
+    gap: 10px;
+    padding: 3px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .ref .l {
+    width: 3ch;
+    flex-shrink: 0;
+    text-align: right;
+    color: var(--t-faint);
+  }
+
+  .ref .t {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ref .tag {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--t-faint);
+  }
+
+  .ref.on,
+  .sym.on {
+    background: var(--t-sel);
+    box-shadow: inset 2px 0 0 var(--t-accent);
+  }
+
+  .insp-sec {
+    margin-top: 10px;
+    padding: 10px 12px 6px;
+    border-top: 1px solid var(--t-line);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--t-faint);
+  }
+
+  .sym .kd {
+    width: 6ch;
+    color: var(--t-k);
+  }
+
+  .sym .l {
+    margin-left: auto;
+    color: var(--t-faint);
+  }
+
+  /* theme strip */
+  .theme-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .theme-strip .lbl {
+    margin-right: 6px;
+  }
+
+  .th {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    height: 28px;
+    padding: 0 10px 0 4px;
+    border: 1px solid var(--bdr);
+    background: var(--bg-elev);
+    font-size: 11px;
+    color: var(--txt-2);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
   }
 
-  .facts li:not(:first-child)::before {
-    content: '';
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--txt-4);
+  .th:hover {
+    border-color: var(--bdr-hi);
+    color: var(--txt);
   }
 
-  @media (max-width: 640px) {
-    .hero { padding: 116px 0 64px; }
+  .th[aria-pressed='true'] {
+    border-color: var(--amber);
+    color: var(--txt);
+  }
+
+  .sw {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 18px;
+    padding: 0 4px;
+    background: var(--sw-bg);
+    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.25);
+  }
+
+  .sw em {
+    width: 4px;
+    height: 10px;
+    background: var(--sw-a);
+  }
+
+  .sw em:nth-child(2) { background: var(--sw-b); }
+  .sw em:nth-child(3) { background: var(--sw-c); }
+
+  /* ── responsive ── */
+  @media (max-width: 1100px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); }
+    .hero-copy { border-right: 0; border-bottom: 1px solid var(--bdr); }
+    .hero-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .stat:nth-child(2n) { border-right: 1px solid var(--bdr); }
+    .stat:nth-child(3n) { border-right: 0; }
+    .stat:nth-last-child(-n + 3) { border-bottom: 0; }
+    .ide-body { grid-template-columns: 190px minmax(0, 1fr); }
+    .ide-insp { display: none; }
+  }
+
+  @media (max-width: 720px) {
+    .hero-meta span:nth-child(n + 3) { display: none; }
+    .hero-meta span:nth-child(2) { border-right: 0; white-space: normal; }
+    .hero-copy { padding: 30px 18px; }
+    .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat { padding: 16px; }
+    .stat:nth-child(3n) { border-right: 1px solid var(--bdr); }
+    .stat:nth-child(2n) { border-right: 0; }
+    .stat:nth-last-child(-n + 3) { border-bottom: 1px solid var(--bdr); }
+    .stat:nth-last-child(-n + 2) { border-bottom: 0; }
+    .ide-body { grid-template-columns: minmax(0, 1fr); height: 480px; }
+    .ide-side,
+    .ide-url,
+    .st.opt,
+    .ide-tab:nth-child(n + 3) { display: none; }
+    .ide-dots { width: auto; }
+    .ide-k { margin-left: auto; }
+    .ide-hover { left: 12px; min-width: 0; right: 12px; }
+    .stage-hint { display: none; }
   }
 </style>
+
+<script>
+  type Theme = { id: string; name: string; light: boolean; vars: Record<string, string> };
+  type Sym = { name: string; kind: string; line: number };
+  type IdeData = { files: string[]; symbols: Sym[]; commands: string[]; themes: Theme[] };
+  type Entry = { html: string; say: string };
+
+  const root = document.getElementById('ide');
+  const dataEl = document.getElementById('ide-data');
+
+  if (root && dataEl) {
+    const data = JSON.parse(dataEl.textContent || '{}') as IdeData;
+
+    // ── themes ──
+    const themeName = root.querySelector('[data-theme-name]');
+    const themeButtons = document.querySelectorAll<HTMLButtonElement>('[data-ide-theme]');
+    const applyTheme = (id: string) => {
+      const t = data.themes.find((x) => x.id === id);
+      if (!t) return;
+      for (const [k, v] of Object.entries(t.vars)) root.style.setProperty(`--t-${k}`, v);
+      if (themeName) themeName.textContent = t.name;
+      themeButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ideTheme === id)));
+    };
+    themeButtons.forEach((b) => b.addEventListener('click', () => applyTheme(b.dataset.ideTheme || '')));
+
+    // ── fuzzyScore, ported line for line from px0's fuzzy.go ──
+    const isBoundary = (c: string) => '/_-. @'.includes(c);
+    const fuzzyScore = (q: string, path: string) => {
+      const lp = path.toLowerCase();
+      const nameStart = path.lastIndexOf('/') + 1;
+      let qi = 0;
+      let end = -1;
+      for (let i = 0; i < lp.length && qi < q.length; i++) {
+        if (lp[i] === q[qi]) {
+          qi++;
+          end = i;
+        }
+      }
+      if (qi < q.length) return null;
+
+      const pos: number[] = [];
+      qi = q.length - 1;
+      for (let i = end; i >= 0 && qi >= 0; i--) {
+        if (lp[i] === q[qi]) {
+          pos.push(i);
+          qi--;
+        }
+      }
+      pos.reverse();
+
+      let score = 0;
+      let prev = -2;
+      pos.forEach((i, k) => {
+        if (i === prev + 1) score += 12;
+        else if (k > 0) score -= Math.min(i - prev, 12);
+        if (i >= nameStart) score += 14;
+        if (i === 0 || isBoundary(path[i - 1])) score += 16;
+        else if (/[A-Z]/.test(path[i]) && /[a-z]/.test(path[i - 1])) score += 14;
+        if (path[i] === q[k]) score += 4;
+        prev = i;
+      });
+      score -= Math.floor(path.length / 8);
+      score -= (path.split('/').length - 1) * 2;
+      const idx = lp.slice(nameStart).indexOf(q);
+      if (idx >= 0) {
+        score += 40;
+        if (idx === 0) score += 20;
+      }
+      return { score, pos };
+    };
+
+    // ── palette ──
+    const pal = root.querySelector<HTMLElement>('.ide-pal')!;
+    const input = pal.querySelector<HTMLInputElement>('input')!;
+    const list = pal.querySelector<HTMLElement>('.ide-pal-list')!;
+    const modeEl = pal.querySelector<HTMLElement>('.ide-pal-mode')!;
+    const metaEl = pal.querySelector<HTMLElement>('.ide-pal-meta')!;
+    const toastEl = root.querySelector<HTMLElement>('.ide-toast')!;
+    let entries: Entry[] = [];
+    let active = 0;
+
+    const esc = (s: string) =>
+      s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] || c);
+    const mark = (s: string, pos: number[], offset = 0) => {
+      const hits = new Set(pos);
+      let out = '';
+      for (let i = 0; i < s.length; i++) out += hits.has(i + offset) ? `<b>${esc(s[i])}</b>` : esc(s[i]);
+      return out;
+    };
+    const rank = (items: string[], q: string) => {
+      if (!q) return { total: items.length, top: items.slice(0, 8).map((item) => ({ item, pos: [] as number[], score: 0 })) };
+      const out: { item: string; pos: number[]; score: number }[] = [];
+      for (const item of items) {
+        const m = fuzzyScore(q, item);
+        if (m) out.push({ item, ...m });
+      }
+      out.sort((a, b) => b.score - a.score || a.item.localeCompare(b.item));
+      return { total: out.length, top: out.slice(0, 8) };
+    };
+
+    const render = () => {
+      const raw = input.value;
+      const q = raw.replace(/^[>@:]/, '').toLowerCase().replace(/\s+/g, '');
+      const t0 = performance.now();
+      let mode = 'files';
+      let total = 0;
+
+      if (raw.startsWith('>')) {
+        mode = 'command';
+        const r = rank(data.commands, q);
+        total = r.total;
+        entries = r.top.map(({ item, pos, score }) => ({
+          html: `<span class="n">${mark(item, pos)}</span>${q ? `<span class="sc">${score}</span>` : ''}`,
+          say: `ran: ${item}`,
+        }));
+      } else if (raw.startsWith('@')) {
+        mode = 'symbol';
+        const r = rank(data.symbols.map((s) => s.name), q);
+        total = r.total;
+        entries = r.top.map(({ item, pos, score }) => {
+          const s = data.symbols.find((x) => x.name === item)!;
+          return {
+            html: `<span class="kd">${s.kind}</span><span class="n">${mark(item, pos)}</span><span class="d">fuzzy.go:${s.line}</span>${q ? `<span class="sc">${score}</span>` : ''}`,
+            say: `jumped to ${item}, line ${s.line}`,
+          };
+        });
+      } else if (raw.startsWith(':')) {
+        mode = 'line';
+        const n = parseInt(raw.slice(1), 10);
+        const ok = Number.isFinite(n);
+        total = 1;
+        entries = [{
+          html: `<span class="n">Go to line <b>${ok ? n : '_'}</b></span><span class="d">fuzzy.go · 156 lines</span>`,
+          say: ok ? `line ${Math.min(Math.max(n, 1), 156)}` : 'type a line number',
+        }];
+      } else {
+        const r = rank(data.files, q);
+        total = r.total;
+        entries = r.top.map(({ item, pos, score }) => {
+          const cut = item.lastIndexOf('/') + 1;
+          return {
+            html: `<span class="n">${mark(item.slice(cut), pos, cut)}</span><span class="d">${mark(item.slice(0, cut), pos)}</span>${q ? `<span class="sc">${score}</span>` : ''}`,
+            say: `opened ${item}`,
+          };
+        });
+      }
+
+      const ms = performance.now() - t0;
+      modeEl.textContent = mode;
+      list.innerHTML = entries.length
+        ? entries.map((e) => `<div class="pal-row" role="option">${e.html}</div>`).join('')
+        : '<div class="pal-empty">no matches</div>';
+      metaEl.textContent = `${total} ranked · ${ms < 0.1 ? '<0.1' : ms.toFixed(1)} ms`;
+      setActive(0);
+    };
+
+    const setActive = (i: number) => {
+      const rows = list.querySelectorAll('.pal-row');
+      if (!rows.length) return;
+      active = (i + rows.length) % rows.length;
+      rows.forEach((r, j) => r.classList.toggle('on', j === active));
+    };
+
+    let toastTimer = 0;
+    const toast = (msg: string) => {
+      toastEl.textContent = msg;
+      toastEl.hidden = false;
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => (toastEl.hidden = true), 1600);
+    };
+
+    const openPal = (focus: boolean) => {
+      pal.hidden = false;
+      render();
+      if (focus) input.focus({ preventScroll: true });
+    };
+    const closePal = () => {
+      pal.hidden = true;
+      input.value = '';
+    };
+    const choose = () => {
+      const e = entries[active];
+      if (e) toast(e.say);
+      closePal();
+    };
+
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+      else if (e.key === 'Enter') { e.preventDefault(); choose(); }
+      else if (e.key === 'Escape') { e.preventDefault(); closePal(); }
+    });
+    list.addEventListener('pointermove', (e) => {
+      const row = (e.target as HTMLElement).closest('.pal-row');
+      if (row) setActive([...list.children].indexOf(row));
+    });
+    list.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('.pal-row')) choose();
+    });
+
+    // ── scripted demo, until the visitor takes over ──
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let demo = !reduce;
+    let visible = false;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const stopDemo = () => (demo = false);
+
+    root.addEventListener('pointerdown', (e) => {
+      stopDemo();
+      const t = e.target as HTMLElement;
+      if (!t.closest('.ide-pal') && !t.closest('[data-pal-open]')) closePal();
+    });
+    input.addEventListener('focus', stopDemo);
+    root.querySelectorAll('[data-pal-open]').forEach((b) =>
+      b.addEventListener('click', () => {
+        stopDemo();
+        input.value = '';
+        openPal(true);
+      })
+    );
+
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.3 }).observe(root);
+
+    const typeInto = async (text: string) => {
+      input.value = '';
+      render();
+      for (const ch of text) {
+        while (demo && !visible) await sleep(300);
+        if (!demo) return;
+        input.value += ch;
+        render();
+        await sleep(90 + Math.random() * 70);
+      }
+    };
+
+    const script: [string, number, number][] = [
+      ['srch', 1500, 1],
+      ['thm', 1400, 2],
+      ['@score', 1300, 0],
+      ['>wrap', 1200, 0],
+      [':65', 1000, 0],
+    ];
+
+    const run = async () => {
+      await sleep(1200);
+      while (demo) {
+        while (demo && !visible) await sleep(300);
+        if (!demo) return;
+        openPal(false);
+        for (const [q, hold, moves] of script) {
+          await typeInto(q);
+          if (!demo) return;
+          await sleep(450);
+          for (let i = 0; i < moves && demo; i++) {
+            setActive(active + 1);
+            await sleep(280);
+          }
+          await sleep(hold);
+          if (!demo) return;
+        }
+        closePal();
+        await sleep(2400);
+      }
+    };
+
+    if (demo) run();
+  }
+</script>

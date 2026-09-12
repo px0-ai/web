@@ -1,7 +1,7 @@
 {
  "name": "px0",
  "short_name": "px0",
- "description": "An agent that works the way you work.",
+ "description": "A lightweight, read-only IDE for reading code fast.",
  "start_url": "/",
  "display": "standalone",
  "background_color": "#07070a",
