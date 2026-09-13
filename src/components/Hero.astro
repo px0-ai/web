@@ -4,7 +4,7 @@ import { THEMES } from '../data/themes';
 import { FILES, SYMBOLS, COMMANDS, FUZZY_EXCERPT } from '../data/px0';
 
 const stats = [
-  { v: '<1', u: 'ms', k: 'cold start', d: 'listener binds before the index is built' },
+  { v: '<1', u: 'ms', k: 'cold start', d: 'sub-millisecond instant boot' },
   { v: '16', u: 'MB', k: 'resident memory', d: 'VS Code on the same tree: ~1,440 MB', hi: true },
   { v: '6.0', u: 'ms', k: 'fuzzy find', d: 'linux kernel, 95,710 files' },
   { v: '~280', u: '', k: 'languages', d: 'tokenized natively by Chroma' },
@@ -80,7 +80,7 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     <div class="hero-grid">
       <div class="hero-copy">
         <p class="kicker"><span>//</span> agents write the code. you verify it.</p>
-        <h1>Read any<br />codebase.<br /><span class="hl">Instantly.</span><i class="h1-cur" aria-hidden="true"></i></h1>
+        <h1>When all you<br />want is <span class="hl">speed.</span><i class="h1-cur" aria-hidden="true"></i></h1>
         <p class="hero-sub">
           px0 is a read-only IDE for the AI-agent era. It turns your browser into an instant verification
           console for whatever your agents just wrote: symbol-level navigation, full LSP intelligence, and

@@ -7,7 +7,7 @@ const engines = [
   { k: 'search', v: 'parallel worker pool' },
   { k: 'highlight', v: 'chroma, windowed, LRU' },
   { k: 'lsp manager', v: 'lazy spawn, regex fallback' },
-  { k: 'scavenger', v: 'FreeOSMemory after 15 s idle' },
+  { k: 'scavenger', v: 'reclaims memory after 15 s idle' },
 ];
 
 const groups = [

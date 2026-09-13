@@ -149,8 +149,7 @@ const lspMax = 6;
             {MEM_TRACE.map((s) => <span>{s.step}</span>)}
           </div>
           <p class="note">
-            Go keeps freed pages until asked. px0 calls <code class="inline-code">FreeOSMemory</code> after 15 s
-            without requests, so an open session settles back down.
+            px0 reclaims memory after 15 s of inactivity, so an open session settles back down.
           </p>
         </div>
       </div>

@@ -8,12 +8,12 @@ interface Props {
 }
 
 const {
-  title = "px0: Super Fast Read-only IDE",
-  description = "px0 is a super fast, browser-based read-only IDE designed for instant code navigation and review. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.",
+  title = "px0: a fast, lightweight, read-only IDE",
+  description = "px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
-const ogImage = 'https://px0.ai/android-icon-192x192.png';
+const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString();
 ---
 <!doctype html>
 <html lang="en">
@@ -71,7 +71,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <meta name="description" content={description} />
     <meta
       name="keywords"
-      content="px0, read-only IDE, super fast IDE, code viewer, code navigator, lightweight IDE, code reading, code review, instant code inspection, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, project search, regex search, single binary, Go, open source, VS Code alternative"
+      content="px0, read code fast, read-only IDE, code viewer, code navigator, lightweight IDE, code reading, code review, instant code inspection, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, project search, regex search, single binary, Go, open source, VS Code alternative"
     />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Arpit Bhayani" />
@@ -82,6 +82,9 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="628" />
+    <meta property="og:image:alt" content="px0: fast, lightweight, read-only IDE" />
     <meta property="og:site_name" content="px0" />
 
     <!-- Twitter / X -->
@@ -90,6 +93,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="px0: fast, lightweight, read-only IDE" />
 
     <!-- Structured data -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
@@ -98,7 +102,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
       name: 'px0',
       softwareVersion: VERSION,
       description:
-        'px0 is a super fast, browser-based read-only IDE designed for instant code navigation and review. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.',
+        'px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.',
       applicationCategory: 'DeveloperApplication',
       applicationSubCategory: 'Code Viewer, Code Navigation, IDE',
       operatingSystem: 'macOS, Linux, FreeBSD, OpenBSD, NetBSD, Windows',
@@ -114,7 +118,52 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
         url: AUTHOR,
       },
     })} />
-
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What is px0?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. It boots in under 1 millisecond and uses approximately 16 MB of RAM, turning your browser into a zero-latency code inspection console.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Why use a read-only IDE instead of a full editor like VS Code?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'With AI coding agents and CLI tools writing code, developers spend most of their time in verification, audit, and navigation. Full desktop IDEs take seconds to boot and consume 1.4+ GB of RAM just to read files. px0 starts in under 1 ms with ~16 MB RAM, providing zero-latency code reading without editor bloat.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does px0 require language servers to work?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. Language servers are completely optional. px0 automatically detects servers like gopls, rust-analyzer, or clangd on your PATH if present, but falls back instantly to a built-in regex-based outline and fuzzy search if no server is installed.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How does px0 handle large repositories?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'px0 uses windowed syntax highlighting and virtual DOM rendering (only rendering visible rows on screen), so opening a 400,000-line file costs the same as a 10-line file. It fuzzy-finds across the Linux kernel (95,710 files) in 6 ms.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I install px0?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Run `curl -fsSL https://px0.ai/install.sh | bash` on macOS, Linux, or BSD. Prebuilt binaries for 15 OS and architecture targets are also available on GitHub Releases.',
+          },
+        },
+      ],
+    })} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

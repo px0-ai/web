@@ -1,627 +1,337 @@
-#!/bin/sh
-
-# px0 installer / uninstaller
+#!/usr/bin/env sh
+# Universal installer script for px0 (https://px0.ai)
 #
-# Supported:
-#   sh install.sh
-#   ./install.sh
-#   curl -fsSL <URL> | sh
+# Usage:
+#   curl -fsSL https://px0.ai/install.sh | bash
 #
-# Optional environment variables:
-#   PX0_VERSION       Install a specific px0 version
-#   PX0_CHANNEL       beta
-#   PX0_PREFIX        Directory for px0 binary
-#   PX0_NO_DAEMON     true
-#   NO_COLOR          Disable colour
-#   FORCE_COLOR       Force colour
+# Environment variables:
+#   VERSION      - target version to install (e.g. "0.1.0" or "latest", default: "latest")
+#   INSTALL_DIR  - target directory for binary (default: /usr/local/bin or ~/.local/bin)
+#   PX0_REPO     - GitHub repository (default: px0-ai/px0)
 
-set -u
+set -eu
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
+REPO="${PX0_REPO:-px0-ai/px0}"
+VERSION="${VERSION:-latest}"
 
-QMD_PINNED_VERSION="2.8.3"
+# Color codes
+BOLD="\033[1m"
+GREEN="\033[38;5;71m"
+AMBER="\033[38;5;208m"
+RED="\033[38;5;167m"
+DIM="\033[38;5;245m"
+RESET="\033[0m"
 
-ACCENT=208
-OK=71
-ERR=167
-WARN=179
-DIM=245
-
-# ---------------------------------------------------------------------------
-# Presentation
-# ---------------------------------------------------------------------------
-
-_use_color=1
-
-if [ -n "${NO_COLOR:-}" ] || [ "${TERM:-}" = "dumb" ] || [ ! -t 1 ]; then
-    _use_color=0
-fi
-
-if [ -n "${FORCE_COLOR:-}" ]; then
-    _use_color=1
-fi
-
-_c() {
-    code="$1"
-    text="$2"
-
-    if [ "$_use_color" = "1" ]; then
-        printf '\033[38;5;%sm%s\033[0m' "$code" "$text"
-    else
-        printf '%s' "$text"
-    fi
+# %b so color codes embedded in messages are interpreted
+log_info() {
+  printf " ${GREEN}✓${RESET} %b\n" "$1"
 }
 
-_bold() {
-    text="$1"
-
-    if [ "$_use_color" = "1" ]; then
-        printf '\033[1m%s\033[0m' "$text"
-    else
-        printf '%s' "$text"
-    fi
+log_step() {
+  printf " ${AMBER}›${RESET} %b\n" "$1"
 }
 
-if [ -t 1 ]; then
-    G_OK="✓"
-    G_ERR="✗"
-    G_WARN="!"
-    G_STEP="◇"
-else
-    G_OK="[OK]"
-    G_ERR="[FAIL]"
-    G_WARN="[WARN]"
-    G_STEP="-"
-fi
-
-ok_msg() {
-    message="$1"
-    detail="${2:-}"
-
-    printf '%s %s' "$(_c "$OK" "$G_OK")" "$message"
-
-    if [ -n "$detail" ]; then
-        printf '  %s' "$(_c "$DIM" "$detail")"
-    fi
-
-    printf '\n'
+log_warn() {
+  printf " ${AMBER}!${RESET} %b\n" "$1"
 }
 
-err_line() {
-    printf '%s %s\n' "$(_c "$ERR" "$G_ERR")" "$1" >&2
+log_error() {
+  printf " ${RED}✗${RESET} %b\n" "$1" >&2
 }
 
-warn_line() {
-    printf '%s %s\n' "$(_c "$WARN" "$G_WARN")" "$1"
-}
-
-step_line() {
-    printf '\n%s %s\n' "$(_c "$ACCENT" "$G_STEP")" "$(_bold "$1")"
-}
-
-hint_line() {
-    printf '\n%s\n' "$(_c "$DIM" "$1")"
-}
-
-cmd_line() {
-    printf '  %s\n' "$(_c "$ACCENT" "$1")"
-}
-
-banner() {
-    printf '\n'
-
-    if [ "$_use_color" = "1" ]; then
-        printf '\033[48;5;%sm\033[1;30m %s \033[0m' "$ACCENT" "px0"
-    else
-        printf 'px0'
-    fi
-
-    printf ' %s\n\n' "$(_c "$DIM" "- an agent that works the way you work.")"
-}
-
-# ---------------------------------------------------------------------------
-# Error handling
-# ---------------------------------------------------------------------------
-
-die() {
-    err_line "$1"
-    exit "${2:-1}"
-}
-
-# ---------------------------------------------------------------------------
-# Path helpers
-# ---------------------------------------------------------------------------
-
-add_path_if_missing() {
-    directory="$1"
-
-    case ":${PATH:-}:" in
-        *":$directory:"*)
-            ;;
-        *)
-            PATH="${PATH:-}:$directory"
-            export PATH
-            ;;
-    esac
-}
-
-# ---------------------------------------------------------------------------
-# Python version helpers
-# ---------------------------------------------------------------------------
-
-python_version_ok() {
-    python_bin="$1"
-
-    version="$(
-        "$python_bin" -c '
-import sys
-print("%d.%d" % (sys.version_info[0], sys.version_info[1]))
-' 2>/dev/null
-    )" || return 1
-
-    major="${version%%.*}"
-    minor="${version#*.}"
-
-    if [ "$major" -gt 3 ]; then
-        return 0
-    fi
-
-    if [ "$major" -eq 3 ] && [ "$minor" -ge 11 ]; then
-        return 0
-    fi
-
-    return 1
-}
-
-find_supported_python() {
-    # Prefer newer versions when available.
-    for candidate in \
-        python3.13 \
-        python3.12 \
-        python3.11 \
-        python3
-    do
-        if command -v "$candidate" >/dev/null 2>&1 &&
-           python_version_ok "$(command -v "$candidate")"; then
-            command -v "$candidate"
-            return 0
-        fi
-    done
-
-    return 1
-}
-
-# ---------------------------------------------------------------------------
-# Sudo helpers
-# ---------------------------------------------------------------------------
-
-# sudo reads its password prompt from /dev/tty, not from stdin, so a piped
-# install (`curl ... | sh`) -- where stdin is the script itself -- can still
-# prompt interactively as long as a real terminal is attached. Only fall
-# back to non-interactive sudo when there is truly no tty to prompt on,
-# otherwise a required password silently fails the whole install.
-resolve_sudo() {
-    SUDO=""
-
-    if [ "$(id -u)" -eq 0 ] || ! command -v sudo >/dev/null 2>&1; then
-        return 0
-    fi
-
-    if [ -r /dev/tty ] && [ -w /dev/tty ]; then
-        SUDO="sudo"
-    else
-        SUDO="sudo -n"
-    fi
-}
-
-# ---------------------------------------------------------------------------
-# Package manager helpers
-# ---------------------------------------------------------------------------
-
-pkg_install_other() {
-    dnf_package="$1"
-    yum_package="$2"
-    pacman_package="$3"
-    apk_package="$4"
-    brew_package="$5"
-
-    if command -v dnf >/dev/null 2>&1; then
-        $SUDO dnf install -y "$dnf_package"
-        return $?
-    fi
-
-    if command -v yum >/dev/null 2>&1; then
-        $SUDO yum install -y "$yum_package"
-        return $?
-    fi
-
-    if command -v pacman >/dev/null 2>&1; then
-        $SUDO pacman -Sy --noconfirm "$pacman_package"
-        return $?
-    fi
-
-    if command -v apk >/dev/null 2>&1; then
-        $SUDO apk add "$apk_package"
-        return $?
-    fi
-
-    if command -v brew >/dev/null 2>&1; then
-        brew install "$brew_package"
-        return $?
-    fi
-
-    return 1
-}
-
-# ---------------------------------------------------------------------------
-# Find / install Python 3.11+
-# ---------------------------------------------------------------------------
-
-PYTHON_BIN=""
-
-if PYTHON_FOUND="$(find_supported_python 2>/dev/null)"; then
-    PYTHON_BIN="$PYTHON_FOUND"
-else
-    resolve_sudo
-
-    step_line "Installing Python 3.11+"
-
-    # macOS / Homebrew
-    if command -v brew >/dev/null 2>&1; then
-        if brew install python@3.12 >/dev/null 2>&1; then
-            BREW_PYTHON="$(brew --prefix python@3.12 2>/dev/null)/bin/python3.12"
-
-            if [ -x "$BREW_PYTHON" ] &&
-               python_version_ok "$BREW_PYTHON"; then
-                PYTHON_BIN="$BREW_PYTHON"
-            fi
-        fi
-    fi
-
-    # Debian / Ubuntu
-    if [ -z "$PYTHON_BIN" ] &&
-       command -v apt-get >/dev/null 2>&1; then
-
-        if $SUDO apt-get update -qq >/dev/null 2>&1 &&
-           $SUDO apt-get install -y python3.11 python3.11-venv >/dev/null 2>&1; then
-
-            if command -v python3.11 >/dev/null 2>&1 &&
-               python_version_ok "$(command -v python3.11)"; then
-                PYTHON_BIN="$(command -v python3.11)"
-            fi
-        fi
-    fi
-
-    # Fedora / RHEL
-    if [ -z "$PYTHON_BIN" ] &&
-       command -v dnf >/dev/null 2>&1; then
-
-        if $SUDO dnf install -y python3.11 >/dev/null 2>&1; then
-            if command -v python3.11 >/dev/null 2>&1 &&
-               python_version_ok "$(command -v python3.11)"; then
-                PYTHON_BIN="$(command -v python3.11)"
-            fi
-        fi
-    fi
-
-    # Arch / Alpine / other RHEL derivatives without their own python3.11
-    # package -- fall back to whatever "python3"-ish package each package
-    # manager ships (typically already 3.11+ on rolling-release distros).
-    if [ -z "$PYTHON_BIN" ] &&
-       pkg_install_other python3 python3 python python3 python@3.12 >/dev/null 2>&1; then
-
-        if command -v python3 >/dev/null 2>&1 &&
-           python_version_ok "$(command -v python3)"; then
-            PYTHON_BIN="$(command -v python3)"
-        fi
-    fi
-
-    if [ -z "$PYTHON_BIN" ]; then
-        err_line "px0 requires Python 3.11 or newer"
-
-        if command -v python3 >/dev/null 2>&1; then
-            printf 'Detected: %s\n' "$(python3 --version 2>&1)" >&2
-        fi
-
-        hint_line "Install Python 3.11+ and run this installer again."
-
-        if command -v brew >/dev/null 2>&1; then
-            cmd_line "brew install python@3.12"
-        elif command -v apt-get >/dev/null 2>&1; then
-            cmd_line "sudo apt-get install python3.11 python3.11-venv"
-        elif command -v dnf >/dev/null 2>&1; then
-            cmd_line "sudo dnf install python3.11"
-        elif command -v pacman >/dev/null 2>&1; then
-            cmd_line "sudo pacman -S python"
-        elif command -v apk >/dev/null 2>&1; then
-            cmd_line "sudo apk add python3"
-        fi
-
-        exit 1
-    fi
-fi
-
-ok_msg "Python ready" "$("$PYTHON_BIN" --version 2>&1)"
-
-# ---------------------------------------------------------------------------
-# Ensure pip exists
-# ---------------------------------------------------------------------------
-
-if ! "$PYTHON_BIN" -m pip --version >/dev/null 2>&1; then
-    step_line "Bootstrapping pip"
-
-    if ! "$PYTHON_BIN" -m ensurepip --upgrade >/dev/null 2>&1; then
-        # Debian/Ubuntu disable ensurepip for the system Python and require
-        # installing pip via the OS package manager instead.
-        resolve_sudo
-
-        if command -v apt-get >/dev/null 2>&1; then
-            apt_out="$($SUDO apt-get install -y python3-pip python3-venv 2>&1)" || {
-                warn_line "could not install python3-pip via apt-get"
-                printf '%s\n' "$apt_out" >&2
-            }
-        else
-            pkg_install_other python3-pip python3-pip python-pip py3-pip python@3.12 \
-                >/dev/null 2>&1 || true
-        fi
-    fi
-fi
-
-if ! "$PYTHON_BIN" -m pip --version >/dev/null 2>&1; then
-    err_line "pip is not available for $PYTHON_BIN"
-
-    hint_line "install it yourself, then re-run this script:"
-
-    if command -v apt-get >/dev/null 2>&1; then
-        cmd_line "sudo apt-get install python3-pip python3-venv"
-    elif command -v dnf >/dev/null 2>&1; then
-        cmd_line "sudo dnf install python3-pip"
-    elif command -v pacman >/dev/null 2>&1; then
-        cmd_line "sudo pacman -S python-pip"
-    elif command -v apk >/dev/null 2>&1; then
-        cmd_line "sudo apk add py3-pip"
-    elif command -v brew >/dev/null 2>&1; then
-        cmd_line "brew reinstall python@3.12"
-    fi
-
+# 1. Detect OS
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+case "$OS" in
+  linux*)   OS="linux" ;;
+  darwin*)  OS="darwin" ;;
+  freebsd*) OS="freebsd" ;;
+  openbsd*) OS="openbsd" ;;
+  netbsd*)  OS="netbsd" ;;
+  msys*|cygwin*|mingw*) OS="windows" ;;
+  *)
+    log_error "Unsupported operating system: $OS"
     exit 1
+    ;;
+esac
+
+# 2. Detect Architecture
+ARCH="$(uname -m)"
+case "$ARCH" in
+  x86_64|amd64)    ARCH="amd64" ;;
+  aarch64|arm64)   ARCH="arm64" ;;
+  armv7*|armv6*|arm) ARCH="arm" ;;
+  i386|i686)       ARCH="386" ;;
+  riscv64)         ARCH="riscv64" ;;
+  *)
+    log_error "Unsupported machine architecture: $ARCH"
+    exit 1
+    ;;
+esac
+
+# 3. HTTP Client detection
+fetch() {
+  url="$1"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL --connect-timeout 10 --max-time 30 --retry 2 "$url"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO- -T 15 -t 3 "$url"
+  else
+    log_error "Neither curl nor wget found in PATH. Please install one of them."
+    exit 1
+  fi
+}
+
+fetch_file() {
+  url="$1"
+  out="$2"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL --connect-timeout 10 --max-time 300 --retry 2 -o "$out" "$url"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q -T 30 -t 3 -O "$out" "$url"
+  fi
+}
+
+log_step "Detecting latest release for ${BOLD}${REPO}${RESET} (${OS}/${ARCH})..."
+
+# 4. Resolve latest version if not explicitly provided
+if [ "$VERSION" = "latest" ]; then
+  RELEASE_JSON=$(fetch "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null || true)
+  if [ -n "$RELEASE_JSON" ]; then
+    VERSION=$(printf '%s' "$RELEASE_JSON" | grep '"tag_name":' | head -n 1 | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/' | sed 's/^v//')
+  fi
+  # Fallback to VERSION file in master if release API returned empty/rate-limited
+  if [ -z "$VERSION" ] || [ "$VERSION" = "latest" ]; then
+    VERSION=$(fetch "https://raw.githubusercontent.com/${REPO}/master/VERSION" 2>/dev/null | tr -d ' \r\n' || true)
+  fi
 fi
 
-# ---------------------------------------------------------------------------
-# Install / locate pipx
-# ---------------------------------------------------------------------------
-
-PIPX_BIN=""
-
-add_path_if_missing "$HOME/.local/bin"
-
-if [ -x "$HOME/.local/bin/pipx" ]; then
-    PIPX_BIN="$HOME/.local/bin/pipx"
-elif command -v pipx >/dev/null 2>&1; then
-    PIPX_BIN="$(command -v pipx)"
+if [ -z "$VERSION" ]; then
+  log_error "Could not determine target version. Check your network or specify VERSION=x.y.z."
+  exit 1
 fi
 
-# We deliberately use the selected Python to install pipx if we cannot find it.
-if [ -z "$PIPX_BIN" ]; then
-    step_line "Installing pipx"
+BINARY_EXT=""
+[ "$OS" = "windows" ] && BINARY_EXT=".exe"
 
-    pipx_installed=0
-
-    if "$PYTHON_BIN" -m pip install --user pipx >/dev/null 2>&1; then
-        pipx_installed=1
-    fi
-
-    # PEP 668 fallback.
-    if [ "$pipx_installed" -eq 0 ]; then
-        if "$PYTHON_BIN" -m pip install \
-            --user \
-            --break-system-packages \
-            pipx >/dev/null 2>&1; then
-            pipx_installed=1
-        fi
-    fi
-
-    add_path_if_missing "$HOME/.local/bin"
-
-    if [ -x "$HOME/.local/bin/pipx" ]; then
-        PIPX_BIN="$HOME/.local/bin/pipx"
-    elif command -v pipx >/dev/null 2>&1; then
-        PIPX_BIN="$(command -v pipx)"
-    elif "$PYTHON_BIN" -m pipx --version >/dev/null 2>&1; then
-        # Keep this as a fallback. Most installations expose a pipx binary.
-        PIPX_BIN="$PYTHON_BIN -m pipx"
-    fi
-
-    if [ -z "$PIPX_BIN" ]; then
-        die "pipx could not be installed"
-    fi
-
-    ok_msg "pipx ready"
-fi
-
-# ---------------------------------------------------------------------------
-# Configure pipx paths
-# ---------------------------------------------------------------------------
-
-if [ -n "${PX0_PREFIX:-}" ]; then
-    export PIPX_BIN_DIR="$PX0_PREFIX"
+# 5. Determine installation target directory
+if [ -n "${INSTALL_DIR:-}" ]; then
+  TARGET_DIR="$INSTALL_DIR"
+elif [ -w "/usr/local/bin" ]; then
+  TARGET_DIR="/usr/local/bin"
+elif command -v sudo >/dev/null 2>&1 && [ -d "/usr/local/bin" ]; then
+  USE_SUDO=1
+  TARGET_DIR="/usr/local/bin"
 else
-    export PIPX_BIN_DIR="$HOME/.local/bin"
+  # Fallback to ~/.local/bin or ~/bin
+  TARGET_DIR="${HOME}/.local/bin"
+  mkdir -p "$TARGET_DIR"
 fi
 
-add_path_if_missing "$PIPX_BIN_DIR"
+TARGET_BIN="${TARGET_DIR}/px0${BINARY_EXT}"
 
-# ---------------------------------------------------------------------------
-# Install px0
-# ---------------------------------------------------------------------------
-
-PX0_PACKAGE="px0"
-
-if [ -n "${PX0_VERSION:-}" ]; then
-    PX0_PACKAGE="px0==$PX0_VERSION"
-fi
-
-step_line "Installing px0"
-
-# Use the explicitly selected modern Python.
-#
-# This is the important fix:
-#   pipx install --python "$PYTHON_BIN" px0
-#
-# It prevents pipx from creating the px0 environment with an older system
-# Python such as 3.9 or 3.10.
-
-if [ "${PX0_CHANNEL:-}" = "beta" ]; then
-    if [ -x "$PIPX_BIN" ]; then
-        if ! "$PIPX_BIN" install \
-            --python "$PYTHON_BIN" \
-            --pip-args "--pre" \
-            "$PX0_PACKAGE"; then
-
-            if ! "$PIPX_BIN" upgrade \
-                --python "$PYTHON_BIN" \
-                --pip-args "--pre" \
-                px0 >/dev/null 2>&1; then
-                die "failed to install px0"
-            fi
-        fi
-    else
-        if ! sh -c "$PIPX_BIN install --python \"\$1\" --pip-args \"--pre\" \"\$2\"" \
-            sh "$PYTHON_BIN" "$PX0_PACKAGE"; then
-
-            if ! sh -c "$PIPX_BIN upgrade --python \"\$1\" --pip-args \"--pre\" px0" \
-                sh "$PYTHON_BIN" >/dev/null 2>&1; then
-                die "failed to install px0"
-            fi
-        fi
+# 6. Check existing installation and version
+ACTION="Installed"
+if [ -f "$TARGET_BIN" ] || [ -L "$TARGET_BIN" ]; then
+  CURRENT_VER=""
+  if [ -x "$TARGET_BIN" ]; then
+    CURRENT_VER=$("$TARGET_BIN" -version 2>&1 | grep -oE "[0-9]+\.[0-9]+(\.[0-9]+)?" | head -n 1 || true)
+    if [ -z "$CURRENT_VER" ]; then
+      CURRENT_VER=$("$TARGET_BIN" --version 2>&1 | grep -oE "[0-9]+\.[0-9]+(\.[0-9]+)?" | head -n 1 || true)
     fi
+    if [ -z "$CURRENT_VER" ]; then
+      CURRENT_VER=$("$TARGET_BIN" version 2>&1 | grep -oE "[0-9]+\.[0-9]+(\.[0-9]+)?" | head -n 1 || true)
+    fi
+  fi
+
+  if [ -n "$CURRENT_VER" ]; then
+    log_step "Found existing px0 v${CURRENT_VER} at ${BOLD}${TARGET_BIN}${RESET}"
+    ACTION="Updated"
+  else
+    log_step "Replacing existing binary at ${BOLD}${TARGET_BIN}${RESET}..."
+    ACTION="Replaced"
+  fi
+fi
+
+BINARY_NAME="px0-${VERSION}-${OS}-${ARCH}${BINARY_EXT}"
+DOWNLOAD_URL="https://github.com/${REPO}/releases/download/v${VERSION}/${BINARY_NAME}"
+
+# Fallback download url without 'v' prefix in tag if needed
+FALLBACK_URL="https://github.com/${REPO}/releases/download/${VERSION}/${BINARY_NAME}"
+
+TMP_DIR="$(mktemp -d 2>/dev/null || mktemp -d -t 'px0install')"
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+log_step "Downloading ${BINARY_NAME}..."
+TMP_FILE="${TMP_DIR}/px0"
+
+if ! fetch_file "$DOWNLOAD_URL" "$TMP_FILE" 2>/dev/null; then
+  if ! fetch_file "$FALLBACK_URL" "$TMP_FILE" 2>/dev/null; then
+    log_error "Failed to download binary from $DOWNLOAD_URL"
+    log_warn "If this version is newly tagged, the GitHub Action release build may still be compiling."
+    exit 1
+  fi
+fi
+
+chmod +x "$TMP_FILE"
+
+# 7. Install / Replace binary
+log_step "Installing to ${BOLD}${TARGET_BIN}${RESET}..."
+
+if [ "${USE_SUDO:-0}" = "1" ]; then
+  sudo rm -f "$TARGET_BIN"
+  sudo mv "$TMP_FILE" "$TARGET_BIN"
+  sudo chmod 755 "$TARGET_BIN"
 else
-    if [ -x "$PIPX_BIN" ]; then
-        if ! "$PIPX_BIN" install \
-            --python "$PYTHON_BIN" \
-            "$PX0_PACKAGE"; then
-
-            if ! "$PIPX_BIN" upgrade \
-                --python "$PYTHON_BIN" \
-                px0 >/dev/null 2>&1; then
-                die "failed to install px0"
-            fi
-        fi
-    else
-        if ! sh -c "$PIPX_BIN install --python \"\$1\" \"\$2\"" \
-            sh "$PYTHON_BIN" "$PX0_PACKAGE"; then
-
-            if ! sh -c "$PIPX_BIN upgrade --python \"\$1\" px0" \
-                sh "$PYTHON_BIN" >/dev/null 2>&1; then
-                die "failed to install px0"
-            fi
-        fi
-    fi
+  mkdir -p "$TARGET_DIR"
+  rm -f "$TARGET_BIN"
+  mv "$TMP_FILE" "$TARGET_BIN"
+  chmod 755 "$TARGET_BIN"
 fi
 
-ok_msg "px0 package installed"
-
-# ---------------------------------------------------------------------------
-# Locate px0 binary
-# ---------------------------------------------------------------------------
-
-PX0_BIN="$PIPX_BIN_DIR/px0"
-
-if [ ! -x "$PX0_BIN" ]; then
-    if command -v px0 >/dev/null 2>&1; then
-        PX0_BIN="$(command -v px0)"
-    elif [ -x "$HOME/.local/bin/px0" ]; then
-        PX0_BIN="$HOME/.local/bin/px0"
-    else
-        die "px0 installed successfully but the executable could not be found"
-    fi
+if [ "$ACTION" = "Updated" ]; then
+  log_info "px0 successfully updated (v${CURRENT_VER} -> v${VERSION})!"
+else
+  log_info "px0 v${VERSION} installed successfully!"
 fi
 
-# ---------------------------------------------------------------------------
-# Bootstrap qmd
-# ---------------------------------------------------------------------------
+# Check if TARGET_DIR is in PATH
+PATH_ALREADY_CONFIGURED=0
+case ":$PATH:" in
+  *":$TARGET_DIR:"*) PATH_ALREADY_CONFIGURED=1 ;;
+esac
 
-if ! command -v qmd >/dev/null 2>&1; then
+# 8. Shell profile configuration (PATH & Aliases)
+detect_shell_rc() {
+  case "$(basename "${SHELL:-}")" in
+    zsh)
+      echo "${HOME}/.zshrc"
+      ;;
+    bash)
+      if [ -f "${HOME}/.bashrc" ]; then
+        echo "${HOME}/.bashrc"
+      elif [ -f "${HOME}/.bash_profile" ]; then
+        echo "${HOME}/.bash_profile"
+      else
+        echo "${HOME}/.profile"
+      fi
+      ;;
+    fish)
+      echo "${HOME}/.config/fish/config.fish"
+      ;;
+    *)
+      if [ -f "${HOME}/.zshrc" ]; then
+        echo "${HOME}/.zshrc"
+      elif [ -f "${HOME}/.bashrc" ]; then
+        echo "${HOME}/.bashrc"
+      elif [ -f "${HOME}/.bash_profile" ]; then
+        echo "${HOME}/.bash_profile"
+      elif [ -f "${HOME}/.profile" ]; then
+        echo "${HOME}/.profile"
+      else
+        echo ""
+      fi
+      ;;
+  esac
+}
 
-    if ! command -v bun >/dev/null 2>&1; then
-        step_line "Installing bun"
+SHELL_RC="$(detect_shell_rc)"
 
-        if ! command -v curl >/dev/null 2>&1; then
-            warn_line "curl is not installed; cannot install bun"
-        elif ! command -v bash >/dev/null 2>&1; then
-            warn_line "bash is not installed; cannot install bun"
+# Check if PATH is already exported in profile
+has_path_configured() {
+  rc="$1"
+  dir="$2"
+  [ -f "$rc" ] && grep -Fq "$dir" "$rc"
+}
+
+# Check if alias already exists
+has_alias_configured() {
+  rc="$1"
+  alias_name="$2"
+  [ -f "$rc" ] && grep -Eq "^[[:space:]]*alias[[:space:]]+${alias_name}=" "$rc"
+}
+
+# Auto-add TARGET_DIR to PATH in shell profile if not in current PATH and not already written
+if [ "$PATH_ALREADY_CONFIGURED" = "0" ]; then
+  log_warn "${TARGET_DIR} is not in your current PATH."
+  if [ -n "$SHELL_RC" ]; then
+    if has_path_configured "$SHELL_RC" "$TARGET_DIR"; then
+      log_info "PATH addition already present in ${SHELL_RC}."
+    else
+      printf "\n# Added by px0 installer\nexport PATH=\"%s:\$PATH\"\n" "$TARGET_DIR" >> "$SHELL_RC"
+      log_info "Added ${TARGET_DIR} to PATH in ${SHELL_RC}"
+    fi
+  else
+    printf "   Add it by running:\n"
+    printf "     export PATH=\"%s:\$PATH\"\n\n" "$TARGET_DIR"
+  fi
+fi
+
+# Windows PATH and command wrapper guidance
+if [ "$OS" = "windows" ]; then
+  printf "\n${BOLD}Windows Shell Setup:${RESET}\n"
+  printf "  To use px0 as %s or %s in PowerShell, you can create function wrappers or doskeys:\n" "${BOLD}code${RESET}" "${BOLD}cursor${RESET}"
+  printf "    ${DIM}Set-Alias -Name code -Value px0${RESET}\n"
+  printf "    ${DIM}Set-Alias -Name cursor -Value px0${RESET}\n"
+else
+  # Check if terminal is available for interactive prompt (either stdin or /dev/tty)
+  CAN_PROMPT=0
+  if [ "${PX0_NO_ALIAS:-0}" != "1" ] && [ -n "$SHELL_RC" ]; then
+    if [ -t 0 ] || [ -r /dev/tty ]; then
+      CAN_PROMPT=1
+    fi
+  fi
+
+  if [ -z "$WANT_ALIAS" ] && [ "$CAN_PROMPT" = "1" ]; then
+    printf "\n${BOLD}Optional CLI Aliases:${RESET}\n"
+    printf "You can invoke px0 with existing editor commands like %b or %b.\n" "${BOLD}code${RESET}" "${BOLD}cursor${RESET}"
+    printf "Would you like to alias px0? [1) code / 2) cursor / 3) both / 4) custom / n) none] (default: n): "
+    choice="n"
+    if [ -r /dev/tty ]; then
+      read -r choice </dev/tty || choice="n"
+    else
+      read -r choice || choice="n"
+    fi
+    case "$choice" in
+      1|[cC]|[cC][oO][dD][eE])
+        WANT_ALIAS="code"
+        ;;
+      2|[cC][uU][rR][sS][oO][rR])
+        WANT_ALIAS="cursor"
+        ;;
+      3|[bB]|[bB][oO][tT][hH])
+        WANT_ALIAS="code cursor"
+        ;;
+      4)
+        printf "Enter custom alias name: "
+        custom_name=""
+        if [ -r /dev/tty ]; then
+          read -r custom_name </dev/tty || custom_name=""
         else
-            if curl -fsSL https://bun.sh/install | bash >/dev/null 2>&1; then
-                ok_msg "bun installed"
-            else
-                warn_line "bun installation did not complete"
-            fi
+          read -r custom_name || custom_name=""
         fi
+        [ -n "$custom_name" ] && WANT_ALIAS="$custom_name"
+        ;;
+      *)
+        WANT_ALIAS=""
+        ;;
+    esac
+  fi
 
-        add_path_if_missing "$HOME/.bun/bin"
-    fi
+  if [ -n "$WANT_ALIAS" ] && [ -n "$SHELL_RC" ]; then
+    for a in $WANT_ALIAS; do
+      # Sanitize alias name to alphanumeric and underscore
+      clean_alias=$(printf '%s' "$a" | tr -cd 'a-zA-Z0-9_-')
+      [ -z "$clean_alias" ] && continue
 
-    if command -v bun >/dev/null 2>&1; then
-        step_line "Installing qmd"
-
-        if bun install -g "@tobilu/qmd@$QMD_PINNED_VERSION" >/dev/null 2>&1; then
-            ok_msg "qmd installed" "$QMD_PINNED_VERSION"
-        else
-            warn_line "qmd installation did not complete"
-            hint_line "install it manually with:"
-            cmd_line "bun install -g @tobilu/qmd@$QMD_PINNED_VERSION"
-        fi
-    else
-        warn_line "bun is unavailable; skipping qmd"
-        hint_line "install it manually with:"
-        cmd_line "bun install -g @tobilu/qmd@$QMD_PINNED_VERSION"
-    fi
+      if has_alias_configured "$SHELL_RC" "$clean_alias"; then
+        log_info "Alias ${BOLD}${clean_alias}${RESET} already exists in ${SHELL_RC} (skipped)."
+      else
+        printf "alias %s=\"px0\"\n" "$clean_alias" >> "$SHELL_RC"
+        log_info "Added alias ${BOLD}${clean_alias}=\"px0\"${RESET} to ${SHELL_RC}."
+      fi
+    done
+  fi
 fi
 
-# ---------------------------------------------------------------------------
-# Scheduler
-# ---------------------------------------------------------------------------
-
-if [ "${PX0_NO_DAEMON:-}" != "true" ] && [ -t 0 ]; then
-    step_line "Scheduler"
-
-    printf 'Install the px0 scheduler daemon now? %s ' \
-        "$(_c "$DIM" "[y/N]:")"
-
-    ans=""
-
-    if read -r ans; then
-        case "$ans" in
-            y|Y)
-                if "$PX0_BIN" daemon install; then
-                    ok_msg "scheduler installed"
-                else
-                    warn_line "scheduler installation failed"
-                    hint_line "you can retry with:"
-                    cmd_line "px0 daemon install"
-                fi
-                ;;
-            *)
-                ;;
-        esac
-    fi
-
-elif [ "${PX0_NO_DAEMON:-}" != "true" ]; then
-    warn_line "not a terminal; skipping the daemon prompt"
-    hint_line "enable it any time with:"
-    cmd_line "px0 daemon install"
-fi
-
-# ---------------------------------------------------------------------------
-# Success
-# ---------------------------------------------------------------------------
-
-ok_msg "$(_bold "px0 is installed")"
-
-hint_line "try these next:"
-cmd_line "px0 init"
-cmd_line "px0 workflows new"
-
-printf '\n'
+printf "\nRun %b to inspect any repository:\n" "${BOLD}px0${RESET}"
+printf "  ${AMBER}px0 .${RESET}\n\n"

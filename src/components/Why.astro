@@ -75,40 +75,52 @@ const doesnt = [
       ))}
     </ol>
 
-    <div class="why-grid">
-      <div class="diff pnl reveal" role="table" aria-label="Traditional IDE compared with px0">
-        <div class="pnl-h"><span>diff --git a/traditional-ide b/px0</span><span><b class="s-bad">-7</b> <b class="s-ok">+7</b></span></div>
-        <div class="diff-b">
-          {hunks.map((x) => (
-            <div class="hunk" role="rowgroup">
-              <div class="hh">@@ {x.h} @@</div>
-              <div class="dl del" role="row"><span class="sg">-</span><span>{x.del}</span></div>
-              <div class="dl add" role="row"><span class="sg">+</span><span>{x.add}</span>{x.note && <span class="note">{x.note}</span>}</div>
-            </div>
-          ))}
-        </div>
+    <div class="why-duo">
+      <div class="pnl ticks reveal">
+        <div class="pnl-h"><span>read-only is the feature</span></div>
+        <ul class="ro">
+          {does.map(([g, t]) => <li><span class="g s-ok">{g}</span>{t}</li>)}
+        </ul>
+        <ul class="ro ro--no">
+          {doesnt.map(([g, t]) => <li><span class="g s-bad">{g}</span>{t}</li>)}
+        </ul>
       </div>
 
-      <div class="why-side">
-        <div class="pnl ticks reveal">
-          <div class="pnl-h"><span>read-only is the feature</span></div>
-          <ul class="ro">
-            {does.map(([g, t]) => <li><span class="g s-ok">{g}</span>{t}</li>)}
-          </ul>
-          <ul class="ro ro--no">
-            {doesnt.map(([g, t]) => <li><span class="g s-bad">{g}</span>{t}</li>)}
-          </ul>
-        </div>
+      <div class="pnl reveal">
+        <div class="pnl-h"><span>where it fits</span></div>
+        <ul class="fit">
+          <li><b>verifying agent output</b> open the worktree, trace the references, close the tab</li>
+          <li><b>auditing a codebase</b> read a 25,000-file monorepo on a laptop without the fans spinning up</li>
+          <li><b>remote boxes</b> run on the server, tunnel one port, read in any browser</li>
+          <li><b>beside your editor</b> keep vim or VS Code for the edits you still type</li>
+        </ul>
+      </div>
+    </div>
 
-        <div class="pnl reveal">
-          <div class="pnl-h"><span>where it fits</span></div>
-          <ul class="fit">
-            <li><b>verifying agent output</b> open the worktree, trace the references, close the tab</li>
-            <li><b>auditing a codebase</b> read a 25,000-file monorepo on a laptop without the fans spinning up</li>
-            <li><b>remote boxes</b> run on the server, tunnel one port, read in any browser</li>
-            <li><b>beside your editor</b> keep vim or VS Code for the edits you still type</li>
-          </ul>
-        </div>
+    <div class="cmp pnl reveal">
+      <div class="pnl-h"><span>traditional IDE vs px0</span><span>side-by-side</span></div>
+      <div class="tbl-wrap">
+        <table class="tbl cmp-tbl">
+          <thead>
+            <tr>
+              <th>dimension</th>
+              <th>traditional IDE</th>
+              <th>px0</th>
+            </tr>
+          </thead>
+          <tbody>
+            {hunks.map((x) => (
+              <tr>
+                <td class="cmp-dim">{x.h}</td>
+                <td class="cmp-trad">{x.del}</td>
+                <td class="cmp-px0">
+                  <span class="cmp-val">{x.add}</span>
+                  {x.note && <span class="cmp-badge">{x.note}</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -212,53 +224,60 @@ const doesnt = [
     text-decoration-thickness: 1px;
   }
 
-  .why-grid {
+  .why-duo {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
-    align-items: start;
+    align-items: stretch;
   }
 
-  .diff-b {
-    padding: 6px 0 10px;
-    font-size: 12.5px;
+  .cmp {
+    margin-top: 16px;
+    width: 100%;
   }
 
-  .hh {
-    padding: 8px 16px 4px;
-    color: var(--cyan);
-    font-size: 11.5px;
+  .cmp-tbl {
+    width: 100%;
+    min-width: 580px;
+    font-size: 12px;
   }
 
-  .dl {
-    display: grid;
-    grid-template-columns: 2ch minmax(0, 1fr) auto;
-    gap: 10px;
-    padding: 3px 16px;
-  }
+  .cmp-tbl th:nth-child(1) { width: 22%; }
+  .cmp-tbl th:nth-child(2) { width: 39%; }
+  .cmp-tbl th:nth-child(3) { width: 39%; }
 
-  .dl.del {
-    background: color-mix(in srgb, var(--rose) 9%, transparent);
-    color: var(--txt-3);
-  }
-
-  .dl.add {
-    background: color-mix(in srgb, var(--green) 10%, transparent);
+  .cmp-dim {
     color: var(--txt);
+    font-weight: 500;
   }
 
-  .del .sg { color: var(--rose); }
-  .add .sg { color: var(--green); }
+  .cmp-trad {
+    color: var(--txt-3);
+    white-space: normal;
+    line-height: 1.45;
+  }
 
-  .dl .note {
-    font-size: 11px;
+  .cmp-px0 {
+    color: var(--txt);
+    white-space: normal;
+    line-height: 1.45;
+  }
+
+  .cmp-val {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .cmp-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 6px;
+    background: var(--amber-wash);
+    border: 1px solid var(--amber-line);
     color: var(--amber);
-  }
-
-  .why-side {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
   }
 
   .ro {
@@ -301,7 +320,7 @@ const doesnt = [
   }
 
   @media (max-width: 960px) {
-    .why-grid { grid-template-columns: minmax(0, 1fr); }
+    .why-duo { grid-template-columns: minmax(0, 1fr); }
     .shift { grid-template-columns: minmax(0, 1fr); }
     .sh:not(:last-child)::after {
       top: auto;
@@ -312,7 +331,6 @@ const doesnt = [
   }
 
   @media (max-width: 640px) {
-    .dl { grid-template-columns: 2ch minmax(0, 1fr); }
-    .dl .note { grid-column: 2; }
+    .cmp-tbl { min-width: 480px; }
   }
 </style>

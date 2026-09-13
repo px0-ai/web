@@ -90,27 +90,12 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       <article class="fcell reveal">
         <div class="fid"><b>f.07</b><span>memory</span></div>
         <h3>Gives memory back</h3>
-        <p>After 15 seconds without requests, px0 returns freed pages to the OS. A tab left open for the afternoon costs what an idle one should.</p>
+        <p>After 15 seconds without requests, px0 reclaims memory. A tab left open for the afternoon costs what an idle one should.</p>
         <div class="fviz scav">
           <div><span>peak</span><i style="width:94%"></i><b>94 MB</b></div>
           <div class="hi"><span>30 s idle</span><i style="width:57%"></i><b>57 MB</b></div>
           <small>linux kernel, after five full scans</small>
         </div>
-      </article>
-
-      <article class="fcell reveal">
-        <div class="fid"><b>f.08</b><span>terminal</span></div>
-        <h3>A CLI with manners</h3>
-        <p>A quiet 256-colour palette on a TTY, plain <code class="inline-code">[OK]</code> glyphs in a pipe, <code class="inline-code">NO_COLOR</code> respected, <code class="inline-code">-quiet</code> for scripts.</p>
-        <pre class="fviz tty"><span class="s-dim">tty </span> <span class="s-ok">✓</span> indexed 95710 files  <span class="s-dim">370ms</span>
-<span class="s-dim">pipe</span> [OK] indexed 95710 files  370ms</pre>
-      </article>
-
-      <article class="fcell reveal">
-        <div class="fid"><b>f.09</b><span>updates</span></div>
-        <h3>Updates itself</h3>
-        <p>A background check once every 24 hours that never delays startup, a note on stderr when a release lands, and one flag to upgrade in place.</p>
-        <pre class="fviz tty"><span class="s-dim">$</span> px0 --update</pre>
       </article>
     </div>
   </div>

@@ -2,7 +2,7 @@
 # Universal installer script for px0 (https://px0.ai)
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/px0-ai/px0/master/install.sh | bash
+#   curl -fsSL https://px0.ai/install.sh | bash
 #
 # Environment variables:
 #   VERSION      - target version to install (e.g. "0.1.0" or "latest", default: "latest")
