@@ -1,5 +1,5 @@
 ---
-import { GITHUB, RELEASES, ISSUES, LICENSE, MAILTO, VERSION, repoDoc } from '../data/links';
+import { GITHUB, RELEASES, ISSUES, LICENSE, MAILTO, VERSION, INSTALL_CMD, repoDoc } from '../data/links';
 const year = new Date().getFullYear();
 const base = Astro.url.pathname === '/' ? '' : '/';
 
@@ -37,6 +37,13 @@ const cols = [
         <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
       </a>
       <p>The read-only IDE for the AI-agent era. Starts in under a millisecond, idles at about 16 MB.</p>
+      <div class="f-install">
+        <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
+          <span class="copyline-p">$</span>
+          <code><span>{INSTALL_CMD}</span></code>
+          <span class="copyline-s"></span>
+        </button>
+      </div>
       <span class="f-ver"><i></i>v{VERSION} · stable channel</span>
     </div>
 
@@ -81,6 +88,11 @@ const cols = [
     font-size: 12px;
     line-height: 1.7;
     color: var(--txt-2);
+  }
+
+  .f-install {
+    max-width: 440px;
+    margin-top: 16px;
   }
 
   .f-ver {

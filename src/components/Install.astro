@@ -79,9 +79,16 @@ sudo install px0 /usr/local/bin/`;
     <div class="final ticks reveal">
       <p class="final-cmd"><span class="s-dim">$</span> px0<span class="caret"></span></p>
       <p class="final-sub">Your codebase, open in the time it takes to read this line.</p>
-      <div class="final-cta">
-        <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">Star on GitHub</a>
-        <a class="btn btn-ghost" href={RELEASES} target="_blank" rel="noopener noreferrer">Download v{VERSION}</a>
+      <div class="final-actions">
+        <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
+          <span class="copyline-p">$</span>
+          <code><span>{INSTALL_CMD}</span></code>
+          <span class="copyline-s"></span>
+        </button>
+        <div class="final-cta">
+          <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">Star on GitHub</a>
+          <a class="btn btn-ghost" href={RELEASES} target="_blank" rel="noopener noreferrer">Download v{VERSION}</a>
+        </div>
       </div>
     </div>
   </div>
@@ -236,12 +243,24 @@ sudo install px0 /usr/local/bin/`;
     color: var(--txt-2);
   }
 
+  .final-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 580px;
+    margin: 28px auto 0;
+  }
+
+  .final-actions .copyline {
+    width: 100%;
+  }
+
   .final-cta {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 26px;
   }
 
   @media (max-width: 1100px) {
