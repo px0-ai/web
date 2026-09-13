@@ -8,8 +8,8 @@ interface Props {
 }
 
 const {
-  title = "px0 - Read-only IDE for the AI-agent era",
-  description = "px0 is a browser-based, read-only IDE in a single Go binary: an instant verification console for code your agents write. It starts in under 1 ms, idles at ~16 MB, and gives you fuzzy file search, symbol navigation, project-wide regex search, ~280 languages of syntax highlighting, and optional LSP go-to-definition across repositories with tens of thousands of files.",
+  title = "px0: Super Fast Read-only IDE",
+  description = "px0 is a super fast, browser-based read-only IDE designed for instant code navigation and review. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
@@ -71,7 +71,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
     <meta name="description" content={description} />
     <meta
       name="keywords"
-      content="px0, read-only IDE, code viewer, code navigator, lightweight IDE, code reading, code review, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, project search, regex search, single binary, Go, open source, VS Code alternative"
+      content="px0, read-only IDE, super fast IDE, code viewer, code navigator, lightweight IDE, code reading, code review, instant code inspection, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, project search, regex search, single binary, Go, open source, VS Code alternative"
     />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Arpit Bhayani" />
@@ -98,7 +98,7 @@ const ogImage = 'https://px0.ai/android-icon-192x192.png';
       name: 'px0',
       softwareVersion: VERSION,
       description:
-        'px0 is a lightweight, browser-based, read-only IDE packaged as a single static Go binary. Fuzzy file search, symbol navigation, project-wide regex search, syntax highlighting for ~280 languages, and optional LSP go-to-definition, hover, and references. Starts in under 1 ms and idles at ~16 MB.',
+        'px0 is a super fast, browser-based read-only IDE designed for instant code navigation and review. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.',
       applicationCategory: 'DeveloperApplication',
       applicationSubCategory: 'Code Viewer, Code Navigation, IDE',
       operatingSystem: 'macOS, Linux, FreeBSD, OpenBSD, NetBSD, Windows',

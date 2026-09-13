@@ -1,6 +1,6 @@
-# px0 - Read-only IDE for the AI-agent era
+# px0: Super Fast Read-only IDE
 
-> px0 is a browser-based, read-only IDE and code navigator packaged as a single static Go binary. It is built for reviewing, auditing, and navigating code that coding agents generate from the terminal. It starts in under 1 ms, idles at ~16 MB of resident memory, and provides fuzzy file search, document symbols, project-wide regex search, syntax highlighting for ~280 languages, and optional LSP go-to-definition, hover, and references across repositories with tens of thousands of files.
+> px0 is a super fast, browser-based read-only IDE designed for instant code navigation and review. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.
 
 This index is written for large language models and AI agents. It maps the px0 product, its performance characteristics, and its command surface.
 

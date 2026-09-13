@@ -1,6 +1,6 @@
-# px0 - Read-only IDE for the AI-agent era
+# px0: Super Fast Read-only IDE
 
-> px0 is a lightning-fast, zero-bloat, browser-based, read-only IDE built for the AI-agent era. It starts in under 1 ms, uses ~16 MB of RAM, and turns the browser into an instant verification console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.
+> px0 is a super fast, browser-based read-only IDE designed for instant code navigation and review. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.
 
 ## Positioning
 
