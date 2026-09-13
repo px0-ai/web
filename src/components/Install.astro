@@ -85,10 +85,7 @@ sudo install px0 /usr/local/bin/`;
           <code><span>{INSTALL_CMD}</span></code>
           <span class="copyline-s"></span>
         </button>
-        <div class="final-cta">
-          <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">Star on GitHub</a>
-          <a class="btn btn-ghost" href={RELEASES} target="_blank" rel="noopener noreferrer">Download v{VERSION}</a>
-        </div>
+        <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">Star on GitHub</a>
       </div>
     </div>
   </div>
@@ -245,22 +242,33 @@ sudo install px0 /usr/local/bin/`;
 
   .final-actions {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 16px;
-    max-width: 580px;
+    gap: 12px;
+    max-width: 660px;
     margin: 28px auto 0;
   }
 
   .final-actions .copyline {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 
-  .final-cta {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
+  .final-actions .btn {
+    height: 44px;
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .final-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    .final-actions .copyline,
+    .final-actions .btn {
+      width: 100%;
+    }
   }
 
   @media (max-width: 1100px) {
