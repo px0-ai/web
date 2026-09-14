@@ -1,0 +1,47 @@
+{
+  "version": "0.1.3",
+  "tag": "v0.1.3",
+  "date": "2026-09-14",
+  "title": "CLI File Navigation, In-Place Tab Reloading & Verified Updates",
+  "summary": "Introduces opening specific files and line numbers directly from the CLI, seamless in-place tab reloading on workspace reindex, cryptographic checksum validation for self-updates, an improved Diff toggle layout menu, and installer auto-detection.",
+  "commitCount": 12,
+  "commitRange": "v0.1.2..v0.1.3",
+  "categories": [
+    {
+      "name": "CLI & Navigation",
+      "items": [
+        "Open file paths directly from the CLI alongside directories with automatic Git repository or working directory root detection",
+        "Navigate directly to target line and column numbers using trailing CLI syntax (e.g. px0 file.go:42 or px0 file.go:42:10)",
+        "Automatically reveal target files in the explorer sidebar tree and focus the editor caret at the requested line on startup",
+        "Clean up path and line query parameters from browser history after startup navigation completes"
+      ]
+    },
+    {
+      "name": "Editor & Diff Experience",
+      "items": [
+        "Reload open tabs concurrently in place when the workspace reindexes without tab switching or layout interruptions",
+        "Snapshot and restore live editor viewports and Markdown preview scroll positions across background reindexes",
+        "Preserve tab state across reloads including diff mode, cursor position, and column offset with boundary clamping for shrunk files",
+        "Single Diff toggle button replacing separate layout buttons, featuring a hover menu to choose between split and unified diffs",
+        "Default to active split diff view when opening modified Git files",
+        "Include diff availability directly within file metadata API responses"
+      ]
+    },
+    {
+      "name": "Security, Installation & Telemetry",
+      "items": [
+        "Validate downloaded release binaries against published SHA-256 digests during self-update before execution or replacement",
+        "Stream update downloads with in-flight cryptographic hash verification and safe abort on mismatch or missing checksums",
+        "Cascading installer target ladder prioritizing writable PATH directories (~/.local/bin) to eliminate unnecessary sudo escalation",
+        "Anonymous backend session telemetry with coarse 7-tier scale bucketing to prevent repository fingerprinting, with full opt-out support"
+      ]
+    },
+    {
+      "name": "Improvements & Documentation",
+      "items": [
+        "Add 500ms browser launch delay on WSL to prevent connection race conditions caused by WSL2 localhost relay latency",
+        "Comprehensive architecture documentation detailing workspace reindexing, chunk-bounded fetching, and in-place tab reload lifecycles"
+      ]
+    }
+  ]
+}
