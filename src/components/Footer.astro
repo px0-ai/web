@@ -10,11 +10,13 @@ const cols = [
   },
   {
     title: 'docs',
-    links: ['README.md', 'BENCHMARKS.md', 'ARCHITECTURE.md', 'STYLING.md', 'CONTRIBUTING.md'].map((d) => ({
-      label: d,
-      href: repoDoc(d),
-      ext: true,
-    })),
+    links: [
+      { label: 'README.md', href: repoDoc('README.md'), ext: true },
+      { label: 'BENCHMARKS.md', href: repoDoc('BENCHMARKS.md'), ext: true },
+      { label: 'ARCHITECTURE.md', href: repoDoc('docs/internals/architecture.md'), ext: true },
+      { label: 'STYLING.md', href: repoDoc('docs/internals/styling-and-themes.md'), ext: true },
+      { label: 'CONTRIBUTING.md', href: repoDoc('CONTRIBUTING.md'), ext: true },
+    ],
   },
   {
     title: 'project',

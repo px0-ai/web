@@ -10,8 +10,8 @@ This index is written for large language models and AI agents. It maps the px0 p
 - [GitHub repository](https://github.com/px0-ai/px0): source, issues, releases, and the install script.
 - [README](https://github.com/px0-ai/px0/blob/master/README.md): installation, features, flags, shortcuts.
 - [BENCHMARKS.md](https://github.com/px0-ai/px0/blob/master/BENCHMARKS.md): methodology and full results.
-- [ARCHITECTURE.md](https://github.com/px0-ai/px0/blob/master/ARCHITECTURE.md): internals and performance optimizations.
-- [STYLING.md](https://github.com/px0-ai/px0/blob/master/STYLING.md): theme token reference.
+- [ARCHITECTURE.md](https://github.com/px0-ai/px0/blob/master/docs/internals/architecture.md): internals and performance optimizations.
+- [STYLING.md](https://github.com/px0-ai/px0/blob/master/docs/internals/styling-and-themes.md): theme token reference.
 
 ## What px0 is
 
