@@ -2,7 +2,7 @@
 # Universal installer script for px0 (https://px0.ai)
 #
 # Usage:
-#   curl -fsSL https://px0.ai/install.sh | bash
+#   curl -fsSL https://px0.ai/install.sh | sh
 #
 # Environment variables:
 #   VERSION      - target version to install (e.g. "0.1.0" or "latest", default: "latest")
@@ -19,7 +19,6 @@ BOLD="\033[1m"
 GREEN="\033[38;5;71m"
 AMBER="\033[38;5;208m"
 RED="\033[38;5;167m"
-DIM="\033[38;5;245m"
 RESET="\033[0m"
 
 # %b so color codes embedded in messages are interpreted
@@ -113,18 +112,66 @@ fi
 BINARY_EXT=""
 [ "$OS" = "windows" ] && BINARY_EXT=".exe"
 
-# 5. Determine installation target directory
-if [ -n "${INSTALL_DIR:-}" ]; then
+# 5. Determine installation target directory (cascading ladder; sudo is last resort)
+USE_SUDO=0
+TARGET_DIR=""
+
+is_writable() {
+  d="$1"
+  [ -z "$d" ] && return 1
+  mkdir -p "$d" 2>/dev/null || return 1
+  test_file="$d/.px0_test_$$"
+  if ( : > "$test_file" ) 2>/dev/null; then
+    rm -f "$test_file" 2>/dev/null
+    return 0
+  fi
+  return 1
+}
+
+# Priority 1: Explicit user overrides
+if [ -n "${PX0_INSTALL_DIR:-}" ] && is_writable "$PX0_INSTALL_DIR"; then
+  TARGET_DIR="$PX0_INSTALL_DIR"
+elif [ -n "${INSTALL_DIR:-}" ] && is_writable "$INSTALL_DIR"; then
   TARGET_DIR="$INSTALL_DIR"
-elif [ -w "/usr/local/bin" ]; then
-  TARGET_DIR="/usr/local/bin"
-elif command -v sudo >/dev/null 2>&1 && [ -d "/usr/local/bin" ]; then
-  USE_SUDO=1
-  TARGET_DIR="/usr/local/bin"
-else
-  # Fallback to ~/.local/bin or ~/bin
-  TARGET_DIR="${HOME}/.local/bin"
-  mkdir -p "$TARGET_DIR"
+fi
+
+# Priority 2: User-writable directories that are ALREADY in PATH (zero-config instant win)
+if [ -z "$TARGET_DIR" ]; then
+  for d in "${HOME:-}/.local/bin" "${HOME:-}/bin" "/usr/local/bin"; do
+    if [ -n "$d" ]; then
+      case ":${PATH:-}:" in
+        *":$d:"*)
+          if is_writable "$d"; then
+            TARGET_DIR="$d"
+            break
+          fi
+          ;;
+      esac
+    fi
+  done
+fi
+
+# Priority 3: Standard user directory fallbacks (created if needed, added to PATH later)
+if [ -z "$TARGET_DIR" ]; then
+  if [ -n "${HOME:-}" ] && is_writable "${HOME}/.local/bin"; then
+    TARGET_DIR="${HOME}/.local/bin"
+  elif [ -n "${HOME:-}" ] && is_writable "${HOME}/bin"; then
+    TARGET_DIR="${HOME}/bin"
+  elif is_writable "/usr/local/bin"; then
+    TARGET_DIR="/usr/local/bin"
+  fi
+fi
+
+# Priority 4: Last resort - requiring sudo
+if [ -z "$TARGET_DIR" ]; then
+  if command -v sudo >/dev/null 2>&1 && [ -d "/usr/local/bin" ]; then
+    USE_SUDO=1
+    TARGET_DIR="/usr/local/bin"
+  else
+    # Emergency fallback (e.g. read-only HOME without sudo)
+    TARGET_DIR="${TMPDIR:-/tmp}/px0/bin"
+    mkdir -p "$TARGET_DIR" 2>/dev/null || true
+  fi
 fi
 
 TARGET_BIN="${TARGET_DIR}/px0${BINARY_EXT}"
@@ -200,7 +247,7 @@ case ":$PATH:" in
   *":$TARGET_DIR:"*) PATH_ALREADY_CONFIGURED=1 ;;
 esac
 
-# 8. Shell profile configuration (PATH & Aliases)
+# 8. Shell profile configuration (PATH)
 detect_shell_rc() {
   case "$(basename "${SHELL:-}")" in
     zsh)
@@ -243,13 +290,6 @@ has_path_configured() {
   [ -f "$rc" ] && grep -Fq "$dir" "$rc"
 }
 
-# Check if alias already exists
-has_alias_configured() {
-  rc="$1"
-  alias_name="$2"
-  [ -f "$rc" ] && grep -Eq "^[[:space:]]*alias[[:space:]]+${alias_name}=" "$rc"
-}
-
 # Auto-add TARGET_DIR to PATH in shell profile if not in current PATH and not already written
 if [ "$PATH_ALREADY_CONFIGURED" = "0" ]; then
   log_warn "${TARGET_DIR} is not in your current PATH."
@@ -266,72 +306,6 @@ if [ "$PATH_ALREADY_CONFIGURED" = "0" ]; then
   fi
 fi
 
-# Windows PATH and command wrapper guidance
-if [ "$OS" = "windows" ]; then
-  printf "\n${BOLD}Windows Shell Setup:${RESET}\n"
-  printf "  To use px0 as %s or %s in PowerShell, you can create function wrappers or doskeys:\n" "${BOLD}code${RESET}" "${BOLD}cursor${RESET}"
-  printf "    ${DIM}Set-Alias -Name code -Value px0${RESET}\n"
-  printf "    ${DIM}Set-Alias -Name cursor -Value px0${RESET}\n"
-else
-  # Check if terminal is available for interactive prompt (either stdin or /dev/tty)
-  CAN_PROMPT=0
-  if [ "${PX0_NO_ALIAS:-0}" != "1" ] && [ -n "$SHELL_RC" ]; then
-    if [ -t 0 ] || [ -r /dev/tty ]; then
-      CAN_PROMPT=1
-    fi
-  fi
-
-  if [ -z "$WANT_ALIAS" ] && [ "$CAN_PROMPT" = "1" ]; then
-    printf "\n${BOLD}Optional CLI Aliases:${RESET}\n"
-    printf "You can invoke px0 with existing editor commands like %b or %b.\n" "${BOLD}code${RESET}" "${BOLD}cursor${RESET}"
-    printf "Would you like to alias px0? [1) code / 2) cursor / 3) both / 4) custom / n) none] (default: n): "
-    choice="n"
-    if [ -r /dev/tty ]; then
-      read -r choice </dev/tty || choice="n"
-    else
-      read -r choice || choice="n"
-    fi
-    case "$choice" in
-      1|[cC]|[cC][oO][dD][eE])
-        WANT_ALIAS="code"
-        ;;
-      2|[cC][uU][rR][sS][oO][rR])
-        WANT_ALIAS="cursor"
-        ;;
-      3|[bB]|[bB][oO][tT][hH])
-        WANT_ALIAS="code cursor"
-        ;;
-      4)
-        printf "Enter custom alias name: "
-        custom_name=""
-        if [ -r /dev/tty ]; then
-          read -r custom_name </dev/tty || custom_name=""
-        else
-          read -r custom_name || custom_name=""
-        fi
-        [ -n "$custom_name" ] && WANT_ALIAS="$custom_name"
-        ;;
-      *)
-        WANT_ALIAS=""
-        ;;
-    esac
-  fi
-
-  if [ -n "$WANT_ALIAS" ] && [ -n "$SHELL_RC" ]; then
-    for a in $WANT_ALIAS; do
-      # Sanitize alias name to alphanumeric and underscore
-      clean_alias=$(printf '%s' "$a" | tr -cd 'a-zA-Z0-9_-')
-      [ -z "$clean_alias" ] && continue
-
-      if has_alias_configured "$SHELL_RC" "$clean_alias"; then
-        log_info "Alias ${BOLD}${clean_alias}${RESET} already exists in ${SHELL_RC} (skipped)."
-      else
-        printf "alias %s=\"px0\"\n" "$clean_alias" >> "$SHELL_RC"
-        log_info "Added alias ${BOLD}${clean_alias}=\"px0\"${RESET} to ${SHELL_RC}."
-      fi
-    done
-  fi
-fi
-
-printf "\nRun %b to inspect any repository:\n" "${BOLD}px0${RESET}"
-printf "  ${AMBER}px0 .${RESET}\n\n"
+printf "\nRun %b to inspect any directory:\n\n" "${BOLD}px0${RESET}"
+printf "  ${AMBER}px0 .${RESET}                 # inspect current directory\n"
+printf "  ${AMBER}px0 /path/to/project${RESET}  # or pass any directory path\n\n"

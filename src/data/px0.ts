@@ -144,6 +144,7 @@ export const FLAGS = [
   { flag: '-no-lsp', def: 'false', desc: 'skip language servers, use the regex outline' },
   { flag: '-no-git', def: 'false', desc: 'disable git awareness (tree status badges and diff view)' },
   { flag: '-no-color', def: 'false', desc: 'strip ANSI escape sequences' },
+  { flag: '-no-telemetry', def: 'false', desc: 'disable anonymous backend usage telemetry' },
   { flag: '-quiet', def: 'false', desc: 'suppress narration, errors still go to stderr' },
   { flag: '-update', def: 'false', desc: 'check for and install the latest release' },
   { flag: '-version, -v', def: 'false', desc: 'print version and architecture, then exit' },

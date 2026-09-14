@@ -2,7 +2,7 @@
 # Universal installer script for px0 (https://px0.ai)
 #
 # Usage:
-#   curl -fsSL https://px0.ai/install.sh | bash
+#   curl -fsSL https://px0.ai/install.sh | sh
 #
 # Environment variables:
 #   VERSION      - target version to install (e.g. "0.1.0" or "latest", default: "latest")
@@ -112,18 +112,66 @@ fi
 BINARY_EXT=""
 [ "$OS" = "windows" ] && BINARY_EXT=".exe"
 
-# 5. Determine installation target directory
-if [ -n "${INSTALL_DIR:-}" ]; then
+# 5. Determine installation target directory (cascading ladder; sudo is last resort)
+USE_SUDO=0
+TARGET_DIR=""
+
+is_writable() {
+  d="$1"
+  [ -z "$d" ] && return 1
+  mkdir -p "$d" 2>/dev/null || return 1
+  test_file="$d/.px0_test_$$"
+  if ( : > "$test_file" ) 2>/dev/null; then
+    rm -f "$test_file" 2>/dev/null
+    return 0
+  fi
+  return 1
+}
+
+# Priority 1: Explicit user overrides
+if [ -n "${PX0_INSTALL_DIR:-}" ] && is_writable "$PX0_INSTALL_DIR"; then
+  TARGET_DIR="$PX0_INSTALL_DIR"
+elif [ -n "${INSTALL_DIR:-}" ] && is_writable "$INSTALL_DIR"; then
   TARGET_DIR="$INSTALL_DIR"
-elif [ -w "/usr/local/bin" ]; then
-  TARGET_DIR="/usr/local/bin"
-elif command -v sudo >/dev/null 2>&1 && [ -d "/usr/local/bin" ]; then
-  USE_SUDO=1
-  TARGET_DIR="/usr/local/bin"
-else
-  # Fallback to ~/.local/bin or ~/bin
-  TARGET_DIR="${HOME}/.local/bin"
-  mkdir -p "$TARGET_DIR"
+fi
+
+# Priority 2: User-writable directories that are ALREADY in PATH (zero-config instant win)
+if [ -z "$TARGET_DIR" ]; then
+  for d in "${HOME:-}/.local/bin" "${HOME:-}/bin" "/usr/local/bin"; do
+    if [ -n "$d" ]; then
+      case ":${PATH:-}:" in
+        *":$d:"*)
+          if is_writable "$d"; then
+            TARGET_DIR="$d"
+            break
+          fi
+          ;;
+      esac
+    fi
+  done
+fi
+
+# Priority 3: Standard user directory fallbacks (created if needed, added to PATH later)
+if [ -z "$TARGET_DIR" ]; then
+  if [ -n "${HOME:-}" ] && is_writable "${HOME}/.local/bin"; then
+    TARGET_DIR="${HOME}/.local/bin"
+  elif [ -n "${HOME:-}" ] && is_writable "${HOME}/bin"; then
+    TARGET_DIR="${HOME}/bin"
+  elif is_writable "/usr/local/bin"; then
+    TARGET_DIR="/usr/local/bin"
+  fi
+fi
+
+# Priority 4: Last resort - requiring sudo
+if [ -z "$TARGET_DIR" ]; then
+  if command -v sudo >/dev/null 2>&1 && [ -d "/usr/local/bin" ]; then
+    USE_SUDO=1
+    TARGET_DIR="/usr/local/bin"
+  else
+    # Emergency fallback (e.g. read-only HOME without sudo)
+    TARGET_DIR="${TMPDIR:-/tmp}/px0/bin"
+    mkdir -p "$TARGET_DIR" 2>/dev/null || true
+  fi
 fi
 
 TARGET_BIN="${TARGET_DIR}/px0${BINARY_EXT}"
@@ -258,5 +306,6 @@ if [ "$PATH_ALREADY_CONFIGURED" = "0" ]; then
   fi
 fi
 
-printf "\nRun %b to inspect any repository:\n" "${BOLD}px0${RESET}"
-printf "  ${AMBER}px0 .${RESET}\n\n"
+printf "\nRun %b to inspect any directory:\n\n" "${BOLD}px0${RESET}"
+printf "  ${AMBER}px0 .${RESET}                 # inspect current directory\n"
+printf "  ${AMBER}px0 /path/to/project${RESET}  # or pass any directory path\n\n"

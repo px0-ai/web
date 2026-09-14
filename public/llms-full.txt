@@ -33,6 +33,7 @@ px0 does the remaining job exceptionally well: an instant, distraction-free envi
 - Virtualized rendering: opening a 400,000-line file costs the same as a 10-line file; only visible lines are in the DOM (~60 DOM rows mounted).
 - A terminal-friendly CLI with a 256-colour palette, pipe detection, NO_COLOR support, and a -quiet mode.
 - Self-contained: a single static binary embedding HTML, CSS, and JS with zero runtime dependencies.
+- Privacy-first: no code, file paths, or search queries leave your machine. Anonymous session metrics measure DAU and duration, and can be disabled with -no-telemetry or DO_NOT_TRACK=1.
 - Self-updating: `px0 --update`, plus an asynchronous daily check that never delays startup.
 
 ## Git Awareness & Diffing
@@ -91,6 +92,7 @@ px0 --update        # upgrade to the latest release
 | -no-lsp | false | Disable language server discovery and use regex-based outline |
 | -no-git | false | Disable git awareness (tree status badges and diff view) |
 | -no-color | false | Strip ANSI escape sequences from terminal output |
+| -no-telemetry | false | Disable anonymous usage telemetry |
 | -quiet | false | Suppress CLI narration (errors still print to stderr) |
 | -update | false | Check for updates and install the latest version |
 | -version, -v | false | Print version and architecture and exit |
@@ -119,7 +121,7 @@ The palette switches mode on its first character: `>` for commands, `@` for symb
 Quick install (macOS, Linux, BSD):
 
 ```bash
-curl -fsSL https://px0.ai/install.sh | bash
+curl -fsSL https://px0.ai/install.sh | sh
 ```
 
 Prebuilt binaries for 15 OS and architecture combinations (darwin, linux, freebsd, openbsd, netbsd, windows) are on GitHub Releases.

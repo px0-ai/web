@@ -160,7 +160,15 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
           name: 'How do I install px0?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Run `curl -fsSL https://px0.ai/install.sh | bash` on macOS, Linux, or BSD. Prebuilt binaries for 15 OS and architecture targets are also available on GitHub Releases.',
+            text: 'Run `curl -fsSL https://px0.ai/install.sh | sh` on macOS, Linux, or BSD. Prebuilt binaries for 15 OS and architecture targets are also available on GitHub Releases.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does px0 collect telemetry or send code to the cloud?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. px0 never transmits code, file paths, symbol names, or search queries. It collects lightweight, anonymous backend session metrics (start and stop times) strictly to measure daily active users and session duration. You can disable telemetry completely with `px0 -no-telemetry`, `DO_NOT_TRACK=1`, or `PX0_TELEMETRY=0`.',
           },
         },
       ],
