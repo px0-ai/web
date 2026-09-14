@@ -7,11 +7,11 @@ const shortcuts = [
   { keys: ['mod', 'shift', 'O'], act: 'go to symbol in file' },
   { keys: ['mod', 'shift', 'F'], act: 'search the whole workspace' },
   { keys: ['mod', 'F'], act: 'find in active file' },
-  { keys: ['mod', 'G'], act: 'jump to line' },
+  { keys: ['mod', 'D'], act: 'toggle git diff vs HEAD' },
+  { keys: ['alt', 'M'], act: 'toggle Markdown preview / source' },
   { keys: ['F12'], alt: ['mod', 'click'], act: 'go to definition' },
   { keys: ['shift', 'F12'], act: 'find all references' },
   { keys: ['hover'], act: 'type signature and docs' },
-  { keys: ['mod', 'hover'], act: 'inspect identifier link' },
   { keys: ['alt', '←'], alt: ['alt', '→'], act: 'back, forward through history' },
 ];
 
@@ -25,7 +25,7 @@ const cap = (k: string) => {
 
 const prefixes = [
   { p: '', name: 'files', ex: 'lspsrv', res: 'lspservers.go' },
-  { p: '>', name: 'commands', ex: '>wrap', res: 'Toggle Word Wrap' },
+  { p: '>', name: 'commands', ex: '>diff', res: 'Toggle Git Diff' },
   { p: '@', name: 'symbols', ex: '@score', res: 'fuzzyScore' },
   { p: ':', name: 'line', ex: ':120', res: 'go to line 120' },
 ];
@@ -34,7 +34,7 @@ const prefixes = [
 <section class="sec" id="keys">
   <div class="wrap">
     <header class="sec-head">
-      <div class="sec-id"><span class="sec-n">05</span><span>/keys</span></div>
+      <div class="sec-id"><span class="sec-n">06</span><span>/keys</span></div>
       <div>
         <h2 class="sec-title">Hands stay on <em>the keyboard.</em></h2>
         <p class="sec-sub">The chords you already know from your editor, plus one palette that switches mode on its first character. Press <span class="kbd">?</span> inside px0 for the full sheet.</p>

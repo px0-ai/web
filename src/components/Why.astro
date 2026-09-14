@@ -11,8 +11,8 @@ const shift = [
     n: '02',
     who: 'you',
     what: 'drive verification',
-    body: 'Follow symbol references, read the surrounding context, and check the architecture the change landed in.',
-    tty: ['<span class="s-warn">F12</span> definition  <span class="s-warn">Shift F12</span> refs', '<span class="s-warn">Ctrl Shift F</span> every call site'],
+    body: 'Follow symbol references, inspect git diffs, preview rendered docs, and check the architecture.',
+    tty: ['<span class="s-warn">Ctrl D</span> diff vs HEAD  <span class="s-warn">Alt M</span> preview', '<span class="s-warn">F12</span> definition  <span class="s-warn">Shift F12</span> refs'],
     hi: true,
   },
   {
@@ -26,7 +26,7 @@ const shift = [
 ];
 
 const hunks = [
-  { h: 'built for', del: 'typing code character by character, hosting plugins', add: 'reading, exploring, and verifying code' },
+  { h: 'built for', del: 'typing code character by character, hosting plugins', add: 'reading, exploring, diffing, and verifying code' },
   { h: 'base memory (rss)', del: '~1,440 MB', add: '~16 MB', note: '80x to 90x lighter' },
   { h: 'startup cpu spike', del: '35% - 50%', add: '< 1%' },
   { h: 'cold start', del: 'several seconds', add: 'sub-millisecond' },
@@ -37,6 +37,8 @@ const hunks = [
 
 const does = [
   ['+', 'fuzzy file search, symbols, regex across the tree'],
+  ['+', 'git awareness, change tree, and split/unified diffs vs HEAD'],
+  ['+', 'rendered Markdown preview with live source switch'],
   ['+', 'go to definition, hover, find references (with an LSP)'],
   ['+', 'jump into stdlib and module-cache sources the server points at'],
   ['+', '14 themes, word wrap, back and forward history'],

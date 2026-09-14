@@ -1,0 +1,648 @@
+---
+// Git Awareness & Visual Diff Viewer section
+const badges = [
+  { k: 'M', label: 'modified', desc: 'tracked file modified in working tree', cls: 'badge-m' },
+  { k: 'A', label: 'added', desc: 'new file staged or added to git', cls: 'badge-a' },
+  { k: 'D', label: 'deleted', desc: 'file removed in working tree', cls: 'badge-d' },
+  { k: 'U', label: 'untracked', desc: 'file not yet tracked by repository', cls: 'badge-u' },
+  { k: 'R', label: 'renamed', desc: 'path changed from original index', cls: 'badge-r' },
+];
+
+const pillars = [
+  {
+    num: '01',
+    title: 'Ancestor propagation',
+    sub: 'Collapsed folders never hide edits',
+    body: 'When a deeply nested file changes, every parent directory in the path receives a dirty marker dot. You never miss changes hiding inside collapsed folders.',
+    tag: 'DIRTY BUBBLING',
+  },
+  {
+    num: '02',
+    title: 'In-memory Myers diff',
+    sub: 'Split and unified views vs HEAD',
+    body: 'Press Ctrl+D on any file to inspect the diff against HEAD. Additions and deletions render with line gutters and syntax highlighting intact.',
+    tag: 'Ctrl+D',
+  },
+  {
+    num: '03',
+    title: 'Changed-only filter',
+    sub: 'Prune 50,000 files to the blast radius',
+    body: 'One click filters the entire tree down to only touched paths. Audit an AI agent refactor or local test run without scrolling through clean directories.',
+    tag: 'FILTER CHORD',
+  },
+];
+---
+
+<section class="sec" id="git">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">04</span><span>/git</span></div>
+      <div>
+        <h2 class="sec-title">Working tree in view. <em>Diff against HEAD.</em></h2>
+        <p class="sec-sub">
+          When AI agents and orchestrators write code, your workflow shifts from typing to verification.
+          px0 tracks git status, bubbles changes through directories, and renders side-by-side split or unified
+          diffs in milliseconds.
+        </p>
+      </div>
+    </header>
+
+    <!-- Main visual showcase: Tree on left, Diff viewer on right -->
+    <div class="git-showcase pnl reveal">
+      <div class="pnl-h">
+        <span class="pnl-h-title">git awareness · tree status & diff viewer</span>
+        <div class="git-status-summary">
+          <span class="gstat-dot"></span>
+          <span>HEAD: clean · <b>4 uncommitted changes</b></span>
+        </div>
+      </div>
+
+      <div class="showcase-grid">
+        <!-- Left: Tree visualizer -->
+        <div class="tree-col">
+          <div class="col-head">
+            <span>working tree</span>
+            <div class="view-toggles" role="tablist">
+              <button class="toggle-btn on" id="btn-tree-all" type="button">all</button>
+              <button class="toggle-btn" id="btn-tree-changed" type="button">changed only (4)</button>
+            </div>
+          </div>
+
+          <ul class="mock-tree" id="git-mock-tree">
+            <li class="t-item t-dir" data-changed="false">
+              <span class="t-chev">▸</span><span class="t-name">.github</span>
+            </li>
+            <li class="t-item t-dir" data-changed="false">
+              <span class="t-chev">▸</span><span class="t-name">docs</span>
+            </li>
+            <li class="t-item t-dir t-dirty" data-changed="true">
+              <span class="t-chev">▾</span><span class="t-name">internal</span><span class="t-dot" title="contains modified files"></span>
+            </li>
+            <li class="t-item t-sub t-file" data-changed="true">
+              <span class="t-indent"></span><span class="t-name">fuzzy.go</span><span class="t-badge badge-m">M</span>
+            </li>
+            <li class="t-item t-sub t-file" data-changed="true">
+              <span class="t-indent"></span><span class="t-name">git.go</span><span class="t-badge badge-a">A</span>
+            </li>
+            <li class="t-item t-sub t-file" data-changed="true">
+              <span class="t-indent"></span><span class="t-name">markdown.go</span><span class="t-badge badge-a">A</span>
+            </li>
+            <li class="t-item t-sub t-file" data-changed="false">
+              <span class="t-indent"></span><span class="t-name">search.go</span>
+            </li>
+            <li class="t-item t-dir t-dirty" data-changed="true">
+              <span class="t-chev">▾</span><span class="t-name">web</span><span class="t-dot" title="contains modified files"></span>
+            </li>
+            <li class="t-item t-sub t-file" data-changed="true">
+              <span class="t-indent"></span><span class="t-name">diff.js</span><span class="t-badge badge-a">A</span>
+            </li>
+            <li class="t-item t-sub t-file" data-changed="false">
+              <span class="t-indent"></span><span class="t-name">main.js</span>
+            </li>
+            <li class="t-item t-file" data-changed="false">
+              <span class="t-name">go.mod</span>
+            </li>
+            <li class="t-item t-file" data-changed="false">
+              <span class="t-name">README.md</span>
+            </li>
+          </ul>
+
+          <div class="tree-legend">
+            {badges.map((b) => (
+              <span class="leg-badge" title={b.desc}>
+                <b class={`t-badge ${b.cls}`}>{b.k}</b> {b.label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Right: Diff viewer visualizer -->
+        <div class="diff-col">
+          <div class="col-head">
+            <div class="diff-meta">
+              <span class="diff-filename">fuzzy.go</span>
+              <span class="diff-stat"><span class="s-add">+1</span> <span class="s-del">−1</span></span>
+            </div>
+            <div class="diff-controls">
+              <div class="view-toggles" role="tablist">
+                <button class="toggle-btn on" id="btn-diff-split" type="button">split</button>
+                <button class="toggle-btn" id="btn-diff-unified" type="button">unified</button>
+              </div>
+              <span class="diff-chord"><span class="kbd mod-key">Ctrl</span><span class="kbd">D</span></span>
+            </div>
+          </div>
+
+          <!-- Split view container -->
+          <div class="diff-viewport" id="diff-split-view">
+            <div class="diff-split">
+              <!-- Left pane: HEAD -->
+              <div class="diff-pane diff-pane-old">
+                <div class="pane-hdr"><span>HEAD (committed)</span><span>r.64</span></div>
+                <div class="diff-lines">
+                  <div class="dline"><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">if</span> dist &gt; 1 {'{'}</span></div>
+                  <div class="dline"><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// penalize distance</span></span></div>
+                  <div class="dline dline-del"><span class="dln">63</span><span class="dmark">−</span><span class="dtx">  score -= len(p) / 4</span></div>
+                  <div class="dline"><span class="dln">64</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
+                  <div class="dline"><span class="dln">65</span><span class="dmark"> </span><span class="dtx"><span class="k">return</span> score</span></div>
+                </div>
+              </div>
+
+              <!-- Right pane: Working Tree -->
+              <div class="diff-pane diff-pane-new">
+                <div class="pane-hdr"><span>Working Tree (modified)</span><span class="s-mod">M</span></div>
+                <div class="diff-lines">
+                  <div class="dline"><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">if</span> dist &gt; 1 {'{'}</span></div>
+                  <div class="dline"><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// penalize distance</span></span></div>
+                  <div class="dline dline-add"><span class="dln">63</span><span class="dmark">+</span><span class="dtx">  score -= len(p) / 8</span></div>
+                  <div class="dline"><span class="dln">64</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
+                  <div class="dline"><span class="dln">65</span><span class="dmark"> </span><span class="dtx"><span class="k">return</span> score</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Unified view container (hidden by default) -->
+          <div class="diff-viewport is-hidden" id="diff-unified-view">
+            <div class="diff-pane diff-unified">
+              <div class="pane-hdr"><span>unified diff · @@ -61,5 +61,5 @@</span><span>Myers</span></div>
+              <div class="diff-lines">
+                <div class="dline"><span class="dln">61</span><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">if</span> dist &gt; 1 {'{'}</span></div>
+                <div class="dline"><span class="dln">62</span><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// penalize distance</span></span></div>
+                <div class="dline dline-del"><span class="dln">63</span><span class="dln"> </span><span class="dmark">−</span><span class="dtx">  score -= len(p) / 4</span></div>
+                <div class="dline dline-add"><span class="dln"> </span><span class="dln">63</span><span class="dmark">+</span><span class="dtx">  score -= len(p) / 8</span></div>
+                <div class="dline"><span class="dln">64</span><span class="dln">64</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
+                <div class="dline"><span class="dln">65</span><span class="dln">65</span><span class="dmark"> </span><span class="dtx"><span class="k">return</span> score</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="diff-foot">
+            <span class="df-note">Press <kbd class="alt-key">Alt</kbd><kbd>M</kbd> inside a Markdown file to switch between preview and source</span>
+            <span class="df-tag">zero git subprocesses</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Core Pillars -->
+    <div class="git-pillars">
+      {pillars.map((p) => (
+        <article class="pillar-cell reveal">
+          <div class="pil-top">
+            <span class="pil-num">{p.num}</span>
+            <span class="pil-tag">{p.tag}</span>
+          </div>
+          <h3 class="pil-title">{p.title}</h3>
+          <h4 class="pil-sub">{p.sub}</h4>
+          <p class="pil-body">{p.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Interactive tab switching for Git showcase
+  const initGitShowcase = () => {
+    // Tree filter toggle
+    const btnTreeAll = document.getElementById('btn-tree-all');
+    const btnTreeChanged = document.getElementById('btn-tree-changed');
+    const tree = document.getElementById('git-mock-tree');
+
+    if (btnTreeAll && btnTreeChanged && tree) {
+      btnTreeAll.addEventListener('click', () => {
+        btnTreeAll.classList.add('on');
+        btnTreeChanged.classList.remove('on');
+        tree.classList.remove('filter-changed');
+      });
+
+      btnTreeChanged.addEventListener('click', () => {
+        btnTreeChanged.classList.add('on');
+        btnTreeAll.classList.remove('on');
+        tree.classList.add('filter-changed');
+      });
+    }
+
+    // Diff split / unified toggle
+    const btnSplit = document.getElementById('btn-diff-split');
+    const btnUnified = document.getElementById('btn-diff-unified');
+    const viewSplit = document.getElementById('diff-split-view');
+    const viewUnified = document.getElementById('diff-unified-view');
+
+    if (btnSplit && btnUnified && viewSplit && viewUnified) {
+      btnSplit.addEventListener('click', () => {
+        btnSplit.classList.add('on');
+        btnUnified.classList.remove('on');
+        viewSplit.classList.remove('is-hidden');
+        viewUnified.classList.add('is-hidden');
+      });
+
+      btnUnified.addEventListener('click', () => {
+        btnUnified.classList.add('on');
+        btnSplit.classList.remove('on');
+        viewUnified.classList.remove('is-hidden');
+        viewSplit.classList.add('is-hidden');
+      });
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGitShowcase);
+  } else {
+    initGitShowcase();
+  }
+</script>
+
+<style>
+  .git-showcase {
+    background: var(--bg);
+    border: 1px solid var(--bdr);
+    margin-bottom: 24px;
+  }
+
+  .git-status-summary {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .git-status-summary b {
+    color: var(--amber);
+    font-weight: 500;
+  }
+
+  .gstat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber-glow);
+  }
+
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    background: var(--bdr);
+    gap: 1px;
+  }
+
+  .tree-col,
+  .diff-col {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 38px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--bdr);
+    background: var(--bg-elev);
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .view-toggles {
+    display: flex;
+    gap: 2px;
+    background: var(--bg);
+    border: 1px solid var(--bdr);
+    padding: 1px;
+  }
+
+  .toggle-btn {
+    border: 0;
+    background: transparent;
+    color: var(--txt-3);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .toggle-btn:hover {
+    color: var(--txt);
+  }
+
+  .toggle-btn.on {
+    background: var(--surface-2);
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  /* mock tree */
+  .mock-tree {
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    flex: 1;
+    min-height: 280px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+  }
+
+  .t-item {
+    display: flex;
+    align-items: center;
+    padding: 3px 12px;
+    color: var(--txt-2);
+    transition: background-color 0.12s;
+  }
+
+  .t-item:hover {
+    background: var(--surface);
+  }
+
+  .t-dir {
+    font-weight: 500;
+    color: var(--txt);
+  }
+
+  .t-chev {
+    width: 14px;
+    font-size: 10px;
+    color: var(--txt-4);
+  }
+
+  .t-indent {
+    width: 16px;
+    display: inline-block;
+  }
+
+  .t-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .t-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-left: 6px;
+  }
+
+  .t-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 2px;
+    line-height: 1;
+  }
+
+  .badge-m { color: var(--amber); background: var(--amber-wash); }
+  .badge-a { color: var(--green); background: rgba(158, 206, 106, 0.15); }
+  .badge-d { color: var(--rose); background: rgba(247, 118, 142, 0.15); }
+  .badge-u { color: var(--cyan); background: rgba(125, 207, 255, 0.15); }
+  .badge-r { color: var(--violet); background: rgba(187, 154, 247, 0.15); }
+
+  /* filter state */
+  .mock-tree.filter-changed .t-item[data-changed="false"] {
+    display: none;
+  }
+
+  .tree-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--bdr);
+    background: var(--bg-elev);
+    font-size: 10.5px;
+    color: var(--txt-3);
+  }
+
+  .leg-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* diff column */
+  .diff-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .diff-filename {
+    font-weight: 600;
+    color: var(--txt);
+  }
+
+  .diff-stat {
+    font-size: 10.5px;
+  }
+
+  .s-add { color: var(--green); }
+  .s-del { color: var(--rose); }
+  .s-mod { color: var(--amber); font-weight: 700; }
+
+  .diff-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .diff-chord {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .diff-viewport {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--code-bg);
+    min-height: 280px;
+  }
+
+  .diff-viewport.is-hidden {
+    display: none;
+  }
+
+  .diff-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    flex: 1;
+    background: var(--bdr);
+    gap: 1px;
+  }
+
+  .diff-pane {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pane-hdr {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 10px;
+    font-size: 10px;
+    color: var(--txt-3);
+    border-bottom: 1px solid var(--bdr);
+    background: var(--bg-elev);
+  }
+
+  .diff-lines {
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .dline {
+    display: flex;
+    align-items: center;
+    padding: 1px 8px;
+    gap: 8px;
+    white-space: pre;
+  }
+
+  .dln {
+    width: 2.5ch;
+    text-align: right;
+    color: var(--txt-4);
+    user-select: none;
+    font-size: 10.5px;
+  }
+
+  .dmark {
+    width: 1ch;
+    color: var(--txt-4);
+    font-weight: 700;
+  }
+
+  .dtx {
+    flex: 1;
+    color: var(--txt-2);
+  }
+
+  .dtx .k { color: var(--violet); }
+  .dtx .c { color: var(--txt-4); }
+
+  .dline-del {
+    background: rgba(247, 118, 142, 0.12);
+    border-left: 2px solid var(--rose);
+  }
+
+  .dline-del .dmark,
+  .dline-del .dtx {
+    color: var(--rose);
+  }
+
+  .dline-add {
+    background: rgba(158, 206, 106, 0.12);
+    border-left: 2px solid var(--green);
+  }
+
+  .dline-add .dmark,
+  .dline-add .dtx {
+    color: var(--green);
+  }
+
+  .diff-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-top: 1px solid var(--bdr);
+    background: var(--bg-elev);
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .df-tag {
+    color: var(--amber);
+    font-size: 10.5px;
+  }
+
+  /* pillars */
+  .git-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pillar-cell {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 22px;
+    background: var(--bg);
+    border: 1px solid var(--bdr);
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  .pillar-cell:hover {
+    background: var(--bg-elev);
+    border-color: var(--bdr-hi);
+  }
+
+  .pil-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .pil-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber);
+    font-family: var(--font-mono);
+  }
+
+  .pil-tag {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--txt-3);
+    border: 1px solid var(--bdr);
+    padding: 1px 5px;
+  }
+
+  .pil-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--txt);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .pil-sub {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--txt-3);
+    margin-bottom: 10px;
+  }
+
+  .pil-body {
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  @media (max-width: 900px) {
+    .showcase-grid {
+      grid-template-columns: 1fr;
+    }
+    .git-pillars {
+      grid-template-columns: 1fr;
+    }
+    .diff-split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -8,7 +8,7 @@ export const EMAIL = "arpit@arpitbhayani.me";
 export const MAILTO = `mailto:${EMAIL}`;
 export const AUTHOR = "https://arpitbhayani.me";
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.2";
 
 /** The one-liner shown on the site. Kept here so it lives in one place. */
 export const INSTALL_URL = "https://px0.ai/install.sh";

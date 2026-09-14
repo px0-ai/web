@@ -1,12 +1,12 @@
 # px0: Read Code. Fast.
 
-> px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.
+> px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, git awareness, diff views, and syntax highlighting across massive codebases.
 
 This index is written for large language models and AI agents. It maps the px0 product, its performance characteristics, and its command surface.
 
 ## Core resources
 
-- [Home page](https://px0.ai): what px0 is, benchmarks, features, architecture, shortcuts, and installation.
+- [Home page](https://px0.ai): what px0 is, benchmarks, features, git awareness, architecture, shortcuts, and installation.
 - [GitHub repository](https://github.com/px0-ai/px0): source, issues, releases, and the install script.
 - [README](https://github.com/px0-ai/px0/blob/master/README.md): installation, features, flags, shortcuts.
 - [BENCHMARKS.md](https://github.com/px0-ai/px0/blob/master/BENCHMARKS.md): methodology and full results.
@@ -18,6 +18,8 @@ This index is written for large language models and AI agents. It maps the px0 p
 - A single static Go binary (no Electron, no Node, no CGO) that embeds its HTML, CSS, and JS UI.
 - Run `px0 [directory]`: it starts a local server on 127.0.0.1:7777, prints the URL, and opens the browser while indexing runs in the background.
 - Navigation: fuzzy go-to-file, go-to-symbol, full-workspace regex search, find in file, go to line, back and forward history.
+- Git awareness: working tree status badges (M, A, D, U, R), dirty ancestor directory indicators, changed-only tree filter, and in-memory split or unified diffs against HEAD (Ctrl+D).
+- Rendered Markdown preview: goldmark GFM rendering with live Preview/Source toggle (Alt+M) and Chroma syntax-highlighted code fences.
 - Optional language servers (gopls, rust-analyzer, typescript-language-server, pyright or ruff, clangd, zls, lua-language-server, solargraph) are detected on `$PATH`, spawned lazily, and fall back to a regex outline when absent.
 - 14 built-in themes; Tokyo Night is the default.
 
@@ -29,4 +31,4 @@ This index is written for large language models and AI agents. It maps the px0 p
 
 ## Full context
 
-- [Full site content](/llms-full.txt): a single consolidated Markdown file covering positioning, benchmarks, architecture, flags, shortcuts, and installation.
+- [Full site content](/llms-full.txt): a single consolidated Markdown file covering positioning, benchmarks, features, git awareness, architecture, flags, shortcuts, and installation.

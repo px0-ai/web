@@ -57,8 +57,8 @@ const rows = FUZZY_EXCERPT.lines.map((text, i) => {
 const hoverRow = CURSOR_LINE - FUZZY_EXCERPT.start;
 
 const tree = [
-  ...['.github', 'scripts', 'web'].map((name) => ({ name, dir: true })),
-  ...['.gitignore', 'AGENT.md', 'ARCHITECTURE.md', 'benchmark.sh', 'BENCHMARKS.md', 'build.sh', 'CONTRIBUTING.md', 'fuzzy.go', 'go.mod', 'go.sum', 'highlight.go', 'highlight_test.go', 'ignore.go', 'index.go', 'install.sh', 'LICENSE', 'lsp.go', 'lsp_test.go', 'lspnav.go', 'lspservers.go', 'main.go', 'Makefile', 'metrics.go', 'px0_test.go', 'README.md', 'search.go', 'server.go'].map((name) => ({ name, dir: false })),
+  ...['.github', 'docs', 'scripts', 'web'].map((name) => ({ name, dir: true })),
+  ...['.gitignore', 'AGENT.md', 'ARCHITECTURE.md', 'benchmark.sh', 'BENCHMARKS.md', 'build.sh', 'CONTRIBUTING.md', 'fuzzy.go', 'git.go', 'go.mod', 'go.sum', 'highlight.go', 'highlight_test.go', 'ignore.go', 'index.go', 'install.sh', 'LICENSE', 'lsp.go', 'lsp_test.go', 'lspnav.go', 'lspservers.go', 'main.go', 'Makefile', 'markdown.go', 'metrics.go', 'px0_test.go', 'README.md', 'search.go', 'server.go'].map((name) => ({ name, dir: false })),
 ];
 const ext = (name: string) => (name.split('.').pop() || '').toLowerCase();
 
@@ -128,13 +128,17 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
 
         <div class="ide-body">
           <aside class="ide-side" aria-hidden="true">
-            <header class="ide-phead"><span>px0</span><span>↻</span></header>
+            <header class="ide-phead"><span>px0</span><span class="tree-acts"><span class="git-filter-btn">filter</span><span>↻</span></span></header>
             <ul class="ide-tree">
               {tree.map((f) => (
                 <li class:list={[{ dir: f.dir, on: f.name === 'fuzzy.go' }]}>
                   <span class="chev">{f.dir ? '▸' : ''}</span>
                   {!f.dir && <i class={`fi x-${ext(f.name)}`}></i>}
-                  {f.name}
+                  <span class="tree-name">{f.name}</span>
+                  {f.dir && f.name === 'web' && <span class="dirty-dot" title="contains changes"></span>}
+                  {f.name === 'fuzzy.go' && <span class="tree-badge mod">M</span>}
+                  {f.name === 'git.go' && <span class="tree-badge add">A</span>}
+                  {f.name === 'markdown.go' && <span class="tree-badge add">A</span>}
                 </li>
               ))}
             </ul>
@@ -142,10 +146,11 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
 
           <div class="ide-main">
             <div class="ide-tabs" aria-hidden="true">
-              <span class="ide-tab on">fuzzy.go <span class="x">×</span></span>
-              <span class="ide-tab">search.go</span>
-              <span class="ide-tab">index.go</span>
+              <span class="ide-tab on">fuzzy.go <span class="tab-git-badge mod">M</span> <span class="x">×</span></span>
+              <span class="ide-tab">git.go <span class="tab-git-badge add">A</span></span>
+              <span class="ide-tab">markdown.go</span>
               <span class="ide-tab">README.md</span>
+              <div class="tab-acts"><span class="diff-btn">Diff</span></div>
             </div>
             <div class="ide-crumbs" aria-hidden="true">px0 <span>›</span> fuzzy.go <span>›</span> <b>fuzzyScore</b></div>
 
@@ -186,7 +191,8 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
             <footer class="ide-status">
               <button class="st" type="button" data-pal-open>Files <kbd><span class="mod-key">Ctrl</span> P</kbd></button>
               <span class="st opt">Search <kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> F</kbd></span>
-              <span class="st opt">Symbols <kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> O</kbd></span>
+              <span class="st opt">Diff <kbd><span class="mod-key">Ctrl</span> D</kbd></span>
+              <span class="st opt">Preview <kbd><span class="alt-key">Alt</span> M</kbd></span>
               <span class="st grow"></span>
               <span class="st opt">156 lines</span>
               <span class="st"><i class="ok"></i>gopls</span>
@@ -500,6 +506,21 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     color: var(--t-faint);
   }
 
+  .tree-acts {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .git-filter-btn {
+    font-size: 9px;
+    padding: 0 4px;
+    border: 1px solid var(--t-line);
+    border-radius: 2px;
+    color: var(--t-dim);
+    text-transform: lowercase;
+  }
+
   .ide-tree {
     list-style: none;
     padding: 4px 0;
@@ -513,6 +534,39 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     padding: 0 12px;
     white-space: nowrap;
     color: var(--t-fg);
+  }
+
+  .tree-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tree-badge {
+    margin-left: auto;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 0 4px;
+    border-radius: 2px;
+  }
+
+  .tree-badge.mod {
+    color: var(--t-accent);
+    background: var(--t-bg4);
+  }
+
+  .tree-badge.add {
+    color: var(--t-gi);
+    background: var(--t-bg4);
+  }
+
+  .dirty-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--t-accent);
+    margin-left: auto;
   }
 
   .ide-tree li.dir {
@@ -551,6 +605,7 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
 
   .ide-tabs {
     display: flex;
+    align-items: center;
     height: 32px;
     overflow: hidden;
     background: var(--t-bg2);
@@ -560,11 +615,33 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
   .ide-tab {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    height: 100%;
     padding: 0 14px;
     border-right: 1px solid var(--t-line);
     white-space: nowrap;
     color: var(--t-faint);
+  }
+
+  .tab-git-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+  }
+
+  .tab-git-badge.mod { color: var(--t-accent); }
+  .tab-git-badge.add { color: var(--t-gi); }
+
+  .tab-acts {
+    margin-left: auto;
+    padding-right: 8px;
+  }
+
+  .diff-btn {
+    font-size: 10px;
+    padding: 2px 6px;
+    border: 1px solid var(--t-line);
+    background: var(--t-bg3);
+    color: var(--t-dim);
   }
 
   .ide-tab.on {
