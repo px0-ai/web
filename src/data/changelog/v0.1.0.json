@@ -1,0 +1,49 @@
+{
+  "version": "0.1.0",
+  "tag": "v0.1.0",
+  "date": "2026-09-13",
+  "title": "Initial Public Release: Fast, Lightweight Read-Only IDE",
+  "summary": "Initial release of px0, the sub-millisecond, read-only IDE built for the AI-agent era with instant startup, symbol navigation, full LSP support, and 14 themes.",
+  "commitCount": 32,
+  "commitRange": "initial..v0.1.0",
+  "categories": [
+    {
+      "name": "Core IDE & Engine",
+      "items": [
+        "Instant sub-millisecond (<1 ms) cold startup in a standalone Go binary with zero runtime dependencies (no Electron, no Node, no CGO)",
+        "Micro-footprint memory model idling at ~20 MB RAM, dropping RAM usage immediately on file close",
+        "Ultra-fast fuzzy finder searching across 95,000+ files in ~6 ms with boundary-aware path scoring",
+        "Windowed Chroma syntax highlighting natively tokenizing ~280 programming languages"
+      ]
+    },
+    {
+      "name": "LSP & Intelligence",
+      "items": [
+        "Full Language Server Protocol support: Go to Definition (F12), Find References (Shift+F12), and Symbol Outlines",
+        "Interactive LSP setup and installation manager with live background installer streaming",
+        "Call hierarchy navigation with inbound and outbound call trails (Alt+Shift+H)",
+        "Resilient language server auto-restart and zero-config regex-based symbol outline fallback"
+      ]
+    },
+    {
+      "name": "Editor & Workspace",
+      "items": [
+        "Blinking caret with horizontal cursor navigation, multi-line selection, and whole-file select all (Ctrl+A)",
+        "Command palette (Ctrl+K / Ctrl+P) with instant file, command, symbol (@), and line (:) search",
+        "Tab management with reopen closed tab (Ctrl+Shift+T), close tab (Ctrl+W), and dirty tracking",
+        "Right inspector panel for references and symbol declarations",
+        "Dimmed tree display and browsing for gitignored files",
+        "14 built-in themes (GitHub Dark, Catppuccin, Dracula, Gruvbox, Nord, Monokai, Rose Pine, Solarized, One Dark) with live theme picker"
+      ]
+    },
+    {
+      "name": "Distribution & CLI",
+      "items": [
+        "One-line curl installation script with in-place updates and self-updater (-update)",
+        "Cross-platform prebuilt binaries for 15 OS and architecture targets",
+        "Versatile CLI flags (-port, -host, -no-open, -no-lsp, -no-color, -quiet, -version, -v)",
+        "Multi-environment browser opener supporting Linux, macOS, Windows, and WSL"
+      ]
+    }
+  ]
+}

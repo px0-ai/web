@@ -1,0 +1,40 @@
+{
+  "version": "0.1.2",
+  "tag": "v0.1.2",
+  "date": "2026-09-14",
+  "title": "Git Awareness, Visual Diff Viewer & Tree Status",
+  "summary": "Introduces full Git awareness with file tree status badges, split and unified visual diff viewer against HEAD, change gutter markers, and restructured docs.",
+  "commitCount": 8,
+  "commitRange": "v0.1.1..v0.1.2",
+  "categories": [
+    {
+      "name": "Git Awareness & Visual Diff",
+      "items": [
+        "File tree working-tree status badges for Modified (M), Added (A), and Untracked files",
+        "Ancestor directory dirty indicators to maintain visibility of changes when folders are collapsed",
+        "Tree sidebar filter button to display only changed files",
+        "Overlay Git diff viewer (Ctrl+D) supporting both unified and side-by-side split layouts against HEAD",
+        "Change gutter markers highlighting added, modified, and deleted lines in the editor margin",
+        "Backend /api/diff and /api/gutter endpoints with per-tab diff availability state tracking",
+        "Added -no-git CLI flag to disable Git tracking and status badges when working outside repositories"
+      ]
+    },
+    {
+      "name": "UI & Layout Refinements",
+      "items": [
+        "Grouped sidebar header action buttons for cleaner toolbar layout",
+        "Tab bar diff mode toggle with persistent layout preference",
+        "Active state highlighting for the changed files tree filter",
+        "Removed read-only tag from file explorer panel header to maximize path visibility"
+      ]
+    },
+    {
+      "name": "Fixes & Documentation",
+      "items": [
+        "Fixed top-level bundle scope collision by renaming diff render function to renderDiff",
+        "Fixed publish Makefile targets to avoid tracking ignored distribution artifacts",
+        "Standardized documentation across docs/ hierarchy and fixed Mermaid flowchart syntax in architecture docs"
+      ]
+    }
+  ]
+}

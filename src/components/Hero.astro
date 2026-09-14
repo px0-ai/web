@@ -2,10 +2,14 @@
 import { GITHUB, INSTALL_CMD, VERSION } from '../data/links';
 import { THEMES } from '../data/themes';
 import { FILES, SYMBOLS, COMMANDS, FUZZY_EXCERPT } from '../data/px0';
+import { getLatestChangelog } from '../data/changelogs';
+
+const latestRelease = getLatestChangelog();
+const latestVersion = latestRelease?.version || VERSION;
 
 const stats = [
   { v: '<1', u: 'ms', k: 'cold start', d: 'sub-millisecond instant boot' },
-  { v: '16', u: 'MB', k: 'resident memory', d: 'VS Code on the same tree: ~1,440 MB', hi: true },
+  { v: '20', u: 'MB', k: 'resident memory', d: 'VS Code on the same tree: ~1,440 MB', hi: true },
   { v: '6.0', u: 'ms', k: 'fuzzy find', d: 'linux kernel, 95,710 files' },
   { v: '~280', u: '', k: 'languages', d: 'tokenized natively by Chroma' },
   { v: '14', u: '', k: 'themes', d: 'one CSS file each' },
@@ -70,6 +74,14 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
 
 <section class="hero">
   <div class="wrap">
+    <div class="hero-announcement">
+      <a href="/changelog" class="pill announcement-pill">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="announcement-text">new version v{latestVersion} is out</span>
+        <span class="announcement-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
     <div class="hero-meta">
       <span><b>px0</b> v{VERSION}</span>
       <span>read-only ide for the ai-agent era</span>
@@ -85,7 +97,7 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
           px0 is a read-only IDE for the AI-agent era. It turns your browser into an instant verification
           console for whatever your agents just wrote: symbol-level navigation, full LSP intelligence, and
           deep search. One binary, zero config. It starts in <strong>under 1 ms</strong>,
-          idles at <strong>~16 MB</strong>, and fuzzy-finds across the Linux kernel's <strong>95,710 files in 6 ms</strong>.
+          idles at <strong>~20 MB</strong>, and fuzzy-finds across the Linux kernel's <strong>95,710 files in 6 ms</strong>.
         </p>
 
         <div class="hero-actions">
@@ -196,7 +208,7 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
               <span class="st grow"></span>
               <span class="st opt">156 lines</span>
               <span class="st"><i class="ok"></i>gopls</span>
-              <span class="st">CPU 0.0% · RAM 16 MB</span>
+              <span class="st">CPU 0.0% · RAM 20 MB</span>
               <span class="st opt" data-theme-name>{THEMES[0].name}</span>
             </footer>
           </div>
@@ -236,6 +248,46 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
 <style>
   .hero {
     padding-top: 80px;
+  }
+
+  /* ── announcement pill ── */
+  .hero-announcement {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  .announcement-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    padding: 0 12px;
+    border: 1px solid var(--bdr-hi);
+    background: var(--surface);
+    font-size: 11.5px;
+    color: var(--txt-2);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.15s;
+  }
+
+  .announcement-pill:hover {
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+    color: var(--txt);
+    transform: translateY(-1px);
+  }
+
+  .announcement-text {
+    color: var(--txt);
+  }
+
+  .announcement-arrow {
+    color: var(--amber);
+    transition: transform 0.15s;
+  }
+
+  .announcement-pill:hover .announcement-arrow {
+    transform: translateX(2px);
   }
 
   /* ── meta strip ── */

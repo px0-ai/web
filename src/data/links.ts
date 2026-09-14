@@ -1,3 +1,5 @@
+import { getLatestChangelog } from './changelogs';
+
 export const GITHUB = "https://github.com/px0-ai/px0";
 export const RELEASES = `${GITHUB}/releases`;
 export const ISSUES = `${GITHUB}/issues`;
@@ -8,7 +10,7 @@ export const EMAIL = "arpit@arpitbhayani.me";
 export const MAILTO = `mailto:${EMAIL}`;
 export const AUTHOR = "https://arpitbhayani.me";
 
-export const VERSION = "0.1.2";
+export const VERSION = getLatestChangelog()?.version || "0.1.2";
 
 /** The one-liner shown on the site. Kept here so it lives in one place. */
 export const INSTALL_URL = "https://px0.ai/install.sh";

@@ -1,6 +1,8 @@
 ---
 import { GITHUB, VERSION } from '../data/links';
+import { getLatestChangelog } from '../data/changelogs';
 
+const latestVersion = getLatestChangelog()?.version || VERSION;
 const base = Astro.url.pathname === '/' ? '' : '/';
 const sections = ['bench', 'why', 'features', 'git', 'arch', 'keys', 'cli', 'install'];
 ---
@@ -17,10 +19,11 @@ const sections = ['bench', 'why', 'features', 'git', 'arch', 'keys', 'cli', 'ins
       {sections.map((s, i) => (
         <a class="nav-link" href={`${base}#${s}`}><span>0{i + 1}</span>{s}</a>
       ))}
+      <a class="nav-link" href="/changelog"><span>09</span>changelog</a>
     </div>
 
     <div class="nav-right">
-      <span class="nav-ver">v{VERSION}</span>
+      <a href="/changelog" class="nav-ver" title="View changelog">v{latestVersion}</a>
 
       <button id="theme-toggle" class="icon-btn" aria-label="Toggle colour theme">
         <svg class="sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
@@ -117,6 +120,14 @@ const sections = ['bench', 'why', 'features', 'git', 'arch', 'keys', 'cli', 'ins
     border: 1px solid var(--bdr);
     font-size: 11px;
     color: var(--amber);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .nav-ver:hover {
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+    color: var(--txt);
   }
 
   .icon-btn,

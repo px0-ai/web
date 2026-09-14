@@ -1,0 +1,35 @@
+{
+  "version": "0.1.1",
+  "tag": "v0.1.1",
+  "date": "2026-09-13",
+  "title": "Rendered Markdown Preview & Source Toggle",
+  "summary": "Adds rendered GitHub Flavored Markdown preview with source switching, synchronized reading position, code highlighting, and sanitized HTML.",
+  "commitCount": 3,
+  "commitRange": "v0.1.0..v0.1.1",
+  "categories": [
+    {
+      "name": "Markdown Preview",
+      "items": [
+        "Rendered GitHub Flavored Markdown (GFM) preview with footnotes powered by goldmark via /api/markdown",
+        "Dedicated Preview / Source toggle with status bar button and Alt+M keyboard shortcut",
+        "Synchronized reading position preserved when switching between Markdown preview and source mode",
+        "Shared Chroma syntax highlighting for fenced code blocks inside Markdown documents",
+        "Client-side HTML sanitization against strict element allowlist",
+        "Workspace file path resolution for relative links and inline image assets",
+        "Full search, select all, and keyboard scrolling support within the rendered preview"
+      ]
+    },
+    {
+      "name": "Installer & DX",
+      "items": [
+        "Streamlined install script by removing shell alias modifications in favor of standard PATH configuration"
+      ]
+    },
+    {
+      "name": "Documentation",
+      "items": [
+        "Added internal architecture guides for editor and Markdown preview pipelines under docs/internals/"
+      ]
+    }
+  ]
+}

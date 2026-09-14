@@ -1,0 +1,525 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { GITHUB, RELEASES, VERSION, INSTALL_CMD } from '../data/links';
+import { getAllChangelogs } from '../data/changelogs';
+
+const changelogs = getAllChangelogs();
+const latest = changelogs[0];
+
+function formatDate(iso: string) {
+  const [y, m, d] = iso.split('-');
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthName = months[parseInt(m, 10) - 1] || m;
+  return `${monthName} ${parseInt(d, 10)}, ${y}`;
+}
+---
+
+<Layout
+  title="Changelog - px0"
+  description="All release updates, new features, bug fixes, and performance improvements for px0, the fast, lightweight read-only IDE."
+>
+  <Nav />
+
+  <main class="cl-page">
+    <div class="wrap">
+      <!-- Header -->
+      <header class="cl-header">
+        <div class="cl-breadcrumbs">
+          <a href="/" class="cl-crumb-link">px0</a>
+          <span class="cl-crumb-sep">/</span>
+          <span class="cl-crumb-cur">changelog</span>
+        </div>
+
+        <div class="cl-headline-row">
+          <div>
+            <p class="kicker"><span>//</span> release history & updates</p>
+            <h1 class="cl-title">Changelog</h1>
+          </div>
+          <div class="cl-actions">
+            <a class="btn btn-ghost" href={RELEASES} target="_blank" rel="noopener noreferrer">
+              GitHub Releases &rarr;
+            </a>
+          </div>
+        </div>
+
+        <p class="cl-sub">
+          Release notes from each version. Every version brings instant boot, zero-latency inspection, and minimal memory footprint.
+        </p>
+
+        <!-- Quick Jump Navigation -->
+        <div class="cl-quickjump">
+          <span class="qj-label">Releases:</span>
+          {changelogs.map((cl, idx) => (
+            <a href={`#${cl.tag}`} class:list={['qj-pill', { 'qj-pill--latest': idx === 0 }]}>
+              {idx === 0 && <span class="dot" aria-hidden="true"></span>}
+              <span>{cl.tag}</span>
+              <small>({cl.date})</small>
+            </a>
+          ))}
+        </div>
+      </header>
+
+      <!-- Releases Timeline -->
+      <section class="cl-timeline" aria-label="Release entries">
+        {changelogs.map((cl, idx) => (
+          <article class="cl-entry" id={cl.tag}>
+            <div class="cl-entry-aside">
+              <div class="cl-ver-badge">
+                <span class="cl-ver-num">{cl.tag}</span>
+                {idx === 0 && <span class="cl-tag-latest">Latest</span>}
+              </div>
+              <time class="cl-date" datetime={cl.date}>{formatDate(cl.date)}</time>
+              <div class="cl-stats">
+                <span class="cl-stat-pill">{cl.commitCount} {cl.commitCount === 1 ? 'commit' : 'commits'}</span>
+              </div>
+              <div class="cl-links">
+                <a
+                  href={`${GITHUB}/releases/tag/${cl.tag}`}
+                  class="cl-ext-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub Release &rarr;
+                </a>
+                {cl.commitRange.includes('..') && (
+                  <a
+                    href={`${GITHUB}/compare/${cl.commitRange}`}
+                    class="cl-ext-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Compare Diff &rarr;
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div class="cl-entry-main">
+              <div class="cl-entry-header">
+                <h2 class="cl-entry-title">{cl.title}</h2>
+                <p class="cl-entry-summary">{cl.summary}</p>
+              </div>
+
+              <div class="cl-categories">
+                {cl.categories.map((cat) => (
+                  <div class="cl-category">
+                    <h3 class="cl-cat-title">
+                      <span class="cl-cat-prefix">//</span> {cat.name}
+                    </h3>
+                    <ul class="cl-cat-list">
+                      {cat.items.map((item) => (
+                        <li class="cl-cat-item">
+                          <span class="cl-bullet" aria-hidden="true">&bull;</span>
+                          <span class="cl-text">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <!-- Bottom install helper -->
+      <div class="cl-bottom-cta">
+        <div class="cta-box">
+          <div class="cta-copy">
+            <h3>Get the latest release (v{VERSION})</h3>
+            <p>Single Go binary, instant boot under 1 ms, zero dependencies.</p>
+          </div>
+          <div class="cta-action">
+            <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
+              <span class="copyline-p">$</span>
+              <code><span>{INSTALL_CMD}</span></code>
+              <span class="copyline-s"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .cl-page {
+    padding-top: 96px;
+    padding-bottom: 96px;
+    min-height: 80vh;
+  }
+
+  /* ── breadcrumbs ── */
+  .cl-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-bottom: 18px;
+  }
+
+  .cl-crumb-link {
+    color: var(--txt-3);
+    transition: color 0.15s;
+  }
+
+  .cl-crumb-link:hover {
+    color: var(--amber);
+  }
+
+  .cl-crumb-sep {
+    color: var(--bdr-hi);
+  }
+
+  .cl-crumb-cur {
+    color: var(--txt);
+  }
+
+  /* ── header ── */
+  .cl-header {
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--bdr);
+    margin-bottom: 48px;
+  }
+
+  .cl-headline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .kicker {
+    font-size: 12px;
+    color: var(--txt-3);
+  }
+
+  .kicker span {
+    color: var(--amber);
+  }
+
+  .cl-title {
+    margin: 10px 0 16px;
+    font-size: clamp(36px, 4.5vw, 64px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--txt);
+  }
+
+  .cl-actions {
+    margin-top: 10px;
+  }
+
+  .cl-sub {
+    max-width: 680px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--txt-2);
+    margin-bottom: 28px;
+  }
+
+  /* ── quick jump ── */
+  .cl-quickjump {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+
+  .qj-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-right: 4px;
+  }
+
+  .qj-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 12px;
+    border: 1px solid var(--bdr);
+    background: var(--surface);
+    color: var(--txt-2);
+    font-size: 11.5px;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .qj-pill small {
+    color: var(--txt-4);
+    font-size: 10px;
+  }
+
+  .qj-pill:hover {
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+    color: var(--txt);
+  }
+
+  .qj-pill--latest {
+    border-color: var(--amber-line);
+    color: var(--amber);
+  }
+
+  /* ── timeline ── */
+  .cl-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .cl-entry {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 48px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--bdr);
+    scroll-margin-top: 80px;
+  }
+
+  .cl-entry:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .cl-entry-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    position: sticky;
+    top: 80px;
+    align-self: flex-start;
+  }
+
+  .cl-ver-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cl-ver-num {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--txt);
+  }
+
+  .cl-tag-latest {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 2px 6px;
+    border: 1px solid var(--amber-line);
+    background: var(--amber-wash);
+    color: var(--amber);
+  }
+
+  .cl-date {
+    font-size: 12px;
+    color: var(--txt-3);
+  }
+
+  .cl-stats {
+    margin-top: 4px;
+  }
+
+  .cl-stat-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    font-size: 10.5px;
+    color: var(--txt-3);
+  }
+
+  .cl-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .cl-ext-link {
+    font-size: 11.5px;
+    color: var(--txt-3);
+    transition: color 0.15s;
+  }
+
+  .cl-ext-link:hover {
+    color: var(--amber);
+  }
+
+  /* ── main content of entry ── */
+  .cl-entry-main {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .cl-entry-header {
+    border-bottom: 1px dashed var(--bdr);
+    padding-bottom: 18px;
+  }
+
+  .cl-entry-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--txt);
+    margin-bottom: 8px;
+  }
+
+  .cl-entry-summary {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--txt-2);
+  }
+
+  .cl-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .cl-category {
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
+    border: 1px solid var(--bdr);
+    padding: 20px 24px;
+  }
+
+  .cl-cat-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--txt);
+    margin-bottom: 14px;
+  }
+
+  .cl-cat-prefix {
+    color: var(--amber);
+  }
+
+  .cl-cat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cl-cat-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--txt-2);
+  }
+
+  .cl-bullet {
+    color: var(--amber);
+    font-size: 14px;
+    line-height: 1.3;
+    flex-shrink: 0;
+  }
+
+  .cl-text {
+    flex: 1;
+  }
+
+  /* ── bottom CTA ── */
+  .cl-bottom-cta {
+    margin-top: 72px;
+    border: 1px solid var(--bdr-hi);
+    background: var(--surface);
+    padding: 32px 36px;
+  }
+
+  .cta-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .cta-copy h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--txt);
+    margin-bottom: 6px;
+  }
+
+  .cta-copy p {
+    font-size: 13px;
+    color: var(--txt-2);
+  }
+
+  .cta-action {
+    max-width: 500px;
+    flex: 1 1 320px;
+  }
+
+  @media (max-width: 860px) {
+    .cl-entry {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .cl-entry-aside {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--bdr);
+      width: 100%;
+    }
+
+    .cl-links {
+      flex-direction: row;
+      gap: 16px;
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cl-category {
+      padding: 16px;
+    }
+
+    .cl-headline-row {
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .cl-entry-aside {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .cl-links {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+</style>

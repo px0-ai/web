@@ -1,6 +1,6 @@
 # px0: Read Code. Fast.
 
-> px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, git awareness, visual diffing, and syntax highlighting across massive codebases.
+> px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, git awareness, visual diffing, and syntax highlighting across massive codebases.
 
 ## Positioning
 
@@ -15,7 +15,7 @@ px0 does the remaining job exceptionally well: an instant, distraction-free envi
 | Parameter | Traditional IDE (such as VS Code) | px0 |
 | --------- | --------------------------------- | --- |
 | Primary purpose | Manual code authoring and plugin host | Instant code reading, diffing, and navigation |
-| Base memory (RSS) | ~1,440 MB | ~16 MB |
+| Base memory (RSS) | ~1,440 MB | ~20 MB |
 | Startup CPU spike | 35% - 50% | < 1% |
 | Cold startup | Several seconds | Sub-millisecond |
 | Process tree | 15+ Node.js / Electron processes | 1 static Go binary |

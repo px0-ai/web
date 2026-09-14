@@ -9,7 +9,7 @@ interface Props {
 
 const {
   title = "px0: a fast, lightweight, read-only IDE",
-  description = "px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.",
+  description = "px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
@@ -103,7 +103,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
       name: 'px0',
       softwareVersion: VERSION,
       description:
-        'px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~16 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.',
+        'px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and syntax highlighting across massive codebases.',
       applicationCategory: 'DeveloperApplication',
       applicationSubCategory: 'Code Viewer, Code Navigation, IDE',
       operatingSystem: 'macOS, Linux, FreeBSD, OpenBSD, NetBSD, Windows',
@@ -128,7 +128,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
           name: 'What is px0?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. It boots in under 1 millisecond and uses approximately 16 MB of RAM, turning your browser into a zero-latency code inspection console.',
+            text: 'px0 is a fast, lightweight, read-only IDE designed for instant code navigation and review in your browser. It boots in under 1 millisecond and uses approximately 20 MB of RAM, turning your browser into a zero-latency code inspection console.',
           },
         },
         {
@@ -136,7 +136,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
           name: 'Why use a read-only IDE instead of a full editor like VS Code?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'With AI coding agents and CLI tools writing code, developers spend most of their time in verification, audit, and navigation. Full desktop IDEs take seconds to boot and consume 1.4+ GB of RAM just to read files. px0 starts in under 1 ms with ~16 MB RAM, providing zero-latency code reading without editor bloat.',
+            text: 'With AI coding agents and CLI tools writing code, developers spend most of their time in verification, audit, and navigation. Full desktop IDEs take seconds to boot and consume 1.4+ GB of RAM just to read files. px0 starts in under 1 ms with ~20 MB RAM, providing zero-latency code reading without editor bloat.',
           },
         },
         {
