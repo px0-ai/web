@@ -4,7 +4,7 @@ import { getLatestChangelog } from '../data/changelogs';
 
 const latestVersion = getLatestChangelog()?.version || VERSION;
 const base = Astro.url.pathname === '/' ? '' : '/';
-const sections = ['bench', 'features', 'remote', 'git', 'why', 'keys', 'arch'];
+const sections = ['cases', 'bench', 'features', 'remote', 'git', 'why', 'keys', 'arch'];
 ---
 
 <nav class="nav">
@@ -19,7 +19,7 @@ const sections = ['bench', 'features', 'remote', 'git', 'why', 'keys', 'arch'];
       {sections.map((s, i) => (
         <a class="nav-link" href={`${base}#${s}`}><span>0{i + 1}</span>{s}</a>
       ))}
-      <a class="nav-link" href="/changelog"><span>08</span>changelog</a>
+      <a class="nav-link" href="/changelog"><span>09</span>changelog</a>
     </div>
 
     <div class="nav-right">
