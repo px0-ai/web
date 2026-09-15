@@ -1,0 +1,27 @@
+{
+  "version": "0.1.4",
+  "tag": "v0.1.4",
+  "date": "2026-09-15",
+  "title": "Workspace Search in Right Inspector Panel",
+  "summary": "Integrates full-text workspace search directly into the right inspector panel alongside references, symbols, and calls, updates search shortcuts and palette commands, and clears in-file search highlights when switching tabs.",
+  "commitCount": 2,
+  "commitRange": "v0.1.3..v0.1.4",
+  "categories": [
+    {
+      "name": "Workspace Search & Inspector",
+      "items": [
+        "Integrated workspace full-text search directly into a dedicated tab in the right inspector panel alongside References, Symbols, and Calls",
+        "Updated global search shortcuts (Ctrl+Shift+F / Cmd+Shift+F), toolbar actions, and command palette items to open the inspector search pane",
+        "Automatically focus the search input query field whenever switching to the Search inspector tab",
+        "Route language server fallback searches directly into the right inspector search pane when definition or reference lookups have no LSP results"
+      ]
+    },
+    {
+      "name": "Editor & UI Improvements",
+      "items": [
+        "Clear active in-file find highlights when switching between editor tabs to avoid lingering search highlights",
+        "Updated bundled application distribution assets"
+      ]
+    }
+  ]
+}
