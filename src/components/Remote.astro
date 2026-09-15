@@ -1,0 +1,526 @@
+---
+import { repoDoc } from '../data/links';
+
+const pillars = [
+  {
+    num: '01',
+    title: 'Zero SSH or heavy client setup',
+    sub: 'No X11, no remote extension daemon',
+    body: 'Remote code editors install gigabytes of node runtimes and background server processes on the remote machine. px0 runs as a single lightweight binary, serving directly over HTTP without requiring you to maintain SSH shell sessions.',
+    tag: 'NO DAEMON',
+  },
+  {
+    num: '02',
+    title: 'Single port over any wire',
+    sub: 'Tailscale, wireguard, reverse proxy, or tunnel',
+    body: 'Pass -host 0.0.0.0 or -port 7777 to bind the web console. Access from any browser on your laptop, iPad, or phone across your private VPN, Tailscale mesh, or Cloudflare Tunnel with pooled gzip compression.',
+    tag: '-host 0.0.0.0',
+  },
+  {
+    num: '03',
+    title: 'Sandboxed by architecture',
+    sub: 'Read-only contract & directory traversal guards',
+    body: 'Every request is strictly read-only with no write endpoints. safePath rejects directory traversal attempts, host header checks protect against DNS rebinding, and external stdlib jumps require explicit LSP allowlisting.',
+    tag: 'SANDBOXED',
+  },
+];
+
+const setups = [
+  {
+    k: 'dev box / cloud vm',
+    cmd: 'px0 -host 0.0.0.0 -port 7777 ~/work/repo',
+    note: 'Instant access over private network / Tailscale',
+  },
+  {
+    k: 'headless ci / test runner',
+    cmd: 'px0 -no-open -port 8080 /workspace',
+    note: 'Inspect failed build workspaces in any web browser',
+  },
+  {
+    k: 'ephemeral docker / pod',
+    cmd: 'docker run -p 7777:7777 -v $(pwd):/src px0:latest',
+    note: 'Browse isolated containers without container shells',
+  },
+];
+---
+
+<section class="sec" id="remote">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">04</span><span>/remote</span></div>
+      <div>
+        <h2 class="sec-title">Remote code. <em>No SSH required.</em></h2>
+        <p class="sec-sub">
+          Spin up on any remote server, cloud instance, or runner in under a millisecond.
+          Inspect and search remote codebases directly in your local browser without configuring SSH keys,
+          forwarding ports through flaky sessions, or installing heavy remote desktop suites.
+        </p>
+      </div>
+    </header>
+
+    <!-- Visual Architecture & Wire Showcase -->
+    <div class="remote-showcase pnl reveal">
+      <div class="pnl-h">
+        <span class="pnl-h-title">remote session architecture · zero-friction topology</span>
+        <div class="wire-status">
+          <span class="wstat-dot"></span>
+          <span>HTTP / TLS · <b>stateless stream</b></span>
+        </div>
+      </div>
+
+      <div class="remote-diagram">
+        <!-- Node 1: Remote Host -->
+        <div class="r-node r-node--host">
+          <div class="r-node-h">
+            <span>remote host</span>
+            <span class="badge-remote">cloud / dev box</span>
+          </div>
+          <div class="r-node-body">
+            <div class="r-proc">
+              <b>px0 process</b>
+              <span>1 static Go binary</span>
+            </div>
+            <ul class="r-specs">
+              <li><span>memory</span><b>~20 MB idle</b></li>
+              <li><span>startup</span><b>&lt; 1 ms</b></li>
+              <li><span>scavenger</span><b>frees OS memory after 15s</b></li>
+              <li><span>access</span><b>read-only & sandboxed</b></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Connection Wire -->
+        <div class="r-wire-col" aria-hidden="true">
+          <div class="r-wire-label">
+            <span>Tailscale · VPN · Proxy</span>
+            <b>single TCP port</b>
+          </div>
+          <div class="wire wire--bidir">
+            <i></i><i></i><i></i>
+          </div>
+          <div class="r-wire-meta">
+            <span>pooled gzip JSON</span>
+          </div>
+        </div>
+
+        <!-- Node 2: Local Client -->
+        <div class="r-node r-node--client">
+          <div class="r-node-h">
+            <span>your machine</span>
+            <span class="badge-browser">any browser</span>
+          </div>
+          <div class="r-node-body">
+            <div class="r-proc">
+              <b>zero-install UI</b>
+              <span>laptop · tablet · mobile</span>
+            </div>
+            <ul class="r-specs">
+              <li><span>client footprint</span><b>0 npm / 0 extensions</b></li>
+              <li><span>fuzzy find</span><b>cached in-browser</b></li>
+              <li><span>syntax highlighting</span><b>pre-rendered Chroma</b></li>
+              <li><span>diffs vs HEAD</span><b>instant Myers viewer</b></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Remote Invocation Snippets -->
+      <div class="remote-scenarios">
+        <div class="scen-h">
+          <span>common remote workflows</span>
+          <span class="scen-link"><a href={repoDoc('docs/internals/architecture.md')} target="_blank" rel="noopener noreferrer">ARCHITECTURE.md &rarr;</a></span>
+        </div>
+        <div class="scen-grid">
+          {setups.map((s) => (
+            <div class="scen-item">
+              <span class="scen-k">{s.k}</span>
+              <pre class="scen-cmd"><code><span class="s-warn">$</span> {s.cmd}</code></pre>
+              <span class="scen-note">{s.note}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Pillars -->
+    <div class="remote-pillars">
+      {pillars.map((p) => (
+        <article class="pillar-cell reveal">
+          <div class="pil-top">
+            <span class="pil-num">{p.num}</span>
+            <span class="pil-tag">{p.tag}</span>
+          </div>
+          <h3 class="pil-title">{p.title}</h3>
+          <h4 class="pil-sub">{p.sub}</h4>
+          <p class="pil-body">{p.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .remote-showcase {
+    background: var(--bg);
+    border: 1px solid var(--bdr);
+    margin-bottom: 24px;
+  }
+
+  .wire-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .wire-status b {
+    color: var(--amber);
+    font-weight: 500;
+  }
+
+  .wstat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  .remote-diagram {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) 140px minmax(0, 1.1fr);
+    align-items: center;
+    background: var(--bg);
+    padding: 24px;
+    gap: 16px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .r-node {
+    border: 1px solid var(--bdr-hi);
+    background: var(--bg-elev);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .r-node--host {
+    border-color: var(--amber-line);
+    background: linear-gradient(180deg, var(--amber-wash), transparent 65%), var(--bg-elev);
+  }
+
+  .r-node-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--bdr);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+  }
+
+  .r-node-h span:first-child {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .badge-remote,
+  .badge-browser {
+    font-size: 9.5px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-remote {
+    color: var(--amber);
+    background: var(--amber-wash);
+    border: 1px solid var(--amber-line);
+  }
+
+  .badge-browser {
+    color: var(--cyan);
+    background: rgba(125, 207, 255, 0.12);
+    border: 1px solid rgba(125, 207, 255, 0.25);
+  }
+
+  .r-node-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .r-proc {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .r-proc b {
+    font-size: 13px;
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .r-proc span {
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .r-specs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+
+  .r-specs li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .r-specs li span {
+    color: var(--txt-3);
+  }
+
+  .r-specs li b {
+    color: var(--txt-2);
+    font-weight: 500;
+    font-size: 11px;
+  }
+
+  .r-wire-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 0 4px;
+  }
+
+  .r-wire-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--txt-3);
+  }
+
+  .r-wire-label b {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .r-wire-meta {
+    font-size: 10px;
+    color: var(--txt-4);
+  }
+
+  .wire {
+    position: relative;
+    width: 100%;
+    height: 1px;
+    background: var(--bdr-hi);
+    overflow: hidden;
+  }
+
+  .wire i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 1px;
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber);
+    animation: packet 2.4s linear infinite;
+  }
+
+  .wire i:nth-child(2) { animation-delay: -0.8s; }
+  .wire i:nth-child(3) { animation-delay: -1.6s; }
+
+  @keyframes packet {
+    from { transform: translateX(-8px); left: 0; }
+    to   { transform: translateX(0); left: 100%; }
+  }
+
+  .remote-scenarios {
+    padding: 16px 20px 20px;
+    background: var(--bg-elev);
+  }
+
+  .scen-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-bottom: 12px;
+  }
+
+  .scen-link a {
+    color: var(--amber);
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 11px;
+  }
+
+  .scen-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .scen-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    border: 1px solid var(--bdr);
+    background: var(--bg);
+  }
+
+  .scen-k {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--txt);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .scen-cmd {
+    padding: 6px 8px;
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--txt-2);
+    overflow-x: auto;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .scen-cmd code {
+    font-family: var(--font-mono);
+  }
+
+  .scen-note {
+    font-size: 11px;
+    color: var(--txt-3);
+    line-height: 1.45;
+  }
+
+  /* Pillars */
+  .remote-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pillar-cell {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 22px;
+    background: var(--bg);
+    border: 1px solid var(--bdr);
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  .pillar-cell:hover {
+    background: var(--bg-elev);
+    border-color: var(--bdr-hi);
+  }
+
+  .pil-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .pil-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber);
+    font-family: var(--font-mono);
+  }
+
+  .pil-tag {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--txt-3);
+    border: 1px solid var(--bdr);
+    padding: 1px 5px;
+  }
+
+  .pil-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--txt);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .pil-sub {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--txt-3);
+    margin-bottom: 10px;
+  }
+
+  .pil-body {
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  @media (max-width: 1040px) {
+    .scen-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .remote-diagram {
+      grid-template-columns: 1fr;
+    }
+
+    .r-wire-col {
+      flex-direction: row;
+      justify-content: center;
+      height: 44px;
+    }
+
+    .wire {
+      width: 1px;
+      height: 100%;
+    }
+
+    .wire i {
+      width: 1px;
+      height: 8px;
+      animation-name: packet-y;
+    }
+
+    @keyframes packet-y {
+      from { transform: translateY(-8px); top: 0; }
+      to   { transform: translateY(0); top: 100%; }
+    }
+
+    .remote-pillars {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
