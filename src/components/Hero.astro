@@ -1,7 +1,8 @@
 ---
 import { GITHUB, INSTALL_CMD, VERSION } from '../data/links';
 import { THEMES } from '../data/themes';
-import { FILES, SYMBOLS, COMMANDS, FUZZY_EXCERPT } from '../data/px0';
+import { COMMANDS, CORPUS } from '../data/px0';
+import { KERNEL_FILES, ROOT_DIRS, ROOT_FILES, LIB_WINDOW, SORT_SYMBOLS, DO_SWAP_REFS, SORT_EXCERPT } from '../data/kernel';
 import { getLatestChangelog } from '../data/changelogs';
 
 const latestRelease = getLatestChangelog();
@@ -16,60 +17,100 @@ const stats = [
   { v: '0', u: '', k: 'runtime deps', d: 'no Electron, no Node, no CGO' },
 ];
 
-// A small Go tokenizer, enough to colour the excerpt with the IDE's own token classes.
-const GO_KW = new Set('break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var'.split(' '));
-const GO_TYPES = new Set('any bool byte error float32 float64 int int16 int32 int64 int8 rune string uint uint16 uint32 uint64 uint8 uintptr'.split(' '));
-const GO_CONST = new Set(['nil', 'true', 'false', 'iota']);
-const GO_BUILTIN = new Set('append cap clear close copy delete len make max min new panic print println recover'.split(' '));
+// The linux row of BENCHMARKS.md drives every number the mock shows.
+const linux = CORPUS.find((r) => r.repo === 'linux')!;
+const fileCount = linux.files.toLocaleString('en-US');
+
+// A small C tokenizer, enough to colour the excerpt with the IDE's own token classes.
+const C_KW = new Set('break case const continue default do else enum extern for goto if inline register return sizeof static struct switch typedef union volatile while'.split(' '));
+const C_TYPES = new Set('bool char double float int long short signed unsigned void size_t'.split(' '));
+const C_CONST = new Set(['NULL', 'true', 'false']);
 
 type Tok = { c: string; v: string };
-function tokenizeGo(line: string): Tok[] {
+function tokenizeC(line: string, open: boolean): { toks: Tok[]; open: boolean } {
   const out: Tok[] = [];
-  const re = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')|(\b\d+\b)|([A-Za-z_]\w*)|(\s+)|([-+*/%=!<>&|^:]+)|([()[\]{}.,;])/g;
+  let at = 0;
+  if (open) {
+    const end = line.indexOf('*/');
+    if (end < 0) return { toks: [{ c: 'c', v: line }], open: true };
+    at = end + 2;
+    out.push({ c: 'c', v: line.slice(0, at) });
+    open = false;
+  }
+  const re = /(\/\*(?:.*?\*\/|.*$))|(\/\/.*$)|("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')|(\b\d+\b)|([A-Za-z_]\w*)|([-+*/%=!<>&|^~?:]+)|([()[\]{}.,;])/g;
+  re.lastIndex = at;
   let m: RegExpExecArray | null;
   while ((m = re.exec(line))) {
+    if (m.index > at) out.push({ c: '', v: line.slice(at, m.index) });
+    at = re.lastIndex;
     const v = m[0];
-    if (m[1]) out.push({ c: 'c', v });
-    else if (m[2] || m[3]) out.push({ c: 's', v });
-    else if (m[4]) out.push({ c: 'm', v });
-    else if (m[5]) {
+    if (m[1]) {
+      out.push({ c: 'c', v });
+      if (!v.slice(2).endsWith('*/')) open = true;
+    } else if (m[2]) out.push({ c: 'c', v });
+    else if (m[3] || m[4]) out.push({ c: 's', v });
+    else if (m[5]) out.push({ c: 'm', v });
+    else if (m[6]) {
       let c = 'nv';
-      if (GO_KW.has(v)) c = 'k';
-      else if (GO_TYPES.has(v)) c = 'kt';
-      else if (GO_CONST.has(v)) c = 'no';
-      else if (GO_BUILTIN.has(v)) c = 'nb';
-      else if (line[re.lastIndex] === '(') c = 'nf';
-      if (v === 'isBoundary') c += ' occ';
+      if (C_KW.has(v)) c = 'k';
+      else if (C_TYPES.has(v)) c = 'kt';
+      else if (C_CONST.has(v)) c = 'no';
+      else if (line[at] === '(') c = 'nf';
+      if (v === 'do_swap') c += ' occ';
       out.push({ c, v });
-    } else if (m[6]) out.push({ c: '', v });
-    else if (m[7]) out.push({ c: 'o', v });
+    } else if (m[7]) out.push({ c: 'o', v });
     else out.push({ c: 'p', v });
   }
-  return out;
+  if (at < line.length) out.push({ c: '', v: line.slice(at) });
+  return { toks: out, open };
 }
 
-const CURSOR_LINE = 65;
-const rows = FUZZY_EXCERPT.lines.map((text, i) => {
-  const n = FUZZY_EXCERPT.start + i;
-  const toks = tokenizeGo(text);
+const CURSOR_LINE = 236;
+let inComment = false;
+const rows = SORT_EXCERPT.lines.map((text, i) => {
+  const n = SORT_EXCERPT.start + i;
+  const r = tokenizeC(text, inComment);
+  inComment = r.open;
   if (n === CURSOR_LINE) {
-    const at = toks.findIndex((t) => t.v === 'isBoundary');
-    if (at >= 0) toks.splice(at + 1, 0, { c: 'caret', v: '' });
+    const at = r.toks.findIndex((t) => t.v === 'do_swap');
+    if (at >= 0) r.toks.splice(at + 1, 0, { c: 'caret', v: '' });
   }
-  return { n, toks, cur: n === CURSOR_LINE };
+  return { n, toks: r.toks, cur: n === CURSOR_LINE };
 });
-const hoverRow = CURSOR_LINE - FUZZY_EXCERPT.start;
+const hoverRow = CURSOR_LINE - SORT_EXCERPT.start;
+const pct = (line: number) => `${(line / SORT_EXCERPT.total) * 100}%`;
 
-const tree = [
-  ...['.github', 'docs', 'scripts', 'web'].map((name) => ({ name, dir: true })),
-  ...['.gitignore', 'AGENT.md', 'ARCHITECTURE.md', 'benchmark.sh', 'BENCHMARKS.md', 'build.sh', 'CONTRIBUTING.md', 'fuzzy.go', 'git.go', 'go.mod', 'go.sum', 'highlight.go', 'highlight_test.go', 'ignore.go', 'index.go', 'install.sh', 'LICENSE', 'lsp.go', 'lsp_test.go', 'lspnav.go', 'lspservers.go', 'main.go', 'Makefile', 'markdown.go', 'metrics.go', 'px0_test.go', 'README.md', 'search.go', 'server.go'].map((name) => ({ name, dir: false })),
-];
-const ext = (name: string) => (name.split('.').pop() || '').toLowerCase();
+const ext = (name: string) => (name.includes('.') ? name.split('.').pop() || '' : '').toLowerCase();
+const [refDef, ...refUses] = DO_SWAP_REFS;
 
 const themeStyle = (vars: Record<string, string>) =>
   Object.entries(vars).map(([k, v]) => `--t-${k}:${v}`).join(';');
 
-const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: THEMES };
+// What px0 prints on start, laid out by uiHeading, uiKV (width 11), uiHint, uiStatus and uiBullet.
+const bootLines = [
+  '',
+  `<b class="t-strong">px0 ${VERSION}</b>`,
+  `  <span class="s-dim">workspace:</span>  /home/you/workspace/kernel`,
+  `  <span class="s-dim">url:</span>        <span class="t-accent">http://127.0.0.1:7777</span>`,
+  '',
+  '<span class="s-dim">ctrl-c to stop</span>',
+];
+const indexLines = [
+  `<span class="s-ok">✓</span> indexed ${linux.files} files  <span class="s-dim">${linux.index}ms</span>`,
+  '  <span class="t-faint">·</span> language servers: clangd (started on first use)',
+];
+
+const ideData = {
+  files: KERNEL_FILES,
+  symbols: SORT_SYMBOLS,
+  commands: COMMANDS.filter((c) => !c.includes('Theme')),
+  file: SORT_EXCERPT.file,
+  lines: SORT_EXCERPT.total,
+  cmd: 'px0 ~/workspace/kernel',
+  boot: bootLines,
+  indexed: indexLines,
+  indexMs: linux.index,
+};
 ---
 
 <section class="hero">
@@ -126,121 +167,145 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
       </dl>
     </div>
 
-    <div class="stage">
+    <div class="stage" id="stage" data-phase="boot">
       <div class="stage-bar">
-        <span class="lbl">~/src/px0 · fuzzy.go</span>
+        <span class="lbl">~/workspace/kernel · {fileCount} files</span>
+        <button class="stage-replay" type="button" data-replay hidden>↻ replay</button>
       </div>
 
-      <div class="ide" id="ide" style={themeStyle(THEMES[0].vars)}>
-        <div class="ide-chrome">
-          <span class="ide-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="ide-url">127.0.0.1:7777</span>
-          <button class="ide-k" type="button" data-pal-open aria-label="Open palette"><span class="mod-key">Ctrl</span> K</button>
-        </div>
-
-        <div class="ide-body">
-          <aside class="ide-side" aria-hidden="true">
-            <header class="ide-phead"><span>px0</span><span class="tree-acts"><span class="git-filter-btn">filter</span><span>↻</span></span></header>
-            <ul class="ide-tree">
-              {tree.map((f) => (
-                <li class:list={[{ dir: f.dir, on: f.name === 'fuzzy.go' }]}>
-                  <span class="chev">{f.dir ? '▸' : ''}</span>
-                  {!f.dir && <i class={`fi x-${ext(f.name)}`}></i>}
-                  <span class="tree-name">{f.name}</span>
-                  {f.dir && f.name === 'web' && <span class="dirty-dot" title="contains changes"></span>}
-                  {f.name === 'fuzzy.go' && <span class="tree-badge mod">M</span>}
-                  {f.name === 'git.go' && <span class="tree-badge add">A</span>}
-                  {f.name === 'markdown.go' && <span class="tree-badge add">A</span>}
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <div class="ide-main">
-            <div class="ide-tabs" aria-hidden="true">
-              <span class="ide-tab on">fuzzy.go <span class="tab-git-badge mod">M</span> <span class="x">×</span></span>
-              <span class="ide-tab">git.go <span class="tab-git-badge add">A</span></span>
-              <span class="ide-tab">markdown.go</span>
-              <span class="ide-tab">README.md</span>
-              <div class="tab-acts"><span class="diff-btn">Diff</span></div>
-            </div>
-            <div class="ide-crumbs" aria-hidden="true">px0 <span>›</span> fuzzy.go <span>›</span> <b>fuzzyScore</b></div>
-
-            <div class="ide-editor">
-              <div class="ide-code" aria-label="fuzzy.go, lines 50 to 85">
-                {rows.map((r) => (
-                  <div class:list={['row', { cur: r.cur }]}>
-                    <span class="ln">{r.n}</span>
-                    <span class="tx">{r.toks.map((t) => (t.c === 'caret' ? <i class="ide-caret"></i> : <span class={t.c || undefined}>{t.v}</span>))}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div class="ide-hover" style={`--row:${hoverRow}`} aria-hidden="true">
-                <div class="hv-sig"><span class="k">func</span> <span class="nf">isBoundary</span><span class="p">(</span>b <span class="kt">byte</span><span class="p">)</span> <span class="kt">bool</span></div>
-                <div class="hv-meta">fuzzy.go:17 · gopls</div>
-                <div class="hv-act"><span><kbd>F12</kbd> definition</span><span><kbd>Shift F12</kbd> references</span></div>
-              </div>
-
-              <div class="ide-scroll" aria-hidden="true">
-                <span class="thumb" style={`top:${(FUZZY_EXCERPT.start / FUZZY_EXCERPT.total) * 100}%;height:${(28 / FUZZY_EXCERPT.total) * 100}%`}></span>
-                <span class="hit" style={`top:${(17 / FUZZY_EXCERPT.total) * 100}%`}></span>
-                <span class="hit" style={`top:${(65 / FUZZY_EXCERPT.total) * 100}%`}></span>
-              </div>
-
-              <div class="ide-pal" hidden>
-                <div class="ide-pal-in">
-                  <span class="ide-pal-mode">files</span>
-                  <input type="text" spellcheck="false" autocomplete="off" aria-label="Palette query" placeholder="path, or > command, @ symbol, : line" />
-                </div>
-                <div class="ide-pal-list" role="listbox"></div>
-                <div class="ide-pal-hint"><span>↑↓ move</span><span>enter open</span><span>esc close</span><span class="ide-pal-meta"></span></div>
-              </div>
-
-              <div class="ide-toast" hidden></div>
-            </div>
-
-            <footer class="ide-status">
-              <button class="st" type="button" data-pal-open>Files <kbd><span class="mod-key">Ctrl</span> P</kbd></button>
-              <span class="st opt">Search <kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> F</kbd></span>
-              <span class="st opt">Diff <kbd><span class="mod-key">Ctrl</span> D</kbd></span>
-              <span class="st opt">Preview <kbd><span class="alt-key">Alt</span> M</kbd></span>
-              <span class="st grow"></span>
-              <span class="st opt">156 lines</span>
-              <span class="st"><i class="ok"></i>gopls</span>
-              <span class="st">CPU 0.0% · RAM 20 MB</span>
-              <span class="st opt" data-theme-name>{THEMES[0].name}</span>
-            </footer>
+      <div class="stage-frame">
+        <div class="ide" id="ide" data-view="open" style={themeStyle(THEMES[0].vars)}>
+          <div class="ide-chrome">
+            <span class="ide-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="ide-url">127.0.0.1:7777</span>
+            <button class="ide-k" type="button" data-pal-open aria-label="Open palette"><span class="mod-key">Ctrl</span> K</button>
           </div>
 
-          <aside class="ide-insp" aria-hidden="true">
-            <div class="insp-tabs"><span class="insp-tab on">References</span><span class="insp-tab">Symbols</span></div>
-            <div class="insp-bar"><b>isBoundary</b><span class="badge">2</span></div>
-            <div class="ref-file">fuzzy.go</div>
-            <div class="ref"><span class="l">17</span><span class="t"><span class="k">func</span> isBoundary(b <span class="kt">byte</span>) <span class="kt">bool</span> {'{'}</span><span class="tag">def</span></div>
-            <div class="ref on"><span class="l">65</span><span class="t"><span class="k">if</span> i == 0 || isBoundary(p[i-1]) {'{'}</span></div>
-            <div class="insp-sec">outline · fuzzy.go</div>
-            {SYMBOLS.map((s) => (
-              <div class:list={['sym', { on: s.name === 'fuzzyScore' }]}><span class="kd">{s.kind}</span><span class="nm">{s.name}</span><span class="l">{s.line}</span></div>
-            ))}
-          </aside>
-        </div>
-      </div>
+          <div class="ide-body">
+            <aside class="ide-side" aria-hidden="true">
+              <header class="ide-phead"><span>kernel</span><span class="tree-acts"><span class="git-filter-btn">filter</span><span>↻</span></span></header>
+              <ul class="ide-tree v-empty">
+                {ROOT_DIRS.map((name) => (
+                  <li class="dir"><span class="chev">▸</span><span class="tree-name">{name}</span></li>
+                ))}
+                {ROOT_FILES.map((name) => (
+                  <li><span class="chev"></span><i class={`fi x-${ext(name)}`}></i><span class="tree-name">{name}</span></li>
+                ))}
+              </ul>
+              <ul class="ide-tree v-open">
+                {LIB_WINDOW.map((entry) => {
+                  const dir = entry.endsWith('/');
+                  const name = dir ? entry.slice(0, -1) : entry;
+                  return (
+                    <li class:list={['in', { dir, on: name === 'sort.c' }]}>
+                      <span class="chev">{dir ? '▸' : ''}</span>
+                      {!dir && <i class={`fi x-${ext(name)}`}></i>}
+                      <span class="tree-name">{name}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </aside>
 
-      <div class="theme-strip" role="group" aria-label="Preview a theme in the mock">
-        <span class="lbl">14 themes</span>
-        {THEMES.map((t, i) => (
-          <button
-            class="th"
-            type="button"
-            data-ide-theme={t.id}
-            aria-pressed={i === 0 ? 'true' : 'false'}
-            style={`--sw-bg:${t.vars.bg};--sw-a:${t.vars.k};--sw-b:${t.vars.s};--sw-c:${t.vars.nf}`}
-          ><i class="sw" aria-hidden="true"><em></em><em></em><em></em></i>{t.name}</button>
-        ))}
+            <div class="ide-main">
+              <div class="ide-tabs" aria-hidden="true">
+                <span class="ide-tab on v-open">sort.c <span class="x">×</span></span>
+                <div class="tab-acts v-open"><span class="diff-btn">Diff</span></div>
+              </div>
+              <div class="ide-crumbs" aria-hidden="true">
+                kernel<span class="v-open crumbs-rest"> <span>›</span> lib <span>›</span> sort.c <span>›</span> <b>__sort_r</b></span>
+              </div>
+
+              <div class="ide-editor">
+                <div class="ide-empty v-empty" aria-hidden="true">
+                  <div class="emp-title">kernel</div>
+                  <div class="emp-sub"><i class="ok"></i>{fileCount} files indexed in {linux.index} ms</div>
+                  <dl class="emp-keys">
+                    <div><dt>Go to file</dt><dd><kbd><span class="mod-key">Ctrl</span> P</kbd></dd></div>
+                    <div><dt>Search in files</dt><dd><kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> F</kbd></dd></div>
+                    <div><dt>Palette</dt><dd><kbd><span class="mod-key">Ctrl</span> K</kbd></dd></div>
+                  </dl>
+                </div>
+
+                <div class="ide-code v-open" aria-label={`${SORT_EXCERPT.file}, lines ${SORT_EXCERPT.start} to ${SORT_EXCERPT.start + SORT_EXCERPT.lines.length - 1}`}>
+                  {rows.map((r) => (
+                    <div class:list={['row', { cur: r.cur }]}>
+                      <span class="ln">{r.n}</span>
+                      <span class="tx">{r.toks.map((t) => (t.c === 'caret' ? <i class="ide-caret"></i> : <span class={t.c || undefined}>{t.v}</span>))}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div class="ide-hover v-open" style={`--row:${hoverRow}`} aria-hidden="true">
+                  <div class="hv-sig"><span class="k">static</span> <span class="kt">void</span> <span class="nf">do_swap</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span>a<span class="p">,</span> <span class="kt">void</span> <span class="o">*</span>b<span class="p">,</span> <span class="kt">size_t</span> size<span class="p">,</span>{'\n'}                    swap_r_func_t swap_func<span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span>priv<span class="p">)</span></div>
+                  <div class="hv-meta">{SORT_EXCERPT.file}:{refDef.line} · clangd</div>
+                  <div class="hv-act"><span><kbd>F12</kbd> definition</span><span><kbd>Shift F12</kbd> references</span></div>
+                </div>
+
+                <div class="ide-scroll v-open" aria-hidden="true">
+                  <span class="thumb" style={`top:${pct(SORT_EXCERPT.start)};height:${pct(SORT_EXCERPT.lines.length)}`}></span>
+                  {DO_SWAP_REFS.map((r) => <span class="hit" style={`top:${pct(r.line)}`}></span>)}
+                </div>
+
+                <div class="ide-pal" hidden>
+                  <div class="ide-pal-in">
+                    <span class="ide-pal-mode">files</span>
+                    <input type="text" spellcheck="false" autocomplete="off" aria-label="Palette query" placeholder="path, or > command, @ symbol, : line" />
+                  </div>
+                  <div class="ide-pal-list" role="listbox"></div>
+                  <div class="ide-pal-hint"><span>↑↓ move</span><span>enter open</span><span>esc close</span><span class="ide-pal-meta"></span></div>
+                </div>
+
+                <div class="ide-toast" hidden></div>
+              </div>
+
+              <footer class="ide-status">
+                <button class="st" type="button" data-pal-open>Files <kbd><span class="mod-key">Ctrl</span> P</kbd></button>
+                <span class="st opt">Search <kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> F</kbd></span>
+                <span class="st opt">Diff <kbd><span class="mod-key">Ctrl</span> D</kbd></span>
+                <span class="st grow"></span>
+                <span class="st opt v-open">{SORT_EXCERPT.total} lines</span>
+                <span class="st"><i class="lsp"></i>clangd</span>
+                <span class="st">CPU 0.0% · RAM {linux.mem} MB</span>
+              </footer>
+            </div>
+
+            <aside class="ide-insp" aria-hidden="true">
+              <div class="insp-tabs"><span class="insp-tab on">References</span><span class="insp-tab">Symbols</span></div>
+              <div class="insp-empty v-empty">No file open.<br />Open one to see references and its outline.</div>
+              <div class="v-open">
+                <div class="insp-bar"><b>do_swap</b><span class="badge">{DO_SWAP_REFS.length}</span></div>
+                <div class="ref-file">{SORT_EXCERPT.file}</div>
+                <div class="ref"><span class="l">{refDef.line}</span><span class="t">{refDef.text}</span><span class="tag">def</span></div>
+                {refUses.map((r) => (
+                  <div class:list={['ref', { on: r.line === CURSOR_LINE }]}><span class="l">{r.line}</span><span class="t">{r.text}</span></div>
+                ))}
+                <div class="insp-sec">outline · sort.c</div>
+                {SORT_SYMBOLS.map((s) => (
+                  <div class:list={['sym', { on: s.name === '__sort_r' }]}><span class="kd">{s.kind}</span><span class="nm">{s.name}</span><span class="l">{s.line}</span></div>
+                ))}
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="boot" aria-hidden="true">
+          <div class="term boot-term">
+            <div class="term-bar">
+              <span class="term-dots"><i></i><i></i><i></i></span>
+              <span class="term-title">~ · zsh</span>
+            </div>
+            <div class="term-body"><pre class="boot-out"><span class="s-warn">$</span> <span class="caret"></span></pre></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <noscript><style is:inline>
+    .stage[data-phase] .boot { display: none !important; }
+    .stage[data-phase] .ide { opacity: 1 !important; transform: none !important; pointer-events: auto !important; }
+  </style></noscript>
 
   <script type="application/json" id="ide-data" is:inline set:html={JSON.stringify(ideData)}></script>
 </section>
@@ -440,14 +505,84 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
 
   .stage-bar {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
+    min-height: 32px;
     padding-bottom: 10px;
   }
 
-  .stage-bar .mod-key {
+  .stage-replay {
+    height: 22px;
+    padding: 0 8px;
+    border: 1px solid var(--bdr);
+    background: none;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .stage-replay:hover {
+    border-color: var(--amber-line);
     color: var(--amber);
+  }
+
+  .stage-frame {
+    position: relative;
+  }
+
+  /* ── boot: the terminal that launches px0 ── */
+  .boot {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border: 1px solid var(--bdr);
+    background-color: var(--bg-elev);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    transition: opacity 0.2s ease-out, visibility 0s linear 0.2s;
+  }
+
+  .boot-term {
+    width: min(680px, 100%);
+  }
+
+  .boot-out {
+    min-height: calc(10 * 1.75em);
+    color: var(--txt);
+  }
+
+  .boot-out :global(.t-strong) {
+    color: var(--txt);
+    font-weight: 700;
+  }
+
+  .boot-out :global(.t-accent) {
+    color: var(--amber);
+  }
+
+  .boot-out :global(.t-faint) {
+    color: var(--txt-4);
+  }
+
+  .stage[data-phase='ide'] .boot {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .stage[data-phase='boot'] .boot {
+    transition: none;
   }
 
   /* ── the IDE mock: every colour comes from a px0 theme, as --t-* ── */
@@ -460,7 +595,19 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     font-size: 12px;
     box-shadow: var(--shadow-float);
     overflow: hidden;
-    transition: background-color 0.25s, color 0.25s;
+    transition: opacity 0.18s ease-out, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .stage[data-phase='boot'] .ide {
+    opacity: 0;
+    transform: translateY(12px) scale(0.975);
+    pointer-events: none;
+    transition: none;
+  }
+
+  .ide[data-view='empty'] .v-open,
+  .ide[data-view='open'] .v-empty {
+    display: none;
   }
 
   .ide .k { color: var(--t-k); }
@@ -588,37 +735,15 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     color: var(--t-fg);
   }
 
+  .ide-tree li.in {
+    padding-left: 26px;
+  }
+
   .tree-name {
     flex: 1;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .tree-badge {
-    margin-left: auto;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 0 4px;
-    border-radius: 2px;
-  }
-
-  .tree-badge.mod {
-    color: var(--t-accent);
-    background: var(--t-bg4);
-  }
-
-  .tree-badge.add {
-    color: var(--t-gi);
-    background: var(--t-bg4);
-  }
-
-  .dirty-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--t-accent);
-    margin-left: auto;
   }
 
   .ide-tree li.dir {
@@ -642,11 +767,9 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     background: var(--t-faint);
   }
 
-  .fi.x-go { background: var(--t-kt); }
-  .fi.x-md { background: var(--t-nc); }
-  .fi.x-sh { background: var(--t-s); }
-  .fi.x-mod,
-  .fi.x-sum { background: var(--t-k); }
+  .fi.x-c { background: var(--t-kt); }
+  .fi.x-h { background: var(--t-nc); }
+  .fi.x-toml { background: var(--t-k); }
 
   /* main column */
   .ide-main {
@@ -675,14 +798,6 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     color: var(--t-faint);
   }
 
-  .tab-git-badge {
-    font-size: 9.5px;
-    font-weight: 700;
-  }
-
-  .tab-git-badge.mod { color: var(--t-accent); }
-  .tab-git-badge.add { color: var(--t-gi); }
-
   .tab-acts {
     margin-left: auto;
     padding-right: 8px;
@@ -710,12 +825,12 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
   .ide-crumbs {
     display: flex;
     align-items: center;
-    gap: 6px;
     height: 26px;
     padding: 0 14px;
     border-bottom: 1px solid var(--t-line);
     font-size: 11px;
     color: var(--t-faint);
+    white-space: pre;
   }
 
   .ide-crumbs b {
@@ -727,6 +842,63 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     position: relative;
     flex: 1;
     overflow: hidden;
+  }
+
+  /* empty editor, before a file is open */
+  .ide-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .emp-title {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--t-bg4);
+  }
+
+  .emp-sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--t-dim);
+  }
+
+  .emp-sub .ok {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--t-gi);
+  }
+
+  .emp-keys {
+    display: grid;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 11.5px;
+  }
+
+  .emp-keys div {
+    display: flex;
+    justify-content: space-between;
+    gap: 36px;
+  }
+
+  .emp-keys dt {
+    color: var(--t-faint);
+  }
+
+  .emp-keys kbd {
+    font: inherit;
+    color: var(--t-fg);
   }
 
   .ide-code {
@@ -778,19 +950,20 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     position: absolute;
     z-index: 3;
     top: calc(8px + var(--row) * var(--lh));
-    left: calc(6ch + 21ch);
+    left: calc(6ch + 12ch);
     transform: translateY(calc(-100% - 2px));
-    min-width: 290px;
+    max-width: calc(100% - 6ch - 12ch - 16px);
     border: 1px solid var(--t-line);
     background: var(--t-bg3);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
     font-size: 12px;
+    overflow: hidden;
   }
 
   .hv-sig {
     padding: 8px 12px;
     border-bottom: 1px solid var(--t-line);
-    white-space: nowrap;
+    white-space: pre;
   }
 
   .hv-meta {
@@ -1008,10 +1181,15 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     border-right: 0;
   }
 
-  .st .ok {
+  /* the language server starts on first use: idle until a file is open */
+  .st .lsp {
     width: 6px;
     height: 6px;
     border-radius: 50%;
+    background: var(--t-bg4);
+  }
+
+  .ide[data-view='open'] .st .lsp {
     background: var(--t-gi);
   }
 
@@ -1041,6 +1219,13 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
   .insp-tab.on {
     color: var(--t-fg);
     box-shadow: inset 0 -1px 0 var(--t-accent);
+  }
+
+  .insp-empty {
+    padding: 14px 12px;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--t-faint);
   }
 
   .insp-bar {
@@ -1122,62 +1307,6 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     color: var(--t-faint);
   }
 
-  /* theme strip */
-  .theme-strip {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-    margin-top: 12px;
-  }
-
-  .theme-strip .lbl {
-    margin-right: 6px;
-  }
-
-  .th {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    height: 28px;
-    padding: 0 10px 0 4px;
-    border: 1px solid var(--bdr);
-    background: var(--bg-elev);
-    font-size: 11px;
-    color: var(--txt-2);
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
-  }
-
-  .th:hover {
-    border-color: var(--bdr-hi);
-    color: var(--txt);
-  }
-
-  .th[aria-pressed='true'] {
-    border-color: var(--amber);
-    color: var(--txt);
-  }
-
-  .sw {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    height: 18px;
-    padding: 0 4px;
-    background: var(--sw-bg);
-    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.25);
-  }
-
-  .sw em {
-    width: 4px;
-    height: 10px;
-    background: var(--sw-a);
-  }
-
-  .sw em:nth-child(2) { background: var(--sw-b); }
-  .sw em:nth-child(3) { background: var(--sw-c); }
-
   /* ── responsive ── */
   @media (max-width: 1100px) {
     .hero-grid { grid-template-columns: minmax(0, 1fr); }
@@ -1203,37 +1332,41 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     .ide-body { grid-template-columns: minmax(0, 1fr); height: 480px; }
     .ide-side,
     .ide-url,
-    .st.opt,
-    .ide-tab:nth-child(n + 3) { display: none; }
+    .st.opt { display: none; }
     .ide-dots { width: auto; }
     .ide-k { margin-left: auto; }
-    .ide-hover { left: 12px; min-width: 0; right: 12px; }
+    .ide-hover { left: 12px; right: 12px; max-width: none; }
+    .boot { padding: 12px; }
   }
 </style>
 
 <script>
-  type Theme = { id: string; name: string; light: boolean; vars: Record<string, string> };
   type Sym = { name: string; kind: string; line: number };
-  type IdeData = { files: string[]; symbols: Sym[]; commands: string[]; themes: Theme[] };
-  type Entry = { html: string; say: string };
+  type IdeData = {
+    files: string[];
+    symbols: Sym[];
+    commands: string[];
+    file: string;
+    lines: number;
+    cmd: string;
+    boot: string[];
+    indexed: string[];
+    indexMs: number;
+  };
+  type Entry = { html: string; say: string; path?: string };
 
+  const stage = document.getElementById('stage');
   const root = document.getElementById('ide');
   const dataEl = document.getElementById('ide-data');
 
-  if (root && dataEl) {
+  if (stage && root && dataEl) {
     const data = JSON.parse(dataEl.textContent || '{}') as IdeData;
+    const frame = stage.querySelector<HTMLElement>('.stage-frame')!;
+    const bootOut = stage.querySelector<HTMLElement>('.boot-out')!;
+    const replayBtn = stage.querySelector<HTMLButtonElement>('[data-replay]')!;
 
-    // ── themes ──
-    const themeName = root.querySelector('[data-theme-name]');
-    const themeButtons = document.querySelectorAll<HTMLButtonElement>('[data-ide-theme]');
-    const applyTheme = (id: string) => {
-      const t = data.themes.find((x) => x.id === id);
-      if (!t) return;
-      for (const [k, v] of Object.entries(t.vars)) root.style.setProperty(`--t-${k}`, v);
-      if (themeName) themeName.textContent = t.name;
-      themeButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ideTheme === id)));
-    };
-    themeButtons.forEach((b) => b.addEventListener('click', () => applyTheme(b.dataset.ideTheme || '')));
+    const setPhase = (p: 'boot' | 'ide') => (stage.dataset.phase = p);
+    const setView = (v: 'empty' | 'open') => (root.dataset.view = v);
 
     // ── fuzzyScore, ported line for line from px0's fuzzy.go ──
     const isBoundary = (c: string) => '/_-. @'.includes(c);
@@ -1332,7 +1465,7 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
         entries = r.top.map(({ item, pos, score }) => {
           const s = data.symbols.find((x) => x.name === item)!;
           return {
-            html: `<span class="kd">${s.kind}</span><span class="n">${mark(item, pos)}</span><span class="d">fuzzy.go:${s.line}</span>${q ? `<span class="sc">${score}</span>` : ''}`,
+            html: `<span class="kd">${s.kind}</span><span class="n">${mark(item, pos)}</span><span class="d">${data.file}:${s.line}</span>${q ? `<span class="sc">${score}</span>` : ''}`,
             say: `jumped to ${item}, line ${s.line}`,
           };
         });
@@ -1342,8 +1475,8 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
         const ok = Number.isFinite(n);
         total = 1;
         entries = [{
-          html: `<span class="n">Go to line <b>${ok ? n : '_'}</b></span><span class="d">fuzzy.go · 156 lines</span>`,
-          say: ok ? `line ${Math.min(Math.max(n, 1), 156)}` : 'type a line number',
+          html: `<span class="n">Go to line <b>${ok ? n : '_'}</b></span><span class="d">${data.file} · ${data.lines} lines</span>`,
+          say: ok ? `line ${Math.min(Math.max(n, 1), data.lines)}` : 'type a line number',
         }];
       } else {
         const r = rank(data.files, q);
@@ -1353,6 +1486,7 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
           return {
             html: `<span class="n">${mark(item.slice(cut), pos, cut)}</span><span class="d">${mark(item.slice(0, cut), pos)}</span>${q ? `<span class="sc">${score}</span>` : ''}`,
             say: `opened ${item}`,
+            path: item,
           };
         });
       }
@@ -1392,6 +1526,7 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
     };
     const choose = () => {
       const e = entries[active];
+      if (e?.path === data.file) setView('open');
       if (e) toast(e.say);
       closePal();
     };
@@ -1411,71 +1546,141 @@ const ideData = { files: FILES, symbols: SYMBOLS, commands: COMMANDS, themes: TH
       if ((e.target as HTMLElement).closest('.pal-row')) choose();
     });
 
-    // ── scripted demo, until the visitor takes over ──
+    // ── scripted demo: boot from a terminal, then drive the palette, until the visitor takes over ──
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let demo = !reduce;
+    let run = 0; // bumped to cancel whatever script is in flight
     let visible = false;
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    const stopDemo = () => (demo = false);
+    const live = async (id: number) => {
+      while (id === run && !visible) await sleep(300);
+      return id === run;
+    };
 
-    root.addEventListener('pointerdown', (e) => {
-      stopDemo();
+    // Jump straight to the finished scene: IDE up, lib/sort.c open.
+    const finish = () => {
+      run++;
+      closePal();
+      setView('open');
+      setPhase('ide');
+      replayBtn.hidden = reduce;
+    };
+
+    frame.addEventListener('pointerdown', (e) => {
+      if (stage.dataset.phase === 'boot') {
+        finish();
+        return;
+      }
+      run++;
       const t = e.target as HTMLElement;
       if (!t.closest('.ide-pal') && !t.closest('[data-pal-open]')) closePal();
     });
-    input.addEventListener('focus', stopDemo);
+    input.addEventListener('focus', () => run++);
     root.querySelectorAll('[data-pal-open]').forEach((b) =>
       b.addEventListener('click', () => {
-        stopDemo();
+        run++;
         input.value = '';
         openPal(true);
       })
     );
 
-    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.3 }).observe(root);
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.3 }).observe(frame);
 
-    const typeInto = async (text: string) => {
+    const PROMPT = '<span class="s-warn">$</span> ';
+    const CARET = '<span class="caret"></span>';
+
+    const boot = async (id: number) => {
+      closePal();
+      setView('empty');
+      setPhase('boot');
+      replayBtn.hidden = true;
+      bootOut.innerHTML = PROMPT + CARET;
+
+      if (!(await live(id))) return false;
+      await sleep(700);
+      let typed = '';
+      for (const ch of data.cmd) {
+        if (!(await live(id))) return false;
+        typed += ch;
+        bootOut.innerHTML = PROMPT + esc(typed) + CARET;
+        await sleep(50 + Math.random() * 60);
+      }
+      await sleep(420);
+      if (id !== run) return false;
+
+      // Enter: the header prints at once, the index lands a moment later, the browser is already up.
+      let text = PROMPT + esc(data.cmd) + '\n' + data.boot.join('\n');
+      bootOut.innerHTML = `${text}\n${CARET}`;
+      await sleep(data.indexMs);
+      if (id !== run) return false;
+      text += '\n' + data.indexed.join('\n');
+      bootOut.innerHTML = `${text}\n${CARET}`;
+      await sleep(520);
+      if (id !== run) return false;
+
+      setPhase('ide');
+      replayBtn.hidden = false;
+      return true;
+    };
+
+    const typeInto = async (id: number, text: string) => {
       input.value = '';
       render();
       for (const ch of text) {
-        while (demo && !visible) await sleep(300);
-        if (!demo) return;
+        if (!(await live(id))) return false;
         input.value += ch;
         render();
         await sleep(90 + Math.random() * 70);
       }
+      return id === run;
     };
 
     const script: [string, number, number][] = [
-      ['srch', 1500, 1],
-      ['thm', 1400, 2],
-      ['@score', 1300, 0],
-      ['>wrap', 1200, 0],
-      [':65', 1000, 0],
+      ['schedcore', 1500, 0],
+      ['ext4inode', 1400, 1],
+      ['@swap', 1300, 1],
+      ['>diff', 1200, 0],
+      [':253', 1000, 0],
     ];
 
-    const run = async () => {
-      await sleep(1200);
-      while (demo) {
-        while (demo && !visible) await sleep(300);
-        if (!demo) return;
+    const tour = async (id: number) => {
+      // First find: open lib/sort.c out of the freshly indexed tree.
+      await sleep(900);
+      if (!(await live(id))) return;
+      openPal(false);
+      if (!(await typeInto(id, 'libsort'))) return;
+      await sleep(650);
+      const at = entries.findIndex((e) => e.path === data.file);
+      if (at > 0) setActive(at);
+      await sleep(350);
+      if (id !== run) return;
+      choose();
+      await sleep(2600);
+
+      while (await live(id)) {
         openPal(false);
         for (const [q, hold, moves] of script) {
-          await typeInto(q);
-          if (!demo) return;
+          if (!(await typeInto(id, q))) return;
           await sleep(450);
-          for (let i = 0; i < moves && demo; i++) {
+          for (let i = 0; i < moves && id === run; i++) {
             setActive(active + 1);
             await sleep(280);
           }
           await sleep(hold);
-          if (!demo) return;
+          if (id !== run) return;
         }
         closePal();
         await sleep(2400);
       }
     };
 
-    if (demo) run();
+    const play = async () => {
+      const id = ++run;
+      if (await boot(id)) tour(id);
+    };
+
+    replayBtn.addEventListener('click', play);
+
+    if (reduce) finish();
+    else play();
   }
 </script>

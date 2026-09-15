@@ -1,90 +1,11 @@
 // Facts about px0, taken from its README, BENCHMARKS.md, ARCHITECTURE.md and source.
 
-/** Every tracked path in the px0 repository, fed to the palette in the hero mock. */
-export const FILES = [
-  '.github/ISSUE_TEMPLATE/bug_report.md', '.github/ISSUE_TEMPLATE/config.yml',
-  '.github/ISSUE_TEMPLATE/feature_request.md', '.github/workflows/release.yml', '.gitignore',
-  'AGENT.md', 'ARCHITECTURE.md', 'BENCHMARKS.md', 'CONTRIBUTING.md', 'LICENSE', 'Makefile',
-  'README.md', 'STYLING.md', 'VERSION', 'benchmark.sh', 'build.sh',
-  'docs/internals/architecture.md', 'docs/internals/editor.md', 'docs/internals/markdown.md',
-  'docs/internals/styling-and-themes.md', 'fuzzy.go', 'git.go', 'git_test.go', 'go.mod', 'go.sum',
-  'highlight.go', 'highlight_test.go', 'ignore.go', 'index.go', 'install.sh', 'lsp.go',
-  'lsp_test.go', 'lspnav.go', 'lspservers.go', 'main.go',
-  'markdown.go', 'markdown_test.go', 'metrics.go', 'px0_test.go', 'scripts/build-web.js',
-  'search.go', 'server.go', 'symbols.go', 'tty_bsd.go', 'tty_linux.go', 'tty_other.go', 'ui.go',
-  'update.go', 'update_integration_test.go', 'update_test.go', 'web/app.js', 'web/index.html',
-  'web/src/cursor.js', 'web/src/diff.js', 'web/src/find.js', 'web/src/history.js',
-  'web/src/hover.js', 'web/src/inspector.js', 'web/src/lsp.js', 'web/src/main.js',
-  'web/src/markdown.js', 'web/src/outline.js', 'web/src/palette.js', 'web/src/panels.js',
-  'web/src/refmenu.js', 'web/src/renderer.js', 'web/src/search.js', 'web/src/shortcuts.js',
-  'web/src/state.js', 'web/src/status.js', 'web/src/tabs.js', 'web/src/theme.js', 'web/src/tree.js',
-  'web/src/ui.js', 'web/style.css', 'web/themes/catppuccin-latte.css', 'web/themes/catppuccin-mocha.css',
-  'web/themes/dark.css', 'web/themes/dracula.css', 'web/themes/github-dark.css',
-  'web/themes/gruvbox-dark.css', 'web/themes/gruvbox-light.css', 'web/themes/light.css',
-  'web/themes/monokai.css', 'web/themes/nord.css', 'web/themes/one-dark.css',
-  'web/themes/rose-pine.css', 'web/themes/solarized-dark.css', 'web/themes/solarized-light.css',
-];
-
-/** Top-level declarations in fuzzy.go. */
-export const SYMBOLS = [
-  { name: 'FuzzyResult', kind: 'struct', line: 10 },
-  { name: 'isBoundary', kind: 'func', line: 17 },
-  { name: 'fuzzyScore', kind: 'func', line: 29 },
-  { name: 'min', kind: 'func', line: 87 },
-  { name: 'FuzzyFind', kind: 'func', line: 95 },
-];
-
 export const COMMANDS = [
   'Go to File', 'Search in Files', 'Go to Symbol', 'Find in File', 'Go to Line',
   'Toggle Git Diff', 'Toggle Markdown Preview',
   'Toggle Word Wrap', 'Toggle Line Numbers', 'Select Theme', 'Next Theme',
   'Keyboard Shortcuts', 'Re-index Workspace',
 ];
-
-/** fuzzy.go, lines 50 to 85, verbatim. */
-export const FUZZY_EXCERPT = {
-  file: 'fuzzy.go',
-  total: 156,
-  start: 50,
-  lines: [
-    '\t// Collected right-to-left; flip in place.',
-    '\tfor i, j := 0, len(pos)-1; i < j; i, j = i+1, j-1 {',
-    '\t\tpos[i], pos[j] = pos[j], pos[i]',
-    '\t}',
-    '',
-    '\tscore, prev := 0, -2',
-    '\tfor k, i := range pos {',
-    '\t\tif i == prev+1 {',
-    '\t\t\tscore += 12 // consecutive run',
-    '\t\t} else if k > 0 {',
-    '\t\t\tscore -= min(i-prev, 12) // gap penalty, bounded',
-    '\t\t}',
-    '\t\tif i >= e.nameStart {',
-    '\t\t\tscore += 14 // basename beats directory noise',
-    '\t\t}',
-    '\t\tif i == 0 || isBoundary(p[i-1]) {',
-    '\t\t\tscore += 16 // start of a path or word segment',
-    "\t\t} else if p[i] >= 'A' && p[i] <= 'Z' && p[i-1] >= 'a' && p[i-1] <= 'z' {",
-    '\t\t\tscore += 14 // camelCase hump',
-    '\t\t}',
-    '\t\tif p[i] == q[k] {',
-    '\t\t\tscore += 4 // exact case',
-    '\t\t}',
-    '\t\tprev = i',
-    '\t}',
-    '\t// Prefer the shallower, shorter of two otherwise-equal paths.',
-    '\tscore -= len(p) / 8',
-    '\tscore -= strings.Count(p, "/") * 2',
-    '\tif idx := strings.Index(e.lower[e.nameStart:], q); idx >= 0 {',
-    '\t\tscore += 40 // whole query appears verbatim in the basename',
-    '\t\tif idx == 0 {',
-    '\t\t\tscore += 20',
-    '\t\t}',
-    '\t}',
-    '\treturn score, pos, true',
-    '}',
-  ],
-};
 
 /** BENCHMARKS.md results: Linux, -no-lsp, fastest of 5 runs. Times in ms, sizes in MB. */
 export const CORPUS = [

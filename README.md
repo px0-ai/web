@@ -40,6 +40,8 @@ src/
   pages/        # index.astro
   styles/       # global.css
 public/         # Favicons and static assets
+scripts/        # Data generators and checks for the hero demo
+docs/           # How parts of the site were built and how to regenerate them
 ```
 
 ## Stack
