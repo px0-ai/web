@@ -4,34 +4,38 @@ import { getLatestChangelog } from '../data/changelogs';
 
 const latestVersion = getLatestChangelog()?.version || VERSION;
 const year = new Date().getFullYear();
-const base = Astro.url.pathname === '/' ? '' : '/';
 
 const cols = [
   {
-    title: 'site',
+    title: 'product',
     links: [
-      ...['cases', 'bench', 'features', 'remote', 'git', 'why', 'keys', 'arch'].map((s) => ({ label: s, href: `${base}#${s}` })),
-      { label: 'changelog', href: '/changelog' },
+      { label: 'Overview', href: '/' },
+      { label: 'Features', href: '/#features' },
+      { label: 'Benchmarks', href: '/#bench' },
+      { label: 'Keybindings', href: '/#keys' },
+      { label: 'Architecture', href: '/#arch' },
+      { label: 'Releases & Changelog', href: '/changelog' },
     ],
   },
   {
     title: 'docs',
     links: [
-      { label: 'README.md', href: repoDoc('README.md'), ext: true },
-      { label: 'BENCHMARKS.md', href: repoDoc('BENCHMARKS.md'), ext: true },
-      { label: 'ARCHITECTURE.md', href: repoDoc('docs/internals/architecture.md'), ext: true },
-      { label: 'STYLING.md', href: repoDoc('docs/internals/styling-and-themes.md'), ext: true },
-      { label: 'CONTRIBUTING.md', href: repoDoc('CONTRIBUTING.md'), ext: true },
+      { label: 'Docs Index', href: '/docs' },
+      { label: 'Getting Started', href: '/docs#getting-started' },
+      { label: 'How-To Guides', href: '/docs#guides' },
+      { label: 'CLI Reference', href: '/docs#reference' },
+      { label: 'Engineering Blog', href: '/blog' },
     ],
   },
   {
-    title: 'project',
+    title: 'project & code',
     links: [
-      { label: 'GitHub', href: GITHUB, ext: true },
-      { label: 'Releases', href: RELEASES, ext: true },
-      { label: 'Issues', href: ISSUES, ext: true },
+      { label: 'GitHub Repository', href: GITHUB, ext: true },
+      { label: 'Release Binaries', href: RELEASES, ext: true },
+      { label: 'Issue Tracker', href: ISSUES, ext: true },
+      { label: 'Internal Specs', href: repoDoc('docs/internals/architecture.md'), ext: true },
       { label: 'MIT License', href: LICENSE, ext: true },
-      { label: 'Email', href: MAILTO },
+      { label: 'Contact', href: MAILTO },
     ],
   },
 ];
@@ -44,7 +48,7 @@ const cols = [
         <img src="/logo/px0-logo-dark.png" alt="px0" class="logo-img logo-dark" />
         <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
       </a>
-      <p>The read-only IDE for the AI-agent era. Starts in under a millisecond, idles at about 20 MB.</p>
+      <p>px0 is fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM.</p>
       <div class="f-install">
         <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
           <span class="copyline-p">$</span>
@@ -71,6 +75,13 @@ const cols = [
 
   <div class="wrap f-base">
     <span>&copy; {year} px0 · MIT licensed</span>
+    <div class="f-base-links">
+      <a href="/docs">Docs</a>
+      <span class="sep">&bull;</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">&bull;</span>
+      <a href="/changelog">Changelog</a>
+    </div>
   </div>
 
   <div class="f-wordmark" aria-hidden="true">px<span>[</span>0<span>]</span></div>
@@ -85,7 +96,7 @@ const cols = [
 
   .footer-inner {
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
     gap: 40px;
     padding-bottom: 40px;
   }
@@ -121,32 +132,34 @@ const cols = [
   .f-col {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 
   .f-col h3 {
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     font-size: 10.5px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--txt-3);
+    color: var(--amber);
   }
 
   .f-col a {
     width: fit-content;
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--txt-2);
+    text-decoration: none;
     transition: color 0.15s;
   }
 
   .f-col a:hover {
-    color: var(--amber);
+    color: var(--txt);
   }
 
   .f-base {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
     gap: 12px;
     padding-top: 18px;
@@ -156,12 +169,24 @@ const cols = [
     color: var(--txt-3);
   }
 
+  .f-base-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
   .f-base a {
-    color: var(--txt-2);
+    color: var(--txt-3);
+    text-decoration: none;
+    transition: color 0.15s;
   }
 
   .f-base a:hover {
     color: var(--amber);
+  }
+
+  .f-base .sep {
+    color: var(--txt-4);
   }
 
   .f-wordmark {
@@ -186,7 +211,8 @@ const cols = [
     .f-brand { grid-column: 1 / -1; }
   }
 
-  @media (max-width: 480px) {
-    .footer-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 580px) {
+    .footer-inner { grid-template-columns: 1fr; }
+    .f-base { flex-direction: column; align-items: flex-start; }
   }
 </style>

@@ -7,6 +7,9 @@ This index is written for large language models and AI agents. It maps the px0 p
 ## Core resources
 
 - [Home page](https://px0.ai): what px0 is, use cases, benchmarks, features, remote sessions, git awareness, architecture, and shortcuts.
+- [Documentation](https://px0.ai/docs): official guides, walkthroughs, and CLI reference.
+- [Engineering Blog](https://px0.ai/blog): architecture deep-dives and engineering insights.
+- [Changelog](https://px0.ai/changelog): release history and updates.
 - [GitHub repository](https://github.com/px0-ai/px0): source, issues, releases, and the install script.
 - [README](https://github.com/px0-ai/px0/blob/master/README.md): installation, features, flags, shortcuts.
 - [BENCHMARKS.md](https://github.com/px0-ai/px0/blob/master/BENCHMARKS.md): methodology and full results.

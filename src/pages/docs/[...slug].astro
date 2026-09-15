@@ -1,0 +1,365 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  return docs.map((doc) => ({
+    params: { slug: doc.id },
+    props: { doc },
+  }));
+}
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+const allDocs = await getCollection('docs');
+
+const categoryTitles: Record<string, string> = {
+  'getting-started': 'Getting Started',
+  'guides': 'How-To Guides',
+  'reference': 'Reference',
+};
+
+// Flattened ordered docs list to compute previous & next pagination
+const orderedDocs = ['getting-started', 'guides', 'reference'].flatMap((cat) =>
+  allDocs
+    .filter((d) => d.data.category === cat)
+    .sort((a, b) => a.data.order - b.data.order)
+);
+
+const currentIndex = orderedDocs.findIndex((d) => d.id === doc.id);
+const prevDoc = currentIndex > 0 ? orderedDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex < orderedDocs.length - 1 ? orderedDocs[currentIndex + 1] : null;
+const docUrl = new URL(`/docs/${doc.id}`, Astro.site || 'https://px0.ai').toString();
+
+const docArticleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: doc.data.title,
+  description: doc.data.description,
+  url: docUrl,
+  author: {
+    '@type': 'Organization',
+    name: 'px0 team',
+    url: 'https://px0.ai',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'px0',
+    url: 'https://px0.ai',
+    logo: 'https://px0.ai/logo/px0-logo-dark.png',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': docUrl,
+  },
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://px0.ai',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Docs',
+      item: 'https://px0.ai/docs',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: categoryTitles[doc.data.category] || doc.data.category,
+      item: `https://px0.ai/docs#${doc.data.category}`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 4,
+      name: doc.data.title,
+      item: docUrl,
+    },
+  ],
+};
+---
+
+<Layout
+  title={`${doc.data.title} - px0 Docs`}
+  description={doc.data.description}
+  jsonLd={[docArticleSchema, breadcrumbSchema]}
+>
+  <Nav />
+
+  <main class="doc-page">
+    <div class="wrap doc-shell">
+      <!-- Clean Breadcrumb Row -->
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">px0</a>
+        <span class="crumb-sep">/</span>
+        <a href="/docs">docs</a>
+        <span class="crumb-sep">/</span>
+        <a href={`/docs#${doc.data.category}`} class="crumb-cat">{categoryTitles[doc.data.category]}</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-cur">{doc.data.title}</span>
+      </nav>
+
+      <!-- Main Article Prose -->
+      <article class="prose">
+        <Content />
+      </article>
+
+      <!-- Sequential Navigation (Previous / Next Article) -->
+      <nav class="doc-pagination" aria-label="Document pagination">
+        {prevDoc ? (
+          <a href={`/docs/${prevDoc.id}`} class="pag-card pag-prev">
+            <span class="pag-dir">&larr; Previous</span>
+            <span class="pag-cat">{categoryTitles[prevDoc.data.category]}</span>
+            <span class="pag-title">{prevDoc.data.title}</span>
+          </a>
+        ) : (
+          <div class="pag-empty" />
+        )}
+
+        {nextDoc ? (
+          <a href={`/docs/${nextDoc.id}`} class="pag-card pag-next">
+            <span class="pag-dir">Next &rarr;</span>
+            <span class="pag-cat">{categoryTitles[nextDoc.data.category]}</span>
+            <span class="pag-title">{nextDoc.data.title}</span>
+          </a>
+        ) : (
+          <div class="pag-empty" />
+        )}
+      </nav>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .doc-page {
+    padding-top: calc(48px + 40px);
+    padding-bottom: 96px;
+    min-height: 85vh;
+  }
+
+  .doc-shell {
+    max-width: 800px;
+  }
+
+  /* Standard Horizontal Breadcrumbs matching /blog and /tutorials */
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--txt-3);
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumbs a {
+    color: var(--txt-2);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--amber);
+  }
+
+  .crumb-sep {
+    color: var(--txt-4);
+  }
+
+  .crumb-cat {
+    color: var(--txt-2);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .crumb-cat:hover {
+    color: var(--amber);
+  }
+
+  .crumb-cur {
+    color: var(--amber);
+  }
+
+  /* Prose markdown formatting */
+  .prose :global(h1) {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+    color: var(--txt);
+    margin-bottom: 24px;
+  }
+
+  .prose :global(h2) {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--txt);
+    margin-top: 40px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .prose :global(h3) {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--txt);
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+
+  .prose :global(p) {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--txt-2);
+    margin-bottom: 20px;
+  }
+
+  .prose :global(a) {
+    color: var(--amber);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: color 0.15s, text-decoration-color 0.15s;
+  }
+
+  .prose :global(a:hover) {
+    color: var(--amber-soft);
+    text-decoration-thickness: 2px;
+  }
+
+  .prose :global(ul), .prose :global(ol) {
+    margin-bottom: 22px;
+    padding-left: 24px;
+    color: var(--txt-2);
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 8px;
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+    font-size: 13px;
+  }
+
+  .prose :global(th), .prose :global(td) {
+    border: 1px solid var(--bdr);
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  .prose :global(th) {
+    background: var(--surface-2);
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .prose :global(td) {
+    color: var(--txt-2);
+  }
+
+  .prose :global(pre) {
+    background: var(--code-bg);
+    border: 1px solid var(--bdr);
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 24px 0;
+  }
+
+  .prose :global(code) {
+    font-family: var(--mono);
+    color: var(--amber);
+  }
+
+  .prose :global(pre code) {
+    color: inherit;
+  }
+
+  /* Pagination */
+  .doc-pagination {
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--bdr);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .pag-empty {
+    display: block;
+  }
+
+  .pag-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px 24px;
+    border: 1px solid var(--bdr);
+    background: var(--surface);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .pag-next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .pag-card:hover {
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+  }
+
+  .pag-dir {
+    font-size: 11px;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+
+  .pag-cat {
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .pag-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--txt);
+    margin-top: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .doc-pagination {
+      grid-template-columns: 1fr;
+    }
+    .pag-empty {
+      display: none;
+    }
+    .pag-next {
+      text-align: left;
+      align-items: flex-start;
+    }
+  }
+</style>

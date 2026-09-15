@@ -5,11 +5,21 @@ import { GITHUB, RELEASES, AUTHOR, EMAIL, VERSION } from '../data/links';
 interface Props {
   title?: string;
   description?: string;
+  keywords?: string;
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  author?: string;
+  jsonLd?: Record<string, any> | Array<Record<string, any>>;
 }
 
 const {
   title = "px0: a fast, ultra-light, remote-first, read-only IDE.",
   description = "px0 is a fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, inspector workspace search, git awareness, and remote session support.",
+  keywords = "px0, read code fast, read-only IDE, remote IDE, remote code inspection, code viewer, code navigator, lightweight IDE, AI code verification, agent code review, cloud VM code viewer, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, workspace search, single binary, Go, open source, VS Code alternative",
+  ogType = 'website',
+  publishedTime,
+  author = 'Arpit Bhayani',
+  jsonLd,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
@@ -78,7 +88,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
     <meta name="author" content="Arpit Bhayani" />
 
     <!-- OpenGraph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -87,6 +97,8 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
     <meta property="og:image:height" content="628" />
     <meta property="og:image:alt" content="px0: fast, ultra-light, remote-first, read-only IDE" />
     <meta property="og:site_name" content="px0" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {author && <meta property="article:author" content={author} />}
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -173,6 +185,14 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
         },
         {
           '@type': 'Question',
+          name: 'How do I avoid sudo prompts when installing or updating px0?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'If px0 was previously installed with sudo, remove the active root-owned binary and reinstall cleanly to user space (~/.local/bin) by running: `sudo rm -f "$(which px0)" && curl -fsSL https://px0.ai/install.sh | sh`. All future updates will then run in user space with zero sudo requirements.',
+          },
+        },
+        {
+          '@type': 'Question',
           name: 'Does px0 collect telemetry or send code to the cloud?',
           acceptedAnswer: {
             '@type': 'Answer',
@@ -181,6 +201,9 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
         },
       ],
     })} />
+    {jsonLd && (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((schema) => (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+    ))}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

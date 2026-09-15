@@ -3,23 +3,44 @@ import { GITHUB, VERSION } from '../data/links';
 import { getLatestChangelog } from '../data/changelogs';
 
 const latestVersion = getLatestChangelog()?.version || VERSION;
-const base = Astro.url.pathname === '/' ? '' : '/';
-const sections = ['cases', 'bench', 'features', 'remote', 'git', 'why', 'keys', 'arch'];
+const pathname = Astro.url.pathname;
+
+const navItems = [
+  { label: 'Docs', href: '/docs', match: (p: string) => p.startsWith('/docs') },
+  { label: 'Blog', href: '/blog', match: (p: string) => p.startsWith('/blog') },
+  { label: 'Changelog', href: '/changelog', match: (p: string) => p.startsWith('/changelog') },
+];
+
+const isHome = pathname === '/';
 ---
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="/" class="logo-link" aria-label="px0 home">
-      <img src="/logo/px0-logo-dark.png" alt="px0" class="logo-img logo-dark" />
-      <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
-    </a>
-    <span class="nav-tag">read-only ide</span>
+    <div class="nav-left">
+      <a href="/" class="logo-link" aria-label="px0 home">
+        <img src="/logo/px0-logo-dark.png" alt="px0" class="logo-img logo-dark" />
+        <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
+      </a>
+    </div>
 
+    <!-- Main Navigation Links -->
     <div class="nav-mid">
-      {sections.map((s, i) => (
-        <a class="nav-link" href={`${base}#${s}`}><span>0{i + 1}</span>{s}</a>
-      ))}
-      <a class="nav-link" href="/changelog"><span>09</span>changelog</a>
+      {navItems.map((item) => {
+        const isActive = item.match(pathname);
+        return (
+          <a
+            class:list={['nav-link', { active: isActive }]}
+            href={item.href}
+          >
+            {item.label}
+          </a>
+        );
+      })}
+
+      <!-- Landing Page Jump to Features/Benchmarks -->
+      <a class="nav-link nav-link-sec" href={isHome ? '#bench' : '/#bench'}>
+        <span>//</span> benchmarks
+      </a>
     </div>
 
     <div class="nav-right">
@@ -64,44 +85,57 @@ const sections = ['cases', 'bench', 'features', 'remote', 'git', 'why', 'keys', 
     padding-inline: 24px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
     gap: 14px;
   }
 
-  .nav-tag {
-    padding-left: 14px;
-    border-left: 1px solid var(--bdr);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--txt-3);
-    white-space: nowrap;
-  }
-
   .nav-mid {
-    flex: 1;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 22px;
+    gap: 26px;
   }
 
   .nav-link {
-    display: inline-flex;
-    gap: 6px;
-    font-size: 12px;
+    font-size: 12.5px;
+    font-weight: 500;
     color: var(--txt-2);
+    text-decoration: none;
     transition: color 0.15s;
-  }
-
-  .nav-link span {
-    color: var(--txt-4);
+    position: relative;
+    padding: 4px 0;
   }
 
   .nav-link:hover {
     color: var(--txt);
   }
 
-  .nav-link:hover span {
+  .nav-link.active {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--amber);
+  }
+
+  .nav-link-sec {
+    font-size: 11.5px;
+    color: var(--txt-3);
+  }
+
+  .nav-link-sec span {
     color: var(--amber);
   }
 
@@ -109,7 +143,6 @@ const sections = ['cases', 'bench', 'features', 'remote', 'git', 'why', 'keys', 
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
   }
 
   .nav-ver {
@@ -173,15 +206,20 @@ const sections = ['cases', 'bench', 'features', 'remote', 'git', 'why', 'keys', 
     transform-origin: 0 50%;
   }
 
-  @media (max-width: 1040px) {
-    .nav-mid { display: none; }
+  @media (max-width: 820px) {
+    .nav-mid { gap: 16px; }
+    .nav-link-sec { display: none; }
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 640px) {
     .nav-inner { padding-inline: 16px; gap: 10px; }
     .nav-tag,
     .nav-ver,
     .nav-gh span { display: none; }
+  }
+
+  @media (max-width: 520px) {
+    .nav-mid { display: none; }
   }
 </style>
 

@@ -1,0 +1,341 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const allDocs = await getCollection('docs');
+
+const gettingStarted = allDocs.filter((d) => d.data.category === 'getting-started').sort((a, b) => a.data.order - b.data.order);
+const guides = allDocs.filter((d) => d.data.category === 'guides').sort((a, b) => a.data.order - b.data.order);
+const reference = allDocs.filter((d) => d.data.category === 'reference').sort((a, b) => a.data.order - b.data.order);
+
+const sections = [
+  { id: 'getting-started', title: 'Getting Started', items: gettingStarted, desc: 'Setup, quickstart, and first session' },
+  { id: 'guides', title: 'How-To Guides', items: guides, desc: 'Workflows, agent pairing, and troubleshooting' },
+  { id: 'reference', title: 'Reference', items: reference, desc: 'CLI parameters, shortcuts, and specifications' },
+];
+
+const totalDocsCount = allDocs.length;
+---
+
+<Layout
+  title="Docs - px0"
+  description="Official guides, tutorials, and technical reference for px0, the fast, lightweight read-only IDE."
+>
+  <Nav />
+
+  <main class="page-container">
+    <div class="wrap">
+      <header class="page-header">
+        <div class="breadcrumbs">
+          <a href="/">px0</a>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-cur">docs</span>
+        </div>
+        <div class="headline-row">
+          <div>
+            <p class="kicker"><span>//</span> technical manuals & guides</p>
+            <h1 class="page-title">Docs</h1>
+          </div>
+        </div>
+        <p class="page-sub">
+          Guides, troubleshooting, and references for running px0 as a zero-latency inspection console alongside autonomous coding agents.
+        </p>
+
+        <!-- Quick filter jump pills -->
+        <div class="quickjump-bar">
+          <span class="qj-label">Categories:</span>
+          {sections.map((sec) => (
+            <a href={`#${sec.id}`} class="qj-pill">
+              <span>{sec.title}</span>
+              <small>({sec.items.length})</small>
+            </a>
+          ))}
+          <span class="qj-total">{totalDocsCount} articles</span>
+        </div>
+      </header>
+
+      <!-- Sequential List Layout -->
+      <div class="sections-stream">
+        {sections.map((sec) => (
+          <section class="section-block" id={sec.id}>
+            <div class="section-header">
+              <div class="section-title-wrap">
+                <span class="section-kicker">// {sec.id}</span>
+                <h2 class="section-title">{sec.title}</h2>
+              </div>
+              <p class="section-desc">{sec.desc}</p>
+            </div>
+
+            <div class="articles-list">
+              {sec.items.map((item, idx) => (
+                <a href={`/docs/${item.id}`} class="article-row">
+                  <div class="article-index">
+                    <span>0{idx + 1}</span>
+                  </div>
+                  <div class="article-main">
+                    <div class="article-heading-row">
+                      <h3 class="article-title">{item.data.title}</h3>
+                      <span class="article-arrow">&rarr;</span>
+                    </div>
+                    <p class="article-desc">{item.data.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .page-container {
+    padding-top: calc(48px + 40px);
+    padding-bottom: 96px;
+    min-height: 85vh;
+  }
+
+  .page-header {
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--txt-3);
+    margin-bottom: 16px;
+  }
+
+  .breadcrumbs a {
+    color: var(--txt-2);
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--amber);
+  }
+
+  .crumb-sep {
+    color: var(--txt-4);
+  }
+
+  .crumb-cur {
+    color: var(--amber);
+  }
+
+  .headline-row {
+    margin-bottom: 12px;
+  }
+
+  .page-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--txt);
+    margin-top: 6px;
+  }
+
+  .page-sub {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--txt-2);
+    max-width: 720px;
+    margin-bottom: 24px;
+  }
+
+  .quickjump-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+
+  .qj-label {
+    color: var(--txt-3);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .qj-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--bdr);
+    background: var(--surface);
+    color: var(--txt-2);
+    text-decoration: none;
+    font-size: 11.5px;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .qj-pill:hover {
+    border-color: var(--amber-line);
+    color: var(--amber);
+    background: var(--amber-wash);
+  }
+
+  .qj-pill small {
+    color: var(--txt-3);
+  }
+
+  .qj-total {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  /* Stream / Vertical Sequence Layout */
+  .sections-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+    max-width: 960px;
+  }
+
+  .section-block {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-margin-top: calc(48px + 24px);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--bdr-hi);
+  }
+
+  .section-title-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .section-kicker {
+    font-size: 11px;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--txt);
+  }
+
+  .section-desc {
+    font-size: 12px;
+    color: var(--txt-3);
+  }
+
+  .articles-list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--bdr);
+    background: var(--bg-elev);
+  }
+
+  .article-row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--bdr);
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .article-row:last-child {
+    border-bottom: none;
+  }
+
+  .article-row:hover {
+    background: var(--surface-2);
+  }
+
+  .article-row:hover .article-title {
+    color: var(--amber);
+  }
+
+  .article-row:hover .article-arrow {
+    color: var(--amber);
+    transform: translateX(4px);
+  }
+
+  .article-index {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--txt-4);
+    padding-top: 2px;
+  }
+
+  .article-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .article-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .article-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--txt);
+    transition: color 0.15s;
+  }
+
+  .article-arrow {
+    color: var(--txt-3);
+    font-size: 15px;
+    transition: transform 0.15s, color 0.15s;
+  }
+
+  .article-desc {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--txt-2);
+  }
+
+  @media (max-width: 640px) {
+    .article-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 16px 18px;
+    }
+
+    .article-index {
+      display: none;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .qj-total {
+      display: none;
+    }
+  }
+</style>

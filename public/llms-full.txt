@@ -154,7 +154,7 @@ From source (Go 1.24 or newer, no npm, no node, no CGO):
 git clone https://github.com/px0-ai/px0.git
 cd px0
 make build
-sudo install px0 /usr/local/bin/
+mkdir -p ~/.local/bin && install -m 755 px0 ~/.local/bin/px0
 ```
 
 ## License
