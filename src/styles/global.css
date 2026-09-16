@@ -570,6 +570,20 @@ h2.h-section {
 .btn-primary:hover { background: var(--amber-fill-hover); }
 .btn-primary:active { background: var(--amber-fill-active); }
 
+.btn-star-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: rgba(11, 10, 6, 0.12);
+  border: 1px solid rgba(11, 10, 6, 0.18);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
 .btn-ghost {
   background: transparent;
   border-color: var(--bdr-hi);
