@@ -31,6 +31,7 @@ If `[file or directory]` is omitted, px0 opens the current working directory (`.
 | `-no-color` | boolean | `false` | Disable ANSI color codes in terminal startup output. |
 | `-no-telemetry` | boolean | `false` | Disable anonymous usage telemetry reporting. |
 | `-quiet` | boolean | `false` | Suppress informational startup narration in the terminal. |
+| `-verbose` | boolean | `false` | Enable verbose logging including request timing, prompt payloads, and agent job IDs. |
 | `-update` | boolean | `false` | Check for, download, and install the latest available release of px0 directly into user space. |
 | `-v, -version` | boolean | `false` | Print px0 version and exit. |
 

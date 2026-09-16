@@ -119,8 +119,8 @@ You can select code in either:
 ### 2. Open the Agent Composer (`Alt+E` or `Option+E`)
 With code selected, open the compose box:
 - Press `Alt+E` (or `Option+E` on macOS)
-- Or right-click the selection and choose **Edit with Agent**
-- Or click **Edit** in the footer selection bar
+- Or right-click the selection and choose **Edit Inline**
+- Or click **Edit Inline** in the footer selection bar
 
 The active selection remains highlighted in the editor while you type.
 

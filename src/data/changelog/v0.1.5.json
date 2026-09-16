@@ -1,0 +1,55 @@
+{
+  "version": "0.1.5",
+  "tag": "v0.1.5",
+  "date": "2026-09-16",
+  "title": "Inline Agent Editing, Multi-Harness Dispatch & Selection Navigation",
+  "summary": "Introduces selection-anchored inline editing powered by external coding harnesses (OpenCode, Codex, Aider, Goose, Claude, Gemini, Cursor, and Antigravity) with worktree snapshots, one-click undo, keyboard text selection, and UI refinements.",
+  "commitCount": 11,
+  "commitRange": "v0.1.4..v0.1.5",
+  "categories": [
+    {
+      "name": "Inline Agent Editing & Coding Harnesses",
+      "items": [
+        "Dispatch selection-anchored inline edits directly from the source editor or diff view using Alt+E (Option+E on macOS)",
+        "Preset integrations and dynamic model discovery for OpenCode, OpenAI Codex, Aider, and Goose alongside Claude Code, Gemini CLI, Cursor Agent, and Antigravity",
+        "Automatic working-tree snapshotting with instant one-click or keyboard undo support for agent-modified files",
+        "In-box model switcher dropdown and persistent harness preferences across editing sessions",
+        "Live terminal process output streaming with duration timing, changed file counts, and in-box cancellation (Escape)",
+        "Automatic tab reloading, LSP document refresh, and syntax cache clearing when agent runs complete",
+        "Preserve active editor selection highlights, tab diff mode, and scroll position during agent composition and reload",
+        "Display detailed stdout and stderr error output in the composer when an agent run fails or is interrupted"
+      ]
+    },
+    {
+      "name": "Editor Selection & Navigation",
+      "items": [
+        "Full keyboard text selection navigation using Shift+Arrows for line and character selection and Shift+Ctrl/Option+Arrows for word jumps",
+        "Synchronize DOM selection ranges with cursor position and virtualized editor rendering",
+        "Immediate footer selection action bar and right-click context menu offering Edit Inline, Copy Ref, Copy with Context, and Find Usages",
+        "Selection range mapping and preservation across diff views and background workspace reloads",
+        "Permanently visible line numbers in the editor viewport"
+      ]
+    },
+    {
+      "name": "UI Styling & Polish",
+      "items": [
+        "GitHub Dark is now the default theme with seamless active tab surface styling",
+        "Redesigned floating toast notifications featuring a modern blurred pill aesthetic and semantic status colors",
+        "New 'Copy Ref' action for copying clean @path:l1-l2 citations and 'Copy with Context' for prompt-ready snippet blocks",
+        "Native process metrics popup in the status bar for real-time CPU and RAM monitoring",
+        "Streamlined status bar layout with right-aligned selection range statistics and dedicated 'Find in File' footer action",
+        "Refined hovercards, command palette borders, and modal keycap styling"
+      ]
+    },
+    {
+      "name": "CLI & Developer Experience",
+      "items": [
+        "Display all detected coding harnesses on startup in the CLI banner",
+        "Added -verbose CLI flag for inspecting request timings, prompt payloads, and agent job identifiers",
+        "Added OpenCode and Codex binary directories (~/.local/bin, /usr/local/bin) to default search paths",
+        "Refactored documentation with remote read-first guides, agent editing workflows, and architecture notes",
+        "Fixed frontend identifier collisions under Node.js bundler fallback environments"
+      ]
+    }
+  ]
+}

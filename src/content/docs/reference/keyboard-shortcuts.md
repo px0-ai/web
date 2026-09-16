@@ -60,12 +60,12 @@ When code is selected in the editor or diff view, the footer selection bar and c
 
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
-| `Option+E` | `Alt+E` | **Edit with agent**: Open compose box to dispatch selected range to coding harness |
-| `Right-click` | `Right-click` | **Selection actions menu**: Edit with agent, copy reference, copy for agent, find usages |
+| `Option+E` | `Alt+E` | **Edit Inline**: Open compose box to dispatch selected range to coding harness |
+| `Right-click` | `Right-click` | **Selection actions menu**: Edit Inline, Copy Ref, Copy with Context, Find Usages |
 | `Shift+Arrows` | `Shift+Arrows` | **Expand selection**: Classic text selection across characters and lines |
 | `Shift+Option+Arrows` | `Shift+Ctrl+Arrows` | **Word selection**: Expand selection by word boundaries |
-| `Option+C` | `Alt+C` | **Copy reference**: Copy standardized `@path:l1-l2` citation |
-| `Option+A` | `Alt+A` | **Copy for agent**: Copy snippet formatted with `@path:l1-l2` header for prompt composition |
+| `Option+C` | `Alt+C` | **Copy reference**: Copy standardized `@path:l1-l2` reference (Copy Ref) |
+| `Option+A` | `Alt+A` | **Copy with context**: Copy snippet formatted with `@path:l1-l2` header for prompt composition |
 | `Option+U` | `Alt+U` | **Find usages**: Search workspace for the selected identifier |
 | `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, selection bar, or open overlay |
 | `?` | `?` | **Help sheet**: Display in-app shortcut modal overlay |
