@@ -263,6 +263,63 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
           document.querySelectorAll(`.${cls}`).forEach((el) => (el.textContent = glyph));
         }
       }
+
+      // Interactive Lightbox Zoom for article/prose images
+      (() => {
+        const proseImages = document.querySelectorAll<HTMLImageElement>('.prose img');
+        if (!proseImages.length) return;
+
+        const lightbox = document.createElement('div');
+        lightbox.className = 'img-lightbox';
+        lightbox.innerHTML = `
+          <div class="img-lightbox-content">
+            <button class="img-lightbox-close" aria-label="Close zoomed image">&times;</button>
+            <img src="" alt="" />
+            <div class="img-lightbox-caption"></div>
+          </div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lbImg = lightbox.querySelector<HTMLImageElement>('img')!;
+        const lbCaption = lightbox.querySelector<HTMLElement>('.img-lightbox-caption')!;
+        const lbClose = lightbox.querySelector<HTMLButtonElement>('.img-lightbox-close')!;
+
+        function open(img: HTMLImageElement) {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt || '';
+          lbCaption.textContent = img.alt || '';
+          lightbox.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function close() {
+          lightbox.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+
+        proseImages.forEach((img) => {
+          img.addEventListener('click', (e) => {
+            e.stopPropagation();
+            open(img);
+          });
+        });
+
+        lightbox.addEventListener('click', (e) => {
+          if (e.target !== lbClose && (e.target as HTMLElement).tagName === 'IMG') {
+            close();
+            return;
+          }
+          close();
+        });
+
+        lbClose.addEventListener('click', close);
+
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            close();
+          }
+        });
+      })();
     </script>
   </body>
 </html>

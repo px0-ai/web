@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
+import { ISSUES } from '../../data/links';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -33,6 +34,12 @@ const currentIndex = orderedDocs.findIndex((d) => d.id === doc.id);
 const prevDoc = currentIndex > 0 ? orderedDocs[currentIndex - 1] : null;
 const nextDoc = currentIndex < orderedDocs.length - 1 ? orderedDocs[currentIndex + 1] : null;
 const docUrl = new URL(`/docs/${doc.id}`, Astro.site || 'https://px0.ai').toString();
+
+const issueTitle = encodeURIComponent(`[Docs Discrepancy]: ${doc.data.title}`);
+const issueBody = encodeURIComponent(
+  `### Documentation Discrepancy Report\n\n- **Page**: ${docUrl}\n- **Article**: ${doc.data.title}\n\n#### What is inaccurate, outdated, or broken?\n<!-- Please describe the discrepancy or issue you encountered -->\n\n#### Suggested Fix\n<!-- If applicable, suggest how the documentation can be improved -->\n`
+);
+const reportBugUrl = `${ISSUES}/new?title=${issueTitle}&body=${issueBody}&labels=documentation`;
 
 const docArticleSchema = {
   '@context': 'https://schema.org',
@@ -100,19 +107,49 @@ const breadcrumbSchema = {
     <div class="wrap doc-shell">
       <!-- Clean Breadcrumb Row -->
       <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">px0</a>
-        <span class="crumb-sep">/</span>
-        <a href="/docs">docs</a>
-        <span class="crumb-sep">/</span>
-        <a href={`/docs#${doc.data.category}`} class="crumb-cat">{categoryTitles[doc.data.category]}</a>
-        <span class="crumb-sep">/</span>
-        <span class="crumb-cur">{doc.data.title}</span>
+        <div class="crumb-trail">
+          <a href="/">px0</a>
+          <span class="crumb-sep">/</span>
+          <a href="/docs">docs</a>
+          <span class="crumb-sep">/</span>
+          <a href={`/docs#${doc.data.category}`} class="crumb-cat">{categoryTitles[doc.data.category]}</a>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-cur">{doc.data.title}</span>
+        </div>
+        <a
+          href={reportBugUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="crumb-report"
+          title="Report a discrepancy or bug in this documentation"
+        >
+          <span>&#128027; Report issue</span>
+        </a>
       </nav>
 
       <!-- Main Article Prose -->
       <article class="prose">
         <Content />
       </article>
+
+      <!-- Feedback & Discrepancy Reporting -->
+      <aside class="doc-feedback">
+        <div class="feedback-meta">
+          <span class="feedback-icon">&#128027;</span>
+          <div class="feedback-text">
+            <strong>Found a discrepancy or mistake in this guide?</strong>
+            <p>px0 documentation is open source. Help us keep it accurate and up to date.</p>
+          </div>
+        </div>
+        <a
+          href={reportBugUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="feedback-btn"
+        >
+          <span>Report Documentation Bug &rarr;</span>
+        </a>
+      </aside>
 
       <!-- Sequential Navigation (Previous / Next Article) -->
       <nav class="doc-pagination" aria-label="Document pagination">
@@ -157,20 +194,50 @@ const breadcrumbSchema = {
   .breadcrumbs {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 12px;
     font-size: 11.5px;
     color: var(--txt-3);
     margin-bottom: 32px;
     flex-wrap: wrap;
   }
 
-  .breadcrumbs a {
+  .crumb-trail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .crumb-report {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--txt-3);
+    border: 1px solid var(--bdr);
+    background: var(--surface);
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+
+  .crumb-report:hover {
+    color: var(--amber);
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+  }
+
+  .breadcrumbs a:not(.crumb-report) {
     color: var(--txt-2);
     text-decoration: none;
     transition: color 0.15s;
   }
 
-  .breadcrumbs a:hover {
+  .breadcrumbs a:not(.crumb-report):hover {
     color: var(--amber);
   }
 
@@ -360,6 +427,78 @@ const breadcrumbSchema = {
     .pag-next {
       text-align: left;
       align-items: flex-start;
+    }
+  }
+
+  /* Documentation Bug / Discrepancy Reporting Card */
+  .doc-feedback {
+    margin-top: 48px;
+    padding: 20px 24px;
+    border: 1px dashed var(--bdr-hi);
+    border-radius: 4px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .feedback-meta {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .feedback-icon {
+    font-size: 20px;
+    line-height: 1;
+    opacity: 0.85;
+  }
+
+  .feedback-text strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--txt);
+    margin-bottom: 3px;
+  }
+
+  .feedback-text p {
+    font-size: 12.5px;
+    color: var(--txt-3);
+    margin: 0;
+  }
+
+  .feedback-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--bdr);
+    border-radius: 4px;
+    color: var(--txt);
+    font-size: 12.5px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .feedback-btn:hover {
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+    color: var(--amber);
+  }
+
+  @media (max-width: 640px) {
+    .doc-feedback {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .feedback-btn {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>

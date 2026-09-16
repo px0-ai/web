@@ -1,11 +1,11 @@
 ---
-title: "Exploring Massive Codebases with Zero Latency"
+title: "Exploring Massive Codebases"
 description: "How to index, search, and navigate 100k+ file repositories like the Linux kernel in milliseconds."
 category: "guides"
 order: 3
 ---
 
-# Exploring Massive Codebases with Zero Latency
+# Exploring Massive Codebases
 
 Opening huge open-source repositories in traditional IDEs often triggers several minutes of indexing, high CPU fan speeds, and gigabytes of memory consumption.
 
