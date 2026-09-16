@@ -7,7 +7,7 @@ const engines = [
   { k: 'search', v: 'parallel worker pool' },
   { k: 'highlight & md', v: 'chroma LRU + goldmark GFM' },
   { k: 'lsp manager', v: 'lazy spawn, regex fallback' },
-  { k: 'scavenger', v: 'reclaims memory after 15 s idle' },
+  { k: 'agent dispatch', v: 'harness runner, diff snapshots' },
 ];
 
 const groups = [
@@ -18,6 +18,15 @@ const groups = [
       ['ignore rules', 'segment · suffix · path, regex last'],
       ['dir symlinks', 'skipped, no cycles'],
       ['startup', 'listen first, index in background'],
+    ],
+  },
+  {
+    t: 'agent dispatch',
+    rows: [
+      ['harnesses', 'claude · gemini · cursor · agy · opencode · codex · aider · goose'],
+      ['overlap guard', 'disjoint lines run concurrent'],
+      ['snapshotting', 'mtime + size + git status diff'],
+      ['localPost guard', 'IP / localhost only, no tunnel domain'],
     ],
   },
   {

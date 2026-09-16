@@ -7,7 +7,7 @@ order: 5
 
 # Language Server (LSP) Setup & Code Intelligence
 
-px0 includes built-in Language Server Protocol (LSP) client support over standard I/O (JSON-RPC). It operates with zero initial configuration, discovering language servers directly on your `PATH`.
+px0 operates with zero initial configuration, discovering language servers directly on your `PATH` and standard binary locations (`~/.local/bin`, `/usr/local/bin`, npm global prefix).
 
 ```text
 +-------------------+      JSON-RPC over stdio      +---------------------+
@@ -30,7 +30,7 @@ px0 automatically detects and connects to the following language servers when in
 | **Go** | `gopls` | `go install golang.org/x/tools/gopls@latest` |
 | **Rust** | `rust-analyzer` | `rustup component add rust-analyzer` |
 | **TypeScript / JS** | `typescript-language-server` | `npm install -g typescript-language-server typescript` |
-| **Python** | `pyright` or `pylsp` | `npm install -g pyright` or `pip install python-lsp-server` |
+| **Python** | `pyright`, `pylsp`, or `ruff` | `npm install -g pyright`, `pip install python-lsp-server`, or `pip install ruff` |
 | **C / C++** | `clangd` | `sudo apt install clangd` or `brew install llvm` |
 | **Zig** | `zls` | `brew install zls` |
 | **Lua** | `lua-language-server` | `brew install lua-language-server` |

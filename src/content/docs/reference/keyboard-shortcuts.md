@@ -52,16 +52,20 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Ctrl+Tab` | `Ctrl+Tab` | **Switch tab**: Cycle to the next open tab |
 | `Option+1` ... `Option+9` | `Alt+1` ... `Alt+9` | **Select tab**: Select tab by its numeric position |
 | `Option+Z` | `Alt+Z` | **Toggle word wrap**: Toggle visual soft-wrapping on or off |
-| `Option+L` | `Alt+L` | **Toggle line numbers**: Show or hide editor line number gutter |
 | `Cmd+Up` / `Cmd+Down` | `Ctrl+Home` / `Ctrl+End` | **Top / Bottom**: Jump caret directly to first or last line |
 
 ## Selection & Agent Actions
 
-When code is selected in the editor, the status bar displays helper actions:
+When code is selected in the editor or diff view, the footer selection bar and context menu provide instant actions:
 
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
-| `Option+C` | `Alt+C` | **Copy reference**: Copy formatted `path:line` citation |
-| `Option+A` | `Alt+A` | **Copy for agent**: Copy snippet formatted with filepath header for AI prompts |
+| `Option+E` | `Alt+E` | **Edit with agent**: Open compose box to dispatch selected range to coding harness |
+| `Right-click` | `Right-click` | **Selection actions menu**: Edit with agent, copy reference, copy for agent, find usages |
+| `Shift+Arrows` | `Shift+Arrows` | **Expand selection**: Classic text selection across characters and lines |
+| `Shift+Option+Arrows` | `Shift+Ctrl+Arrows` | **Word selection**: Expand selection by word boundaries |
+| `Option+C` | `Alt+C` | **Copy reference**: Copy standardized `@path:l1-l2` citation |
+| `Option+A` | `Alt+A` | **Copy for agent**: Copy snippet formatted with `@path:l1-l2` header for prompt composition |
 | `Option+U` | `Alt+U` | **Find usages**: Search workspace for the selected identifier |
+| `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, selection bar, or open overlay |
 | `?` | `?` | **Help sheet**: Display in-app shortcut modal overlay |

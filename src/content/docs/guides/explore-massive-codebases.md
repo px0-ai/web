@@ -9,7 +9,7 @@ order: 3
 
 Opening huge open-source repositories in traditional IDEs often triggers several minutes of indexing, high CPU fan speeds, and gigabytes of memory consumption.
 
-px0 is engineered specifically for fast, read-only inspection of massive codebases.
+px0 is engineered specifically for fast, zero-overhead inspection of massive codebases.
 
 ## Step 1: Target a Large Repository
 

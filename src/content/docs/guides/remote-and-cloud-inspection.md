@@ -30,13 +30,13 @@ When your remote machine is part of a private mesh network (such as Tailscale or
 px0 -host 0.0.0.0 -port 7777 -no-open /path/to/remote/code
 ```
 
-Then open the machine's MagicDNS hostname or private IP in your local browser:
+Then open the machine's private IP or MagicDNS hostname in your local browser:
 
 ```text
-http://my-dev-server:7777
+http://100.x.y.z:7777
 ```
 
-Because px0 is strictly read-only, viewers cannot mutate files or execute commands on the remote server.
+Opening px0 directly by private IP allows both fast code navigation and authenticated agent editing.
 
 ## Pattern 2: SSH Port Forwarding
 
@@ -55,7 +55,7 @@ px0 -no-open /path/to/remote/code
 
 Open your local browser to `http://127.0.0.1:7777`. All traffic is forwarded securely through your SSH tunnel.
 
-## Pattern 3: Cloudflare Tunnels or Reverse Proxy
+## Pattern 3: Reverse Proxy or Tunnels
 
 For persistent or shared inspection endpoints behind Nginx or Cloudflare Tunnels:
 
@@ -87,14 +87,17 @@ When running px0 on remote machines, use these flags:
 
 | Flag | Purpose |
 | :--- | :--- |
-| `-no-open` | Disables launching a browser on the remote server (essential for headless servers without X11/Wayland). |
+| `-no-open` | Disables launching a browser on the remote server (essential for headless servers without graphical environments). |
 | `-host 0.0.0.0` | Binds all network interfaces rather than only loopback `127.0.0.1`. |
 | `-port N` | Sets a fixed port (default `7777`). Pass `0` to allocate a random available port. |
+| `-no-agent` | Disables agent dispatch endpoints entirely (recommended on shared or multi-user instances). |
 | `-quiet` | Suppresses terminal narration banner and outputs only fatal errors. |
 
 ## Security & Sandboxing Guarantees
 
 When exposing px0 across networks:
-- **Strict Read-Only**: The backend contains no endpoints for file creation, deletion, or modification.
+- **Exploration Sandboxing**: File reading, search, and symbol endpoints are strictly sandboxed.
 - **Path Traversal Protection**: Every request verifies that target file paths resolve strictly inside the designated workspace root.
 - **DNS Rebinding Prevention**: The HTTP router verifies incoming `Host` headers to prevent cross-origin DNS rebinding attacks.
+- **Agent Editing Origin Verification (`localPost`)**: Agent dispatch endpoints (`/api/agent/...`) verify that the `Origin` matches the `Host` header and that the Host is an IP address or localhost. Access through public tunnel hostnames will refuse agent edits to prevent remote exploitation.
+- **Network Isolation**: When exposing px0 with `-host 0.0.0.0`, ensure the port is accessible only over private networks (WireGuard, Tailscale, private VPCs) or pass `-no-agent` to prevent unwanted code execution.

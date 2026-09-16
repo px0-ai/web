@@ -19,8 +19,8 @@ const pillars = [
   {
     num: '03',
     title: 'Sandboxed by architecture',
-    sub: 'Read-only contract & directory traversal guards',
-    body: 'Every request is strictly read-only with no write endpoints. safePath rejects directory traversal attempts, host header checks protect against DNS rebinding, and external stdlib jumps require explicit LSP allowlisting.',
+    sub: 'Traversal guards & origin verification',
+    body: 'Exploration is strictly sandboxed: safePath rejects directory traversal attempts, host header checks protect against DNS rebinding, and external stdlib jumps require explicit allowlisting. Agent editing is protected by origin verification: requests are accepted only when opened by IP address or localhost, and strictly refused through public tunnel hostnames.',
     tag: 'SANDBOXED',
   },
 ];
@@ -84,7 +84,7 @@ const setups = [
               <li><span>memory</span><b>~20 MB idle</b></li>
               <li><span>startup</span><b>&lt; 1 ms</b></li>
               <li><span>scavenger</span><b>frees OS memory after 15s</b></li>
-              <li><span>access</span><b>read-only & sandboxed</b></li>
+              <li><span>access</span><b>secure & sandboxed</b></li>
             </ul>
           </div>
         </div>

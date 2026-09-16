@@ -1,6 +1,6 @@
 # px0: Read Code. Fast.
 
-> px0 is a fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, git awareness, visual diffing, and syntax highlighting across massive codebases.
+> px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, git awareness, visual diffing, and agent edit dispatch.
 
 ## Positioning
 
@@ -50,7 +50,7 @@ px0 is built to inspect remote codebases as easily as local ones:
 
 - **Zero SSH or heavy client setup**: Remote editors install gigabytes of Node runtimes and server daemons on the host machine. px0 runs as a single lightweight binary, serving directly over HTTP/TLS without requiring SSH shell sessions.
 - **Single port over any wire**: Pass `-host 0.0.0.0` or `-port 7777` to bind the web console. Access from any browser on your laptop, iPad, or phone across your private VPN, Tailscale mesh, WireGuard, reverse proxy, or Cloudflare Tunnel with pooled gzip compression.
-- **Sandboxed by architecture**: Every request is strictly read-only with no write endpoints. `safePath` rejects directory traversal attempts, host header checks protect against DNS rebinding, and external stdlib jumps require explicit LSP allowlisting.
+- **Sandboxed by architecture**: `safePath` rejects directory traversal attempts, host header checks protect against DNS rebinding, and external stdlib jumps require explicit LSP allowlisting. Agent editing endpoints are protected by origin verification.
 
 Common setups:
 - Dev box / cloud VM: `px0 -host 0.0.0.0 -port 7777 ~/work/repo` (access over private network / Tailscale)
@@ -95,6 +95,7 @@ Memory is returned to the OS after 15 seconds of inactivity. On the linux kernel
 - Parallel search: whole-file rejection with bytes.Contains, per-worker buffer reuse, and in-place ASCII case folding. Results surface in the right inspector panel.
 - Two-pass fuzzy matching in linear time, weighting consecutive runs, word boundaries, camelCase humps, and basename hits.
 - Lazy LSP manager: servers are spawned on the first request for a language and shut down on exit.
+- Agent dispatch runner: delegates edits to installed coding harnesses (Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, Goose) with live streaming and auto-reload.
 - Frontend DOM virtualization: about 60 live rows with 24 rows of overscan, painted inside requestAnimationFrame.
 
 ## Usage
@@ -113,6 +114,8 @@ px0 --update        # upgrade to the latest release
 | -no-open | false | Do not launch the web browser automatically |
 | -no-lsp | false | Disable language server discovery and use regex-based outline |
 | -no-git | false | Disable git awareness (tree status badges and diff view) |
+| -agent H | none | Pin coding harness: claude, gemini, cursor-agent, agy, opencode, codex, aider, goose, or command template with {prompt} |
+| -no-agent | false | Do not offer editing through a coding harness |
 | -no-color | false | Strip ANSI escape sequences from terminal output |
 | -no-telemetry | false | Disable anonymous usage telemetry |
 | -quiet | false | Suppress CLI narration (errors still print to stderr) |
@@ -131,6 +134,7 @@ px0 --update        # upgrade to the latest release
 | Cmd/Ctrl+F | Find in active file |
 | Cmd/Ctrl+D | Toggle git diff vs HEAD (split / unified) |
 | Alt+M | Toggle rendered Markdown preview / source |
+| Alt+E | Edit selected code with coding agent |
 | F12, Cmd/Ctrl+Click | Go to definition |
 | Shift+F12 | Find all references |
 | Hover | Type signature and doc hover |

@@ -1,7 +1,7 @@
 {
  "name": "px0",
  "short_name": "px0",
- "description": "Fast, lightweight, read-only IDE designed for instant code navigation and review in your browser.",
+ "description": "Fast, lightweight, remote-first IDE designed for instant code navigation and review in your browser.",
  "start_url": "/",
  "display": "standalone",
  "background_color": "#06070b",

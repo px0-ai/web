@@ -1,6 +1,6 @@
 # px0 web
 
-Source for [px0.ai](https://px0.ai) - the landing page for [px0](https://github.com/px0-ai/px0), the read-only IDE for the AI-agent era.
+Source for [px0.ai](https://px0.ai) - the landing page for [px0](https://github.com/px0-ai/px0), the fast, ultra-light, remote-first IDE for the AI-agent era.
 
 ## Getting started
 

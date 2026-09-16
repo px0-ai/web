@@ -8,11 +8,15 @@ const shortcuts = [
   { keys: ['mod', 'shift', 'F'], act: 'search the whole workspace' },
   { keys: ['mod', 'F'], act: 'find in active file' },
   { keys: ['mod', 'D'], act: 'toggle git diff vs HEAD' },
+  { keys: ['alt', 'E'], act: 'edit with coding agent on selection' },
+  { keys: ['alt', 'C'], act: 'copy reference (@path:l1-l2)' },
+  { keys: ['alt', 'A'], act: 'copy snippet for agent' },
   { keys: ['alt', 'M'], act: 'toggle Markdown preview / source' },
+  { keys: ['alt', 'shift', 'H'], act: 'call trail (callers / callees)' },
   { keys: ['F12'], alt: ['mod', 'click'], act: 'go to definition' },
   { keys: ['shift', 'F12'], act: 'find all references' },
-  { keys: ['hover'], act: 'type signature and docs' },
   { keys: ['alt', '←'], alt: ['alt', '→'], act: 'back, forward through history' },
+  { keys: ['click'], act: 'right-click selection actions menu' },
 ];
 
 const cap = (k: string) => {

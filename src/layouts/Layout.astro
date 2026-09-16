@@ -13,9 +13,9 @@ interface Props {
 }
 
 const {
-  title = "px0: a fast, ultra-light, remote-first, read-only IDE.",
-  description = "px0 is a fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, inspector workspace search, git awareness, and remote session support.",
-  keywords = "px0, read code fast, read-only IDE, remote IDE, remote code inspection, code viewer, code navigator, lightweight IDE, AI code verification, agent code review, cloud VM code viewer, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, workspace search, single binary, Go, open source, VS Code alternative",
+  title = "px0: a fast, ultra-light, remote-first IDE.",
+  description = "px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, inspector workspace search, git awareness, and agent edit dispatch.",
+  keywords = "px0, read code fast, remote IDE, remote code inspection, code viewer, code navigator, lightweight IDE, AI code verification, agent code review, cloud VM code viewer, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, workspace search, single binary, Go, open source, VS Code alternative",
   ogType = 'website',
   publishedTime,
   author = 'Arpit Bhayani',
@@ -82,7 +82,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
     <meta name="description" content={description} />
     <meta
       name="keywords"
-      content="px0, read code fast, read-only IDE, remote IDE, remote code inspection, code viewer, code navigator, lightweight IDE, AI code verification, agent code review, cloud VM code viewer, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, workspace search, single binary, Go, open source, VS Code alternative"
+      content="px0, read code fast, remote IDE, remote code inspection, code viewer, code navigator, lightweight IDE, AI code verification, agent code review, cloud VM code viewer, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, workspace search, single binary, Go, open source, VS Code alternative"
     />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Arpit Bhayani" />
@@ -95,7 +95,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="628" />
-    <meta property="og:image:alt" content="px0: fast, ultra-light, remote-first, read-only IDE" />
+    <meta property="og:image:alt" content="px0: fast, ultra-light, remote-first IDE" />
     <meta property="og:site_name" content="px0" />
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {author && <meta property="article:author" content={author} />}
@@ -106,7 +106,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content="px0: fast, ultra-light, remote-first, read-only IDE" />
+    <meta name="twitter:image:alt" content="px0: fast, ultra-light, remote-first IDE" />
 
     <!-- Structured data -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
@@ -115,7 +115,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
       name: 'px0',
       softwareVersion: VERSION,
       description:
-        'px0 is a fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and remote session support.',
+        'px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and agent edit dispatch.',
       applicationCategory: 'DeveloperApplication',
       applicationSubCategory: 'Code Viewer, Code Navigation, IDE',
       operatingSystem: 'macOS, Linux, FreeBSD, OpenBSD, NetBSD, Windows',
@@ -140,7 +140,7 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
           name: 'What is px0?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'px0 is a fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser. It boots in under 1 millisecond and uses approximately 20 MB of RAM, turning your browser into a zero-latency code inspection console.',
+            text: 'px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. It boots in under 1 millisecond and uses approximately 20 MB of RAM, turning your browser into a zero-latency code inspection console.',
           },
         },
         {
@@ -153,10 +153,10 @@ const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString()
         },
         {
           '@type': 'Question',
-          name: 'Why use a read-only IDE instead of a full editor like VS Code?',
+          name: 'Why use px0 instead of a heavy editor like VS Code?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Code increasingly arrives from the terminal via AI coding agents, compilers, or remote test runners. Developers spend most of their time in verification, audit, and navigation. Full desktop IDEs take seconds to boot and consume 1.4+ GB of RAM just to read files. px0 starts in under 1 ms with ~20 MB RAM, providing zero-latency code reading without editor bloat.',
+            text: 'Code increasingly arrives from the terminal via AI coding agents, compilers, or remote test runners. Developers spend most of their time in verification, audit, and navigation. Full desktop IDEs take seconds to boot and consume 1.4+ GB of RAM just to inspect files. px0 starts in under 1 ms with ~20 MB RAM, providing zero-latency code reading and delegated agent editing without editor bloat.',
           },
         },
         {

@@ -4,17 +4,17 @@ const cases = [
     num: '01',
     tag: 'agent workflow',
     title: 'Verifying AI Agent Output',
-    desc: 'Trace symbol references, inspect live git diffs against HEAD, review generated code, and close the tab without leaving your terminal flow.',
+    desc: 'Trace symbol references, inspect live git diffs against HEAD, review generated code, and send follow-up edits directly back to your agent with Alt+E without leaving your review flow.',
     meta: [
       { label: 'diff vs HEAD', val: 'Ctrl D' },
-      { label: 'symbol jump', val: 'F12' },
+      { label: 'edit with agent', val: 'Alt E' },
       { label: 'context switch', val: '0' },
     ],
     snippet: [
       '<span class="c-dim">$</span> claude code "refactor auth middleware"',
       '<span class="c-ok">✓</span> 8 files changed · 32 tests passing',
       '<span class="c-dim">$</span> <span class="c-hi">px0 .</span>',
-      '<span class="c-out">→ browser opens instantly at http://localhost:6789</span>',
+      '<span class="c-out">→ browser opens instantly at http://127.0.0.1:7777</span>',
     ],
   },
   {
@@ -28,9 +28,9 @@ const cases = [
       { label: 'transport', val: 'HTTP / TLS' },
     ],
     snippet: [
-      '<span class="c-dim">runner@ci-box:~/repo$</span> <span class="c-hi">px0 -host 0.0.0.0</span>',
-      '<span class="c-out">px0 v0.1.4 · listening on http://10.0.4.12:6789</span>',
-      '<span class="c-dim">local-laptop:~$</span> <span class="c-hi">open http://dev-runner:6789</span>',
+      '<span class="c-dim">runner@ci-box:~/repo$</span> <span class="c-hi">px0 -host 0.0.0.0 -no-open</span>',
+      '<span class="c-out">listening on http://10.0.4.12:7777</span>',
+      '<span class="c-dim">local-laptop:~$</span> <span class="c-hi">open http://dev-runner:7777</span>',
       '<span class="c-ok">✓</span> connected directly from local browser',
     ],
   },

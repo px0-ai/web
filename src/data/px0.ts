@@ -3,8 +3,61 @@
 export const COMMANDS = [
   'Go to File', 'Search in Files', 'Go to Symbol', 'Find in File', 'Go to Line',
   'Toggle Git Diff', 'Toggle Markdown Preview',
-  'Toggle Word Wrap', 'Toggle Line Numbers', 'Select Theme', 'Next Theme',
+  'Toggle Word Wrap', 'Select Theme', 'Next Theme',
+  'Edit with Agent', 'Cancel Agent Edit', 'Call Trail', 'Find Usages',
   'Keyboard Shortcuts', 'Re-index Workspace',
+];
+
+/** Supported coding harnesses for agent-delegated edits */
+export const HARNESSES = [
+  {
+    name: 'Claude Code',
+    id: 'claude',
+    defaultModel: 'haiku',
+    cmd: 'claude --permission-mode acceptEdits --model haiku -p {prompt}',
+  },
+  {
+    name: 'Gemini CLI',
+    id: 'gemini',
+    defaultModel: 'gemini-2.5-flash-lite',
+    cmd: 'gemini --approval-mode auto_edit -m gemini-2.5-flash-lite -p {prompt}',
+  },
+  {
+    name: 'Cursor Agent',
+    id: 'cursor-agent',
+    defaultModel: 'gemini-3.6-flash-minimal',
+    cmd: 'cursor-agent --force --model gemini-3.6-flash-minimal -p {prompt}',
+  },
+  {
+    name: 'Antigravity',
+    id: 'agy',
+    defaultModel: 'gemini-3.6-flash-low',
+    cmd: 'agy --dangerously-skip-permissions --mode accept-edits --model gemini-3.6-flash-low -p {prompt}',
+  },
+  {
+    name: 'OpenCode',
+    id: 'opencode',
+    defaultModel: 'opencode/big-pickle',
+    cmd: 'opencode run -m opencode/big-pickle {prompt}',
+  },
+  {
+    name: 'OpenAI Codex',
+    id: 'codex',
+    defaultModel: 'gpt-5-codex',
+    cmd: 'codex exec --ask-for-approval never -m gpt-5-codex {prompt}',
+  },
+  {
+    name: 'Aider',
+    id: 'aider',
+    defaultModel: 'claude-3-7-sonnet',
+    cmd: 'aider --yes-always --no-auto-commits --model claude-3-7-sonnet --message {prompt}',
+  },
+  {
+    name: 'Goose',
+    id: 'goose',
+    defaultModel: 'gpt-4o',
+    cmd: 'goose run --no-session --model gpt-4o -t {prompt}',
+  },
 ];
 
 /** BENCHMARKS.md results: Linux, -no-lsp, fastest of 5 runs. Times in ms, sizes in MB. */
@@ -51,11 +104,14 @@ export const LSP_SERVERS = [
   { lang: 'Go', server: 'gopls', cmd: 'go install golang.org/x/tools/gopls@latest' },
   { lang: 'Rust', server: 'rust-analyzer', cmd: 'rustup component add rust-analyzer' },
   { lang: 'TypeScript / JavaScript', server: 'typescript-language-server', cmd: 'npm install -g typescript-language-server typescript' },
-  { lang: 'Python', server: 'pyright or ruff', cmd: 'npm install -g pyright' },
-  { lang: 'C / C++', server: 'clangd', cmd: 'brew install llvm' },
+  { lang: 'Python', server: 'pyright / pylsp / ruff', cmd: 'npm install -g pyright or pipx install python-lsp-server' },
+  { lang: 'C / C++', server: 'clangd', cmd: 'sudo apt install clangd or brew install llvm' },
   { lang: 'Zig', server: 'zls', cmd: 'brew install zls' },
   { lang: 'Lua', server: 'lua-language-server', cmd: 'brew install lua-language-server' },
   { lang: 'Ruby', server: 'solargraph', cmd: 'gem install solargraph' },
+  { lang: 'Java', server: 'jdtls', cmd: 'brew install jdtls' },
+  { lang: 'C#', server: 'omnisharp', cmd: 'Install OmniSharp on PATH' },
+  { lang: 'LaTeX', server: 'texlab', cmd: 'brew install texlab' },
 ];
 
 export const FLAGS = [
@@ -64,6 +120,8 @@ export const FLAGS = [
   { flag: '-no-open', def: 'false', desc: 'do not launch the browser' },
   { flag: '-no-lsp', def: 'false', desc: 'skip language servers, use the regex outline' },
   { flag: '-no-git', def: 'false', desc: 'disable git awareness (tree status badges and diff view)' },
+  { flag: '-agent H', def: 'none', desc: 'pin coding harness: claude, gemini, cursor-agent, agy, opencode, codex, aider, goose, or command template with {prompt}' },
+  { flag: '-no-agent', def: 'false', desc: 'do not offer editing through a coding harness' },
   { flag: '-no-color', def: 'false', desc: 'strip ANSI escape sequences' },
   { flag: '-no-telemetry', def: 'false', desc: 'disable anonymous backend usage telemetry' },
   { flag: '-quiet', def: 'false', desc: 'suppress narration, errors still go to stderr' },

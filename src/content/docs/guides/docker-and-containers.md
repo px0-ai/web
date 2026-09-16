@@ -25,7 +25,7 @@ Now open `http://localhost:7777` in your host browser.
 
 ### Key Flags Explained:
 - `-p 7777:7777`: Maps container port 7777 to your local machine.
-- `-v "$(pwd):/workspace:ro"`: Mounts the target directory inside the container in **read-only mode (`:ro`)**. This reinforces px0's read-only guarantees at the filesystem kernel level.
+- `-v "$(pwd):/workspace"`: Mounts your project directory into the container workspace (or append `:ro` for isolated audit-only containers).
 - `-host 0.0.0.0`: Ensures px0 listens on all container network interfaces so requests from the host are accepted.
 - `-no-open`: Prevents trying to open a desktop browser inside the headless container.
 

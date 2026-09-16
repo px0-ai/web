@@ -1,6 +1,6 @@
 # px0: Read Code. Fast.
 
-> px0 is a fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, git awareness, diff views, and syntax highlighting across massive codebases.
+> px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, git awareness, diff views, and agent edit dispatch.
 
 This index is written for large language models and AI agents. It maps the px0 product, its performance characteristics, and its command surface.
 
@@ -36,7 +36,7 @@ This index is written for large language models and AI agents. It maps the px0 p
 
 ## What px0 is not
 
-- Not an editor: it has no write endpoints and does not modify files.
+- Not a heavy typing editor: it delegates code authoring to your installed coding harness instead of typing character by character.
 - Not a plugin host: there is no extension marketplace.
 - Not a hosted service: it runs locally or self-hosted on your remote hosts; outbound requests are limited to a daily release check against GitHub and anonymous session metrics (opt out with -no-telemetry or DO_NOT_TRACK=1).
 

@@ -3,7 +3,7 @@ import { THEMES } from '../data/themes';
 import { repoDoc } from '../data/links';
 
 const langs = ['go', 'rust', 'typescript', 'python', 'c', 'c++', 'zig', 'lua', 'ruby', 'java', 'kotlin', 'swift', 'haskell', 'ocaml', 'elixir', 'sql', 'yaml', 'toml', 'nix', 'bash', 'protobuf', 'hcl'];
-const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyright · ruff', 'clangd', 'zls', 'lua-language-server', 'solargraph'];
+const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyright · ruff', 'clangd', 'zls', 'lua-language-server', 'solargraph', 'jdtls', 'omnisharp', 'texlab'];
 ---
 
 <section class="sec" id="features">
@@ -13,7 +13,7 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       <div>
         <h2 class="sec-title">Everything for reading. <em>Nothing else.</em></h2>
         <p class="sec-sub">
-          The navigation you reach for a hundred times a day, done in milliseconds, in a UI that renders only
+          The navigation and review tools you reach for a hundred times a day, done in milliseconds, in a UI that renders only
           the lines you can see.
         </p>
       </div>
@@ -51,7 +51,49 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.03</b><span>markdown</span></div>
+        <div class="fid"><b>f.03</b><span>agent dispatch</span></div>
+        <h3>Edit with your coding agent</h3>
+        <p>Select code in source or diff view, press Alt+E or right-click, and describe the change. Dispatches directly to installed harnesses with live terminal streaming and auto-reload.</p>
+        <div class="fviz agent-box">
+          <div class="ab-harnesses">
+            <span class="ab-h on">Claude Code</span>
+            <span class="ab-h">Gemini CLI</span>
+            <span class="ab-h">Cursor Agent</span>
+            <span class="ab-h">Antigravity</span>
+            <span class="ab-h">OpenCode</span>
+            <span class="ab-h">Codex</span>
+            <span class="ab-h">Aider</span>
+            <span class="ab-h">Goose</span>
+          </div>
+          <div class="ab-head">
+            <span class="ab-pill">claude</span>
+            <span class="ab-model">haiku</span>
+            <span class="ab-range">@fuzzy.go:64-70</span>
+          </div>
+          <div class="ab-in">"simplify score penalty calculation"</div>
+          <div class="ab-status">
+            <i class="ab-dot"></i><span>live terminal streaming</span><b class="ab-tag">Alt+E</b>
+          </div>
+        </div>
+      </article>
+
+      <article class="fcell reveal">
+        <div class="fid"><b>f.04</b><span>selection</span></div>
+        <h3>Classic text & diff selection</h3>
+        <p>Full Shift and Ctrl keyboard selection across lines, words, and pages. Select code inside side-by-side or unified diffs, right-click for instant actions, or copy standardized @path:l1-l2 snippets.</p>
+        <div class="fviz sel-demo">
+          <div class="sel-row"><span class="sel-ln">182</span><span class="sel-tx sel-hi">func diffSelection(sel) Range &#123;</span></div>
+          <div class="sel-row"><span class="sel-ln">183</span><span class="sel-tx sel-hi">  return anchorWorkingTree(sel)</span></div>
+          <div class="sel-acts">
+            <span>Alt+C copy ref</span>
+            <span>Alt+A copy for agent</span>
+            <span class="sel-act-hi">Alt+E edit</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="fcell reveal">
+        <div class="fid"><b>f.05</b><span>markdown</span></div>
         <h3>Rendered GFM preview</h3>
         <p>Full GitHub Flavored Markdown and footnotes rendered via goldmark with Chroma-highlighted code fences. Switch preview and source with Alt+M while locking scroll position.</p>
         <div class="fviz md-prev">
@@ -68,7 +110,7 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.04</b><span>render</span></div>
+        <div class="fid"><b>f.06</b><span>render</span></div>
         <h3>Virtual rows</h3>
         <p>Opening a 400,000-line file costs the same as a 10-line one. Only the visible window plus 24 rows of overscan is mounted; scrolling recycles rows with a single transform.</p>
         <div class="fviz vr">
@@ -82,7 +124,7 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.05</b><span>highlight</span></div>
+        <div class="fid"><b>f.07</b><span>highlight</span></div>
         <h3>~280 languages</h3>
         <p>Native tokenizing through Chroma. The server lexes a 1,000-line window padded with 400 lines of context, never the whole file, and caches rendered HTML under a 512 MB LRU budget.</p>
         <div class="fviz chips">
@@ -92,40 +134,49 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.06</b><span>lsp · optional</span></div>
+        <div class="fid"><b>f.08</b><span>lsp · optional</span></div>
         <h3>Semantic when you want it</h3>
-        <p>Zero-config detection of servers on your <code class="inline-code">$PATH</code>. Spawned lazily on first request, stopped on exit. Missing or crashed? Instant regex outline instead.</p>
+        <p>Zero-config detection on $PATH and standard binary folders. Spawned lazily on first request, stopped on exit. Click the status bar hint for automatic installation recipes.</p>
         <ul class="fviz srv">
           {servers.map((s) => <li><i></i>{s}</li>)}
         </ul>
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.07</b><span>themes</span></div>
+        <div class="fid"><b>f.09</b><span>remote</span></div>
+        <h3>Remote-first & zero SSH</h3>
+        <p>Spin up on cloud VMs, Docker containers, or CI runners with -host 0.0.0.0. Browse in your local browser over Tailscale or WireGuard with zero remote extension daemons and strict DNS rebinding checks.</p>
+        <pre class="fviz tty"><span class="s-warn">$</span> px0 -host 0.0.0.0 -port 7777 ~/work
+<span class="s-dim">listening on:</span> <span class="s-ok">http://10.0.4.12:7777</span>
+<span class="s-dim">sandboxing:</span>   <span class="s-ok">path traversal + DNS guards</span></pre>
+      </article>
+
+      <article class="fcell reveal">
+        <div class="fid"><b>f.10</b><span>themes</span></div>
         <h3>14 built in</h3>
         <p>Tokyo Night by default, plus Paper, Catppuccin, Dracula, GitHub Dark, Gruvbox, Monokai, Nord, One Dark, Rose Pine, and Solarized. A theme is one CSS file of tokens.</p>
         <div class="fviz swatches">
           {THEMES.map((t) => (
             <span class="swatch" title={t.name} style={`--a:${t.vars.bg};--b:${t.vars.k};--c:${t.vars.s};--d:${t.vars.nf}`}></span>
           ))}
-          <a href={repoDoc('docs/internals/styling-and-themes.md')} target="_blank" rel="noopener noreferrer">write your own → STYLING.md</a>
+          <a href={repoDoc('docs/internals/styling-and-themes.md')} target="_blank" rel="noopener noreferrer">write your own: STYLING.md</a>
         </div>
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.08</b><span>distribution</span></div>
+        <div class="fid"><b>f.11</b><span>distribution</span></div>
         <h3>One static binary</h3>
         <p>HTML, CSS, and JS are embedded with <code class="inline-code">go:embed</code>. No Electron, no Node, no CGO, no system libraries. Copy it to a box and run it.</p>
         <pre class="fviz tree"><span class="s-warn">px0</span> <span class="s-dim">static, go:embed</span>
-├─ index · search · highlight · lsp
+├─ index · search · highlight · lsp · agent
 ├─ web/     <span class="s-dim">html css js, ~74 KB</span>
 └─ themes/  <span class="s-dim">14 × css</span></pre>
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.09</b><span>memory</span></div>
+        <div class="fid"><b>f.12</b><span>memory</span></div>
         <h3>Gives memory back</h3>
-        <p>After 15 seconds without requests, px0 reclaims memory. A tab left open for the afternoon costs what an idle one should.</p>
+        <p>After 15 seconds without requests, px0 automatically frees memory back to the kernel. A tab left open for the afternoon costs what an idle one should.</p>
         <div class="fviz scav">
           <div><span>peak</span><i style="width:94%"></i><b>94 MB</b></div>
           <div class="hi"><span>30 s idle</span><i style="width:57%"></i><b>57 MB</b></div>
@@ -318,6 +369,153 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
   .dm-add {
     background: rgba(46, 160, 67, 0.12);
     color: var(--green);
+  }
+
+  /* agent box */
+  .agent-box {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    font-family: var(--font-mono);
+  }
+
+  .ab-harnesses {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 6px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--bdr);
+    font-size: 9px;
+  }
+
+  .ab-h {
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--txt-3);
+    border: 1px solid transparent;
+  }
+
+  .ab-h.on {
+    color: var(--amber);
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+    font-weight: 600;
+  }
+
+  .ab-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--bdr);
+    font-size: 10px;
+  }
+
+  .ab-pill {
+    padding: 1px 6px;
+    border: 1px solid var(--amber-line);
+    background: var(--amber-wash);
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .ab-model {
+    color: var(--cyan);
+    font-size: 9.5px;
+  }
+
+  .ab-range {
+    margin-left: auto;
+    color: var(--txt-3);
+    font-size: 9.5px;
+  }
+
+  .ab-in {
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--txt);
+    font-style: italic;
+    background: var(--bg);
+  }
+
+  .ab-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-top: 1px solid var(--bdr);
+    font-size: 10px;
+    color: var(--txt-3);
+  }
+
+  .ab-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  .ab-tag {
+    margin-left: auto;
+    color: var(--amber);
+    border: 1px solid var(--amber-line);
+    padding: 0 4px;
+    font-weight: 500;
+  }
+
+  /* selection demo */
+  .sel-demo {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+  }
+
+  .sel-row {
+    display: flex;
+    align-items: center;
+    padding: 2px 6px;
+    gap: 8px;
+  }
+
+  .sel-ln {
+    color: var(--txt-4);
+    width: 3ch;
+    text-align: right;
+    user-select: none;
+  }
+
+  .sel-tx {
+    white-space: pre;
+    color: var(--txt-2);
+  }
+
+  .sel-hi {
+    background: var(--amber-wash);
+    color: var(--txt);
+  }
+
+  .sel-acts {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--bdr);
+    font-size: 9.5px;
+    color: var(--txt-3);
+  }
+
+  .sel-act-hi {
+    color: var(--amber);
+    font-weight: 600;
   }
 
   /* markdown preview */

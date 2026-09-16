@@ -59,4 +59,4 @@ All documentation, learning materials, and blog articles are managed as Astro Co
 
 - Do not use em dashes.
 - Keep code snippets copy-pasteable with explicit language tags.
-- Emphasize px0's read-only guarantees and low resource footprint.
+- Emphasize px0's ultra-light design, fast reading performance, and low resource footprint.

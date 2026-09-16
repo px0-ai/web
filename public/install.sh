@@ -168,7 +168,7 @@ if [ -z "$TARGET_DIR" ]; then
     USE_SUDO=1
     TARGET_DIR="/usr/local/bin"
   else
-    # Emergency fallback (e.g. read-only HOME without sudo)
+    # Emergency fallback (e.g. non-writable HOME without sudo)
     TARGET_DIR="${TMPDIR:-/tmp}/px0/bin"
     mkdir -p "$TARGET_DIR" 2>/dev/null || true
   fi

@@ -134,9 +134,9 @@ const ideData = {
         <p class="kicker"><span>//</span> when all you want is speed.</p>
         <h1>Just. Damn.<br /><span class="hl">Fast.</span><i class="h1-cur" aria-hidden="true"></i></h1>
         <p class="hero-sub">
-          px0 is a fast, ultra-light, remote-first, read-only IDE designed for instant code navigation and review in your browser.
+          px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser.
           It starts in <strong>under 1 ms</strong>, idles at <strong>~20 MB</strong>, and fuzzy-finds across the
-          Linux kernel's <strong>95,710 files in 6 ms</strong>.
+          Linux kernel's <strong>95,710 files in 6 ms</strong>. When something needs to change, hand it to your coding agent: px0 runs it and reloads what moved.
         </p>
 
         <div class="hero-actions">
@@ -150,6 +150,20 @@ const ideData = {
               Star on GitHub
             </a>
             <a class="btn btn-ghost" href="#bench">See the benchmarks ↓</a>
+          </div>
+
+          <div class="hero-harnesses">
+            <span class="hh-label">Supported harnesses:</span>
+            <div class="hh-pills">
+              <span class="hh-pill"><i class="hh-dot"></i>Claude Code</span>
+              <span class="hh-pill"><i class="hh-dot"></i>Gemini CLI</span>
+              <span class="hh-pill"><i class="hh-dot"></i>Cursor Agent</span>
+              <span class="hh-pill"><i class="hh-dot"></i>Antigravity</span>
+              <span class="hh-pill"><i class="hh-dot"></i>OpenCode</span>
+              <span class="hh-pill"><i class="hh-dot"></i>OpenAI Codex</span>
+              <span class="hh-pill"><i class="hh-dot"></i>Aider</span>
+              <span class="hh-pill"><i class="hh-dot"></i>Goose</span>
+            </div>
           </div>
         </div>
       </div>
@@ -262,6 +276,7 @@ const ideData = {
                 <span class="st opt">Search <kbd><span class="mod-key">Ctrl</span> <span class="shift-key">Shift</span> F</kbd></span>
                 <span class="st opt">Diff <kbd><span class="mod-key">Ctrl</span> D</kbd></span>
                 <span class="st grow"></span>
+                <span class="st opt v-open"><i class="lsp"></i>Agent: agy (gemini-3.6-flash-low)</span>
                 <span class="st opt v-open">{SORT_EXCERPT.total} lines</span>
                 <span class="st"><i class="lsp"></i>clangd</span>
                 <span class="st">CPU 0.0% · RAM {linux.mem} MB</span>
@@ -444,6 +459,48 @@ const ideData = {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+  }
+
+  .hero-harnesses {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 4px;
+    font-size: 11px;
+    color: var(--txt-muted);
+  }
+
+  .hh-label {
+    letter-spacing: 0.04em;
+    color: var(--txt-dim);
+  }
+
+  .hh-pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hh-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    border: 1px solid var(--bdr);
+    background: var(--bg-card);
+    color: var(--txt);
+    font-size: 11px;
+    font-family: var(--font-mono);
+  }
+
+  .hh-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
   }
 
   .hero-stats {

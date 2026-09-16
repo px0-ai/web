@@ -26,6 +26,8 @@ If `[file or directory]` is omitted, px0 opens the current working directory (`.
 | `-no-open` | boolean | `false` | Do not launch the default web browser automatically on startup. Useful for background execution or remote sessions. |
 | `-no-lsp` | boolean | `false` | Do not use language servers (such as `gopls`, `rust-analyzer`, or `clangd`), even if installed on `$PATH`. Falls back to the built-in regex outline and search. |
 | `-no-git` | boolean | `false` | Disable git repository awareness, branch detection, status badges, and diff overlays. |
+| `-agent <harness>` | string | `none` | Pin coding harness for in-app agent edits: `claude`, `gemini`, `cursor-agent`, `agy`, `opencode`, `codex`, `aider`, `goose`, or a custom command template containing `{prompt}`. |
+| `-no-agent` | boolean | `false` | Disable coding harness discovery and edit capabilities entirely. |
 | `-no-color` | boolean | `false` | Disable ANSI color codes in terminal startup output. |
 | `-no-telemetry` | boolean | `false` | Disable anonymous usage telemetry reporting. |
 | `-quiet` | boolean | `false` | Suppress informational startup narration in the terminal. |
@@ -39,9 +41,26 @@ If `[file or directory]` is omitted, px0 opens the current working directory (`.
 px0 -port 0 -no-open /path/to/project
 ```
 
+### Pinning an Agent Harness for the Session
+```bash
+# Pin Claude Code
+px0 -agent claude /path/to/project
+
+# Or pin Gemini CLI
+px0 -agent gemini /path/to/project
+
+# Or use a custom command template
+px0 -agent 'my-agent --prompt {prompt}' /path/to/project
+```
+
+### Disabling Agent Dispatch
+```bash
+px0 -no-agent /path/to/project
+```
+
 ### Exposing Across Local Network or Cloud VM
 ```bash
-px0 -host 0.0.0.0 -port 8080 /path/to/project
+px0 -host 0.0.0.0 -port 7777 -no-open /path/to/project
 ```
 
 ### Self-Update to Latest Release

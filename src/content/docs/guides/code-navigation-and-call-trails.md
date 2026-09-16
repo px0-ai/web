@@ -47,6 +47,9 @@ As you jump across definitions and call sites, px0 maintains a navigation stack:
 | `Alt+Right` | Jump forward in history |
 | `F12` | Jump directly to definition |
 | `Shift+F12` | Inspect all reference call sites in the inspector |
+| `Alt+U` | Find usages for active selection in the workspace |
+
+Closing the Right Inspector panel automatically cancels in-flight reference searches and LSP queries, keeping UI response immediate and free from background CPU drag.
 
 ## Symbol Outlines (`Ctrl+Shift+O` or `Cmd+Shift+O`)
 

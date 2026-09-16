@@ -41,11 +41,12 @@ const does = [
   ['+', 'rendered Markdown preview with live source switch'],
   ['+', 'go to definition, hover, find references (with an LSP)'],
   ['+', 'jump into stdlib and module-cache sources the server points at'],
+  ['+', 'delegates edits to your coding agent (Claude, Gemini, Cursor, Antigravity, OpenCode, Codex, Aider, Goose)'],
   ['+', '14 themes, word wrap, back and forward history'],
 ];
 
 const doesnt = [
-  ['-', 'no write endpoints: the HTTP API reads, searches, and asks language servers'],
+  ['-', 'no heavy editor or save button: edits go through your coding agent, never typed char-by-char'],
   ['-', 'no extension host, no plugin marketplace, no Electron'],
   ['-', 'no code telemetry or tracking: only anonymous session duration, opt out with -no-telemetry'],
   ['-', 'binds 127.0.0.1 unless you pass -host'],
@@ -79,7 +80,7 @@ const doesnt = [
 
     <div class="why-duo">
       <div class="pnl ticks reveal">
-        <div class="pnl-h"><span>read-only is the feature</span></div>
+        <div class="pnl-h"><span>optimized for reads</span></div>
         <ul class="ro">
           {does.map(([g, t]) => <li><span class="g s-ok">{g}</span>{t}</li>)}
         </ul>
@@ -91,7 +92,7 @@ const doesnt = [
       <div class="pnl reveal">
         <div class="pnl-h"><span>where it fits</span></div>
         <ul class="fit">
-          <li><b>verifying agent output</b> open the worktree, trace the references, close the tab</li>
+          <li><b>verifying agent output</b> open the worktree, trace references, dispatch fixes with Alt+E, close the tab</li>
           <li><b>auditing a codebase</b> read a 25,000-file monorepo on a laptop without the fans spinning up</li>
           <li><b>remote boxes</b> run on the server, tunnel one port, read in any browser</li>
           <li><b>beside your editor</b> keep vim or VS Code for the edits you still type</li>
