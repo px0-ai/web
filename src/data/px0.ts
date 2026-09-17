@@ -129,7 +129,6 @@ export const FLAGS = [
   { flag: '-version, -v', def: 'false', desc: 'print version and architecture, then exit' },
 ];
 
-/** The 15 release targets from `make dist`. */
 export const TARGETS = [
   { os: 'darwin', arch: ['amd64', 'arm64'] },
   { os: 'linux', arch: ['386', 'amd64', 'arm', 'arm64', 'riscv64'] },
@@ -137,4 +136,13 @@ export const TARGETS = [
   { os: 'openbsd', arch: ['amd64', 'arm64'] },
   { os: 'netbsd', arch: ['amd64'] },
   { os: 'windows', arch: ['386', 'amd64', 'arm64'] },
+];
+
+export const EDITORS_BENCH = [
+  { editor: 'px0', mem: '~15 - 18 MB', memVal: 18, open: '~10 ms', interact: '~15 ms', proc: '1 process (native Go)' },
+  { editor: 'Vim', mem: '~10 - 15 MB', memVal: 15, open: '~15 ms', interact: '~15 ms', proc: '1 process' },
+  { editor: 'Neovim', mem: '~10 - 20 MB', memVal: 20, open: '~150 ms', interact: '~150 ms', proc: '1 process' },
+  { editor: 'Sublime Text', mem: '~100 - 250 MB', memVal: 250, open: 'GUI dep.', interact: '~250 - 500 ms', proc: '2-4 processes (C++)' },
+  { editor: 'Zed', mem: '~200 - 450 MB', memVal: 450, open: 'GUI dep.', interact: '~300 - 600 ms', proc: '1-3 processes (Rust)' },
+  { editor: 'VS Code', mem: '~1,100 - 1,440 MB', memVal: 1440, open: '~3.0 - 5.0 s', interact: '~6.0 - 10.0 s', proc: '12 - 15+ processes' },
 ];

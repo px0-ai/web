@@ -1,15 +1,10 @@
 ---
-import { CORPUS, VSCODE_TREE, MEM_TRACE, LSP_OPS } from '../data/px0';
+import { CORPUS, MEM_TRACE, LSP_OPS, EDITORS_BENCH } from '../data/px0';
 import { repoDoc } from '../data/links';
 
 const n = (v: number) => v.toLocaleString('en-US');
 const f1 = (v: number | null) => (v === null ? 'n/a' : v.toFixed(1));
 const pct = (v: number, max: number) => `${Math.max((v / max) * 100, 0.6).toFixed(2)}%`;
-
-// Memory: one linear scale, so the gap is the story.
-const SCALE = 1500;
-const vsTotal = VSCODE_TREE.reduce((a, b) => a + b.mb, 0);
-const ticks = [0, 250, 500, 750, 1000, 1250, 1500];
 
 const max = {
   index: Math.max(...CORPUS.map((r) => r.index)),
@@ -37,46 +32,38 @@ const lspMax = 6;
       </div>
     </header>
 
-    <!-- A: memory -->
+    <!-- A: multi-editor -->
     <div class="pnl ticks reveal">
       <div class="pnl-h">
-        <span>resident memory · same workspace · linear scale</span>
-        <span><b>~90x</b> lighter</span>
+        <span>multi-editor benchmark · identical hardware (Linux)</span>
+        <span><b>Sub-20 MB</b> resident</span>
       </div>
-      <div class="pnl-b">
-        <div class="mem">
-          <div class="mem-row">
-            <div class="mem-name">px0<span>1 go process</span></div>
-            <div class="mem-track">
-              <div class="mem-fill" style={`width:${pct(20, SCALE)}`} title="px0: 20 MB"></div>
-            </div>
-            <div class="mem-val">20 MB</div>
-          </div>
-          <div class="mem-row">
-            <div class="mem-name">VS Code<span>15+ processes</span></div>
-            <div class="mem-track">
-              <div class="mem-stack" style={`width:${pct(vsTotal, SCALE)}`}>
-                {VSCODE_TREE.map((p, i) => (
-                  <div class="mem-seg" style={`flex-grow:${p.mb}`} title={`${p.name}: ~${p.mb} MB`}>{i + 1}</div>
-                ))}
-              </div>
-            </div>
-            <div class="mem-val">~1,440 MB</div>
-          </div>
-          <div class="mem-axis" aria-hidden="true">
-            <span></span>
-            <div class="mem-ticks">
-              {ticks.map((t) => <span style={`left:${(t / SCALE) * 100}%`}>{n(t)}</span>)}
-            </div>
-            <span class="mem-unit">MB</span>
-          </div>
-        </div>
-
-        <ol class="mem-legend">
-          {VSCODE_TREE.map((p, i) => (
-            <li><i>{i + 1}</i><span>{p.name}</span><b>~{p.mb} MB</b></li>
-          ))}
-        </ol>
+      <div class="tbl-wrap">
+        <table class="tbl corpus">
+          <thead>
+            <tr>
+              <th>editor</th>
+              <th class="num">process arch</th>
+              <th class="num">memory (rss)</th>
+              <th class="num">time to open</th>
+              <th class="num">first interact</th>
+            </tr>
+          </thead>
+          <tbody>
+            {EDITORS_BENCH.map((e) => (
+              <tr>
+                <td class="repo">{e.editor}</td>
+                <td class="num">{e.proc}</td>
+                <td class="num hi">{e.mem}<span class="cbar" style={`--w:${pct(e.memVal, 1440)}`}></span></td>
+                <td class="num">{e.open}</td>
+                <td class="num hi">{e.interact}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="pnl-foot">
+        <span style="grid-column: 1 / -1; max-width: none;"><b>Note:</b> CLI editors (Vim/Neovim) do not provide inline LSP out-of-the-box natively. Zed and Sublime Text evaluated as active GUI configs. VS Code memory heavily depends on active extensions.</span>
       </div>
     </div>
 
@@ -201,127 +188,7 @@ const lspMax = 6;
     margin-top: 16px;
   }
 
-  /* memory comparison */
-  .mem-row,
-  .mem-axis {
-    display: grid;
-    grid-template-columns: 130px minmax(0, 1fr) 96px;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .mem-row {
-    padding: 8px 0;
-  }
-
-  .mem-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--txt);
-  }
-
-  .mem-name span {
-    display: block;
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--txt-3);
-  }
-
-  .mem-track {
-    height: 26px;
-    background-image: linear-gradient(90deg, var(--bdr) 1px, transparent 1px);
-    background-size: calc(100% / 6) 100%;
-  }
-
-  .mem-fill {
-    height: 100%;
-    min-width: 3px;
-    background: var(--bar);
-  }
-
-  .mem-stack {
-    display: flex;
-    gap: 2px;
-    height: 100%;
-  }
-
-  .mem-seg {
-    flex-basis: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    background: var(--bar-muted);
-    font-size: 10.5px;
-    color: var(--txt);
-  }
-
-  .mem-val {
-    text-align: right;
-    font-weight: 600;
-    color: var(--txt);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .mem-ticks {
-    position: relative;
-    height: 16px;
-    border-top: 1px solid var(--bdr-hi);
-  }
-
-  .mem-ticks span {
-    position: absolute;
-    top: 3px;
-    transform: translateX(-50%);
-    font-size: 10px;
-    color: var(--txt-3);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .mem-ticks span:first-child { transform: none; }
-  .mem-ticks span:last-child { transform: translateX(-100%); }
-
-  .mem-unit {
-    font-size: 10px;
-    color: var(--txt-3);
-  }
-
-  .mem-legend {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px 24px;
-    margin-top: 22px;
-    padding-top: 16px;
-    border-top: 1px solid var(--bdr);
-    list-style: none;
-    font-size: 11.5px;
-    color: var(--txt-2);
-  }
-
-  .mem-legend li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .mem-legend i {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    background: var(--bar-muted);
-    font-style: normal;
-    font-size: 10px;
-    color: var(--txt);
-  }
-
-  .mem-legend b {
-    margin-left: auto;
-    font-weight: 500;
-    color: var(--txt);
-    font-variant-numeric: tabular-nums;
-  }
+  /* memory comparison removed */
 
   /* corpus */
   .corpus {
