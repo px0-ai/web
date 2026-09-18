@@ -51,19 +51,14 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.03</b><span>agent dispatch</span></div>
-        <h3>Edit with your coding agent</h3>
-        <p>Select code in source or diff view, press Alt+E or right-click, and describe the change. Dispatches directly to installed harnesses with live terminal streaming and auto-reload.</p>
+        <div class="fid"><b>f.03</b><span>batch agent edit</span></div>
+        <h3>Batch inline agent editing</h3>
+        <p>Stage multiple selection comments across files with Alt+E, review unified batch controls, and apply all edits at once with Mod+Enter. Live Git status sync highlights touched tabs instantly.</p>
         <div class="fviz agent-box">
-          <div class="ab-harnesses">
-            <span class="ab-h on">Claude Code</span>
-            <span class="ab-h">Gemini CLI</span>
-            <span class="ab-h">Cursor Agent</span>
-            <span class="ab-h">Antigravity</span>
-            <span class="ab-h">OpenCode</span>
-            <span class="ab-h">Codex</span>
-            <span class="ab-h">Aider</span>
-            <span class="ab-h">Goose</span>
+          <div class="ab-batch-bar">
+            <span class="ab-batch-badge">Batch Edit</span>
+            <span class="ab-batch-count">2 comments</span>
+            <span class="ab-batch-apply">Mod+Enter Apply All</span>
           </div>
           <div class="ab-head">
             <span class="ab-pill">claude</span>
@@ -71,9 +66,12 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
             <span class="ab-range">@fuzzy.go:64-70</span>
           </div>
           <div class="ab-in">"simplify score penalty calculation"</div>
-          <div class="ab-status">
-            <i class="ab-dot"></i><span>live terminal streaming</span><b class="ab-tag">Alt+E</b>
+          <div class="ab-head">
+            <span class="ab-pill">claude</span>
+            <span class="ab-model">haiku</span>
+            <span class="ab-range">@status.go:18-22</span>
           </div>
+          <div class="ab-in">"format batch elapsed timer"</div>
         </div>
       </article>
 
@@ -93,18 +91,19 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.05</b><span>markdown</span></div>
-        <h3>Rendered GFM preview</h3>
-        <p>Full GitHub Flavored Markdown and footnotes rendered via goldmark with Chroma-highlighted code fences. Switch preview and source with Alt+M while locking scroll position.</p>
+        <div class="fid"><b>f.05</b><span>markdown & images</span></div>
+        <h3>Rendered GFM & image tabs</h3>
+        <p>Full GitHub Flavored Markdown with syntax-highlighted code fences and bi-directional scroll sync. Inspect images with zoom/pan, contrast modes (b), pixelated toggle (p), and lightbox.</p>
         <div class="fviz md-prev">
           <div class="md-bar">
             <span class="md-pill on">Preview</span><span class="md-pill">Source</span>
+            <span class="md-pill">Image Tab</span>
             <span class="md-key"><span class="kbd alt-key">Alt</span><span class="kbd">M</span></span>
           </div>
           <div class="md-box">
             <div class="md-h"># Architecture Deep Dive</div>
             <p class="md-p">Windowed tokenizing with Chroma...</p>
-            <div class="md-code"><code>func FuzzyFind()</code></div>
+            <div class="md-img-badge"><span class="md-badge-icon">🖼</span><span>icon.svg · 512×512 px [b: checker | p: pixelated]</span></div>
           </div>
         </div>
       </article>
@@ -380,29 +379,33 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
     font-family: var(--font-mono);
   }
 
-  .ab-harnesses {
+  .ab-batch-bar {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 4px;
-    padding: 4px 6px;
+    gap: 6px;
+    padding: 3px 8px;
     background: var(--bg-card);
-    border-bottom: 1px solid var(--bdr);
-    font-size: 9px;
+    border-bottom: 1px solid var(--amber-line);
+    font-size: 9.5px;
   }
 
-  .ab-h {
+  .ab-batch-badge {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .ab-batch-count {
+    color: var(--txt-3);
+  }
+
+  .ab-batch-apply {
+    margin-left: auto;
+    background: var(--amber);
+    color: var(--bg);
+    font-size: 8.5px;
+    font-weight: 600;
     padding: 1px 5px;
     border-radius: 2px;
-    color: var(--txt-3);
-    border: 1px solid transparent;
-  }
-
-  .ab-h.on {
-    color: var(--amber);
-    border-color: var(--amber-line);
-    background: var(--amber-wash);
-    font-weight: 600;
   }
 
   .ab-head {
@@ -576,6 +579,19 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
     background: var(--bg);
     color: var(--cyan);
     font-size: 10.5px;
+  }
+
+  .md-img-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: var(--bg-elev);
+    border: 1px solid var(--bdr);
+    border-radius: 3px;
+    font-size: 9.5px;
+    color: var(--txt-3);
+    font-family: var(--font-mono);
   }
 
   /* chips */

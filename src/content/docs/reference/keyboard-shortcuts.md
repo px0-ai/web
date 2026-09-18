@@ -20,6 +20,7 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Cmd+Shift+P` | `Ctrl+Shift+P` | **Command palette**: Access all editor and view commands |
 | `Cmd+Shift+O` | `Ctrl+Shift+O` | **Go to symbol**: Symbol outline in current active file |
 | `Cmd+Shift+F` | `Ctrl+Shift+F` | **Workspace search**: Full-text regex search across all files |
+| `Cmd+Shift+R` | `Ctrl+Shift+R` | **Refresh workspace**: Live reindex of workspace tree and Git status |
 | `Cmd+F` | `Ctrl+F` | **Find in file**: In-file search seeded with current selection |
 | `Cmd+G` | `Ctrl+G` | **Jump to line**: Enter line number to jump directly |
 | `Cmd+B` | `Ctrl+B` | **Toggle sidebar**: Show or hide the left explorer sidebar |
@@ -61,11 +62,29 @@ When code is selected in the editor or diff view, the footer selection bar and c
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
 | `Option+E` | `Alt+E` | **Edit Inline**: Open compose box to dispatch selected range to coding harness |
+| `Cmd+Enter` | `Ctrl+Enter` | **Apply all comments**: Dispatch all staged inline comments as a single batch edit |
 | `Right-click` | `Right-click` | **Selection actions menu**: Edit Inline, Copy Ref, Copy with Context, Find Usages |
 | `Shift+Arrows` | `Shift+Arrows` | **Expand selection**: Classic text selection across characters and lines |
 | `Shift+Option+Arrows` | `Shift+Ctrl+Arrows` | **Word selection**: Expand selection by word boundaries |
 | `Option+C` | `Alt+C` | **Copy reference**: Copy standardized `@path:l1-l2` reference (Copy Ref) |
 | `Option+A` | `Alt+A` | **Copy with context**: Copy snippet formatted with `@path:l1-l2` header for prompt composition |
 | `Option+U` | `Alt+U` | **Find usages**: Search workspace for the selected identifier |
-| `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, selection bar, or open overlay |
+| `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, selection bar, lightbox, or open overlay |
 | `?` | `?` | **Help sheet**: Display in-app shortcut modal overlay |
+
+## Image Viewer & Asset Inspection
+
+When an image file tab is active:
+
+| macOS | Linux / Windows | Action |
+| :--- | :--- | :--- |
+| `+` or `=` | `+` or `=` | **Zoom In**: Multiplies current scale by 1.25x (up to 3200%) |
+| `-` or `_` | `-` or `_` | **Zoom Out**: Divides current scale by 1.25x (down to 5%) |
+| `0` | `0` | **Fit to window**: Scales image to fit viewport bounds |
+| `1` | `1` | **Actual size**: Resets scale to 100% (1:1 native resolution) |
+| `b` or `B` | `b` or `B` | **Cycle background**: Switch contrast between Checkerboard, Dark, and Light |
+| `p` or `P` | `p` or `P` | **Toggle mode**: Switch between Smooth and Pixelated interpolation |
+| `Arrow keys` | `Arrow keys` | **Pan canvas**: Pan viewport by 40 px in corresponding direction |
+| `Mouse Drag` | `Mouse Drag` | **Pan canvas**: Freeform grab-and-pan anywhere on the viewport |
+| `Mouse Wheel` | `Mouse Wheel` | **Interactive zoom**: Smoothly zoom in and out |
+

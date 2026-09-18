@@ -24,59 +24,6 @@ px0 discovers installed coding harnesses on your `PATH` and standard binary dire
 | **Aider** | `aider` | `aider --yes-always --no-auto-commits --model <model> --message {prompt}` |
 | **Goose** | `goose` | `goose run --no-session --model <model> -t {prompt}` |
 
-### Harness Details & Headless Configuration
-
-Each harness preset is preconfigured to bypass interactive confirmation prompts so edits apply non-interactively:
-
-#### 1. Claude Code (`claude`)
-- **Binary**: `claude`
-- **Headless Flag**: `--permission-mode acceptEdits` ensures Claude applies file edits directly without waiting for manual terminal confirmation.
-- **Model Flag**: `--model <model>`
-- **Default Model**: `haiku` for near-instant edits. Switch to `sonnet` or `opus` in the dropdown for complex architectural refactoring.
-
-#### 2. Gemini CLI (`gemini`)
-- **Binary**: `gemini`
-- **Headless Flag**: `--approval-mode auto_edit` instructs the Gemini runner to write patches straight to disk.
-- **Model Flag**: `-m <model>`
-- **Default Model**: `gemini-2.5-flash-lite` for ultra-low latency. Switch to `gemini-2.5-flash` or `gemini-2.5-pro` when broader reasoning context is required.
-
-#### 3. Cursor Agent (`cursor-agent`)
-- **Binary**: `cursor-agent`
-- **Headless Flag**: `--force` applies suggested edits without prompting.
-- **Model Flag**: `--model <model>`
-- **Default Model**: `gemini-3.6-flash-minimal`. Supports a wide variety of models including Gemini Flash variants, GPT-5.4 nano/mini, and Claude Sonnet/Opus models.
-
-#### 4. Antigravity (`agy`)
-- **Binary**: `agy`
-- **Headless Flags**: `--dangerously-skip-permissions --mode accept-edits` permits fully autonomous execution within the project root.
-- **Model Flag**: `--model <model>`
-- **Default Model**: `gemini-3.6-flash-low`. Supports tiered Gemini 3.x models across low, medium, and high compute budgets.
-
-#### 5. OpenCode (`opencode`)
-- **Binary**: `opencode`
-- **Headless Command**: `opencode run -m <model> {prompt}`
-- **Model Flag**: `-m <model>`
-- **Default Model**: `opencode/big-pickle`. Supports multi-provider models across OpenCode, GitHub Copilot, and Google Gemini.
-- **Model Discovery**: px0 runs `opencode models` in the background to dynamically discover all configured endpoints.
-
-#### 6. OpenAI Codex (`codex`)
-- **Binary**: `codex`
-- **Headless Flag**: `codex exec --ask-for-approval never -m <model> {prompt}` ensures autonomous execution without terminal interaction.
-- **Model Flag**: `-m <model>`
-- **Default Model**: `gpt-5-codex`. Supports the full suite of Codex reasoning and mini models.
-
-#### 7. Aider (`aider`)
-- **Binary**: `aider`
-- **Headless Flags**: `--yes-always --no-auto-commits` lets Aider modify files cleanly without creating git commits behind px0's back.
-- **Model Flag**: `--model <model>`
-- **Default Model**: `claude-3-7-sonnet`. Supports Claude, OpenAI, Gemini, DeepSeek, and local Ollama models.
-
-#### 8. Goose (`goose`)
-- **Binary**: `goose`
-- **Headless Flags**: `goose run --no-session -t {prompt}` executes ephemeral single-shot tasks without session overhead.
-- **Model Flag**: `--model <model>`
-- **Default Model**: `gpt-4o`. Supports OpenAI, Anthropic, and Google Gemini models.
-
 ---
 
 ### Custom Command Templates
@@ -152,10 +99,66 @@ When the harness finishes:
 
 ---
 
+## Batch Inline Editing
+
+When reviewing a PR, refactoring a module, or coordinating multi-step changes, submitting one prompt at a time creates friction. px0 supports **Batch Inline Editing**, allowing you to stage multiple selection comments across lines or files, review them together, and apply all changes in a single coordinated run.
+
+### Creating Multiple Comments
+1. Highlight any code range and press `Alt+E` (or `Option+E` on macOS) to create an edit comment. Alternatively, if no code is highlighted, pressing `Alt+E` anchors a comment to your current cursor line.
+2. Type your instruction in the composer.
+3. Without submitting yet, navigate elsewhere in the file or open another file, select a second target range, and press `Alt+E`.
+4. Gutter indicators immediately display a `✎` anchor glyph and highlight the lines. Clicking the reference badge (e.g. `@src/agent.js:12-25`) in any comment box instantly jumps your viewport back to the target code.
+
+### Document-Order Stacking & The Batch Control Bar
+- Comment boxes automatically arrange themselves from top to bottom in document order inside `#agentbox-list`.
+- When two or more comments exist, the **Batch Control Bar** (`#agent-batch-bar`) automatically appears at the top of the composer stack.
+- The bar provides unified controls:
+  - **Comment Counter**: Tracks ready comments versus currently running edits (e.g. `3 comments`, `1 remaining (2 in batch)`).
+  - **Unified Model Selector**: Change the target coding harness and model for the entire batch simultaneously.
+  - **Apply All (`Mod+Enter` / `Ctrl+Enter` / `Cmd+Enter`)**: Dispatches all staged comments together.
+  - **Clear All**: Dismisses all open comment boxes.
+  - **Cancel**: Halts an in-flight batch job.
+
+### Coordinated Prompt Synthesis
+When you trigger **Apply All**, px0 aggregates all comments into a single orchestrated batch prompt dispatched to your selected coding harness:
+
+````markdown
+Batch Edit Request: Carry out all of the following instructions across the workspace.
+
+### Edit 1: @src/agent.js lines 14-28
+```js
+// code snippet 1
+```
+**Instruction**: Refactor session lookup to use Map.get
+
+### Edit 2: @src/status.js lines 45-52
+```js
+// code snippet 2
+```
+**Instruction**: Format elapsed batch time as minutes:seconds
+
+Edit the file(s) in place to carry out all of the above instructions. Change only what they ask for, coordinate changes cleanly, and do not explain the changes afterwards.
+````
+
+The harness receives all instructions in context, allowing it to coordinate cross-file type signatures, imports, and variables in one cohesive pass.
+
+---
+
+## Live IDE Git Status Synchronization
+
+When an agent completes an edit (or when files change on disk), px0 updates your environment live without full page reloads:
+- **Modified Tab Indicators**: Tabs containing uncommitted modifications display an orange file name and an indicator dot (`.git-modified`).
+- **Preserved Tree State**: Reindexing preserves all open tabs, active scroll offsets, and expanded directory folders in the file explorer tree.
+- **Diff Gutters**: Live diff gutters immediately highlight added, changed, and deleted lines against `HEAD`.
+- **Manual Workspace Refresh (`Mod+Shift+R`)**: Press `Ctrl+Shift+R` (or `Cmd+Shift+R` on macOS) at any time to force an immediate workspace reindex and Git status synchronization.
+
+---
+
 ## Concurrency & Overlap Protection
 
 px0 supports concurrent agent dispatch with strict safety guards:
 - **Disjoint Edits**: You can dispatch multiple edits simultaneously across different files or non-overlapping line ranges in the same file.
+- **Concurrent Batch & Single Edits**: Non-overlapping batch edits and individual edits can run at the same time. The status bar coordinates progress notes smoothly (e.g. `Batch editing 3 items + 1 edit running... 6s`).
 - **Overlap Lock**: If an edit overlaps with line ranges already being modified by an in-flight job, px0 rejects the second dispatch with an HTTP 409 conflict to prevent corrupted merges.
 
 ---
