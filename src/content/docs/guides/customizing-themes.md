@@ -42,8 +42,11 @@ Click the **Theme Button** in the bottom left footer of the sidebar (or press th
 2. Type `Theme` and select **Preferences: Select Theme**.
 3. Use the arrow keys to preview themes dynamically in real time and press `Enter` to commit your choice.
 
+### Method 3: Visual Settings Manager (`Cmd+,` or `Ctrl+,`)
+Press `Cmd+,` (or `Ctrl+,`) to open the [Settings Manager](/docs/guides/settings-and-configuration), locate **Workbench: Color Theme** (`workbench.colorTheme`), and click any theme pill button to apply it instantly.
+
 ### Persistence
-Your selected theme is automatically saved to browser local storage and restored whenever you open any px0 session on that machine.
+Your selected theme is automatically saved to your user settings (`~/.px0/settings.json`) and restored whenever you open any px0 session on that machine.
 
 ## Theme Architecture & CSS Tokens
 

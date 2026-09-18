@@ -58,3 +58,7 @@ To quickly see all top-level symbols in the current file without expanding call 
 1. Press `Ctrl+Shift+O` (or `Cmd+Shift+O` on macOS).
 2. A symbol picker displays all types, functions, constants, and variables in the active file with category badges (`fn`, `struct`, `interface`, `type`).
 3. Type to fuzzy-filter and press `Enter` to jump directly to the declaration.
+
+## Modal Vim Navigation
+
+Developers who prefer home-row keyboard motions can enable modal keybindings (`h/j/k/l`, `w/b/e`, `gg/G`, `Ctrl+u/d`, Visual selection) in Settings. See the [Vim Keybindings Guide](/docs/guides/vim-mode) for complete details.

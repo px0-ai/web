@@ -21,6 +21,7 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Cmd+Shift+O` | `Ctrl+Shift+O` | **Go to symbol**: Symbol outline in current active file |
 | `Cmd+Shift+F` | `Ctrl+Shift+F` | **Workspace search**: Full-text regex search across all files |
 | `Cmd+Shift+R` | `Ctrl+Shift+R` | **Refresh workspace**: Live reindex of workspace tree and Git status |
+| `Cmd+,` | `Ctrl+,` | **Open settings**: Open visual Settings UI and raw JSON configurator |
 | `Cmd+F` | `Ctrl+F` | **Find in file**: In-file search seeded with current selection |
 | `Cmd+G` | `Ctrl+G` | **Jump to line**: Enter line number to jump directly |
 | `Cmd+B` | `Ctrl+B` | **Toggle sidebar**: Show or hide the left explorer sidebar |
@@ -87,4 +88,28 @@ When an image file tab is active:
 | `Arrow keys` | `Arrow keys` | **Pan canvas**: Pan viewport by 40 px in corresponding direction |
 | `Mouse Drag` | `Mouse Drag` | **Pan canvas**: Freeform grab-and-pan anywhere on the viewport |
 | `Mouse Wheel` | `Mouse Wheel` | **Interactive zoom**: Smoothly zoom in and out |
+
+## Vim Mode (Modal Navigation)
+
+When `editor.vimMode` is enabled in Settings:
+
+| Key | Mode | Action |
+| :--- | :--- | :--- |
+| `h`, `j`, `k`, `l` | Normal | Directional motions: Left, Down, Up, Right |
+| `w`, `b`, `e` | Normal | Word motions: Next word, previous word, end of word |
+| `0`, `^`, `$` | Normal | Line motions: Beginning of line, first non-blank character, end of line |
+| `gg`, `G` | Normal | Document jumps: Top of file, bottom of file |
+| `:[line]` or `[line]G` | Normal | Line jump: Navigate directly to specified line number |
+| `Ctrl+u`, `Ctrl+d` | Normal | Half-page scrolling: Scroll half page up / down |
+| `Ctrl+b`, `Ctrl+f` | Normal | Full-page scrolling: Scroll full page up / down |
+| `/` | Normal | Search: Open in-file search bar |
+| `n`, `N` | Normal | Next match, previous match |
+| `v` | Normal | Enter character-wise Visual mode |
+| `V` | Normal | Enter line-wise Visual mode |
+| `y` | Visual | Yank: Copy selected text to clipboard |
+| `Alt+C` / `Option+C` | Visual | Copy `@path:l1-l2` reference pointer |
+| `Alt+A` / `Option+A` | Visual | Copy snippet formatted with context for LLM |
+| `Alt+E` / `Option+E` | Visual | Dispatch selected range to coding agent |
+| `Escape` | Visual | Cancel selection and return to Normal mode |
+
 
