@@ -1,0 +1,67 @@
+{
+  "version": "0.1.6",
+  "tag": "v0.1.6",
+  "date": "2026-09-18",
+  "title": "Settings Configurator, Modal Vim Keybindings, Dedicated Image Viewer & Batch Agent Edits",
+  "summary": "Introduces a full VS Code-style settings configurator with live preview, modal Vim keybindings with LSP motions and interactive cheat sheet, a dedicated zoom/pan image viewer with Markdown lightbox, batch inline agent editing, and live git status synchronization.",
+  "commitCount": 8,
+  "commitRange": "v0.1.5..v0.1.6",
+  "categories": [
+    {
+      "name": "Settings Configurator & Preferences",
+      "items": [
+        "Full settings modal with category navigation, quick search filtering, and raw JSON editor",
+        "Tagged setting definitions with types, defaults, descriptions, and allowed value badges",
+        "Live preview for typography, cursor style, word wrap, and themes without requiring an editor reload",
+        "Keyboard shortcut Cmd/Ctrl+, and dedicated status bar entry point for quick configuration",
+        "Persistent settings store with schema validation, default fallbacks, and REST API endpoints"
+      ]
+    },
+    {
+      "name": "Modal Vim Keybindings",
+      "items": [
+        "Modal Vim navigation module supporting Normal and Visual modes with status bar indicator",
+        "Standard motions for cursor movement (h, j, k, l), line jumping (gg, G, :<n>), and viewport scrolling (Ctrl+U, Ctrl+D)",
+        "Forward and backward in-file search motions (/ and ?) with occurrence navigation (n, N)",
+        "Vim-style LSP shortcut motions: gd (go to definition), gr (find references), gh / K (hover documentation), and gc (call hierarchy)",
+        "Visual selection actions for code yank (y), citation reference copy, and inline agent edit invocation (Alt+E)",
+        "editor.vimMode preference toggle in settings dialog and Command Palette with interactive Vim cheat sheet modal"
+      ]
+    },
+    {
+      "name": "Dedicated Image Viewer & Markdown Lightbox",
+      "items": [
+        "Open image files (.png, .jpg, .svg, .webp, .ico, .gif) as first-class tabs with custom file icons",
+        "Interactive dedicated image viewer with zoom controls, pan navigation, and smooth vs. pixelated rendering toggle",
+        "Status bar metrics display showing image dimensions, active zoom percentage, and file size",
+        "Background contrast modes (checkerboard, dark, light) for inspecting transparent graphics and icons",
+        "Click-to-expand lightbox overlay for inline Markdown preview images with lazy loading and error fallbacks"
+      ]
+    },
+    {
+      "name": "Batch Inline Editing & Git Synchronization",
+      "items": [
+        "Multi-comment batch agent edit orchestration supporting concurrent non-overlapping inline edits across selections",
+        "Structured top-to-bottom compose box layout with document-order insertion",
+        "Live workspace refresh preserving expanded tree folders and open tabs without losing editor state",
+        "Real-time git-modified tab indicators and automatic diff gutter recomputation on clean files",
+        "Added Mod+Shift+R keyboard shortcut to manually trigger immediate workspace refresh"
+      ]
+    },
+    {
+      "name": "Benchmarks & Multi-Editor Comparisons",
+      "items": [
+        "Added passive memory and resource footprint benchmarks comparing px0 against Zed and Sublime Text",
+        "Tracked time-to-open and time-to-first-interaction metrics demonstrating px0's ultra-low resource profile",
+        "Updated benchmark comparison matrix in documentation highlighting sub-10ms startup and sub-15MB idle RAM usage"
+      ]
+    },
+    {
+      "name": "Documentation & Fixes",
+      "items": [
+        "Added comprehensive user-facing features documentation suite with 17 detailed feature guides and matrix index",
+        "Fixed top-level identifier collision in Node.js fallback bundler for clean bundle distribution"
+      ]
+    }
+  ]
+}
