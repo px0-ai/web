@@ -23,7 +23,7 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai');
-const ogImage = new URL('/cover.png', Astro.site || 'https://px0.ai').toString();
+const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toString();
 ---
 <!doctype html>
 <html lang="en">
