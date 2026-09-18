@@ -13,7 +13,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.0.1"
+    "astro": "^7.0.1",
+    "minisearch": "^7.2.0"
   },
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.3",

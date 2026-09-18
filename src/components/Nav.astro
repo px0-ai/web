@@ -44,6 +44,18 @@ const isHome = pathname === '/';
     </div>
 
     <div class="nav-right">
+      <button class="nav-search-btn" data-open-search aria-label="Search site (Ctrl+K)" type="button">
+        <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <span class="search-text">Search</span>
+        <kbd class="search-kbd">
+          <span class="mod-mac">&#8984;K</span>
+          <span class="mod-win">Ctrl+K</span>
+        </kbd>
+      </button>
+
       <a href="/changelog" class="nav-ver" title="View changelog">v{latestVersion}</a>
 
       <button id="theme-toggle" class="icon-btn" aria-label="Toggle colour theme">
@@ -145,6 +157,42 @@ const isHome = pathname === '/';
     gap: 8px;
   }
 
+  .nav-search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 28px;
+    padding: 0 8px 0 10px;
+    border: 1px solid var(--bdr-hi);
+    background: var(--surface);
+    color: var(--txt-2);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .nav-search-btn:hover {
+    color: var(--txt);
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+  }
+
+  .nav-search-btn .search-kbd {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 5px;
+    font-size: 9.5px;
+    background: var(--surface-2);
+    border: 1px solid var(--bdr);
+    color: var(--txt-3);
+    line-height: 1.2;
+  }
+
+  .nav-search-btn .mod-mac {
+    display: none;
+  }
+
   .nav-ver {
     padding: 0 8px;
     height: 28px;
@@ -215,7 +263,14 @@ const isHome = pathname === '/';
     .nav-inner { padding-inline: 16px; gap: 10px; }
     .nav-tag,
     .nav-ver,
-    .nav-gh span { display: none; }
+    .nav-gh span,
+    .nav-search-btn .search-text,
+    .nav-search-btn .search-kbd { display: none; }
+    .nav-search-btn {
+      padding: 0;
+      min-width: 28px;
+      justify-content: center;
+    }
   }
 
   @media (max-width: 520px) {
@@ -231,6 +286,11 @@ const isHome = pathname === '/';
   };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  if (navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+    document.querySelectorAll<HTMLElement>('.mod-mac').forEach((el) => (el.style.display = 'inline'));
+    document.querySelectorAll<HTMLElement>('.mod-win').forEach((el) => (el.style.display = 'none'));
+  }
 
   document.getElementById('theme-toggle')?.addEventListener('click', () => {
     const next =

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { GITHUB, RELEASES, AUTHOR, EMAIL, VERSION } from '../data/links';
+import SearchModal from '../components/SearchModal.astro';
 
 interface Props {
   title?: string;
@@ -320,6 +321,68 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
           }
         });
       })();
+
+      // Enhanced Code Blocks with Terminal Chrome, Language Badge, and Copy Button
+      (() => {
+        const preElements = document.querySelectorAll<HTMLPreElement>('.prose pre');
+        if (!preElements.length) return;
+
+        preElements.forEach((pre) => {
+          if (pre.closest('.code-block')) return;
+
+          const rawLang = pre.getAttribute('data-language') || 'code';
+          const langDisplay = rawLang.toLowerCase() === 'plaintext' ? 'text' : rawLang;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-block';
+          wrapper.setAttribute('data-language', langDisplay);
+
+          const header = document.createElement('div');
+          header.className = 'code-block-header';
+          header.innerHTML = `
+            <div class="code-block-left">
+              <span class="code-dots" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </span>
+              <span class="code-lang">${langDisplay.toUpperCase()}</span>
+            </div>
+            <button class="code-copy-btn" type="button" aria-label="Copy code to clipboard">
+              <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          `;
+
+          const copyBtn = header.querySelector<HTMLButtonElement>('.code-copy-btn')!;
+          const copyLabel = header.querySelector<HTMLElement>('.copy-label')!;
+
+          copyBtn.addEventListener('click', async () => {
+            const codeEl = pre.querySelector('code');
+            const codeText = (codeEl ? codeEl.innerText : pre.innerText).replace(/\n$/, '');
+            try {
+              await navigator.clipboard.writeText(codeText);
+              copyBtn.classList.add('copied');
+              copyLabel.textContent = 'Copied!';
+              setTimeout(() => {
+                copyBtn.classList.remove('copied');
+                copyLabel.textContent = 'Copy';
+              }, 2000);
+            } catch (err) {
+              console.error('Failed to copy code:', err);
+            }
+          });
+
+          pre.parentNode?.insertBefore(wrapper, pre);
+          wrapper.appendChild(header);
+          wrapper.appendChild(pre);
+        });
+      })();
     </script>
+    <SearchModal />
   </body>
 </html>

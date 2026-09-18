@@ -11,6 +11,10 @@
   --surface-2: rgba(192, 202, 245, 0.055);
   --surface-solid: #0d0e16;
   --code-bg: rgba(192, 202, 245, 0.032);
+  --code-surface: #0a0c14;
+  --code-surface-header: #0f111c;
+  --code-bdr: rgba(192, 202, 245, 0.12);
+  --code-bdr-hi: rgba(192, 202, 245, 0.25);
   --bdr: rgba(192, 202, 245, 0.09);
   --bdr-hi: rgba(192, 202, 245, 0.2);
 
@@ -76,6 +80,10 @@
   --surface-2: rgba(11, 13, 20, 0.05);
   --surface-solid: #ffffff;
   --code-bg: rgba(11, 13, 20, 0.035);
+  --code-surface: #0e111a;
+  --code-surface-header: #141824;
+  --code-bdr: rgba(11, 13, 20, 0.18);
+  --code-bdr-hi: rgba(180, 83, 9, 0.35);
   --bdr: rgba(11, 13, 20, 0.1);
   --bdr-hi: rgba(11, 13, 20, 0.22);
 
@@ -959,3 +967,202 @@ pre {
   margin-top: 10px;
   text-align: center;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Prose Code Blocks & Inline Code
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Standalone / fallback pre tag styling */
+.prose pre,
+.prose pre.astro-code {
+  position: relative;
+  background-color: var(--code-surface) !important;
+  border: 1px solid var(--code-bdr);
+  border-radius: 4px;
+  padding: 18px 20px;
+  margin: 28px 0;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.65;
+  box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prose pre:hover {
+  border-color: var(--code-bdr-hi);
+}
+
+/* Terminal card wrapper */
+.code-block {
+  position: relative;
+  margin: 28px 0;
+  border: 1px solid var(--code-bdr);
+  border-radius: 6px;
+  background: var(--code-surface);
+  overflow: hidden;
+  box-shadow: 0 10px 36px -10px rgba(0, 0, 0, 0.55);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.code-block:hover {
+  border-color: var(--code-bdr-hi);
+  box-shadow: 0 14px 44px -8px rgba(0, 0, 0, 0.7);
+}
+
+/* Header bar */
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 36px;
+  padding: 0 14px;
+  background: var(--code-surface-header);
+  border-bottom: 1px solid var(--code-bdr);
+  user-select: none;
+}
+
+.code-block-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.code-dots {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.code-dots i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(192, 202, 245, 0.16);
+  transition: background 0.2s;
+}
+
+.code-block:hover .code-dots i:nth-child(1) { background: #ff5f56; }
+.code-block:hover .code-dots i:nth-child(2) { background: #ffbd2e; }
+.code-block:hover .code-dots i:nth-child(3) { background: #27c93f; }
+
+.code-lang {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--txt-3);
+  padding: 1px 7px;
+  border-radius: 2px;
+  background: rgba(192, 202, 245, 0.05);
+  border: 1px solid rgba(192, 202, 245, 0.08);
+}
+
+.code-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--txt-3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.code-copy-btn:hover {
+  color: var(--txt);
+  background: rgba(192, 202, 245, 0.08);
+  border-color: rgba(192, 202, 245, 0.16);
+}
+
+.code-copy-btn .check-icon {
+  display: none;
+  color: var(--green);
+}
+
+.code-copy-btn.copied {
+  color: var(--green);
+  background: rgba(158, 206, 106, 0.12);
+  border-color: rgba(158, 206, 106, 0.3);
+}
+
+.code-copy-btn.copied .copy-icon {
+  display: none;
+}
+
+.code-copy-btn.copied .check-icon {
+  display: inline-block;
+}
+
+/* Reset inner pre inside .code-block */
+.code-block pre,
+.code-block pre.astro-code {
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 18px 20px !important;
+  background-color: var(--code-surface) !important;
+}
+
+/* Code fonts & line height */
+.prose pre code {
+  font-family: var(--mono) !important;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: inherit;
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Inline code tags in prose */
+.prose :not(pre) > code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  color: var(--amber);
+  background: var(--amber-wash);
+  border: 1px solid var(--amber-line);
+  padding: 2px 6px;
+  border-radius: 3px;
+  word-break: break-word;
+  white-space: break-spaces;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.prose :not(pre) > code:hover {
+  border-color: var(--amber);
+  background: rgba(251, 191, 36, 0.12);
+}
+
+/* Scrollbars for code blocks */
+.code-block pre::-webkit-scrollbar,
+.prose pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-block pre::-webkit-scrollbar-track,
+.prose pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-block pre::-webkit-scrollbar-thumb,
+.prose pre::-webkit-scrollbar-thumb {
+  background: rgba(192, 202, 245, 0.16);
+  border-radius: 3px;
+}
+
+.code-block pre::-webkit-scrollbar-thumb:hover,
+.prose pre::-webkit-scrollbar-thumb:hover {
+  background: var(--amber);
+}
+
