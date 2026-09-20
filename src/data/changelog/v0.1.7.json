@@ -1,0 +1,48 @@
+{
+  "version": "0.1.7",
+  "tag": "v0.1.7",
+  "date": "2026-09-20",
+  "title": "Live Git Status Streaming, Sidebar Explorer Toggle & Resilient Agent Concurrency",
+  "summary": "Introduces real-time Git status streaming via Server-Sent Events with in-place badge patching, automatic closing of discarded diff tabs, a sidebar file/changes explorer toggle, and robust process-group cancellation for inline agent edits.",
+  "commitCount": 5,
+  "commitRange": "v0.1.6..v0.1.7",
+  "categories": [
+    {
+      "name": "Live Git Status Streaming & Diff Management",
+      "items": [
+        "Real-time git status streaming to the browser using Server-Sent Events (SSE) and debounced file system watching",
+        "In-place DOM updates for sidebar git status badges and dirty folder markers without reloading the file tree",
+        "Automatic tab closure in diff view whenever modified files are checked out, reset, or committed externally",
+        "Intelligent fallback from changed-only sidebar filter to full file tree view when the repository becomes clean",
+        "Fixed active tab index drift when closing tabs positioned to the left of the currently focused editor tab"
+      ]
+    },
+    {
+      "name": "Sidebar Explorer & UI Polish",
+      "items": [
+        "Toggle switch in the sidebar header to switch seamlessly between the complete file explorer and modified git changes",
+        "Clean-state indicators disabling git changes and diff buttons with informative tooltips when no working tree changes exist",
+        "Contextual tooltips across UI navigation and action buttons for improved discoverability"
+      ]
+    },
+    {
+      "name": "Inline Agent Concurrency & Cancellation",
+      "items": [
+        "Process group termination and WaitDelay timeouts on cancellation to prevent hung pipes and orphaned subprocesses",
+        "Guaranteed job flag cleanup using Go defer semantics to ensure background agent slots never get stuck",
+        "Immediate running-flag reset upon user cancellation so new inline edit requests can start without delay",
+        "Conflicting job diagnostics with an inline cancel button in agent edit error banners",
+        "Unlocked harness and model selection dropdowns while background jobs are running"
+      ]
+    },
+    {
+      "name": "Benchmarking & Tooling Reliability",
+      "items": [
+        "Guaranteed index readiness polling via /api/meta before benchmark execution, preventing measurement races on unindexed workspaces",
+        "Ensured git status stat cache warmup completes before capturing file counts and index timing metrics",
+        "Added test suites for real-time git streaming events, repository change detection, and CLI commit handling",
+        "Documented pre-release verification protocols and release sequencing rules in developer documentation"
+      ]
+    }
+  ]
+}
