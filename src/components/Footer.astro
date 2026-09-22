@@ -1,5 +1,5 @@
 ---
-import { GITHUB, RELEASES, ISSUES, LICENSE, MAILTO, VERSION, INSTALL_CMD, repoDoc } from '../data/links';
+import { GITHUB, RELEASES, ISSUES, LICENSE, MAILTO, VERSION, INSTALL_CMD, repoDoc, SLACK } from '../data/links';
 import { getLatestChangelog } from '../data/changelogs';
 
 const latestVersion = getLatestChangelog()?.version || VERSION;
@@ -15,6 +15,7 @@ const cols = [
       { label: 'Keybindings', href: '/#keys' },
       { label: 'Architecture', href: '/#arch' },
       { label: 'Releases & Changelog', href: '/changelog' },
+      { label: 'Design Partners', href: '/design-partners' },
     ],
   },
   {
@@ -31,6 +32,7 @@ const cols = [
     title: 'project & code',
     links: [
       { label: 'GitHub Repository', href: GITHUB, ext: true },
+      { label: 'Slack Community', href: SLACK, ext: true },
       { label: 'Release Binaries', href: RELEASES, ext: true },
       { label: 'Issue Tracker', href: ISSUES, ext: true },
       { label: 'Internal Specs', href: repoDoc('docs/internals/architecture.md'), ext: true },

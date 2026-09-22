@@ -1,0 +1,404 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SLACK } from '../data/links';
+
+const pillars = [
+  {
+    n: '01',
+    title: 'Zero Review Latency',
+    desc: 'Instant code inspection for teams reviewing agent output: sub-millisecond cold start, ~20 MB resident memory, and zero background indexing lag.',
+  },
+  {
+    n: '02',
+    title: 'Direct Engineering Line',
+    desc: 'Dedicated shared Slack or Discord channel directly with the founder and core team. Same-day turnaround on friction points and custom integrations.',
+  },
+  {
+    n: '03',
+    title: 'Enterprise Roadmap Influence',
+    desc: 'Early access and direct input on team-focused features: remote dev fleet orchestration, shared agent harness configs, and security policies.',
+  },
+  {
+    n: '04',
+    title: 'Air-Gapped & Local Security',
+    desc: 'Runs entirely locally or within your private VPC/Tailscale network with zero telemetry leakage and strict path traversal sandboxing.',
+  },
+];
+
+const criteria = [
+  {
+    k: 'team size',
+    v: '10+ engineers or active internal engineering squads.',
+  },
+  {
+    k: 'agentic workflow',
+    v: 'Actively running coding agents (Claude Code, Cursor, Antigravity, Aider, OpenCode, or custom internal harnesses).',
+  },
+  {
+    k: 'cadence',
+    v: 'Piloting px0 on developer machines or remote boxes with structured feedback every 2 to 3 weeks.',
+  },
+  {
+    k: 'scope restriction',
+    v: 'Strictly for workplace engineering teams. Individual hobbyist queries and general mentorship requests are not accepted.',
+  },
+];
+---
+
+<Layout
+  title="Design Partner Program - px0 for Engineering Teams"
+  description="Partner with px0 to bring sub-millisecond code verification and instant diff reviews to your engineering team."
+>
+  <Nav />
+
+  <main class="dp-page">
+    <div class="wrap">
+      <!-- Breadcrumb & Header -->
+      <header class="dp-header">
+        <div class="dp-breadcrumbs">
+          <a href="/" class="dp-crumb-link">px0</a>
+          <span class="dp-crumb-sep">/</span>
+          <span class="dp-crumb-cur">design-partners</span>
+        </div>
+
+        <div class="dp-headline">
+          <p class="kicker"><span>//</span> workplace adoption · design partner program</p>
+          <h1 class="dp-title">px0 for Engineering Teams</h1>
+          <p class="dp-sub">
+            When coding agents write thousands of lines across dozens of files daily, typing code is no longer the bottleneck.
+            Verification is. We are collaborating directly with engineering teams to provide an instant, ultra-lightweight code review layer.
+          </p>
+        </div>
+      </header>
+
+      <!-- Pillars -->
+      <section class="dp-section">
+        <div class="pnl">
+          <div class="pnl-h">
+            <span>what design partners receive</span>
+            <span>high-touch collaboration</span>
+          </div>
+          <div class="dp-grid">
+            {pillars.map((p) => (
+              <div class="dp-col">
+                <span class="dp-num">{p.n}</span>
+                <h3>{p.title}</h3>
+                <p>{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Qualification Criteria -->
+      <section class="dp-section">
+        <div class="pnl">
+          <div class="pnl-h">
+            <span>qualification criteria</span>
+            <span>filtering for high-signal workplace teams</span>
+          </div>
+          <div class="dp-criteria">
+            {criteria.map((c) => (
+              <div class="dp-crit-row">
+                <span class="dp-crit-k">{c.k}</span>
+                <span class="dp-crit-v">{c.v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Big Slack CTA -->
+      <section class="dp-section" id="connect">
+        <div class="pnl dp-connect-pnl">
+          <div class="pnl-h">
+            <span>initiate partnership</span>
+            <span>community & slack connect</span>
+          </div>
+
+          <div class="dp-connect-body">
+            <div class="dp-connect-content">
+              <h2>Join the px0 Slack Community</h2>
+              <p>
+                We coordinate design partnerships and pilot onboarding directly on Slack.
+                Qualifying engineering organizations get dedicated private channels or Slack Connect access with the core team.
+              </p>
+            </div>
+
+            <div class="dp-slack-action">
+              <a href={SLACK} target="_blank" rel="noopener noreferrer" class="btn-slack-cta">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.528 2.528 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                </svg>
+                <span>Join px0 Slack Community</span>
+                <span class="btn-arrow">&rarr;</span>
+              </a>
+            </div>
+
+            <div class="dp-slack-hint">
+              <span class="hint-dot"></span>
+              <span>Once in Slack, drop a note in <code>#workplace-adoption</code> to introduce your team, or DM Arpit directly to set up private Slack Connect.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .dp-page {
+    padding-top: 80px;
+    padding-bottom: 80px;
+    min-height: calc(100vh - 48px);
+  }
+
+  .dp-header {
+    margin-bottom: 36px;
+  }
+
+  .dp-breadcrumbs {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    margin-bottom: 16px;
+    color: var(--txt-3);
+  }
+
+  .dp-crumb-link {
+    color: var(--txt-3);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .dp-crumb-link:hover {
+    color: var(--txt);
+  }
+
+  .dp-crumb-sep {
+    color: var(--txt-4);
+  }
+
+  .dp-crumb-cur {
+    color: var(--amber);
+  }
+
+  .dp-title {
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--txt);
+    margin-top: 6px;
+    margin-bottom: 12px;
+  }
+
+  .dp-sub {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--txt-2);
+    max-width: 720px;
+  }
+
+  .dp-section {
+    margin-bottom: 28px;
+  }
+
+  .pnl {
+    border: 1px solid var(--bdr);
+    background: var(--bg-elev);
+  }
+
+  .pnl-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--bdr);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+  }
+
+  .pnl-h span:first-child {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .dp-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--bdr);
+  }
+
+  .dp-col {
+    background: var(--bg-elev);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .dp-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+  }
+
+  .dp-col h3 {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--txt);
+    letter-spacing: -0.01em;
+  }
+
+  .dp-col p {
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  .dp-criteria {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dp-crit-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--bdr);
+    font-size: 12px;
+    align-items: baseline;
+  }
+
+  .dp-crit-row:last-child {
+    border-bottom: none;
+  }
+
+  .dp-crit-k {
+    font-weight: 600;
+    color: var(--txt);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  .dp-crit-v {
+    color: var(--txt-2);
+    line-height: 1.55;
+  }
+
+  .dp-connect-pnl {
+    box-shadow: inset 0 2px 0 var(--amber);
+  }
+
+  .dp-connect-body {
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .dp-connect-content h2 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--txt);
+    margin-bottom: 6px;
+  }
+
+  .dp-connect-content p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--txt-2);
+    max-width: 680px;
+    margin: 0;
+  }
+
+  .dp-slack-action {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .btn-slack-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    background: var(--amber-fill);
+    color: #0b0c0e;
+    font-weight: 700;
+    font-size: 13.5px;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-slack-cta:hover {
+    background: var(--amber-fill-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(251, 191, 36, 0.25);
+  }
+
+  .btn-arrow {
+    font-size: 16px;
+    transition: transform 0.15s;
+  }
+
+  .btn-slack-cta:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  .dp-slack-hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--txt-3);
+    padding-top: 6px;
+  }
+
+  .hint-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--amber);
+    flex-shrink: 0;
+  }
+
+  .dp-slack-hint code {
+    color: var(--txt);
+    background: var(--surface-2, var(--surface));
+    padding: 1px 5px;
+    border: 1px solid var(--bdr);
+    font-size: 11px;
+  }
+
+  @media (max-width: 760px) {
+    .dp-grid {
+      grid-template-columns: 1fr;
+    }
+    .dp-crit-row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .dp-connect-body {
+      padding: 24px 20px;
+    }
+    .btn-slack-cta {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

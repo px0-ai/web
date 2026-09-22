@@ -1,0 +1,199 @@
+---
+const highlights = [
+  {
+    n: '01',
+    title: 'Instant Code Review',
+    desc: 'When agents generate large diffs across dozens of files, inspection speed is key. px0 starts in under 1ms with ~20 MB RAM, giving your team instant fuzzy search and split diffs.',
+  },
+  {
+    n: '02',
+    title: 'Direct Line on Slack',
+    desc: 'Get a direct line with the core team on Slack or Slack Connect. We prioritize bug fixes, performance tuning, and integration with your specific agent toolchains.',
+  },
+  {
+    n: '03',
+    title: 'Local & Secure by Default',
+    desc: 'px0 runs strictly locally on developer laptops or remote dev boxes. Zero telemetry, zero cloud dependencies, and zero risk of proprietary code leaking.',
+  },
+];
+---
+
+<section class="sec" id="partners">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">08</span><span>/partners</span></div>
+      <div>
+        <h2 class="sec-title">Adopting px0 across your <em>engineering team?</em></h2>
+        <p class="sec-sub">
+          If your engineers are actively using coding agents and looking for a fast, ultra-lightweight
+          code reader and diff viewer to speed up verification, we would love to collaborate.
+        </p>
+      </div>
+    </header>
+
+    <div class="partner-card reveal">
+      <div class="partner-head">
+        <div class="partner-tag">
+          <span class="dot"></span>
+          <span>DESIGN PARTNERS</span>
+        </div>
+        <span class="partner-status">slack connect available</span>
+      </div>
+
+      <div class="partner-grid">
+        {highlights.map((h) => (
+          <div class="partner-col">
+            <span class="partner-num">{h.n}</span>
+            <h3>{h.title}</h3>
+            <p>{h.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="partner-action">
+        <div class="partner-action-text">
+          <strong>Best suited for teams with 10+ engineers or active agent workflows.</strong>
+          <span>Collaborate directly with us on Slack to shape a faster review workflow for your team.</span>
+        </div>
+        <a href="/design-partners" class="partner-btn">
+          <span>Explore Design Partners</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-card {
+    border: 1px solid var(--bdr-hi);
+    background: var(--bg-elev);
+    box-shadow: inset 0 2px 0 var(--amber);
+  }
+
+  .partner-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--bdr);
+    background: var(--surface);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  .partner-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .partner-tag .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--amber);
+  }
+
+  .partner-status {
+    color: var(--txt-3);
+    font-size: 10px;
+    font-family: var(--mono);
+    text-transform: lowercase;
+  }
+
+  .partner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--bdr);
+  }
+
+  .partner-col {
+    background: var(--bg-elev);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .partner-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+  }
+
+  .partner-col h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--txt);
+    letter-spacing: -0.01em;
+  }
+
+  .partner-col p {
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--txt-2);
+  }
+
+  .partner-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: var(--surface);
+    border-top: 1px solid var(--bdr);
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .partner-action-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12.5px;
+  }
+
+  .partner-action-text strong {
+    color: var(--txt);
+  }
+
+  .partner-action-text span {
+    color: var(--txt-3);
+    font-size: 11.5px;
+  }
+
+  .partner-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--amber-fill);
+    color: #0b0c0e;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.15s;
+    white-space: nowrap;
+  }
+
+  .partner-btn:hover {
+    background: var(--amber-fill-hover);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 860px) {
+    .partner-grid {
+      grid-template-columns: 1fr;
+    }
+    .partner-action {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -728,7 +728,7 @@ const pillars = [
 
   .pr-btn-apply {
     flex: 1;
-    background: var(--amber);
+    background: var(--amber-fill);
     color: #0b0d13;
     border: 0;
     font-family: var(--font-mono);
@@ -737,11 +737,11 @@ const pillars = [
     padding: 5px 8px;
     border-radius: 2px;
     cursor: pointer;
-    transition: opacity 0.15s;
+    transition: background 0.15s, opacity 0.15s;
   }
 
   .pr-btn-apply:hover {
-    opacity: 0.9;
+    background: var(--amber-fill-hover);
   }
 
   .pr-btn-review {
@@ -1027,7 +1027,7 @@ const pillars = [
   }
 
   .icb-btn-save {
-    background: var(--amber);
+    background: var(--amber-fill);
     border: 0;
     color: #0b0d13;
     font-family: var(--font-mono);
@@ -1036,6 +1036,11 @@ const pillars = [
     padding: 3px 8px;
     border-radius: 2px;
     cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .icb-btn-save:hover {
+    background: var(--amber-fill-hover);
   }
 
   .dln {
