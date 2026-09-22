@@ -11,10 +11,9 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
     <header class="sec-head">
       <div class="sec-id"><span class="sec-n">03</span><span>/features</span></div>
       <div>
-        <h2 class="sec-title">Everything for reading. <em>Nothing else.</em></h2>
+        <h2 class="sec-title">Built for review. <em>Engineered for speed.</em></h2>
         <p class="sec-sub">
-          The navigation and review tools you reach for a hundred times a day, done in milliseconds, in a UI that renders only
-          the lines you can see.
+          The code review, Git inspection, and AI harness tools you reach for a hundred times a day, done in milliseconds, in a UI that renders only the lines you can see.
         </p>
       </div>
     </header>
@@ -33,19 +32,19 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.02</b><span>git & diff</span></div>
-        <h3>Status badges & visual diffs</h3>
-        <p>Working-tree status badges (M, A, D, U) in the file tree, dirty ancestor paths, and a changed-only filter. Toggle side-by-side or unified diffs vs HEAD with Ctrl+D.</p>
+        <div class="fid"><b>f.02</b><span>git & github</span></div>
+        <h3>GitHub PR review & Git panel</h3>
+        <p>Pass any PR URL to review merge-base diffs, draft inline comments (Alt+R), and run 1-click batch AI edits. Stage per-file ticks, commit with AI, and push straight back to PR branches.</p>
         <div class="fviz git-diff">
           <div class="gd-tree">
-            <span><i class="gt-dot"></i>web/src</span>
-            <span class="badge-git badge-add">A markdown.js</span>
-            <span class="badge-git badge-mod">M fuzzy.go</span>
+            <span><i class="gt-dot"></i>PR #123 (open)</span>
+            <span class="badge-git badge-add">A provider.go</span>
+            <span class="badge-git badge-mod">M token.go 💬1</span>
           </div>
           <div class="diff-mini">
-            <div class="dm-head"><span>fuzzy.go (diff vs HEAD)</span><span class="dm-tag">Ctrl+D</span></div>
-            <div class="dm-row dm-del"><span class="dm-ln">64</span><span class="dm-tx">- score -= len(p) / 4</span></div>
-            <div class="dm-row dm-add"><span class="dm-ln">64</span><span class="dm-tx">+ score -= len(p) / 8</span></div>
+            <div class="dm-head"><span>token.go (diff vs merge-base)</span><span class="dm-tag">Alt+R</span></div>
+            <div class="dm-row dm-del"><span class="dm-ln">39</span><span class="dm-tx">- return os.Getenv("GITHUB_TOKEN")</span></div>
+            <div class="dm-row dm-add"><span class="dm-ln">39</span><span class="dm-tx">+ if tok := cfg.GitHubToken; tok != ""</span></div>
           </div>
         </div>
       </article>

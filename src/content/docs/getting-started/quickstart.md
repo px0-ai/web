@@ -7,21 +7,24 @@ order: 2
 
 # Quickstart & First Session
 
-px0 turns your browser into a zero-latency inspection console for any codebase on your machine. This guide walks you through launching your first session and navigating the interface.
+px0 is the IDE for humans and AI, optimized for quick, fast code reviews with native Git and GitHub integrations, and seamless connection to AI coding harnesses. This guide walks you through launching your first session and navigating the interface.
 
-## Launching Your First Workspace
+## Launching Your First Workspace or PR Review
 
-Open any directory or repository by passing its path to `px0`:
+Open any directory, repository, or GitHub pull request by passing it to `px0`:
 
 ```bash
 # Open current working directory
 px0 .
 
-# Or open any repository path
+# Open any repository path
 px0 ~/projects/backend
+
+# Review a GitHub pull request directly in the browser
+px0 https://github.com/owner/repo/pull/123
 ```
 
-px0 instantly scans the directory tree in a few milliseconds, launches an embedded HTTP server on port 7777, and opens your default browser to `http://127.0.0.1:7777`.
+px0 instantly scans the tree or checks out the PR in a few milliseconds, launches an embedded HTTP server, and opens your default browser.
 
 ## Interface Anatomy
 

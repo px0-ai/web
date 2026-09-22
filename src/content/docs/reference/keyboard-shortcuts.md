@@ -38,11 +38,14 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Option+Left` | `Alt+Left` | **Navigate back**: Jump back to previous cursor position / file |
 | `Option+Right` | `Alt+Right` | **Navigate forward**: Jump forward along the navigation trail |
 
-## Git Review & Diffs
+## Git Review, GitHub PR & Everyday Operations
 
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
-| `Cmd+D` | `Ctrl+D` | **Toggle Git diff**: Toggle split or unified diff against `HEAD` |
+| `Cmd+D` | `Ctrl+D` | **Toggle Git diff**: Toggle split or unified diff against `HEAD` (or merge-base in PR review) |
+| `Option+R` | `Alt+R` | **Review comment**: Draft PR review comment on active selection |
+| `Line Hover (✏)` | `Line Hover (✏)` | **Line action popover**: Choose between GitHub comment or inline agent edit |
+| `Cmd+K` -> `Git: Open Pull Request...` | `Ctrl+K` -> `Git: Open Pull Request...` | **Open PR**: Launch a fresh pull request review tab |
 | `Option+M` | `Alt+M` | **Toggle Markdown preview**: Switch between raw source and rendered GFM |
 
 ## Tabs & Editor Viewport

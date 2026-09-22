@@ -1,19 +1,19 @@
 ---
-title: "Inspecting & Reviewing Git Diffs"
-description: "Review live uncommitted changes, stream real-time git status updates, toggle side-by-side diffs, and auto-close discarded diff tabs."
+title: "Git Awareness, Diffs & Everyday Operations"
+description: "Review uncommitted changes, stage files, generate AI commit messages, push, pull with fast-forward guarantees, and inspect real-time diffs."
 category: "guides"
 order: 7
 ---
 
-# Inspecting & Reviewing Git Diffs
+# Git Awareness, Diffs & Everyday Operations
 
-In modern software development, coding agents, background formatters, and compilers continuously modify files on disk. Developers spend a significant portion of their time auditing what changed rather than writing boilerplate code line by line.
+In modern software development, coding agents, background formatters, and compilers continuously modify files on disk. Developers spend a significant portion of their time auditing what changed and committing verified edits.
 
-px0 is built to serve as an ultra-fast, zero-overhead review cockpit. It keeps your workspace in continuous synchronization with your working tree through real-time Server-Sent Events (SSE) streaming and sub-millisecond Git CLI detection.
+px0 serves as an ultra-fast, zero-overhead review cockpit and day-to-day Git controller. It keeps your workspace in continuous synchronization with your working tree through real-time Server-Sent Events (SSE) streaming and sub-millisecond Git CLI detection, while providing a streamlined sidebar panel for staging, committing, pushing, and pulling without leaving the browser.
 
 ## Real-Time Git Status Streaming
 
-px0 connects to a lightweight Server-Sent Events stream (`/api/git/stream`) running on the Go backend. When files are modified, staged, or removed:
+px0 connects to a lightweight Server-Sent Events stream (`/api/stream` or `/api/git/stream`) running on the Go backend. When files are modified, staged, or removed:
 
 - **Automatic Badge Updates**: File explorer status badges (`M`, `A`, `D`, `U`, `R`) update in place immediately.
 - **Dirty Folder Propagation**: Collapsed parent directories display dirty indicator dots as soon as a nested descendant changes.
@@ -21,7 +21,7 @@ px0 connects to a lightweight Server-Sent Events stream (`/api/git/stream`) runn
 - **Live Gutter Synchronization**: Active editor line gutters and diff views refresh instantly without requiring manual page reloads.
 
 ```text
-Working Tree Event ──► Go GitWatcher ──► SSE Stream (/api/git/stream) ──► In-Place DOM Patch
+Working Tree Event -> Go GitWatcher -> SSE Stream (/api/stream) -> In-Place DOM Patch
 ```
 
 ## Sub-Millisecond Terminal Awareness
@@ -105,6 +105,33 @@ Even when viewing standard code without full diff mode enabled, the editor line 
 - **Green bar**: Added line.
 - **Blue bar**: Modified line.
 - **Red triangle**: Deleted line marker positioned where deleted lines originally sat.
+
+## Sidebar Git Panel (Stage, Commit, Push, Pull)
+
+px0 includes a dedicated Git panel at the base of the left sidebar, providing complete control over everyday Git actions without opening a terminal:
+
+### 1. Per-File Staging Ticks & Stage All
+- Every changed row in the file tree features a stage tick next to its status badge. Clicking it stages or unstages that specific file (`git add` or `git reset`).
+- Click **Stage All** in the Git panel to stage every modified and untracked file at once.
+- The panel displays live counts: `X staged / Y changed`.
+
+### 2. Manual Commit & Commit with AI
+- **Manual Commit**: Enter a commit message in the monospace commit box and click **Commit** (or press `Cmd+Enter` / `Ctrl+Enter` inside the input).
+- **Commit with AI**: Select your preferred AI harness from the picker and click **Commit with AI**. px0 extracts the unified diff of all staged changes, combines it with your instructions from `git.commitMessageInstruction` in Settings, generates a concise commit message, and executes the commit in a single operation.
+
+### 3. Safe Fast-Forward Pull
+- Clicking **Pull** invokes `git merge --ff-only FETCH_HEAD`.
+- If the remote branch has diverged or if uncommitted changes exist locally, px0 refuses the pull immediately with a clear explanatory message. It never initiates an ambiguous merge or creates detached conflict states on disk.
+
+### 4. Direct Push
+- Clicking **Push** uploads committed changes to your configured upstream branch.
+- If no upstream tracking branch is set yet, px0 automatically offers to configure it on the first push (`git push -u origin <branch>`).
+
+## GitHub Pull Request Review
+
+In addition to local repository operations, px0 features native GitHub pull request reviews. By passing any PR URL directly to the CLI (`px0 https://github.com/owner/repo/pull/123`), you can inspect merge-base diffs, draft inline line comments, run **Batch Apply** with local AI harnesses, submit reviews, and push commits straight back to the PR's head branch.
+
+For full details, see the [GitHub Pull Request Review Guide](/docs/guides/github-pr-review).
 
 ## Battery and Focus Awareness
 

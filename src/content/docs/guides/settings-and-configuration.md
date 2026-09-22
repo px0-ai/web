@@ -74,6 +74,8 @@ Your git status, commits, and repository files remain completely untouched.
 | `diffEditor.renderSideBySide` | Diff Editor | `true` | `true`, `false` | Split vs. unified diff view default |
 | `diffEditor.ignoreTrimWhitespace` | Diff Editor | `true` | `true`, `false` | Ignore whitespace differences in diffs |
 | `git.gutterIndicators` | Git | `true` | `true`, `false` | Visual change markers in gutter |
+| `git.commitMessageInstruction` | Git | `""` | Free-text string | Custom instruction prompt appended to AI commit message generator |
+| `github.token` | GitHub | `""` | Personal Access Token (Secret) | GitHub token for PR review actions and review submissions |
 | `explorer.compactFolders` | Explorer | `true` | `true`, `false` | Compact single-child directory chains |
 | `explorer.autoReveal` | Explorer | `true` | `true`, `false` | Auto-scroll to active file in tree |
 | `files.exclude` | Files | Default globs | Array of glob patterns | Exclude patterns from trees and search |

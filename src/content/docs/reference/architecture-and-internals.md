@@ -1,13 +1,13 @@
 ---
 title: "Architecture & Systems Internals"
-description: "Technical deep dive into px0's single-binary design, parallel indexing, fuzzy matching, and virtualized rendering."
+description: "Technical deep dive into px0's single-binary design, parallel indexing, fuzzy matching, virtualized rendering, and Git/GitHub review architecture."
 category: "reference"
 order: 4
 ---
 
 # Architecture & Systems Internals
 
-px0 achieves sub-millisecond startup, instantaneous file navigation, ~20 MB resident memory consumption, and safe coding harness dispatch through dedicated systems engineering principles. This document provides a technical walkthrough of its internal architecture.
+px0 achieves sub-millisecond startup, instantaneous file navigation, ~20 MB resident memory consumption, safe coding harness dispatch, and real-time Git/GitHub collaboration through dedicated systems engineering principles. This document provides a technical walkthrough of its internal architecture.
 
 ## High-Level Subsystem Flow
 
@@ -18,6 +18,8 @@ Browser Client (Vanilla JS + CSS)
   ├── Bidirectional Scroll Markdown Viewer
   ├── Agent Composer & Model Discovery Modal
   ├── Keyboard Palette & Command Router
+  ├── PR Review Header Bar & Line Comment Composer (pr.js, linecomment.js)
+  ├── Sidebar Git Panel & Per-File Stage Controls (gitpanel.js, tree.js)
   └── Reactive Git Stream Client (gitstream.js, SSE)
             │
             ▼ HTTP / JSON / SSE (Pooled Gzip)
@@ -29,7 +31,9 @@ Go Server Runtime (Single Static Binary)
   ├── Windowed Syntax Lexer (1,000-line chunks + LRU cache)
   ├── Stdio JSON-RPC Language Server (LSP) Client
   ├── Coding Harness Dispatch Runner (agent.go, settings.go)
-  ├── Reactive Git Watcher (git_watcher.go, SSE /api/git/stream)
+  ├── Pure Shell-Out Git Controller (git.go, gitpanel endpoints)
+  ├── Git Forge Provider Engine (provider.go, github.go, pr.go)
+  ├── Reactive Git Watcher (git_watcher.go, SSE /api/stream)
   └── Active Memory Scavenger (debug.FreeOSMemory after 15s)
 ```
 
@@ -111,3 +115,55 @@ When `UpdateGitStatus` runs:
 4. The frontend (`gitstream.js`) invokes `patchTreeGitStatus(statuses, dirtyDirs)` to toggle CSS classes and badge nodes directly in the DOM without collapsing expanded tree branches or resetting scroll position.
 5. Diff tabs for files whose changes were checked out or reset in the CLI are closed automatically in reverse index order, keeping the active tab index stable.
 
+### 10. Git Panel & Pure Shell-Out Write Engine
+While the status and diffing engine is purely read-only, the sidebar Git panel introduces explicit repository write actions. Adhering to px0's zero-dependency philosophy, every write operation shells out directly to the host `git` executable:
+
+- **Explicit Invocations Only**: Staging, committing, pushing, and pulling never trigger on background timers or file events. Each executes exactly once in response to an explicit user interaction.
+- **Staged-Path Tracking**: The server tracks staged status alongside working-tree status by executing `git diff --name-only --cached -z`. This state is mapped into `Index.gitStagedMap` and `Node.Staged`. When staging state changes, `UpdateGitStatus` detects the delta and broadcasts the updated `Staged` map and `Branch` name across the SSE stream (`/api/stream`).
+- **Fast-Forward-Only Pull Enforcement**: The pull endpoint executes `git merge --ff-only FETCH_HEAD`. If a branch cannot be cleanly fast-forwarded (such as diverged history or uncommitted local changes), px0 returns sentinel `errNotFastForward` (HTTP 409) rather than creating conflict markers on disk.
+- **Targeted Push Routing**: For local workspaces, px0 pushes to the tracked upstream or sets it on initial push. In PR review sessions, it routes pushes directly to the pull request's true head clone URL and branch ref.
+- **AI Commit Message Generation**: Triggered via **Commit with AI**, the Go backend executes `git diff --cached` to extract the exact staged changes, combines them with any user instructions from `git.commitMessageInstruction`, and invokes `agentManager.StartPrompt`. The returned text is placed directly into the commit input and committed in a single step.
+- **Security Isolation**: All Git write endpoints (`/api/git/stage`, `/api/git/unstage`, `/api/git/commit`, `/api/git/push`, `/api/git/pull`, `/api/git/commit-message`) are strictly protected by `localPost` checks, rejecting requests originating from non-local or cross-site contexts.
+
+### 11. Git Forge PR Review & Provider Architecture
+px0 provides native pull request review capabilities through a decoupled provider abstraction and process-scoped checkout architecture:
+
+#### The `GitProvider` Abstraction Layer
+To support multiple forge systems without entangling core viewer logic, forge operations are defined by the `GitProvider` interface in `provider.go`:
+```go
+type GitProvider interface {
+    Name() string
+    MatchURL(rawURL string) bool
+    ParseURL(rawURL string) (PRTarget, error)
+    ResolveToken(cfg settings) (token, source string)
+    FetchPR(ctx context.Context, target PRTarget, token string) (PRMeta, error)
+    CheckPushAccess(ctx context.Context, target PRTarget, token string) bool
+    SubmitReview(ctx context.Context, target PRTarget, token, headSHA string, comments []prComment, event, body string) error
+}
+```
+
+`GitHubProvider` implements this interface using Go standard library `net/http` to communicate with the GitHub REST API, without external vendor SDKs.
+
+#### Process-Scoped Ephemeral Worktrees
+Pull request checkouts are strictly ephemeral:
+1. `checkoutPR` creates a dedicated temporary directory (`os.MkdirTemp("", "px0-pr-*")`).
+2. If the user runs px0 inside a local clone of the same repository, it creates a lightweight git worktree (`git worktree add --detach <tmp> refs/px0/pr/<N>`).
+3. For remote repositories or external forks, it performs a blobless clone (`git clone --filter=blob:none --branch <headRef> <tmp>`).
+4. When px0 shuts down (`Ctrl+C` or exit), `prSession.Close` removes the temporary directory and deletes temporary references, leaving zero disk clutter.
+
+#### Scoped Merge-Base Diffing
+Unlike local workspaces that diff against `HEAD`, PR review mode computes the merge-base between the PR head commit and the base branch:
+```go
+diffBase := gitMergeBase(tmp, "HEAD", baseRef)
+```
+Both editor gutter indicators and the `Cmd/Ctrl+D` diff viewer display only changes introduced by the pull request relative to the target branch.
+
+#### In-Memory Thread-Safe Draft Comments
+Draft review comments are stored in server memory (`prSession.comments`) guarded by a `sync.Mutex`. Reviewers can add, view, and delete comments without disk writes or remote API calls. When ready, comments can be:
+- Batch-applied locally across the worktree by delegating all comments to an AI coding harness (`Batch Apply`).
+- Formally submitted to the GitHub REST API in a single atomic review payload (`provider.SubmitReview`).
+
+#### In-Session Git Panel Synchronization
+In PR review sessions, the sidebar Git panel allows reviewers to commit and push changes back to the PR's true branch:
+- `prSession.Push` executes `git -C worktree push <meta.HeadRepoCloneURL> HEAD:refs/heads/<meta.HeadRef>`, pushing cleanly to the PR's actual repository (including user forks).
+- `prSession.Pull` re-fetches the remote PR head, safely fast-forwards the worktree, re-calculates `diffBase`, re-indexes the workspace, and updates the PR review header bar and comments panel in place.

@@ -83,7 +83,7 @@ The future belongs to agent-driven code generation paired with high-velocity hum
 
 Text editors had a glorious thirty-year run. But as inline character-by-character editing recedes into history, we need specialized, zero-latency inspection consoles that keep up with autonomous agents.
 
-The typing IDE is dead. Long live the inspection IDE.
+The typing IDE is dead. Long live the inspection IDE: the IDE for humans and AI.
 
 That is why we built px0.
 

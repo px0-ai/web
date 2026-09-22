@@ -5,6 +5,7 @@ export const COMMANDS = [
   'Toggle Git Diff', 'Toggle Markdown Preview',
   'Toggle Word Wrap', 'Select Theme', 'Next Theme',
   'Edit with Agent', 'Cancel Agent Edit', 'Call Trail', 'Find Usages',
+  'Git: Open Pull Request...', 'Git: Stage All', 'Git: Commit', 'Git: Push', 'Git: Pull',
   'Keyboard Shortcuts', 'Re-index Workspace',
 ];
 

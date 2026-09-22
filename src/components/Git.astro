@@ -1,5 +1,5 @@
 ---
-// Git Awareness & Visual Diff Viewer section
+// Git Awareness, GitHub PR Review & Visual Diff Viewer section
 const badges = [
   { k: 'M', label: 'modified', desc: 'tracked file modified in working tree', cls: 'badge-m' },
   { k: 'A', label: 'added', desc: 'new file staged or added to git', cls: 'badge-a' },
@@ -11,24 +11,24 @@ const badges = [
 const pillars = [
   {
     num: '01',
-    title: 'Ancestor propagation',
-    sub: 'Collapsed folders never hide edits',
-    body: 'When a deeply nested file changes, every parent directory in the path receives a dirty marker dot. You never miss changes hiding inside collapsed folders.',
-    tag: 'DIRTY BUBBLING',
+    title: 'Native GitHub PR Review',
+    sub: 'Scoped merge-base diffs from any URL',
+    body: 'Pass any pull request URL to inspect diffs in an isolated ephemeral worktree. Full codebase navigation, symbols, definitions, and callers remain accessible with zero disk clutter.',
+    tag: 'px0 <pr-url>',
   },
   {
     num: '02',
-    title: 'In-memory Myers diff',
-    sub: 'Split and unified views vs HEAD',
-    body: 'Press Ctrl+D on any file to inspect the diff against HEAD. Additions and deletions render with line gutters and syntax highlighting intact.',
-    tag: 'Ctrl+D',
+    title: 'Inline Comments & AI Apply',
+    sub: 'Draft review notes or let AI apply them',
+    body: 'Hover any line or press Alt+R to draft inline review notes. Submit formal approvals to GitHub or click Batch Apply to dispatch all comments across the PR to your local AI coding agent.',
+    tag: 'Alt+R · BATCH APPLY',
   },
   {
     num: '03',
-    title: 'Changed-only filter',
-    sub: 'Prune 50,000 files to the blast radius',
-    body: 'One click filters the entire tree down to only touched paths. Audit an AI agent refactor or local test run without scrolling through clean directories.',
-    tag: 'FILTER CHORD',
+    title: 'Sidebar Git Panel & AI Commits',
+    sub: 'Stage ticks, AI messages, and safe push',
+    body: 'Stage per-file ticks in the tree, generate commit messages from staged diffs with AI, and push directly back to the PR head branch (including forks) without opening a terminal.',
+    tag: 'STAGE · COMMIT · PUSH',
   },
 ];
 ---
@@ -38,97 +38,229 @@ const pillars = [
     <header class="sec-head">
       <div class="sec-id"><span class="sec-n">05</span><span>/git</span></div>
       <div>
-        <h2 class="sec-title">Working tree in view. <em>Diff against HEAD.</em></h2>
+        <h2 class="sec-title">Native GitHub integration. <em>Review, comment, commit.</em></h2>
         <p class="sec-sub">
-          When AI agents and orchestrators write code, your workflow shifts from typing to verification.
-          px0 tracks git status, bubbles changes through directories, and renders side-by-side split or unified
-          diffs in milliseconds.
+          Pass any pull request URL directly to px0. Inspect merge-base diffs, draft inline comments, run
+          one-click batch AI edits, stage per-file ticks, commit with AI, and push fixes straight back to the PR's
+          own branch without leaving your browser.
         </p>
       </div>
     </header>
 
-    <!-- Main visual showcase: Tree on left, Diff viewer on right -->
+    <!-- Main visual showcase: Mode toggling between PR Review & Git Panel -->
     <div class="git-showcase pnl reveal">
       <div class="pnl-h">
-        <span class="pnl-h-title">git awareness · tree status & diff viewer</span>
-        <div class="git-status-summary">
+        <div class="mode-selectors" role="tablist">
+          <button class="mode-tab on" id="tab-mode-pr" type="button">
+            <span class="tab-ico">⎇</span>
+            <span>GitHub PR Review</span>
+            <span class="mode-pill pill-pr">#123</span>
+          </button>
+          <button class="mode-tab" id="tab-mode-git" type="button">
+            <span class="tab-ico">●</span>
+            <span>Working Tree & Git Panel</span>
+            <span class="mode-pill">local</span>
+          </button>
+        </div>
+
+        <div class="git-status-summary" id="showcase-summary-pr">
+          <span class="gstat-pill badge-open">● Open</span>
+          <span class="gstat-repo">px0-ai/px0 #123</span>
+          <span class="gstat-branch">main &larr; auth-refactor</span>
+        </div>
+
+        <div class="git-status-summary is-hidden" id="showcase-summary-git">
           <span class="gstat-dot"></span>
-          <span>HEAD: clean · <b>4 uncommitted changes</b></span>
+          <span>branch: <b>feat/fast-path</b> · <b>2 staged, 1 changed</b></span>
         </div>
       </div>
 
-      <div class="showcase-grid">
-        <!-- Left: Tree visualizer -->
+      <!-- PR REVIEW MODE VIEWPORT -->
+      <div class="showcase-grid mode-pr-view" id="view-mode-pr">
+        <!-- Left: PR File Tree & Comments list -->
+        <div class="tree-col">
+          <div class="col-head">
+            <span class="col-title-pr">PR #123 · 3 files changed</span>
+            <div class="view-toggles" role="tablist">
+              <button class="toggle-btn on" id="btn-pr-files" type="button">files</button>
+              <button class="toggle-btn" id="btn-pr-comments" type="button">comments (2)</button>
+            </div>
+          </div>
+
+          <ul class="mock-tree" id="pr-mock-tree">
+            <li class="t-item t-dir t-dirty">
+              <span class="t-chev">▾</span><span class="t-name">internal/auth</span>
+            </li>
+            <li class="t-item t-sub t-file t-active">
+              <span class="t-indent"></span><span class="t-name">token.go</span>
+              <span class="t-comment-badge" title="1 draft comment">💬 1</span>
+              <span class="t-badge badge-m">M</span>
+            </li>
+            <li class="t-item t-sub t-file">
+              <span class="t-indent"></span><span class="t-name">provider.go</span>
+              <span class="t-comment-badge" title="1 draft comment">💬 1</span>
+              <span class="t-badge badge-a">A</span>
+            </li>
+            <li class="t-item t-dir">
+              <span class="t-chev">▾</span><span class="t-name">cmd</span>
+            </li>
+            <li class="t-item t-sub t-file">
+              <span class="t-indent"></span><span class="t-name">main.go</span>
+              <span class="t-badge badge-m">M</span>
+            </li>
+          </ul>
+
+          <!-- PR Action Footer -->
+          <div class="pr-action-card">
+            <div class="pr-action-h">
+              <span class="pr-h-title">Batch Apply (2)</span>
+              <span class="pr-h-agent">claude-haiku</span>
+            </div>
+            <p class="pr-action-desc">Apply all drafted review comments across files with your local coding agent.</p>
+            <div class="pr-action-btns">
+              <button class="pr-btn-apply" type="button">Run Batch Apply</button>
+              <button class="pr-btn-review" type="button">Submit Review &rarr;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Merge-Base Diff View with Inline Comment Popover -->
+        <div class="diff-col">
+          <div class="col-head">
+            <div class="diff-meta">
+              <span class="diff-tag-pr">merge-base</span>
+              <span class="diff-filename">internal/auth/token.go</span>
+              <span class="diff-stat"><span class="s-add">+14</span> <span class="s-del">−3</span></span>
+            </div>
+            <div class="diff-controls">
+              <span class="diff-badge-shortcut"><kbd class="alt-key">Alt</kbd><kbd>R</kbd> comment</span>
+              <span class="diff-chord"><kbd class="mod-key">Ctrl</kbd><kbd>D</kbd> diff</span>
+            </div>
+          </div>
+
+          <div class="diff-viewport">
+            <div class="diff-pane diff-unified">
+              <div class="pane-hdr">
+                <span>diff against merge-base (main @ 8f2a1c)</span>
+                <span class="s-author">@alice authored</span>
+              </div>
+              <div class="diff-lines">
+                <div class="dline"><span class="dln">38</span><span class="dln">38</span><span class="dmark"> </span><span class="dtx"><span class="k">func</span> ResolveToken(cfg Config) (string, error) {'{'}</span></div>
+                <div class="dline dline-del"><span class="dln">39</span><span class="dln"> </span><span class="dmark">−</span><span class="dtx">    <span class="k">return</span> os.Getenv("GITHUB_TOKEN"), nil</span></div>
+                <div class="dline dline-add"><span class="dln"> </span><span class="dln">39</span><span class="dmark">+</span><span class="dtx">    <span class="k">if</span> tok := cfg.GitHubToken; tok != "" {'{'}</span></div>
+                <div class="dline dline-add"><span class="dln"> </span><span class="dln">40</span><span class="dmark">+</span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
+                <div class="dline dline-add dline-comment-anchor">
+                  <span class="dln"> </span><span class="dln">41</span><span class="dmark">+</span>
+                  <span class="dtx">    <span class="k">if</span> tok := os.Getenv("GITHUB_TOKEN"); tok != "" {'{'}</span>
+                  <span class="gutter-pencil" title="Add review comment (Alt+R)">✏</span>
+                </div>
+
+                <!-- Open Inline Comment Composer Box -->
+                <div class="inline-comment-box">
+                  <div class="icb-head">
+                    <span class="icb-author">Draft Review Comment · line 41</span>
+                    <span class="icb-tag">in-memory</span>
+                  </div>
+                  <div class="icb-body">
+                    Check if GH_TOKEN is also set before falling back to the gh CLI binary so standard environment variables take precedence.
+                  </div>
+                  <div class="icb-actions">
+                    <span class="icb-hint">Press <kbd>Ctrl+Enter</kbd> to save draft</span>
+                    <div class="icb-btns">
+                      <button class="icb-btn-cancel" type="button">Discard</button>
+                      <button class="icb-btn-save" type="button">Save Draft</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="dline"><span class="dln">42</span><span class="dln">42</span><span class="dmark"> </span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
+                <div class="dline"><span class="dln">43</span><span class="dln">43</span><span class="dmark"> </span><span class="dtx">    {'}'}</span></div>
+                <div class="dline"><span class="dln">44</span><span class="dln">44</span><span class="dmark"> </span><span class="dtx">    <span class="k">return</span> resolveGhCliToken()</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="diff-foot">
+            <span class="df-note">Hover any gutter line for <b>✏</b> or select code & press <kbd class="alt-key">Alt</kbd><kbd>R</kbd></span>
+            <span class="df-tag">push back to pr branch enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOCAL WORKING TREE & GIT PANEL VIEWPORT -->
+      <div class="showcase-grid mode-git-view is-hidden" id="view-mode-git">
+        <!-- Left: File tree with stage ticks + Git Panel at bottom -->
         <div class="tree-col">
           <div class="col-head">
             <span>working tree</span>
             <div class="view-toggles" role="tablist">
               <button class="toggle-btn on" id="btn-tree-all" type="button">all</button>
-              <button class="toggle-btn" id="btn-tree-changed" type="button">changed only (4)</button>
+              <button class="toggle-btn" id="btn-tree-changed" type="button">changed (3)</button>
             </div>
           </div>
 
           <ul class="mock-tree" id="git-mock-tree">
-            <li class="t-item t-dir" data-changed="false">
-              <span class="t-chev">▸</span><span class="t-name">.github</span>
+            <li class="t-item t-dir t-dirty">
+              <span class="t-chev">▾</span><span class="t-name">internal/engine</span><span class="t-dot"></span>
             </li>
-            <li class="t-item t-dir" data-changed="false">
-              <span class="t-chev">▸</span><span class="t-name">docs</span>
+            <li class="t-item t-sub t-file t-staged">
+              <span class="t-check" title="Staged in index">✓</span>
+              <span class="t-name">merge_base.go</span>
+              <span class="t-badge badge-m">M</span>
             </li>
-            <li class="t-item t-dir t-dirty" data-changed="true">
-              <span class="t-chev">▾</span><span class="t-name">internal</span><span class="t-dot" title="contains modified files"></span>
+            <li class="t-item t-sub t-file t-staged">
+              <span class="t-check" title="Staged in index">✓</span>
+              <span class="t-name">git_write.go</span>
+              <span class="t-badge badge-a">A</span>
             </li>
-            <li class="t-item t-sub t-file" data-changed="true">
-              <span class="t-indent"></span><span class="t-name">fuzzy.go</span><span class="t-badge badge-m">M</span>
+            <li class="t-item t-sub t-file">
+              <span class="t-check t-check-empty" title="Click to stage">+</span>
+              <span class="t-name">git_test.go</span>
+              <span class="t-badge badge-m">M</span>
             </li>
-            <li class="t-item t-sub t-file" data-changed="true">
-              <span class="t-indent"></span><span class="t-name">git.go</span><span class="t-badge badge-a">A</span>
+            <li class="t-item t-dir">
+              <span class="t-chev">▸</span><span class="t-name">web</span>
             </li>
-            <li class="t-item t-sub t-file" data-changed="true">
-              <span class="t-indent"></span><span class="t-name">markdown.go</span><span class="t-badge badge-a">A</span>
-            </li>
-            <li class="t-item t-sub t-file" data-changed="false">
-              <span class="t-indent"></span><span class="t-name">search.go</span>
-            </li>
-            <li class="t-item t-dir t-dirty" data-changed="true">
-              <span class="t-chev">▾</span><span class="t-name">web</span><span class="t-dot" title="contains modified files"></span>
-            </li>
-            <li class="t-item t-sub t-file" data-changed="true">
-              <span class="t-indent"></span><span class="t-name">diff.js</span><span class="t-badge badge-a">A</span>
-            </li>
-            <li class="t-item t-sub t-file" data-changed="false">
-              <span class="t-indent"></span><span class="t-name">main.js</span>
-            </li>
-            <li class="t-item t-file" data-changed="false">
+            <li class="t-item t-file">
               <span class="t-name">go.mod</span>
-            </li>
-            <li class="t-item t-file" data-changed="false">
-              <span class="t-name">README.md</span>
             </li>
           </ul>
 
-          <div class="tree-legend">
-            {badges.map((b) => (
-              <span class="leg-badge" title={b.desc}>
-                <b class={`t-badge ${b.cls}`}>{b.k}</b> {b.label}
-              </span>
-            ))}
+          <!-- Sidebar Git Panel -->
+          <div class="sidebar-git-panel">
+            <div class="sgp-head">
+              <span class="sgp-branch">⎇ feat/fast-path</span>
+              <span class="sgp-staged-count">2 staged · 1 changed</span>
+            </div>
+            <div class="sgp-commit-box">
+              <textarea class="sgp-input" rows="2" readonly>feat: add fast-path merge base detection</textarea>
+            </div>
+            <div class="sgp-actions">
+              <button class="sgp-btn sgp-commit" type="button">Commit</button>
+              <button class="sgp-btn sgp-ai" type="button" title="Generate commit message with agent">
+                <span>Commit with AI</span>
+              </button>
+            </div>
+            <div class="sgp-remote-row">
+              <button class="sgp-btn-remote" type="button">&uarr; Push (origin)</button>
+              <button class="sgp-btn-remote" type="button">&darr; Pull (ff-only)</button>
+            </div>
           </div>
         </div>
 
-        <!-- Right: Diff viewer visualizer -->
+        <!-- Right: Standard Diff Viewer -->
         <div class="diff-col">
           <div class="col-head">
             <div class="diff-meta">
-              <span class="diff-filename">fuzzy.go</span>
-              <span class="diff-stat"><span class="s-add">+1</span> <span class="s-del">−1</span></span>
+              <span class="diff-filename">internal/engine/merge_base.go</span>
+              <span class="diff-stat"><span class="s-add">+22</span> <span class="s-del">−4</span></span>
             </div>
             <div class="diff-controls">
               <div class="view-toggles" role="tablist">
                 <button class="toggle-btn on" id="btn-diff-split" type="button">split</button>
                 <button class="toggle-btn" id="btn-diff-unified" type="button">unified</button>
               </div>
-              <span class="diff-chord"><span class="kbd mod-key">Ctrl</span><span class="kbd">D</span></span>
+              <span class="diff-chord"><kbd class="mod-key">Ctrl</kbd><kbd>D</kbd></span>
             </div>
           </div>
 
@@ -139,23 +271,24 @@ const pillars = [
               <div class="diff-pane diff-pane-old">
                 <div class="pane-hdr"><span>HEAD (committed)</span><span>r.64</span></div>
                 <div class="diff-lines">
-                  <div class="dline"><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">if</span> dist &gt; 1 {'{'}</span></div>
-                  <div class="dline"><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// penalize distance</span></span></div>
-                  <div class="dline dline-del"><span class="dln">63</span><span class="dmark">−</span><span class="dtx">  score -= len(p) / 4</span></div>
+                  <div class="dline"><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">func</span> findBase(head, target string) string {'{'}</span></div>
+                  <div class="dline"><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// standard linear revwalk</span></span></div>
+                  <div class="dline dline-del"><span class="dln">63</span><span class="dmark">−</span><span class="dtx">  <span class="k">return</span> execGitMergeBase(head, target)</span></div>
                   <div class="dline"><span class="dln">64</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
-                  <div class="dline"><span class="dln">65</span><span class="dmark"> </span><span class="dtx"><span class="k">return</span> score</span></div>
                 </div>
               </div>
 
               <!-- Right pane: Working Tree -->
               <div class="diff-pane diff-pane-new">
-                <div class="pane-hdr"><span>Working Tree (modified)</span><span class="s-mod">M</span></div>
+                <div class="pane-hdr"><span>Staged Changes (index)</span><span class="s-mod">M</span></div>
                 <div class="diff-lines">
-                  <div class="dline"><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">if</span> dist &gt; 1 {'{'}</span></div>
-                  <div class="dline"><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// penalize distance</span></span></div>
-                  <div class="dline dline-add"><span class="dln">63</span><span class="dmark">+</span><span class="dtx">  score -= len(p) / 8</span></div>
-                  <div class="dline"><span class="dln">64</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
-                  <div class="dline"><span class="dln">65</span><span class="dmark"> </span><span class="dtx"><span class="k">return</span> score</span></div>
+                  <div class="dline"><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">func</span> findBase(head, target string) string {'{'}</span></div>
+                  <div class="dline"><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// fast path: check commit graph cache</span></span></div>
+                  <div class="dline dline-add"><span class="dln">63</span><span class="dmark">+</span><span class="dtx">  <span class="k">if</span> base, ok := fastBaseCache(head); ok {'{'}</span></div>
+                  <div class="dline dline-add"><span class="dln">64</span><span class="dmark">+</span><span class="dtx">      <span class="k">return</span> base</span></div>
+                  <div class="dline dline-add"><span class="dln">65</span><span class="dmark">+</span><span class="dtx">  {'}'}</span></div>
+                  <div class="dline"><span class="dln">66</span><span class="dmark"> </span><span class="dtx">  <span class="k">return</span> execGitMergeBase(head, target)</span></div>
+                  <div class="dline"><span class="dln">67</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
                 </div>
               </div>
             </div>
@@ -164,21 +297,22 @@ const pillars = [
           <!-- Unified view container (hidden by default) -->
           <div class="diff-viewport is-hidden" id="diff-unified-view">
             <div class="diff-pane diff-unified">
-              <div class="pane-hdr"><span>unified diff · @@ -61,5 +61,5 @@</span><span>Myers</span></div>
+              <div class="pane-hdr"><span>unified diff · @@ -61,4 +61,7 @@</span><span>staged</span></div>
               <div class="diff-lines">
-                <div class="dline"><span class="dln">61</span><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">if</span> dist &gt; 1 {'{'}</span></div>
-                <div class="dline"><span class="dln">62</span><span class="dln">62</span><span class="dmark"> </span><span class="dtx">  <span class="c">// penalize distance</span></span></div>
-                <div class="dline dline-del"><span class="dln">63</span><span class="dln"> </span><span class="dmark">−</span><span class="dtx">  score -= len(p) / 4</span></div>
-                <div class="dline dline-add"><span class="dln"> </span><span class="dln">63</span><span class="dmark">+</span><span class="dtx">  score -= len(p) / 8</span></div>
-                <div class="dline"><span class="dln">64</span><span class="dln">64</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
-                <div class="dline"><span class="dln">65</span><span class="dln">65</span><span class="dmark"> </span><span class="dtx"><span class="k">return</span> score</span></div>
+                <div class="dline"><span class="dln">61</span><span class="dln">61</span><span class="dmark"> </span><span class="dtx"><span class="k">func</span> findBase(head, target string) string {'{'}</span></div>
+                <div class="dline dline-del"><span class="dln">63</span><span class="dln"> </span><span class="dmark">−</span><span class="dtx">  <span class="k">return</span> execGitMergeBase(head, target)</span></div>
+                <div class="dline dline-add"><span class="dln"> </span><span class="dln">63</span><span class="dmark">+</span><span class="dtx">  <span class="k">if</span> base, ok := fastBaseCache(head); ok {'{'}</span></div>
+                <div class="dline dline-add"><span class="dln"> </span><span class="dln">64</span><span class="dmark">+</span><span class="dtx">      <span class="k">return</span> base</span></div>
+                <div class="dline dline-add"><span class="dln"> </span><span class="dln">65</span><span class="dmark">+</span><span class="dtx">  {'}'}</span></div>
+                <div class="dline"><span class="dln">64</span><span class="dln">66</span><span class="dmark"> </span><span class="dtx">  <span class="k">return</span> execGitMergeBase(head, target)</span></div>
+                <div class="dline"><span class="dln">65</span><span class="dln">67</span><span class="dmark"> </span><span class="dtx">{'}'}</span></div>
               </div>
             </div>
           </div>
 
           <div class="diff-foot">
-            <span class="df-note">Press <kbd class="alt-key">Alt</kbd><kbd>M</kbd> inside a Markdown file to switch between preview and source</span>
-            <span class="df-tag">zero git subprocesses</span>
+            <span class="df-note">Per-file stage ticks in tree · Fast-forward only pulls prevent detached conflicts</span>
+            <span class="df-tag">pure shell-out git</span>
           </div>
         </div>
       </div>
@@ -202,9 +336,37 @@ const pillars = [
 </section>
 
 <script>
-  // Interactive tab switching for Git showcase
+  // Interactive mode switching and tab controls for Git showcase
   const initGitShowcase = () => {
-    // Tree filter toggle
+    // Mode switcher: PR review vs Working Tree / Git Panel
+    const tabModePr = document.getElementById('tab-mode-pr');
+    const tabModeGit = document.getElementById('tab-mode-git');
+    const viewModePr = document.getElementById('view-mode-pr');
+    const viewModeGit = document.getElementById('view-mode-git');
+    const summaryPr = document.getElementById('showcase-summary-pr');
+    const summaryGit = document.getElementById('showcase-summary-git');
+
+    if (tabModePr && tabModeGit && viewModePr && viewModeGit && summaryPr && summaryGit) {
+      tabModePr.addEventListener('click', () => {
+        tabModePr.classList.add('on');
+        tabModeGit.classList.remove('on');
+        viewModePr.classList.remove('is-hidden');
+        viewModeGit.classList.add('is-hidden');
+        summaryPr.classList.remove('is-hidden');
+        summaryGit.classList.add('is-hidden');
+      });
+
+      tabModeGit.addEventListener('click', () => {
+        tabModeGit.classList.add('on');
+        tabModePr.classList.remove('on');
+        viewModeGit.classList.remove('is-hidden');
+        viewModePr.classList.add('is-hidden');
+        summaryGit.classList.remove('is-hidden');
+        summaryPr.classList.add('is-hidden');
+      });
+    }
+
+    // Tree filter toggle in Git panel view
     const btnTreeAll = document.getElementById('btn-tree-all');
     const btnTreeChanged = document.getElementById('btn-tree-changed');
     const tree = document.getElementById('git-mock-tree');
@@ -260,10 +422,60 @@ const pillars = [
     margin-bottom: 24px;
   }
 
+  .mode-selectors {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .mode-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--bdr);
+    background: var(--bg);
+    color: var(--txt-3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .mode-tab:hover {
+    color: var(--txt);
+    border-color: var(--bdr-hi);
+  }
+
+  .mode-tab.on {
+    background: var(--surface-2);
+    border-color: var(--amber);
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .tab-ico {
+    font-size: 10px;
+  }
+
+  .mode-pill {
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    background: var(--surface);
+    color: var(--txt-4);
+  }
+
+  .pill-pr {
+    background: rgba(187, 154, 247, 0.18);
+    color: var(--violet);
+    font-weight: 700;
+  }
+
   .git-status-summary {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     font-size: 11px;
     color: var(--txt-3);
   }
@@ -271,6 +483,29 @@ const pillars = [
   .git-status-summary b {
     color: var(--amber);
     font-weight: 500;
+  }
+
+  .gstat-pill {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .badge-open {
+    color: var(--green);
+    background: rgba(158, 206, 106, 0.15);
+  }
+
+  .gstat-repo {
+    font-weight: 600;
+    color: var(--txt);
+  }
+
+  .gstat-branch {
+    color: var(--txt-4);
+    font-family: var(--font-mono);
   }
 
   .gstat-dot {
@@ -283,9 +518,13 @@ const pillars = [
 
   .showcase-grid {
     display: grid;
-    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-columns: 290px minmax(0, 1fr);
     background: var(--bdr);
     gap: 1px;
+  }
+
+  .showcase-grid.is-hidden {
+    display: none;
   }
 
   .tree-col,
@@ -305,6 +544,11 @@ const pillars = [
     background: var(--bg-elev);
     font-size: 11px;
     color: var(--txt-3);
+  }
+
+  .col-title-pr {
+    font-weight: 600;
+    color: var(--txt);
   }
 
   .view-toggles {
@@ -342,7 +586,7 @@ const pillars = [
     padding: 8px 0;
     margin: 0;
     flex: 1;
-    min-height: 280px;
+    min-height: 200px;
     font-family: var(--font-mono);
     font-size: 11.5px;
   }
@@ -353,10 +597,16 @@ const pillars = [
     padding: 3px 12px;
     color: var(--txt-2);
     transition: background-color 0.12s;
+    cursor: default;
   }
 
   .t-item:hover {
     background: var(--surface);
+  }
+
+  .t-item.t-active {
+    background: var(--surface-2);
+    color: var(--txt);
   }
 
   .t-dir {
@@ -405,26 +655,193 @@ const pillars = [
   .badge-u { color: var(--cyan); background: rgba(125, 207, 255, 0.15); }
   .badge-r { color: var(--violet); background: rgba(187, 154, 247, 0.15); }
 
-  /* filter state */
-  .mock-tree.filter-changed .t-item[data-changed="false"] {
-    display: none;
+  .t-comment-badge {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    margin-right: 6px;
+    border-radius: 2px;
+    background: rgba(187, 154, 247, 0.15);
+    color: var(--violet);
+    font-weight: 600;
   }
 
-  .tree-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px 12px;
+  .t-check {
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    margin-right: 6px;
+    border-radius: 2px;
+    background: var(--green);
+    color: #0d1117;
+  }
+
+  .t-check-empty {
+    background: transparent;
+    border: 1px solid var(--bdr);
+    color: var(--txt-4);
+  }
+
+  /* PR Action Card in Left Tree */
+  .pr-action-card {
     border-top: 1px solid var(--bdr);
     background: var(--bg-elev);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pr-action-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pr-h-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber);
+  }
+
+  .pr-h-agent {
+    font-size: 9.5px;
+    color: var(--txt-4);
+    font-family: var(--font-mono);
+  }
+
+  .pr-action-desc {
     font-size: 10.5px;
+    color: var(--txt-3);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .pr-action-btns {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .pr-btn-apply {
+    flex: 1;
+    background: var(--amber);
+    color: #0b0d13;
+    border: 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .pr-btn-apply:hover {
+    opacity: 0.9;
+  }
+
+  .pr-btn-review {
+    background: var(--surface);
+    color: var(--txt-2);
+    border: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 5px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  /* Sidebar Git Panel (Local mode) */
+  .sidebar-git-panel {
+    border-top: 1px solid var(--bdr);
+    background: var(--bg-elev);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sgp-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    font-family: var(--font-mono);
+  }
+
+  .sgp-branch {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .sgp-staged-count {
     color: var(--txt-3);
   }
 
-  .leg-badge {
+  .sgp-commit-box {
     display: flex;
-    align-items: center;
-    gap: 4px;
+  }
+
+  .sgp-input {
+    width: 100%;
+    background: var(--code-bg);
+    border: 1px solid var(--bdr);
+    color: var(--txt);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 5px 8px;
+    resize: none;
+    border-radius: 2px;
+  }
+
+  .sgp-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .sgp-btn {
+    flex: 1;
+    padding: 4px 6px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--bdr);
+    background: var(--surface);
+    color: var(--txt-2);
+  }
+
+  .sgp-commit {
+    background: var(--surface-2);
+    color: var(--txt);
+    border-color: var(--bdr-hi);
+  }
+
+  .sgp-ai {
+    background: rgba(224, 175, 104, 0.12);
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .sgp-remote-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .sgp-btn-remote {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--bdr);
+    color: var(--txt-3);
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    padding: 3px 0;
+    border-radius: 2px;
+    cursor: pointer;
   }
 
   /* diff column */
@@ -432,6 +849,16 @@ const pillars = [
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  .diff-tag-pr {
+    font-size: 9px;
+    background: rgba(187, 154, 247, 0.15);
+    color: var(--violet);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .diff-filename {
@@ -446,11 +873,17 @@ const pillars = [
   .s-add { color: var(--green); }
   .s-del { color: var(--rose); }
   .s-mod { color: var(--amber); font-weight: 700; }
+  .s-author { color: var(--txt-4); font-size: 10px; }
 
   .diff-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .diff-badge-shortcut {
+    font-size: 10px;
+    color: var(--txt-3);
   }
 
   .diff-chord {
@@ -502,6 +935,7 @@ const pillars = [
     font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.6;
+    position: relative;
   }
 
   .dline {
@@ -510,6 +944,98 @@ const pillars = [
     padding: 1px 8px;
     gap: 8px;
     white-space: pre;
+    position: relative;
+  }
+
+  .dline-comment-anchor {
+    background: rgba(187, 154, 247, 0.12);
+  }
+
+  .gutter-pencil {
+    position: absolute;
+    right: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--amber);
+    opacity: 0.9;
+  }
+
+  /* Inline Comment Composer Popover Box */
+  .inline-comment-box {
+    margin: 4px 16px 8px 36px;
+    background: var(--bg-elev);
+    border: 1px solid var(--amber);
+    border-radius: 4px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  .icb-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+  }
+
+  .icb-author {
+    font-weight: 600;
+    color: var(--amber);
+  }
+
+  .icb-tag {
+    font-size: 9.5px;
+    color: var(--txt-4);
+  }
+
+  .icb-body {
+    font-size: 11.5px;
+    color: var(--txt);
+    line-height: 1.5;
+    background: var(--code-bg);
+    padding: 6px 8px;
+    border-radius: 2px;
+    border: 1px solid var(--bdr);
+  }
+
+  .icb-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .icb-hint {
+    font-size: 10px;
+    color: var(--txt-4);
+  }
+
+  .icb-btns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .icb-btn-cancel {
+    background: transparent;
+    border: 1px solid var(--bdr);
+    color: var(--txt-3);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 7px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .icb-btn-save {
+    background: var(--amber);
+    border: 0;
+    color: #0b0d13;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 2px;
+    cursor: pointer;
   }
 
   .dln {

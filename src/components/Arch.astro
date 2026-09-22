@@ -3,7 +3,8 @@ import { repoDoc } from '../data/links';
 
 const engines = [
   { k: 'router', v: 'HTTP · JSON · pooled gzip' },
-  { k: 'index & git', v: 'tree, .gitignore, status & diff' },
+  { k: 'git & github forge', v: 'pr review, merge-base, stage & commit' },
+  { k: 'index & tree', v: 'tree walk, .gitignore, status & diff' },
   { k: 'search', v: 'parallel worker pool' },
   { k: 'highlight & md', v: 'chroma LRU + goldmark GFM' },
   { k: 'lsp manager', v: 'lazy spawn, regex fallback' },
@@ -11,6 +12,15 @@ const engines = [
 ];
 
 const groups = [
+  {
+    t: 'git & github',
+    rows: [
+      ['worktree lifecycle', 'process-scoped os.MkdirTemp'],
+      ['diff calculation', 'merge-base against target branch'],
+      ['pull safety', 'fast-forward only, sentinel 409'],
+      ['review submission', 'fail-closed push access check'],
+    ],
+  },
   {
     t: 'index',
     rows: [

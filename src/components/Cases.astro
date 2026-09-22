@@ -2,36 +2,36 @@
 const cases = [
   {
     num: '01',
-    tag: 'agent workflow',
-    title: 'Verifying AI Agent Output',
-    desc: 'Trace symbol references, inspect live git diffs against HEAD, review generated code, and send follow-up edits directly back to your agent with Alt+E without leaving your review flow.',
+    tag: 'fast pr reviews',
+    title: 'Quick, Fast PR Code Reviews',
+    desc: 'Paste any GitHub PR URL to review scoped merge-base diffs, draft line comments with Alt+R, and submit formal approvals or batch changes without waiting for heavy IDEs.',
     meta: [
-      { label: 'diff vs HEAD', val: 'Ctrl D' },
-      { label: 'edit with agent', val: 'Alt E' },
-      { label: 'context switch', val: '0' },
+      { label: 'launch from url', val: 'px0 <pr-url>' },
+      { label: 'line comments', val: 'Alt R' },
+      { label: 'merge-base diff', val: 'Ctrl D' },
     ],
     snippet: [
-      '<span class="c-dim">$</span> claude code "refactor auth middleware"',
-      '<span class="c-ok">✓</span> 8 files changed · 32 tests passing',
-      '<span class="c-dim">$</span> <span class="c-hi">px0 .</span>',
-      '<span class="c-out">→ browser opens instantly at http://127.0.0.1:7777</span>',
+      '<span class="c-dim">$</span> <span class="c-hi">px0 https://github.com/owner/repo/pull/123</span>',
+      '<span class="c-out">→ opened PR #123 in 12 ms · ephemeral worktree ready</span>',
+      '<span class="c-dim">$</span> <span class="c-dim"># drafted 2 inline comments · Alt+R</span>',
+      '<span class="c-ok">✓</span> submitted review with Approve to GitHub',
     ],
   },
   {
     num: '02',
-    tag: 'zero-ssh remote',
-    title: 'Remote & Cloud Server Inspection',
-    desc: 'Spin up on any remote server, VM, or CI runner and browse the codebase instantly from your local browser: no SSH keys, no port forwarding hassle, and no heavy remote desktop daemons.',
+    tag: 'agent harnesses',
+    title: 'Connecting to Coding Harnesses',
+    desc: 'Select code in px0 or review comments and dispatch directly to Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, or Goose with live reloading.',
     meta: [
-      { label: 'setup required', val: 'zero' },
-      { label: 'port forward', val: 'none' },
-      { label: 'transport', val: 'HTTP / TLS' },
+      { label: 'batch apply', val: '1-click' },
+      { label: 'inline edit', val: 'Alt E' },
+      { label: 'harness reload', val: 'instant' },
     ],
     snippet: [
-      '<span class="c-dim">runner@ci-box:~/repo$</span> <span class="c-hi">px0 -host 0.0.0.0 -no-open</span>',
-      '<span class="c-out">listening on http://10.0.4.12:7777</span>',
-      '<span class="c-dim">local-laptop:~$</span> <span class="c-hi">open http://dev-runner:7777</span>',
-      '<span class="c-ok">✓</span> connected directly from local browser',
+      '<span class="c-dim">px0:</span> Batch Apply (2 review comments)',
+      '<span class="c-out">→ dispatched to claude-haiku runner</span>',
+      '<span class="c-ok">✓</span> 3 files refactored · tabs reloaded in place',
+      '<span class="c-dim">git panel:</span> Commit with AI & push to PR branch',
     ],
   },
   {
@@ -53,19 +53,19 @@ const cases = [
   },
   {
     num: '04',
-    tag: 'companion setup',
-    title: 'Sidecar to Terminal Editors',
-    desc: 'Keep lightweight editors (like Vim, Neovim, or Helix) in the terminal for typing, while using px0 as a high-density, rich graphical inspection and diff console.',
+    tag: 'zero-ssh remote',
+    title: 'Remote & Cloud Server Inspection',
+    desc: 'Spin up on any remote server, VM, or CI runner and browse the codebase instantly from your local browser: no SSH keys, no port forwarding hassle, and no heavy remote desktop daemons.',
     meta: [
-      { label: 'typing speed', val: 'terminal' },
-      { label: 'inspection', val: 'graphical' },
-      { label: 'footprint', val: '~20 MB' },
+      { label: 'setup required', val: 'zero' },
+      { label: 'port forward', val: 'none' },
+      { label: 'transport', val: 'HTTP / TLS' },
     ],
     snippet: [
-      '<span class="c-dim">tmux pane 1:</span> <span class="c-hi">nvim main.go</span> <span class="c-dim">(fast keyboard editing)</span>',
-      '<span class="c-dim">tmux pane 2:</span> <span class="c-hi">px0 .</span> <span class="c-dim">(starts in &lt;1 ms)</span>',
-      '<span class="c-dim">browser:</span> side-by-side git diffs, Markdown & symbols',
-      '<span class="c-ok">✓</span> best of both worlds: modal editing + GUI clarity',
+      '<span class="c-dim">runner@ci-box:~/repo$</span> <span class="c-hi">px0 -host 0.0.0.0 -no-open</span>',
+      '<span class="c-out">listening on http://10.0.4.12:7777</span>',
+      '<span class="c-dim">local-laptop:~$</span> <span class="c-hi">open http://dev-runner:7777</span>',
+      '<span class="c-ok">✓</span> connected directly from local browser',
     ],
   },
 ];
@@ -76,10 +76,9 @@ const cases = [
     <header class="sec-head">
       <div class="sec-id"><span class="sec-n">01</span><span>/cases</span></div>
       <div>
-        <h2 class="sec-title">Where px0 <em>fits in best.</em></h2>
+        <h2 class="sec-title">Fast code reviews. <em>Connected to harnesses.</em></h2>
         <p class="sec-sub">
-          When you just need to inspect, navigate, and audit code without booting an editor,
-          waiting on heavy background indexers, or burning gigabytes of RAM.
+          Built from the ground up for speed: instant PR checkouts, native Git operations, and seamless handoff to your AI coding harnesses.
         </p>
       </div>
     </header>

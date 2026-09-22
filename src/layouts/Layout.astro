@@ -14,9 +14,9 @@ interface Props {
 }
 
 const {
-  title = "px0: a fast, ultra-light, remote-first IDE.",
-  description = "px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, inspector workspace search, git awareness, and agent edit dispatch.",
-  keywords = "px0, read code fast, remote IDE, remote code inspection, code viewer, code navigator, lightweight IDE, AI code verification, agent code review, cloud VM code viewer, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, workspace search, single binary, Go, open source, VS Code alternative",
+  title = "px0: the IDE for humans and AI",
+  description = "px0 is the IDE for humans and AI, optimized for quick, fast code reviews. Featuring native Git and GitHub integrations with merge-base diffs, inline comments, and seamless connections to AI coding harnesses.",
+  keywords = "px0, the IDE for humans and AI, fast code review, PR review, GitHub integration, Git diff, harness integration, Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, remote IDE, lightweight IDE, AI code verification, single binary, Go, open source",
   ogType = 'website',
   publishedTime,
   author = 'Arpit Bhayani',
@@ -81,10 +81,7 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
     <!-- SEO -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta
-      name="keywords"
-      content="px0, read code fast, remote IDE, remote code inspection, code viewer, code navigator, lightweight IDE, AI code verification, agent code review, cloud VM code viewer, fuzzy file finder, go to definition, find references, LSP, gopls, rust-analyzer, clangd, syntax highlighting, Chroma, workspace search, single binary, Go, open source, VS Code alternative"
-    />
+    <meta name="keywords" content={keywords} />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Arpit Bhayani" />
 
@@ -96,7 +93,7 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="628" />
-    <meta property="og:image:alt" content="px0: fast, ultra-light, remote-first IDE" />
+    <meta property="og:image:alt" content="px0: the IDE for humans and AI" />
     <meta property="og:site_name" content="px0" />
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {author && <meta property="article:author" content={author} />}
@@ -107,7 +104,7 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content="px0: fast, ultra-light, remote-first IDE" />
+    <meta name="twitter:image:alt" content="px0: the IDE for humans and AI" />
 
     <!-- Structured data -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
@@ -116,7 +113,7 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
       name: 'px0',
       softwareVersion: VERSION,
       description:
-        'px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. Booting in under 1 ms and using ~20 MB of RAM, it turns your browser into a zero-latency inspection console with symbol-level navigation, deep search, and agent edit dispatch.',
+        'px0 is the IDE for humans and AI, optimized for quick, fast code reviews. Featuring native Git and GitHub integrations with merge-base diffs, inline comments, and seamless connections to AI coding harnesses.',
       applicationCategory: 'DeveloperApplication',
       applicationSubCategory: 'Code Viewer, Code Navigation, IDE',
       operatingSystem: 'macOS, Linux, FreeBSD, OpenBSD, NetBSD, Windows',
@@ -141,7 +138,7 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
           name: 'What is px0?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'px0 is a fast, ultra-light, remote-first IDE designed for instant code navigation and review in your browser. It boots in under 1 millisecond and uses approximately 20 MB of RAM, turning your browser into a zero-latency code inspection console.',
+            text: 'px0 is the IDE for humans and AI, optimized for quick, fast code reviews. It boots in under 1 millisecond and uses approximately 20 MB of RAM, turning your browser into a zero-latency code review and inspection console with native Git/GitHub integration and AI harness connectivity.',
           },
         },
         {
