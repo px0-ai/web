@@ -1,0 +1,55 @@
+{
+  "version": "0.1.8",
+  "tag": "v0.1.8",
+  "date": "2026-09-22",
+  "title": "GitHub PR Review Mode, Sidebar Git Operations, AI Commit Messages & Unified SSE Streaming",
+  "summary": "Introduces full GitHub Pull Request review mode with threaded inline comments and agent batch execution, a dedicated sidebar Git panel with staging, sync tracking, and AI-powered commit message generation, unified Server-Sent Events streaming for metrics and Git status, and jump-to-source diff navigation.",
+  "commitCount": 20,
+  "commitRange": "v0.1.7..v0.1.8",
+  "categories": [
+    {
+      "name": "GitHub Pull Request Review Mode",
+      "items": [
+        "Instant PR checkout and inspection in isolated temporary worktrees using px0 <pr-url> or palette commands",
+        "Zero-dependency GitHub client and extensible GitProvider forge abstraction with token configuration",
+        "Merge-base diff calculation against target base branches with automated fallback handling",
+        "Interactive PR review bar supporting approval, request changes, and general review comments",
+        "Inline line comments and threaded replies with diff line anchoring and collapsible comments panel",
+        "Batch apply action to dispatch all drafted review comments to the AI coding agent in one click",
+        "Real-time file watching and automatic reloading of PR worktrees during active agent modifications",
+        "Resolved symlink mismatches on temporary PR checkout paths across macOS and Linux environments"
+      ]
+    },
+    {
+      "name": "Sidebar Git Operations & AI Commit Generation",
+      "items": [
+        "Dedicated collapsible sidebar Git panel displaying active branch status, ahead/behind sync counts, and recent commit history",
+        "Integrated Git staging workflows with stage/unstage toggle buttons in file tree rows",
+        "Direct commit, push, and pull actions with automated upstream branch resolution and fast-forward pulls",
+        "AI-powered commit message generation via configured harnesses with custom prompt rules via git.commitMessageInstruction",
+        "Auto-commit pipeline and automatic staging of unstaged changes when requesting an AI commit message on an empty stage",
+        "Enlarged, resizable Git sidebar panel with flexible height capping and clear visual hierarchy"
+      ]
+    },
+    {
+      "name": "Diff Navigation & UI Polish",
+      "items": [
+        "Direct jump-to-source navigation when clicking diff line numbers or switching from diff to editor tabs",
+        "Streamlined line gutter actions opening inline AI edit directly on click",
+        "Standardized border radii, elevation shadows, and flat square toggle switches across all themes",
+        "Explicit save button, status indicators, and Ctrl+S shortcut for settings modal with multiline textarea support",
+        "Semantic color styling and loading feedback across review and sync buttons"
+      ]
+    },
+    {
+      "name": "Unified Streaming, Developer Ergonomics & Tooling",
+      "items": [
+        "Unified /api/stream endpoint multiplexing real-time Git status and runtime metrics over Server-Sent Events",
+        "Eliminated periodic metrics polling, reducing background network requests while preserving memory scavenger idle timeouts",
+        "Verbose request logging under --verbose tracking HTTP response codes, transferred bytes, and handler latency",
+        "Modal Vim improvement delegating Escape keypress to exit Visual and Insert modes before global modal dismissals",
+        "Resolved bundling namespace collisions and automated web bundle CI testing pipeline"
+      ]
+    }
+  ]
+}
