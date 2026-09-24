@@ -1,0 +1,68 @@
+{
+  "version": "0.1.9",
+  "tag": "v0.1.9",
+  "date": "2026-09-24",
+  "title": "Base Path Hosting, Server-Side Session Persistence, PR Reviewer Diff Isolation & Performance Hardening",
+  "summary": "Adds configurable subpath hosting via -base-path and settings, server-side session persistence for tabs and review drafts via /api/session, isolated PR reviewer edits with distinct badges and diff folding, expand/collapse all tree controls, event-driven tab lifecycle messaging, and extensive backend concurrency, memory, and bounds safety fixes.",
+  "commitCount": 17,
+  "commitRange": "v0.1.8..v0.1.9",
+  "categories": [
+    {
+      "name": "Base Path Hosting & Subpath Reverse Proxying",
+      "items": [
+        "Configurable server.basePath in settings and -base-path CLI flag with automatic fallback",
+        "Dynamic base href tag injection into HTML for hosting px0 behind subpath reverse proxies",
+        "Route-level prefixing and normalization for all HTTP server handlers, static files, and SSE streams",
+        "Frontend API client and asset link resolution updated to resolve reliably against baseURI",
+        "Scoped metrics and event stream telemetry honoring configured base path prefixes"
+      ]
+    },
+    {
+      "name": "Server-Side Session Persistence & PR Review Mode",
+      "items": [
+        "Server-backed workspace session persistence via /api/session for tabs, tree expansion state, and draft reviews",
+        "Isolated PR reviewer edits in diff views with collapsible sections separate from frozen PR changes",
+        "Visual YOU badges on reviewer-modified files with dirty ancestor markers across the file explorer",
+        "Preserved PR comment composer and reply threads with automated token connection nudges in read-only mode",
+        "Unconditional opening of merged PRs without confirmation prompts and preserved diff access when reverting changes",
+        "Hidden staging checkboxes in PR tree unless explicitly modified by reviewer"
+      ]
+    },
+    {
+      "name": "Explorer Ergonomics, Animations & Git Panel Polish",
+      "items": [
+        "Batch Expand All and Collapse All controls in the file explorer with bounded batching and cancellation",
+        "Skip expanding ignored directories during batch tree expansion to avoid unnecessary traversal overhead",
+        "Collapsible commit message textarea saving sidebar vertical space with on-demand AI message generation",
+        "Two-column Git panel action grid layout with refined 24px button sizing",
+        "Visual action feedback including flash success states on buttons and animated workspace reindexing",
+        "Input shake and highlight validation when attempting to commit with an empty message",
+        "Inline checkmark confirmation feedback on markdown code block copy buttons"
+      ]
+    },
+    {
+      "name": "Event-Driven Frontend & Developer Tooling",
+      "items": [
+        "Lightweight event bus module decoupling frontend subsystems via tab open, switch, and close lifecycle events",
+        "Enabled checkJs TypeScript type checking via tsconfig.json and comprehensive JSDoc annotations across frontend code",
+        "Enhanced AI commit message generation prompt with staged file paths and diffstat capped to 32KB",
+        "Optimized highlight test walking by skipping git, dependency, and build fixture directories",
+        "Refactored Vim help modal into structured HTML concatenation"
+      ]
+    },
+    {
+      "name": "Concurrency, Memory & Backend Safety Fixes",
+      "items": [
+        "Eliminated data races in Index.Children by isolating node slice copies under a read lock",
+        "Fixed HTTP gzip writer pooling resets and handled 204 No Content and 304 Not Modified responses cleanly",
+        "Thread-safe model lookups under mutex lock in agent batch and prompt execution managers",
+        "Defensive boundary clamping for negative columns and character offsets in LSP conversions",
+        "Prevented bounds panics by clamping slice indices in search snippet helper",
+        "Preserved original query casing in fuzzyScore for exact uppercase match bonuses",
+        "Throttled Git status refreshes and change-aware tab reloads to eliminate redundant DOM repainting and tab flickering",
+        "Comprehensive docstrings and field comments across backend Go types, LSP handlers, and GitWatcher",
+        "Documented client-server RAM breakdown across benchmarks clarifying Go daemon and browser tab memory usage"
+      ]
+    }
+  ]
+}
