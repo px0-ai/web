@@ -27,6 +27,7 @@ Now open `http://localhost:7777` in your host browser.
 - `-p 7777:7777`: Maps container port 7777 to your local machine.
 - `-v "$(pwd):/workspace"`: Mounts your project directory into the container workspace (or append `:ro` for isolated audit-only containers).
 - `-host 0.0.0.0`: Ensures px0 listens on all container network interfaces so requests from the host are accepted.
+- `-base-path /rev-123/`: Optional subpath prefix for multi-container ingress routing or reverse proxies.
 - `-no-open`: Prevents trying to open a desktop browser inside the headless container.
 
 ## Minimal Dockerfile Recipe
@@ -48,7 +49,7 @@ ENTRYPOINT ["/root/.local/bin/px0", "-host", "0.0.0.0", "-port", "7777", "-no-op
 CMD ["/workspace"]
 ```
 
-Because px0 is a statically linked binary with zero CGO or dynamic library requirements, it runs directly on standard Alpine, Debian, Ubuntu, or distroless base images.
+Because px0 is a statically linked binary with zero CGO or dynamic library requirements, it runs directly on standard Alpine, Debian, Ubuntu, or distroless base images, consuming only ~20-30 MB of container memory while browser rendering is offloaded to the client.
 
 ## Inspecting CI/CD Artifacts & Runners
 

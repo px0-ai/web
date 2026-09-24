@@ -97,4 +97,4 @@ When an external terminal agent finishes applying changes to disk:
 - **Zero Watcher Overhead**: Without recursive `inotify` or `fsevents` watching hundreds of thousands of files, your machine stays cool and quiet.
 - **Instant Git Diffs**: Press `Ctrl+D` (or `Cmd+D`) to toggle side-by-side or unified diffs across all modified files in real time.
 - **Diff View Selection**: Select lines directly inside diff view to send targeted refinements back to your agent.
-- **Low CPU & Memory**: px0 uses ~20 MB of resident memory and sub-1% CPU, reserving resources for your agent and compiler.
+- **Low CPU & Memory**: px0 uses strictly ~20-30 MB of host resident memory (~100-180 MB total including the browser tab) and sub-1% CPU, reserving resources for your agent and compiler.

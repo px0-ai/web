@@ -35,22 +35,11 @@ Because fetching metadata and checking out remote references takes a few moments
 ✔ PR #123 checked out (Refactor auth token resolution)
 ```
 
-### Merged PR Handling & Confirmation Prompt
+### Merged PR Handling
 
 If the pull request is already merged:
-- px0 detects its merged status from the API.
-- In interactive terminals, it pauses and prompts for confirmation:
-  ```text
-  ! PR #123 is already merged into main  Refactor auth token resolution
-    ? Open anyway? [y/N]
-  ```
-- Pressing Enter or typing `n` cleanly aborts.
-- Typing `y` continues with the review session.
-- To bypass the prompt in automated environments, pass `-y` or `-yes`:
-  ```bash
-  px0 -y https://github.com/owner/repo/pull/123
-  ```
-- In both the CLI banner and the browser review header bar, a purple **Merged** pill badge is displayed.
+- px0 detects its merged status from the API and opens it immediately without blocking or prompting.
+- Both the CLI checkout summary and the browser review header display a prominent purple **Merged** pill badge.
 
 ### Multi-Session Process Isolation
 
@@ -63,7 +52,7 @@ From inside any running px0 browser session, you can also launch another pull re
 
 ---
 
-## Scoped Merge-Base Diffing
+## Scoped Merge-Base Diffing & Isolated Reviewer Edits
 
 Unlike standard working tree diffs that compare against `HEAD`, PR reviews calculate diffs against the commit where the PR branch diverged from the base branch (the merge-base):
 
@@ -71,6 +60,15 @@ Unlike standard working tree diffs that compare against `HEAD`, PR reviews calcu
 - Press **`Cmd+D`** or **`Ctrl+D`** on any file to open side-by-side or unified diffs.
 - The diff is computed against the merge-base between the PR head and its target branch, exactly mirroring the diff shown on GitHub.
 - Full codebase files remain fully browsable. You can jump to callers, inspect definitions, and search usages across untouched files without having to switch git branches locally.
+
+### Isolated Reviewer Diffs
+
+When reviewing a PR, you may test local changes or delegate fixes to an AI coding harness (`Alt+E`). px0 isolates your working-tree edits from the pull request author's commits:
+
+- **Collapsible Diff Sections**: The diff viewer separates frozen PR changes (`PR Changes (Frozen)`) from your working edits (`Your Changes`), each with its own collapse toggle.
+- **"YOU" Tree Badge**: Files modified locally by the reviewer receive a bright **YOU** badge in the sidebar tree, and directory branches display dirty dots so your changes stand out.
+- **Selective Staging Controls**: Staging checkboxes in the PR tree are hidden by default for original PR files and appear only for files you modify, preventing accidental restaging of original PR code.
+- **Protected Comment Anchoring**: Local reviewer diff sections are marked non-reviewable, ensuring inline comment drafts always anchor cleanly to upstream lines rather than local scratch edits.
 
 ---
 
@@ -170,12 +168,15 @@ px0 discovers forge credentials automatically in the following order:
 3. **`GH_TOKEN`** environment variable.
 4. **`gh auth token`** via the GitHub CLI if installed and authenticated.
 
-### Unauthenticated Read-Only Mode
+### Unauthenticated Read-Only Mode & Token Prompts
 
 If no token is found on your workstation:
 - Public pull requests check out and diff seamlessly.
 - You can navigate the entire repository, draft review comments in memory, and run **Batch Apply** with local AI harnesses.
-- Formal review submission back to GitHub requires authentication. The CLI startup banner displays:
+- Comment composition controls and reply boxes remain enabled: if you click to submit a review without credentials, px0 presents a helpful nudge prompting you to connect a token.
+- The top PR comments panel is collapsed by default with an interactive header toggle, keeping your editor workspace clean until you want to review all comments.
+- The review submission bar is separated cleanly from the general PR conversation composer.
+- The CLI startup banner displays:
   ```text
   access: read-only (no github token: set GITHUB_TOKEN or gh auth login to submit reviews)
   ```

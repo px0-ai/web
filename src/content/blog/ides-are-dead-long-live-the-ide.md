@@ -44,7 +44,8 @@ Opening a heavy IDE like VS Code just to inspect what an agent modified incurs s
 | Metric | Traditional IDE | px0 |
 | :--- | :--- | :--- |
 | **Primary purpose** | Manual character typing & plugin host | Instant code reading, diffing, and navigation |
-| **Base memory (RSS)** | ~1,440 MB | **~20 MB** (70x lighter) |
+| **Host memory (RSS)** | ~500 MB - 1,440 MB | **~20 - 30 MB** (20-50x leaner on host) |
+| **Total system RAM** | ~1,100 - 1,440 MB | **~100 - 180 MB** (~90% total reduction) |
 | **Startup time** | Several seconds | **< 1 ms** |
 | **Process tree** | 15+ Node.js and Electron processes | **1 static Go binary** |
 | **Indexing churn** | Multi-second background thrashing | **370 ms** for the Linux kernel (95k files) |
@@ -65,8 +66,8 @@ px0 eliminates editor clutter and accidental buffer mutations. It does not burde
 
 When editing in px0, it is not manual character-by-character buffer hacking. It is agentic: selecting code, issuing directives and intentions in the UI with `Alt+E`, and letting autonomous agents apply changes in the background while px0 reloads what moved.
 
-### 2. Sub-Millisecond Boot, 20 MB Footprint
-Written as a compiled Go binary with embedded web assets, px0 boots in less than 1 ms and idles at ~20 MB of resident memory. You can spin it up on demand, inspect a workspace, and close it without thought.
+### 2. Sub-Millisecond Boot, Minimal Resource Footprint
+Written as a compiled Go binary with embedded web assets, px0 boots in less than 1 ms and idles at ~20-30 MB of host resident memory (~100-180 MB total including the browser tab). You can spin it up on demand, inspect a workspace, and close it without thought.
 
 ### 3. Windowed Rendering at 60 FPS
 Whether opening a 10-line script or a 400,000-line generated file, px0 renders only visible DOM rows (~60 rows in viewport) with bounded Chroma windowing. Scrolling through massive files never stutters.

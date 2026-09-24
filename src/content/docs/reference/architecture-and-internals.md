@@ -49,35 +49,46 @@ The entire web application (HTML, CSS tokens, JavaScript modules, fonts, icons) 
 - No CGO (100% pure Go)
 - No local database engine
 
-### 3. File Tree Indexing & Ignore Engine
+### 3. File Tree Indexing, Ignore Engine & Batch Expansion
 When px0 boots, it traverses the target directory using bounded goroutines:
 - **Concurrency**: Traversals run with worker pools bounded to `runtime.NumCPU() * 4`.
 - **Ignore Classification**: Rather than spawning recursive git processes, px0 parses `.gitignore` rules in-memory using an optimized classification matcher. Ignored files remain visible in the file tree (dimmed) but are excluded from search and indexing indexes.
 - **Symlink Cycle Immunity**: Traversal tracks inode visit sets to eliminate infinite loops from cyclic symbolic links.
+- **Bounded Batch Expansion**: The explorer sidebar header features Expand All and Collapse All controls. Expand All traverses directories in bounded batches (requesting at most four directories concurrently) and skips ignored folders (like `node_modules` or `target`) to avoid bulk-loading massive generated trees. Any user click, file reveal, or tree switch cleanly cancels pending batch expansions, and expanded paths are saved to the server session.
 
-### 4. Bounded Two-Pass Fuzzy Search
+### 4. Reverse Proxy & Subpath Hosting (`-base-path`)
+When hosted behind reverse proxies (Nginx, Traefik, Caddy) or multi-tenant review platforms, px0 supports custom URL prefixes via the `-base-path` CLI flag or `server.basePath` in settings (e.g. `/rev-123/`):
+- All HTTP endpoints and static routes are prefixed (`/<base-path>/api/...`, `/<base-path>/static/...`).
+- `handleIndex` dynamically injects `<base href="/<base-path>/">` into `web/index.html`, allowing the frontend to resolve relative assets and API endpoints without domain-level assumptions.
+- Requests to `/<base-path>` without a trailing slash redirect to `/<base-path>/`, and root `/` redirects to the configured base path.
+
+### 5. Bounded Two-Pass Fuzzy Search
 Finding files across 100,000+ paths occurs in milliseconds through a two-pass algorithm:
 1. **Fast Bitmask Pass**: Quickly filters out candidate paths that do not contain the target characters in sequence ($O(N)$ linear byte scan).
-2. **Scoring Pass**: Ranks remaining candidates using an exact dynamic programming matrix rewarding boundary matches (such as path separators and camelCase boundaries).
+2. **Scoring Pass**: Ranks remaining candidates using an exact dynamic programming matrix rewarding boundary matches (such as path separators and camelCase boundaries). Original query casing is preserved to award exact uppercase match bonuses.
 
-### 5. Windowed Syntax Highlighting
+### 6. Windowed Syntax Highlighting
 Traditional web editors tokenize entire 50,000-line files on load, freezing the UI. px0 solves this via windowed lexical chunking:
 - Files are parsed and highlighted in **1,000-line chunks** on demand.
 - Opening a 400,000-line file requires highlighting only the first viewport chunk.
 - Chunks are cached in a byte-budgeted Least Recently Used (LRU) cache.
 
-### 6. DOM Virtualization & Selection Engine
+### 7. DOM Virtualization & Selection Engine
 The client mounts only the rows currently visible inside the scroll viewport (approximately 60 DOM elements). As you scroll:
 - Top and bottom spacers (`#sizer`) expand to give the scrollbar accurate document height.
 - DOM nodes are recycled continuously, maintaining a steady 60 frames per second on any device.
 - Classic text selections (mouse and Shift/Ctrl keyboard navigation) synchronize with the virtualized viewport and caret layer.
+- Because only ~60 rows are active at any time, the browser tab's RAM stays bounded at ~80-150 MB, preventing memory creep on 500,000-line files.
 
-### 7. Active Memory Scavenging
-Many CLI tools retain memory allocations indefinitely after an initial large operation. px0 registers an idle timer:
-- After **15 seconds** of inactivity following an index or search pass, px0 triggers `debug.FreeOSMemory()`.
-- Unused heap pages are returned directly to the host operating system kernel, dropping resident RSS back to ~20 MB.
+### 8. Active Memory Scavenging & Client-Server Memory Split
+Many CLI tools retain memory allocations indefinitely after an initial large operation. px0 pairs a low-footprint Go backend with an active idle scavenger:
+- **Automatic Scavenger**: After **15 seconds** of inactivity following an index or search pass, px0 triggers `debug.FreeOSMemory()`. Unused heap pages are returned directly to the host operating system kernel, dropping resident RSS back to ~20-30 MB.
+- **Host Server Footprint**: The Go backend daemon occupies strictly ~20-30 MB RSS, handling indexing, symbol discovery, regex search, and git operations.
+- **Client Browser Tab**: The frontend web client runs in the user's existing browser, allocating ~80-150 MB for the DOM, V8 runtime, and GPU compositing.
+- **Combined Impact**: Total local system footprint is ~100-180 MB (~85-90% lower than the ~1,400 MB footprint of desktop Electron IDEs).
+- **Remote Devbox Benefit**: On remote cloud VMs, Kubernetes pods, and containers (`px0 -host 0.0.0.0`), the remote host pays strictly the ~20-30 MB server cost while UI rendering runs on the client machine.
 
-### 8. Coding Harness Dispatch & Worktree Snapshotting
+### 9. Coding Harness Dispatch & Worktree Snapshotting
 When you trigger an edit with `Alt+E` or right-click:
 - **Prompt Synthesis**: The server synthesizes a prompt including the workspace root, relative file path, line range `@path:l1-l2`, selected snippet, and user prompt.
 - **Overlap Lock**: Disjoint files and non-overlapping line ranges can run concurrently. Conflicting ranges that overlap with an in-flight job are rejected with an HTTP 409 status code.
@@ -110,22 +121,24 @@ When the browser tab is hidden (`document.visibilityState === 'hidden'`), the cl
 #### In-Place DOM Tree Patching & Tab Reconciliation
 When `UpdateGitStatus` runs:
 1. It executes `git status` concurrently without re-walking directories on disk.
-2. If the resulting status map is identical to `ix.gitStatusMap`, it exits with zero memory allocations or broadcasts.
+2. If the resulting status map is identical to `ix.gitStatusMap`, it exits with zero memory allocations or broadcasts. Status refreshes are throttled with a cooldown window and deduplication to prevent CPU waste during burst filesystem writes.
 3. When changes occur, it updates `Node.Status` and `Node.Dirty` in place on the in-memory tree nodes and streams an SSE event payload (`event: git-status`) to connected clients.
 4. The frontend (`gitstream.js`) invokes `patchTreeGitStatus(statuses, dirtyDirs)` to toggle CSS classes and badge nodes directly in the DOM without collapsing expanded tree branches or resetting scroll position.
-5. Diff tabs for files whose changes were checked out or reset in the CLI are closed automatically in reverse index order, keeping the active tab index stable.
+5. Tab reloads apply an `onlyIfChanged` check, preventing background git status syncs from repainting untouched open tabs or causing editor flicker.
+6. Diff tabs for files whose changes were checked out or reset in the CLI are closed automatically in reverse index order, keeping the active tab index stable.
 
-### 10. Git Panel & Pure Shell-Out Write Engine
+### 11. Git Panel, AI Commit Generation & Pure Shell-Out Write Engine
 While the status and diffing engine is purely read-only, the sidebar Git panel introduces explicit repository write actions. Adhering to px0's zero-dependency philosophy, every write operation shells out directly to the host `git` executable:
 
 - **Explicit Invocations Only**: Staging, committing, pushing, and pulling never trigger on background timers or file events. Each executes exactly once in response to an explicit user interaction.
+- **Collapsible Monospace Input & Standalone AI Generation**: The commit message textarea is hidden by default to keep the panel compact, expanding on toggle or when generating a message. Clicking **Generate** runs standalone AI generation so reviewers can inspect, edit, and verify the message before committing. If a commit fails, the generated message stays visible in the textarea to prevent data loss.
+- **Refined AI Commit Prompt**: When generating commit messages via `agentManager.StartPrompt`, px0 passes the list of staged file paths (`gitStagedFiles`), diffstat summary (`gitStagedStat`), and the staged diff (`gitStagedDiff`). Staged diffs are capped at 32 KB and exclude lockfiles and generated assets to ensure quick and focused commit synthesis.
 - **Staged-Path Tracking**: The server tracks staged status alongside working-tree status by executing `git diff --name-only --cached -z`. This state is mapped into `Index.gitStagedMap` and `Node.Staged`. When staging state changes, `UpdateGitStatus` detects the delta and broadcasts the updated `Staged` map and `Branch` name across the SSE stream (`/api/stream`).
 - **Fast-Forward-Only Pull Enforcement**: The pull endpoint executes `git merge --ff-only FETCH_HEAD`. If a branch cannot be cleanly fast-forwarded (such as diverged history or uncommitted local changes), px0 returns sentinel `errNotFastForward` (HTTP 409) rather than creating conflict markers on disk.
 - **Targeted Push Routing**: For local workspaces, px0 pushes to the tracked upstream or sets it on initial push. In PR review sessions, it routes pushes directly to the pull request's true head clone URL and branch ref.
-- **AI Commit Message Generation**: Triggered via **Commit with AI**, the Go backend executes `git diff --cached` to extract the exact staged changes, combines them with any user instructions from `git.commitMessageInstruction`, and invokes `agentManager.StartPrompt`. The returned text is placed directly into the commit input and committed in a single step.
 - **Security Isolation**: All Git write endpoints (`/api/git/stage`, `/api/git/unstage`, `/api/git/commit`, `/api/git/push`, `/api/git/pull`, `/api/git/commit-message`) are strictly protected by `localPost` checks, rejecting requests originating from non-local or cross-site contexts.
 
-### 11. Git Forge PR Review & Provider Architecture
+### 12. Git Forge PR Review & Provider Architecture
 px0 provides native pull request review capabilities through a decoupled provider abstraction and process-scoped checkout architecture:
 
 #### The `GitProvider` Abstraction Layer
@@ -144,6 +157,16 @@ type GitProvider interface {
 
 `GitHubProvider` implements this interface using Go standard library `net/http` to communicate with the GitHub REST API, without external vendor SDKs.
 
+#### Unconditional Merged PR Checkout
+When opening an already-merged pull request, px0 does not block behind interactive terminal confirmation prompts. It proceeds immediately to check out the tree and badges the review session with a `[merged]` CLI indicator and a purple `Merged` pill in the browser review header.
+
+#### Isolated Reviewer Diffs
+When reviewers edit files locally or apply AI fixes during a PR review:
+- The diff viewer separates frozen PR changes from local reviewer edits using collapsible sections.
+- Reviewer-modified files receive a prominent **YOU** badge in the sidebar tree, and parent directory dirty dots reflect local reviewer edits.
+- Staging checkboxes are hidden for original PR files and displayed only for files touched by the reviewer.
+- Local reviewer diff sections are marked non-reviewable so inline comment drafts target original pull request commits rather than personal scratch modifications.
+
 #### Process-Scoped Ephemeral Worktrees
 Pull request checkouts are strictly ephemeral:
 1. `checkoutPR` creates a dedicated temporary directory (`os.MkdirTemp("", "px0-pr-*")`).
@@ -158,8 +181,8 @@ diffBase := gitMergeBase(tmp, "HEAD", baseRef)
 ```
 Both editor gutter indicators and the `Cmd/Ctrl+D` diff viewer display only changes introduced by the pull request relative to the target branch.
 
-#### In-Memory Thread-Safe Draft Comments
-Draft review comments are stored in server memory (`prSession.comments`) guarded by a `sync.Mutex`. Reviewers can add, view, and delete comments without disk writes or remote API calls. When ready, comments can be:
+#### In-Memory Thread-Safe Draft Comments & Read-Only Nudges
+Draft review comments are stored in server memory (`prSession.comments`) guarded by a `sync.Mutex`. Reviewers can add, view, and delete comments without disk writes or remote API calls. Comment drafting controls stay enabled in read-only sessions (without a configured token), presenting a helpful prompt to connect credentials only when submitting formal reviews. When ready, comments can be:
 - Batch-applied locally across the worktree by delegating all comments to an AI coding harness (`Batch Apply`).
 - Formally submitted to the GitHub REST API in a single atomic review payload (`provider.SubmitReview`).
 
@@ -167,3 +190,10 @@ Draft review comments are stored in server memory (`prSession.comments`) guarded
 In PR review sessions, the sidebar Git panel allows reviewers to commit and push changes back to the PR's true branch:
 - `prSession.Push` executes `git -C worktree push <meta.HeadRepoCloneURL> HEAD:refs/heads/<meta.HeadRef>`, pushing cleanly to the PR's actual repository (including user forks).
 - `prSession.Pull` re-fetches the remote PR head, safely fast-forwards the worktree, re-calculates `diffBase`, re-indexes the workspace, and updates the PR review header bar and comments panel in place.
+
+### 13. Server-Side Session Persistence & Frontend Event Bus
+px0 coordinates frontend subsystems and persistent workspace state through dedicated modules:
+
+- **Server-Side Session API (`/api/session`)**: Workspace state (including open file tabs, active tab selection, and expanded directory paths in the tree) is persisted on the backend via `/api/session`. This ensures workspace layout survives browser restarts and works reliably across different devices and private windows without relying strictly on browser `localStorage`.
+- **Decoupled Event Bus (`bus.js`)**: A lightweight event bus coordinates tab lifecycle transitions (`file:open`, `tab:switch`, `tab:close`). Subsystems such as Markdown Preview, Image Viewer, Selection Bar, and PR Review subscribe to these events to synchronize status and view modes cleanly without circular dependencies.
+- **Static Type Checking**: Frontend modules are annotated with structured JSDoc types and checked via `tsconfig.json` (`checkJs: true`) to ensure type safety across browser code.

@@ -118,6 +118,7 @@ export const LSP_SERVERS = [
 export const FLAGS = [
   { flag: '-port N', def: '7777', desc: 'port to listen on (0 picks an ephemeral free port)' },
   { flag: '-host H', def: '127.0.0.1', desc: 'local address to bind' },
+  { flag: '-base-path P', def: 'none', desc: 'base URL path prefix to serve endpoints and assets from (e.g. /rev-123/)' },
   { flag: '-no-open', def: 'false', desc: 'do not launch the browser' },
   { flag: '-no-lsp', def: 'false', desc: 'skip language servers, use the regex outline' },
   { flag: '-no-git', def: 'false', desc: 'disable git awareness (tree status badges and diff view)' },
@@ -140,10 +141,17 @@ export const TARGETS = [
 ];
 
 export const EDITORS_BENCH = [
-  { editor: 'px0', mem: '~15 - 18 MB', memVal: 18, open: '~10 ms', interact: '~15 ms', proc: '1 process (native Go)' },
-  { editor: 'Vim', mem: '~10 - 15 MB', memVal: 15, open: '~15 ms', interact: '~15 ms', proc: '1 process' },
-  { editor: 'Neovim', mem: '~10 - 20 MB', memVal: 20, open: '~150 ms', interact: '~150 ms', proc: '1 process' },
-  { editor: 'Sublime Text', mem: '~100 - 250 MB', memVal: 250, open: 'GUI dep.', interact: '~250 - 500 ms', proc: '2-4 processes (C++)' },
-  { editor: 'Zed', mem: '~200 - 450 MB', memVal: 450, open: 'GUI dep.', interact: '~300 - 600 ms', proc: '1-3 processes (Rust)' },
-  { editor: 'VS Code', mem: '~1,100 - 1,440 MB', memVal: 1440, open: '~3.0 - 5.0 s', interact: '~6.0 - 10.0 s', proc: '12 - 15+ processes' },
+  { editor: 'px0', hostMem: '~20 - 30 MB', totalMem: '~100 - 180 MB', mem: '~20 - 30 MB (host) / ~100 - 180 MB (total)', memVal: 180, hostVal: 30, open: '~10 ms', interact: '~15 ms', proc: 'Native Go daemon + Browser client' },
+  { editor: 'Vim', hostMem: '~10 - 15 MB', totalMem: '~10 - 15 MB', mem: '~10 - 15 MB', memVal: 15, hostVal: 15, open: '~15 ms', interact: '~15 ms', proc: 'Native CLI' },
+  { editor: 'Neovim', hostMem: '~10 - 20 MB', totalMem: '~10 - 20 MB', mem: '~10 - 20 MB', memVal: 20, hostVal: 20, open: '~150 ms', interact: '~150 ms', proc: 'Native CLI' },
+  { editor: 'Sublime Text', hostMem: '~100 - 250 MB', totalMem: '~100 - 250 MB', mem: '~100 - 250 MB', memVal: 250, hostVal: 250, open: 'GUI dep.', interact: '~250 - 500 ms', proc: 'Native GUI (C++)' },
+  { editor: 'Zed', hostMem: '~200 - 450 MB', totalMem: '~200 - 450 MB', mem: '~200 - 450 MB', memVal: 450, hostVal: 450, open: 'GUI dep.', interact: '~300 - 600 ms', proc: 'Native GUI (Metal / Vulkan)' },
+  { editor: 'VS Code', hostMem: '~500 - 1,440 MB', totalMem: '~1,100 - 1,440 MB', mem: '~1,100 - 1,440 MB', memVal: 1440, hostVal: 1440, open: '~3.0 - 5.0 s', interact: '~6.0 - 10.0 s', proc: 'Electron (Chromium + Node)' },
+];
+
+export const CLIENT_SERVER_BENCH = [
+  { layer: 'Server / Host Daemon', vscode: '~400 - 600 MB (Node.js, Extension Host)', vscodeRemote: '~500 - 1,200 MB (VS Code Server tree)', px0Local: '~20 - 30 MB (Native Go binary)', px0Remote: '~20 - 30 MB (Host memory only)' },
+  { layer: 'Client UI / Frontend', vscode: '~700 - 900 MB (Bundled Chromium + GPU)', vscodeRemote: '~150 - 300 MB (Web browser tab)', px0Local: '~80 - 150 MB (Single browser tab)', px0Remote: '~80 - 150 MB (Local client browser)' },
+  { layer: 'Total System RAM', vscode: '~1,100 - 1,440 MB', vscodeRemote: '~650 - 1,500 MB', px0Local: '~100 - 180 MB (~85-90% reduction)', px0Remote: '~100 - 180 MB', hi: true },
+  { layer: 'Host Impact (Server / Devbox)', vscode: 'N/A', vscodeRemote: '~500 - 1,200 MB', px0Local: '~20 - 30 MB', px0Remote: '~20 - 30 MB', note: '20-50x leaner on host' },
 ];

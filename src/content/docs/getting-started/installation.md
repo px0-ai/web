@@ -7,7 +7,7 @@ order: 1
 
 # Installation & Setup
 
-px0 is a single self-contained binary with zero external dependencies. It starts in under a millisecond and consumes approximately 20 MB of RAM.
+px0 is a single self-contained binary with zero external dependencies. It starts in under a millisecond and consumes approximately 20-30 MB of host RAM (~100-180 MB total including the browser tab).
 
 ## Quick Install (macOS, Linux, BSD)
 

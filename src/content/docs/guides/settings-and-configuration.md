@@ -85,6 +85,7 @@ Your git status, commits, and repository files remain completely untouched.
 | `lsp.hover.enabled` | LSP | `true` | `true`, `false` | Hover documentation cards |
 | `agent.harness` | Coding Agent | `""` | `claude`, `gemini`, `agy`, etc. | Preferred CLI coding harness |
 | `agent.timeoutSeconds` | Coding Agent | `120` | `10` to `600` (seconds) | Max execution runtime for agent jobs |
+| `server.basePath` | Server | `"/"` | any path prefix (e.g. `"/rev-123/"`) | Base URL path prefix to serve endpoints and assets from. Overridden by the `-base-path` CLI flag. |
 
 ---
 

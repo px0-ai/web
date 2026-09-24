@@ -102,7 +102,7 @@ const penalties = [
       <div class="node">
         <div class="node-h"><span>browser</span><span>vanilla js</span></div>
         <ul>
-          <li>virtual rows <em>~60 nodes</em></li>
+          <li>virtual rows <em>~60 nodes · ~80-150 MB</em></li>
           <li>fuzzy & tree cache</li>
           <li>offscreen font measure</li>
           <li>rAF-throttled paint</li>
@@ -116,7 +116,7 @@ const penalties = [
       </div>
 
       <div class="node node--core ticks">
-        <div class="node-h"><span>px0 · one go process</span><span class="s-warn">~20 MB</span></div>
+        <div class="node-h"><span>px0 · one go process</span><span class="s-warn">~20-30 MB host</span></div>
         <div class="engines">
           {engines.map((e) => (
             <div class="eng"><b>{e.k}</b><span>{e.v}</span></div>

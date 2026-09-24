@@ -41,6 +41,11 @@ const setups = [
     cmd: 'docker run -p 7777:7777 -v $(pwd):/src px0:latest',
     note: 'Browse isolated containers without container shells',
   },
+  {
+    k: 'reverse proxy / subpath',
+    cmd: 'px0 -base-path /rev-123/ -host 0.0.0.0 ~/work',
+    note: 'Serve behind Nginx, Ingress, or PR review gateways',
+  },
 ];
 ---
 
@@ -81,7 +86,7 @@ const setups = [
               <span>1 static Go binary</span>
             </div>
             <ul class="r-specs">
-              <li><span>memory</span><b>~20 MB idle</b></li>
+              <li><span>host memory</span><b>~20-30 MB RSS</b></li>
               <li><span>startup</span><b>&lt; 1 ms</b></li>
               <li><span>scavenger</span><b>frees OS memory after 15s</b></li>
               <li><span>access</span><b>secure & sandboxed</b></li>
@@ -115,7 +120,7 @@ const setups = [
               <span>laptop · tablet · mobile</span>
             </div>
             <ul class="r-specs">
-              <li><span>client footprint</span><b>0 npm / 0 extensions</b></li>
+              <li><span>client tab RAM</span><b>~80-150 MB</b></li>
               <li><span>fuzzy find</span><b>cached in-browser</b></li>
               <li><span>syntax highlighting</span><b>pre-rendered Chroma</b></li>
               <li><span>diffs vs HEAD</span><b>instant Myers viewer</b></li>

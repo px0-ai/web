@@ -23,7 +23,8 @@ If the argument is omitted, px0 opens the current working directory (`.`). You c
 | :--- | :--- | :--- | :--- |
 | `-port <int>` | integer | `7777` | Port to listen on. Passing `0` automatically picks a random free port. |
 | `-host <string>` | string | `127.0.0.1` | Network interface address to bind. Use `0.0.0.0` to expose px0 over local networks, Docker containers, or remote cloud VMs. |
-| `-y, -yes` | boolean | `false` | Bypass confirmation prompt when opening an already-merged GitHub pull request URL. |
+| `-base-path <path>` | string | `"/"` | Base URL path prefix to serve endpoints and assets from (e.g. `/rev-123/`). Also configurable in settings via `server.basePath`. |
+| `-y, -yes` | boolean | `false` | Legacy bypass flag (merged PRs now open automatically without confirmation). |
 | `-no-open` | boolean | `false` | Do not launch the default web browser automatically on startup. Useful for background execution or remote sessions. |
 | `-no-lsp` | boolean | `false` | Do not use language servers (such as `gopls`, `rust-analyzer`, or `clangd`), even if installed on `$PATH`. Falls back to the built-in regex outline and search. |
 | `-no-git` | boolean | `false` | Disable git repository awareness, branch detection, status badges, and diff overlays. |
@@ -42,9 +43,12 @@ If the argument is omitted, px0 opens the current working directory (`.`). You c
 ```bash
 # Open a GitHub pull request with merge-base diffs and live commenting
 px0 https://github.com/owner/repo/pull/123
+```
 
-# Open without confirmation prompt even if already merged
-px0 -y https://github.com/owner/repo/pull/123
+### Reverse Proxy & Subpath Hosting
+```bash
+# Host behind a reverse proxy or PR review pod with a custom URL path prefix
+px0 -base-path /rev-123/ -host 0.0.0.0 -port 7777 /path/to/project
 ```
 
 ### Ephemeral Port and Headless Mode (Remote / Agent Workflow)

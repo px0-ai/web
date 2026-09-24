@@ -116,8 +116,12 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 - The panel displays live counts: `X staged / Y changed`.
 
 ### 2. Manual Commit & Commit with AI
-- **Manual Commit**: Enter a commit message in the monospace commit box and click **Commit** (or press `Cmd+Enter` / `Ctrl+Enter` inside the input).
-- **Commit with AI**: Select your preferred AI harness from the picker and click **Commit with AI**. px0 extracts the unified diff of all staged changes, combines it with your instructions from `git.commitMessageInstruction` in Settings, generates a concise commit message, and executes the commit in a single operation.
+- **Collapsible Monospace Input**: The commit message textarea is hidden by default to keep the sidebar compact. Click the toggle link to reveal it for manual typing, or let it auto-expand when generating a message.
+- **Standalone AI Generation & Pre-Commit Review**: Click **Generate** to draft a commit message with your configured AI harness (Claude Code, Gemini CLI, Cursor Agent, Antigravity) without committing immediately. This lets you review and tweak the text before clicking **Commit**.
+- **1-Click Commit with AI**: Alternatively, click **Commit with AI** to generate a message and commit the staged changes in a single action.
+- **Data-Loss Protection**: If a commit fails (for instance due to pre-commit hooks or git conflicts), the generated message remains in the textarea so you never lose your draft.
+- **Curated Diff Context**: px0 supplies the agent with the list of staged file paths, a diffstat summary, and the staged diff capped at 32 KB while excluding lockfiles and minified assets.
+- **Custom Commit Instructions**: Set `git.commitMessageInstruction` in Settings (`Cmd+,` or `Ctrl+,`) to enforce custom team guidelines (such as Conventional Commits format, ticket prefixes, or emoji rules).
 
 ### 3. Safe Fast-Forward Pull
 - Clicking **Pull** invokes `git merge --ff-only FETCH_HEAD`.
@@ -126,6 +130,10 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 ### 4. Direct Push
 - Clicking **Push** uploads committed changes to your configured upstream branch.
 - If no upstream tracking branch is set yet, px0 automatically offers to configure it on the first push (`git push -u origin <branch>`).
+
+### 5. Throttled Status Refresh & Flicker-Free Tabs
+- Background git status syncs are throttled with an adaptive cooldown window and deduplication to avoid eating CPU during rapid disk operations.
+- Open tabs apply an `onlyIfChanged` guard during background synchronizations: untouched files are never repainted, eliminating cursor jumps or visual tab flickering.
 
 ## GitHub Pull Request Review
 

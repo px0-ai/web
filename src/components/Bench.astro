@@ -1,5 +1,5 @@
 ---
-import { CORPUS, MEM_TRACE, LSP_OPS, EDITORS_BENCH } from '../data/px0';
+import { CORPUS, MEM_TRACE, LSP_OPS, EDITORS_BENCH, CLIENT_SERVER_BENCH } from '../data/px0';
 import { repoDoc } from '../data/links';
 
 const n = (v: number) => v.toLocaleString('en-US');
@@ -36,15 +36,16 @@ const lspMax = 6;
     <div class="pnl ticks reveal">
       <div class="pnl-h">
         <span>multi-editor benchmark · identical hardware (Linux)</span>
-        <span><b>Sub-20 MB</b> resident</span>
+        <span><b>~20 - 30 MB</b> host RSS · <b>~100 - 180 MB</b> total</span>
       </div>
       <div class="tbl-wrap">
         <table class="tbl corpus">
           <thead>
             <tr>
               <th>editor</th>
-              <th class="num">process arch</th>
-              <th class="num">memory (rss)</th>
+              <th>process arch</th>
+              <th class="num">host / server rss</th>
+              <th class="num">total system ram</th>
               <th class="num">time to open</th>
               <th class="num">first interact</th>
             </tr>
@@ -53,8 +54,9 @@ const lspMax = 6;
             {EDITORS_BENCH.map((e) => (
               <tr>
                 <td class="repo">{e.editor}</td>
-                <td class="num">{e.proc}</td>
-                <td class="num hi">{e.mem}<span class="cbar" style={`--w:${pct(e.memVal, 1440)}`}></span></td>
+                <td>{e.proc}</td>
+                <td class="num">{e.hostMem}</td>
+                <td class="num hi">{e.totalMem}<span class="cbar" style={`--w:${pct(e.memVal, 1440)}`}></span></td>
                 <td class="num">{e.open}</td>
                 <td class="num hi">{e.interact}</td>
               </tr>
@@ -63,7 +65,61 @@ const lspMax = 6;
         </table>
       </div>
       <div class="pnl-foot">
-        <span style="grid-column: 1 / -1; max-width: none;"><b>Note:</b> CLI editors (Vim/Neovim) do not provide inline LSP out-of-the-box natively. Zed and Sublime Text evaluated as active GUI configs. VS Code memory heavily depends on active extensions.</span>
+        <span style="grid-column: 1 / -1; max-width: none;"><b>Note:</b> CLI editors (Vim/Neovim) do not provide inline LSP out-of-the-box natively. Zed and Sublime Text evaluated as active GUI configs. px0 serves a full workspace with instantaneous indexing natively in 20-30 MB host RSS (~100-180 MB total system RAM including the browser tab).</span>
+      </div>
+    </div>
+
+    <!-- Client / Server Breakdown -->
+    <div class="pnl ticks reveal bench-gap">
+      <div class="pnl-h">
+        <span>accounting for the browser tab · client/server breakdown vs vs code</span>
+        <span><b>~85 - 90%</b> net system reduction</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl corpus">
+          <thead>
+            <tr>
+              <th>component / layer</th>
+              <th>vs code (desktop electron)</th>
+              <th>vs code remote (code-server)</th>
+              <th>px0 (local mode)</th>
+              <th>px0 (remote server mode)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {CLIENT_SERVER_BENCH.map((c) => (
+              <tr class:list={[{ 'tr-hi': c.hi }]}>
+                <td class="repo">{c.layer}</td>
+                <td class="cs-val">{c.vscode}</td>
+                <td class="cs-val">{c.vscodeRemote}</td>
+                <td class="cs-val hi">{c.px0Local}</td>
+                <td class="cs-val hi">{c.px0Remote}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="cs-reasons">
+        <div class="cs-card">
+          <div class="cs-n">01</div>
+          <b>Total System Memory is ~90% Lighter</b>
+          <p>Even when adding the browser tab (~80 - 150 MB) to the Go backend (~20 - 30 MB), px0's total local system footprint is ~100 - 180 MB. Compared to Electron-based IDEs running at ~1,100 - 1,440 MB, px0 achieves an 85 - 90% net memory reduction.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-n">02</div>
+          <b>Remote & Cloud Devboxes</b>
+          <p>On remote servers, cloud VMs, and containers, the host pays strictly the ~20 - 30 MB server cost while UI rendering runs on the client machine. In contrast, remote server IDEs consume 500 MB to 1.2 GB+ directly on the host.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-n">03</div>
+          <b>Marginal Cost of an Existing Browser</b>
+          <p>Developers virtually always have a browser running. Adding one lightweight tab to an already-warm browser process pool avoids the steep CPU and memory penalty of cold-starting a dedicated, isolated Chromium instance and GPU process tree.</p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-n">04</div>
+          <b>Virtualized DOM Keeps the Tab Bounded</b>
+          <p>px0 bypasses heavy third-party editor frameworks like Monaco or CodeMirror. A bespoke virtualized renderer mounts only ~60 active rows at any time regardless of file size, keeping client tab RAM strictly bounded (~80 - 150 MB).</p>
+        </div>
       </div>
     </div>
 
@@ -188,7 +244,66 @@ const lspMax = 6;
     margin-top: 16px;
   }
 
-  /* memory comparison removed */
+  /* client/server breakdown */
+  .tr-hi td {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .cs-val {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--txt-2);
+  }
+
+  .cs-val.hi {
+    color: var(--cyan);
+    font-weight: 600;
+  }
+
+  .cs-reasons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 16px;
+    border-top: 1px solid var(--bdr);
+    background: var(--bg-card);
+  }
+
+  .cs-card {
+    position: relative;
+    padding: 12px 14px;
+    border: 1px solid var(--bdr);
+    background: var(--bg);
+  }
+
+  .cs-n {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--amber);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .cs-card b {
+    display: block;
+    font-size: 12.5px;
+    color: var(--txt);
+    margin-bottom: 6px;
+  }
+
+  .cs-card p {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--txt-3);
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .cs-reasons {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
 
   /* corpus */
   .corpus {

@@ -34,7 +34,7 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       <article class="fcell reveal">
         <div class="fid"><b>f.02</b><span>git & github</span></div>
         <h3>GitHub PR review & Git panel</h3>
-        <p>Pass any PR URL to review merge-base diffs, draft inline comments (Alt+R), and run 1-click batch AI edits. Stage per-file ticks, commit with AI, and push straight back to PR branches.</p>
+        <p>Pass any PR URL to review merge-base diffs, isolate reviewer edits, draft inline comments (Alt+R), and run 1-click batch AI edits. Stage per-file ticks, generate and review AI commit messages, and push straight back to PR branches.</p>
         <div class="fviz git-diff">
           <div class="gd-tree">
             <span><i class="gt-dot"></i>PR #123 (open)</span>
@@ -143,7 +143,7 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       <article class="fcell reveal">
         <div class="fid"><b>f.09</b><span>remote</span></div>
         <h3>Remote-first & zero SSH</h3>
-        <p>Spin up on cloud VMs, Docker containers, or CI runners with -host 0.0.0.0. Browse in your local browser over Tailscale or WireGuard with zero remote extension daemons and strict DNS rebinding checks.</p>
+        <p>Spin up on cloud VMs, Docker containers, or CI runners with -host 0.0.0.0. The remote host pays strictly ~20-30 MB server memory, while custom subpaths (-base-path) support reverse proxies and multi-tenant ingress.</p>
         <pre class="fviz tty"><span class="s-warn">$</span> px0 -host 0.0.0.0 -port 7777 ~/work
 <span class="s-dim">listening on:</span> <span class="s-ok">http://10.0.4.12:7777</span>
 <span class="s-dim">sandboxing:</span>   <span class="s-ok">path traversal + DNS guards</span></pre>
@@ -174,7 +174,7 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       <article class="fcell reveal">
         <div class="fid"><b>f.12</b><span>memory</span></div>
         <h3>Gives memory back</h3>
-        <p>After 15 seconds without requests, px0 automatically frees memory back to the kernel. A tab left open for the afternoon costs what an idle one should.</p>
+        <p>After 15 seconds without requests, px0 automatically frees memory back to the host kernel (~20-30 MB server RSS). Combined with bounded DOM virtualization (~80-150 MB client tab), total footprint stays ~100-180 MB.</p>
         <div class="fviz scav">
           <div><span>peak</span><i style="width:94%"></i><b>94 MB</b></div>
           <div class="hi"><span>30 s idle</span><i style="width:57%"></i><b>57 MB</b></div>
