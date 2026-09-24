@@ -41,7 +41,7 @@ px0 does the code viewing job exceptionally well: an instant, distraction-free e
 - Optional LSP: zero-config detection of gopls, rust-analyzer, pyright, ruff, typescript-language-server, clangd, zls, lua-language-server, and solargraph for go-to-definition (F12), hover, and references (Shift+F12). Falls back to regex outlines and inspector search when no server is installed.
 - Virtualized rendering: opening a 400,000-line file costs the same as a 10-line file; only visible lines are in the DOM (~60 DOM rows mounted).
 - Remote-friendly and self-contained: single static binary embedding HTML, CSS, and JS with zero runtime dependencies.
-- Privacy-first: no code, file paths, or search queries leave your machine. Anonymous session metrics measure DAU and duration, and can be disabled with -no-telemetry or DO_NOT_TRACK=1.
+- Privacy-first: no code, file paths, or search queries leave your machine.
 - Self-updating: `px0 --update`, plus an asynchronous daily check that never delays startup.
 
 ## Remote Sessions Architecture
@@ -117,7 +117,6 @@ px0 --update        # upgrade to the latest release
 | -agent H | none | Pin coding harness: claude, gemini, cursor-agent, agy, opencode, codex, aider, goose, or command template with {prompt} |
 | -no-agent | false | Do not offer editing through a coding harness |
 | -no-color | false | Strip ANSI escape sequences from terminal output |
-| -no-telemetry | false | Disable anonymous usage telemetry |
 | -quiet | false | Suppress CLI narration (errors still print to stderr) |
 | -update | false | Check for updates and install the latest version |
 | -version, -v | false | Print version and architecture and exit |

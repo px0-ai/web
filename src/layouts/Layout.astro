@@ -191,10 +191,10 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
         },
         {
           '@type': 'Question',
-          name: 'Does px0 collect telemetry or send code to the cloud?',
+          name: 'Does px0 send code or project data to the cloud?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'No. px0 never transmits code, file paths, symbol names, or search queries. It collects lightweight, anonymous backend session metrics (start and stop times) strictly to measure daily active users and session duration. You can disable telemetry completely with `px0 -no-telemetry`, `DO_NOT_TRACK=1`, or `PX0_TELEMETRY=0`.',
+            text: 'No. px0 runs strictly locally and never transmits your code, file paths, symbol names, or search queries.',
           },
         },
       ],

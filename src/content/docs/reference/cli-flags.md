@@ -31,7 +31,6 @@ If the argument is omitted, px0 opens the current working directory (`.`). You c
 | `-agent <harness>` | string | `none` | Pin coding harness for in-app agent edits: `claude`, `gemini`, `cursor-agent`, `agy`, `opencode`, `codex`, `aider`, `goose`, or a custom command template containing `{prompt}`. |
 | `-no-agent` | boolean | `false` | Disable coding harness discovery and edit capabilities entirely. |
 | `-no-color` | boolean | `false` | Disable ANSI color codes in terminal startup output. |
-| `-no-telemetry` | boolean | `false` | Disable anonymous usage telemetry reporting. |
 | `-quiet` | boolean | `false` | Suppress informational startup narration in the terminal. |
 | `-verbose` | boolean | `false` | Enable verbose logging including request timing, prompt payloads, and agent job IDs. |
 | `-update` | boolean | `false` | Check for, download, and install the latest available release of px0 directly into user space. |

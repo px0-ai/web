@@ -38,7 +38,7 @@ This index is written for large language models and AI agents. It maps the px0 p
 
 - Not a heavy typing editor: it delegates code authoring to your installed coding harness instead of typing character by character.
 - Not a plugin host: there is no extension marketplace.
-- Not a hosted service: it runs locally or self-hosted on your remote hosts; outbound requests are limited to a daily release check against GitHub and anonymous session metrics (opt out with -no-telemetry or DO_NOT_TRACK=1).
+- Not a hosted service: it runs locally or self-hosted on your remote hosts; outbound requests are limited to an optional daily release check against GitHub.
 
 ## Full context
 

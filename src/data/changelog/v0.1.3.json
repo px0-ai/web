@@ -28,12 +28,11 @@
       ]
     },
     {
-      "name": "Security, Installation & Telemetry",
+      "name": "Security & Installation",
       "items": [
         "Validate downloaded release binaries against published SHA-256 digests during self-update before execution or replacement",
         "Stream update downloads with in-flight cryptographic hash verification and safe abort on mismatch or missing checksums",
-        "Cascading installer target ladder prioritizing writable PATH directories (~/.local/bin) to eliminate unnecessary sudo escalation",
-        "Anonymous backend session telemetry with coarse 7-tier scale bucketing to prevent repository fingerprinting, with full opt-out support"
+        "Cascading installer target ladder prioritizing writable PATH directories (~/.local/bin) to eliminate unnecessary sudo escalation"
       ]
     },
     {

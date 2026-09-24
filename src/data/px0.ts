@@ -125,7 +125,6 @@ export const FLAGS = [
   { flag: '-agent H', def: 'none', desc: 'pin coding harness: claude, gemini, cursor-agent, agy, opencode, codex, aider, goose, or command template with {prompt}' },
   { flag: '-no-agent', def: 'false', desc: 'do not offer editing through a coding harness' },
   { flag: '-no-color', def: 'false', desc: 'strip ANSI escape sequences' },
-  { flag: '-no-telemetry', def: 'false', desc: 'disable anonymous backend usage telemetry' },
   { flag: '-quiet', def: 'false', desc: 'suppress narration, errors still go to stderr' },
   { flag: '-update', def: 'false', desc: 'check for and install the latest release' },
   { flag: '-version, -v', def: 'false', desc: 'print version and architecture, then exit' },
