@@ -1,7 +1,7 @@
 ---
 import { GITHUB, INSTALL_CMD, VERSION } from '../data/links';
 import { THEMES } from '../data/themes';
-import { COMMANDS, CORPUS } from '../data/px0';
+import { COMMANDS, CORPUS, HARNESSES } from '../data/px0';
 import { KERNEL_FILES, ROOT_DIRS, ROOT_FILES, LIB_WINDOW, SORT_SYMBOLS, DO_SWAP_REFS, SORT_EXCERPT } from '../data/kernel';
 import { getLatestChangelog } from '../data/changelogs';
 
@@ -10,10 +10,10 @@ const latestVersion = latestRelease?.version || VERSION;
 
 const stats = [
   { v: '<1', u: 'ms', k: 'cold start', d: 'sub-millisecond instant boot' },
-  { v: '20-30', u: 'MB', k: 'host memory', d: 'VS Code: ~1.4 GB', hi: true },
+  { v: '20-30', u: 'MB', k: 'host memory', d: '~90% less vs. ~1.4 GB VS Code', hi: true },
   { v: '6.0', u: 'ms', k: 'fuzzy find', d: 'linux kernel, 95,710 files' },
-  { v: '~280', u: '', k: 'languages', d: 'tokenized natively by Chroma' },
-  { v: '14', u: '', k: 'themes', d: 'one CSS file each' },
+  { v: `${HARNESSES.length}`, u: '', k: 'ai harnesses', d: 'Claude, Gemini, Cursor, and more' },
+  { v: '1', u: 'tab', k: 'browser based', d: 'no GUI bloat' },
   { v: '0', u: '', k: 'runtime deps', d: 'no Electron, no Node, no CGO' },
 ];
 
