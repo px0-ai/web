@@ -11,24 +11,24 @@ const badges = [
 const pillars = [
   {
     num: '01',
-    title: 'Native GitHub PR Review',
-    sub: 'Scoped merge-base diffs from any URL',
-    body: 'Pass any pull request URL to inspect diffs in an isolated ephemeral worktree. Full codebase navigation, symbols, definitions, and callers remain accessible with zero disk clutter.',
-    tag: 'px0 <pr-url>',
+    title: 'Sidebar Git Panel & Staging',
+    sub: 'Per-file stage ticks in tree',
+    body: 'Stage or unstage individual files with clean checkbox ticks directly in the sidebar tree. Track modified, added, untracked, and deleted statuses with zero background lag.',
+    tag: 'STAGE · UNSTAGE',
   },
   {
     num: '02',
-    title: 'Inline Comments & AI Apply',
-    sub: 'Draft review notes or let AI apply them',
-    body: 'Hover any line or press Alt+R to draft inline review notes. Submit formal approvals to GitHub or click Batch Apply to dispatch all comments across the PR to your local AI coding agent.',
-    tag: 'Alt+R · BATCH APPLY',
+    title: 'AI Commit Message Generation',
+    sub: 'Inspect diffs and generate messages',
+    body: 'Generate standardized git commit messages from staged diffs with your active coding agent. Review, edit, and amend before committing to keep repository history clean.',
+    tag: 'COMMIT WITH AI',
   },
   {
     num: '03',
-    title: 'Sidebar Git Panel & AI Commits',
-    sub: 'Stage ticks, AI messages, and safe push',
-    body: 'Stage per-file ticks in the tree, review AI commit messages before committing, toggle collapsible inputs, and push directly back to the PR head branch (including forks) without opening a terminal.',
-    tag: 'STAGE · COMMIT · PUSH',
+    title: 'Chroma Split & Unified Diffs',
+    sub: 'Side-by-side or inline viewports',
+    body: 'Toggle between split and unified diffs with Ctrl+D. Syntax highlighting powered by Chroma renders staged changes against HEAD in real time with line-anchored selection.',
+    tag: 'Ctrl+D · SPLIT / UNIFIED',
   },
 ];
 ---
@@ -36,159 +36,27 @@ const pillars = [
 <section class="sec" id="git">
   <div class="wrap">
     <header class="sec-head">
-      <div class="sec-id"><span class="sec-n">05</span><span>/git</span></div>
+      <div class="sec-id"><span class="sec-n">06</span><span>/git</span></div>
       <div>
-        <h2 class="sec-title">Native GitHub integration. <em>Review, comment, commit.</em></h2>
+        <h2 class="sec-title">Working tree & Git panel. <em>Stage, commit, diff, push.</em></h2>
         <p class="sec-sub">
-          Pass any pull request URL directly to px0. Inspect merge-base diffs, draft inline comments, run
-          one-click batch AI edits, stage per-file ticks, commit with AI, and push fixes straight back to the PR's
-          own branch without leaving your browser.
+          Full Git control built directly into the sidebar. Stage per-file ticks in the tree, generate AI commit messages with pre-commit review, inspect split or unified diffs, and push or pull without touching the terminal.
         </p>
       </div>
     </header>
 
-    <!-- Main visual showcase: Mode toggling between PR Review & Git Panel -->
+    <!-- Main visual showcase: Working Tree & Git Panel with Split/Unified Diff -->
     <div class="git-showcase pnl reveal">
       <div class="pnl-h">
-        <div class="mode-selectors" role="tablist">
-          <button class="mode-tab on" id="tab-mode-pr" type="button">
-            <span class="tab-ico">⎇</span>
-            <span>GitHub PR Review</span>
-            <span class="mode-pill pill-pr">#123</span>
-          </button>
-          <button class="mode-tab" id="tab-mode-git" type="button">
-            <span class="tab-ico">●</span>
-            <span>Working Tree & Git Panel</span>
-            <span class="mode-pill">local</span>
-          </button>
-        </div>
-
-        <div class="git-status-summary" id="showcase-summary-pr">
-          <span class="gstat-pill badge-open">● Open</span>
-          <span class="gstat-repo">px0-ai/px0 #123</span>
-          <span class="gstat-branch">main &larr; auth-refactor</span>
-        </div>
-
-        <div class="git-status-summary is-hidden" id="showcase-summary-git">
+        <div class="git-status-summary">
           <span class="gstat-dot"></span>
           <span>branch: <b>feat/fast-path</b> · <b>2 staged, 1 changed</b></span>
-        </div>
-      </div>
-
-      <!-- PR REVIEW MODE VIEWPORT -->
-      <div class="showcase-grid mode-pr-view" id="view-mode-pr">
-        <!-- Left: PR File Tree & Comments list -->
-        <div class="tree-col">
-          <div class="col-head">
-            <span class="col-title-pr">PR #123 · 3 files changed</span>
-            <div class="view-toggles" role="tablist">
-              <button class="toggle-btn on" id="btn-pr-files" type="button">files</button>
-              <button class="toggle-btn" id="btn-pr-comments" type="button">comments (2)</button>
-            </div>
-          </div>
-
-          <ul class="mock-tree" id="pr-mock-tree">
-            <li class="t-item t-dir t-dirty">
-              <span class="t-chev">▾</span><span class="t-name">internal/auth</span>
-            </li>
-            <li class="t-item t-sub t-file t-active">
-              <span class="t-indent"></span><span class="t-name">token.go</span>
-              <span class="t-comment-badge" title="1 draft comment">💬 1</span>
-              <span class="t-badge badge-m">M</span>
-            </li>
-            <li class="t-item t-sub t-file">
-              <span class="t-indent"></span><span class="t-name">provider.go</span>
-              <span class="t-comment-badge" title="1 draft comment">💬 1</span>
-              <span class="t-badge badge-a">A</span>
-            </li>
-            <li class="t-item t-dir">
-              <span class="t-chev">▾</span><span class="t-name">cmd</span>
-            </li>
-            <li class="t-item t-sub t-file">
-              <span class="t-indent"></span><span class="t-name">main.go</span>
-              <span class="t-badge badge-m">M</span>
-            </li>
-          </ul>
-
-          <!-- PR Action Footer -->
-          <div class="pr-action-card">
-            <div class="pr-action-h">
-              <span class="pr-h-title">Batch Apply (2)</span>
-              <span class="pr-h-agent">claude-haiku</span>
-            </div>
-            <p class="pr-action-desc">Apply all drafted review comments across files with your local coding agent.</p>
-            <div class="pr-action-btns">
-              <button class="pr-btn-apply" type="button">Run Batch Apply</button>
-              <button class="pr-btn-review" type="button">Submit Review &rarr;</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Merge-Base Diff View with Inline Comment Popover -->
-        <div class="diff-col">
-          <div class="col-head">
-            <div class="diff-meta">
-              <span class="diff-tag-pr">merge-base</span>
-              <span class="diff-filename">internal/auth/token.go</span>
-              <span class="diff-stat"><span class="s-add">+14</span> <span class="s-del">−3</span></span>
-            </div>
-            <div class="diff-controls">
-              <span class="diff-badge-shortcut"><kbd class="alt-key">Alt</kbd><kbd>R</kbd> comment</span>
-              <span class="diff-chord"><kbd class="mod-key">Ctrl</kbd><kbd>D</kbd> diff</span>
-            </div>
-          </div>
-
-          <div class="diff-viewport">
-            <div class="diff-pane diff-unified">
-              <div class="pane-hdr">
-                <span>diff against merge-base (main @ 8f2a1c)</span>
-                <span class="s-author">@alice authored</span>
-              </div>
-              <div class="diff-lines">
-                <div class="dline"><span class="dln">38</span><span class="dln">38</span><span class="dmark"> </span><span class="dtx"><span class="k">func</span> ResolveToken(cfg Config) (string, error) {'{'}</span></div>
-                <div class="dline dline-del"><span class="dln">39</span><span class="dln"> </span><span class="dmark">−</span><span class="dtx">    <span class="k">return</span> os.Getenv("GITHUB_TOKEN"), nil</span></div>
-                <div class="dline dline-add"><span class="dln"> </span><span class="dln">39</span><span class="dmark">+</span><span class="dtx">    <span class="k">if</span> tok := cfg.GitHubToken; tok != "" {'{'}</span></div>
-                <div class="dline dline-add"><span class="dln"> </span><span class="dln">40</span><span class="dmark">+</span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
-                <div class="dline dline-add dline-comment-anchor">
-                  <span class="dln"> </span><span class="dln">41</span><span class="dmark">+</span>
-                  <span class="dtx">    <span class="k">if</span> tok := os.Getenv("GITHUB_TOKEN"); tok != "" {'{'}</span>
-                  <span class="gutter-pencil" title="Add review comment (Alt+R)">✏</span>
-                </div>
-
-                <!-- Open Inline Comment Composer Box -->
-                <div class="inline-comment-box">
-                  <div class="icb-head">
-                    <span class="icb-author">Draft Review Comment · line 41</span>
-                    <span class="icb-tag">in-memory</span>
-                  </div>
-                  <div class="icb-body">
-                    Check if GH_TOKEN is also set before falling back to the gh CLI binary so standard environment variables take precedence.
-                  </div>
-                  <div class="icb-actions">
-                    <span class="icb-hint">Press <kbd>Ctrl+Enter</kbd> to save draft</span>
-                    <div class="icb-btns">
-                      <button class="icb-btn-cancel" type="button">Discard</button>
-                      <button class="icb-btn-save" type="button">Save Draft</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="dline"><span class="dln">42</span><span class="dln">42</span><span class="dmark"> </span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
-                <div class="dline"><span class="dln">43</span><span class="dln">43</span><span class="dmark"> </span><span class="dtx">    {'}'}</span></div>
-                <div class="dline"><span class="dln">44</span><span class="dln">44</span><span class="dmark"> </span><span class="dtx">    <span class="k">return</span> resolveGhCliToken()</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="diff-foot">
-            <span class="df-note">Hover any gutter line for <b>✏</b> or select code & press <kbd class="alt-key">Alt</kbd><kbd>R</kbd></span>
-            <span class="df-tag">push back to pr branch enabled</span>
-          </div>
+          <span class="mode-pill">local working tree</span>
         </div>
       </div>
 
       <!-- LOCAL WORKING TREE & GIT PANEL VIEWPORT -->
-      <div class="showcase-grid mode-git-view is-hidden" id="view-mode-git">
+      <div class="showcase-grid mode-git-view" id="view-mode-git">
         <!-- Left: File tree with stage ticks + Git Panel at bottom -->
         <div class="tree-col">
           <div class="col-head">
@@ -336,36 +204,8 @@ const pillars = [
 </section>
 
 <script>
-  // Interactive mode switching and tab controls for Git showcase
+  // Interactive tree filter and diff controls for Git showcase
   const initGitShowcase = () => {
-    // Mode switcher: PR review vs Working Tree / Git Panel
-    const tabModePr = document.getElementById('tab-mode-pr');
-    const tabModeGit = document.getElementById('tab-mode-git');
-    const viewModePr = document.getElementById('view-mode-pr');
-    const viewModeGit = document.getElementById('view-mode-git');
-    const summaryPr = document.getElementById('showcase-summary-pr');
-    const summaryGit = document.getElementById('showcase-summary-git');
-
-    if (tabModePr && tabModeGit && viewModePr && viewModeGit && summaryPr && summaryGit) {
-      tabModePr.addEventListener('click', () => {
-        tabModePr.classList.add('on');
-        tabModeGit.classList.remove('on');
-        viewModePr.classList.remove('is-hidden');
-        viewModeGit.classList.add('is-hidden');
-        summaryPr.classList.remove('is-hidden');
-        summaryGit.classList.add('is-hidden');
-      });
-
-      tabModeGit.addEventListener('click', () => {
-        tabModeGit.classList.add('on');
-        tabModePr.classList.remove('on');
-        viewModeGit.classList.remove('is-hidden');
-        viewModePr.classList.add('is-hidden');
-        summaryGit.classList.remove('is-hidden');
-        summaryPr.classList.add('is-hidden');
-      });
-    }
-
     // Tree filter toggle in Git panel view
     const btnTreeAll = document.getElementById('btn-tree-all');
     const btnTreeChanged = document.getElementById('btn-tree-changed');

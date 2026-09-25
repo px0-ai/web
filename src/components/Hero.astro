@@ -86,6 +86,8 @@ const [refDef, ...refUses] = DO_SWAP_REFS;
 const themeStyle = (vars: Record<string, string>) =>
   Object.entries(vars).map(([k, v]) => `--t-${k}:${v}`).join(';');
 
+const lightTheme = THEMES.find((t) => t.id === 'light') || THEMES.find((t) => t.light) || THEMES[0];
+
 // What px0 prints on start, laid out by uiHeading, uiKV (width 11), uiHint, uiStatus and uiBullet.
 const bootLines = [
   '',
@@ -186,7 +188,7 @@ const ideData = {
       </div>
 
       <div class="stage-frame">
-        <div class="ide" id="ide" data-view="open" style={themeStyle(THEMES[0].vars)}>
+        <div class="ide" id="ide" data-view="open" style={themeStyle(lightTheme.vars)}>
           <div class="ide-chrome">
             <span class="ide-dots" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="ide-url">127.0.0.1:7777</span>

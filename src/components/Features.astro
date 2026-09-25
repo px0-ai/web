@@ -9,11 +9,11 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
 <section class="sec" id="features">
   <div class="wrap">
     <header class="sec-head">
-      <div class="sec-id"><span class="sec-n">03</span><span>/features</span></div>
+      <div class="sec-id"><span class="sec-n">04</span><span>/features</span></div>
       <div>
         <h2 class="sec-title">Built for review. <em>Engineered for speed.</em></h2>
         <p class="sec-sub">
-          The code review, Git inspection, and AI harness tools you reach for a hundred times a day, done in milliseconds, in a UI that renders only the lines you can see.
+          The code navigation, search, outline, and reading tools you reach for a hundred times a day, done in milliseconds, in a UI that renders only the lines you can see.
         </p>
       </div>
     </header>
@@ -32,45 +32,29 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.02</b><span>git & github</span></div>
-        <h3>GitHub PR review & Git panel</h3>
-        <p>Pass any PR URL to review merge-base diffs, isolate reviewer edits, draft inline comments (Alt+R), and run 1-click batch AI edits. Stage per-file ticks, generate and review AI commit messages, and push straight back to PR branches.</p>
-        <div class="fviz git-diff">
-          <div class="gd-tree">
-            <span><i class="gt-dot"></i>PR #123 (open)</span>
-            <span class="badge-git badge-add">A provider.go</span>
-            <span class="badge-git badge-mod">M token.go 💬1</span>
-          </div>
-          <div class="diff-mini">
-            <div class="dm-head"><span>token.go (diff vs merge-base)</span><span class="dm-tag">Alt+R</span></div>
-            <div class="dm-row dm-del"><span class="dm-ln">39</span><span class="dm-tx">- return os.Getenv("GITHUB_TOKEN")</span></div>
-            <div class="dm-row dm-add"><span class="dm-ln">39</span><span class="dm-tx">+ if tok := cfg.GitHubToken; tok != ""</span></div>
-          </div>
+        <div class="fid"><b>f.02</b><span>symbols & outline</span></div>
+        <h3>Symbol hierarchy & outlines</h3>
+        <p>Jump to functions, types, constants, and caller trees across files with Ctrl+Shift+O. Built-in regex outline generates instant symbols even when language servers are inactive.</p>
+        <div class="fviz sym-tree">
+          <div class="sym-row"><span class="sym-tag tag-fn">fn</span><span class="sym-name">ResolveToken(cfg)</span><b class="sym-ln">:38</b></div>
+          <div class="sym-row"><span class="sym-tag tag-ty">type</span><span class="sym-name">Config struct</span><b class="sym-ln">:12</b></div>
+          <div class="sym-row"><span class="sym-tag tag-co">const</span><span class="sym-name">DefaultTimeout</span><b class="sym-ln">:8</b></div>
         </div>
       </article>
 
       <article class="fcell reveal">
-        <div class="fid"><b>f.03</b><span>batch agent edit</span></div>
-        <h3>Batch inline agent editing</h3>
-        <p>Stage multiple selection comments across files with Alt+E, review unified batch controls, and apply all edits at once with Mod+Enter. Live Git status sync highlights touched tabs instantly.</p>
-        <div class="fviz agent-box">
-          <div class="ab-batch-bar">
-            <span class="ab-batch-badge">Batch Edit</span>
-            <span class="ab-batch-count">2 comments</span>
-            <span class="ab-batch-apply">Mod+Enter Apply All</span>
-          </div>
-          <div class="ab-head">
-            <span class="ab-pill">claude</span>
-            <span class="ab-model">haiku</span>
-            <span class="ab-range">@fuzzy.go:64-70</span>
-          </div>
-          <div class="ab-in">"simplify score penalty calculation"</div>
-          <div class="ab-head">
-            <span class="ab-pill">claude</span>
-            <span class="ab-model">haiku</span>
-            <span class="ab-range">@status.go:18-22</span>
-          </div>
-          <div class="ab-in">"format batch elapsed timer"</div>
+        <div class="fid"><b>f.03</b><span>coding harnesses</span></div>
+        <h3>Multi-harness agent dispatch</h3>
+        <p>Direct integration with Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, and Goose. Tabs reload automatically in place with zero manual git stashing.</p>
+        <div class="fviz harness-grid">
+          <span class="chip-harness on">claude</span>
+          <span class="chip-harness on">gemini</span>
+          <span class="chip-harness on">cursor</span>
+          <span class="chip-harness on">agy</span>
+          <span class="chip-harness">opencode</span>
+          <span class="chip-harness">codex</span>
+          <span class="chip-harness">aider</span>
+          <span class="chip-harness">goose</span>
         </div>
       </article>
 
@@ -272,202 +256,79 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
     color: var(--txt-3);
   }
 
-  /* git & diff visualizer */
-  .git-diff {
+  /* sym-tree */
+  .sym-tree {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     font-size: 11px;
-    font-family: var(--font-mono);
+    font-family: var(--mono);
+    border: 1px solid var(--bdr);
+    background: var(--code-bg);
+    padding: 6px 8px;
   }
 
-  .gd-tree {
+  .sym-row {
     display: flex;
     align-items: center;
     gap: 8px;
     color: var(--txt-2);
   }
 
-  .gt-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--amber);
-    margin-right: 4px;
-  }
-
-  .badge-git {
-    font-size: 9.5px;
-    font-weight: 600;
-    padding: 1px 5px;
+  .sym-tag {
+    font-size: 9px;
+    padding: 1px 4px;
     border-radius: 2px;
+    font-weight: 700;
   }
 
-  .badge-add {
-    color: var(--green);
-    background: rgba(46, 160, 67, 0.15);
+  .tag-fn {
+    background: rgba(122, 162, 247, 0.15);
+    color: var(--blue);
   }
 
-  .badge-mod {
+  .tag-ty {
+    background: rgba(187, 154, 247, 0.15);
+    color: var(--violet);
+  }
+
+  .tag-co {
+    background: rgba(251, 191, 36, 0.15);
     color: var(--amber);
-    background: var(--amber-wash);
   }
 
-  .diff-mini {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--bdr);
-    background: var(--code-bg);
-  }
-
-  .dm-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 3px 8px;
-    background: var(--bg-elev);
-    border-bottom: 1px solid var(--bdr);
-    color: var(--txt-3);
-    font-size: 10px;
-  }
-
-  .dm-tag {
-    color: var(--amber);
-    font-size: 9.5px;
-    border: 1px solid var(--amber-line);
-    padding: 0 4px;
-  }
-
-  .dm-row {
-    display: flex;
-    align-items: center;
-    padding: 2px 6px;
-    gap: 8px;
-  }
-
-  .dm-ln {
-    color: var(--txt-4);
-    width: 2ch;
-    text-align: right;
-    user-select: none;
-  }
-
-  .dm-tx {
-    white-space: pre;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .dm-del {
-    background: rgba(248, 81, 73, 0.12);
-    color: var(--rose);
-  }
-
-  .dm-add {
-    background: rgba(46, 160, 67, 0.12);
-    color: var(--green);
-  }
-
-  /* agent box */
-  .agent-box {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--bdr);
-    background: var(--code-bg);
-    font-family: var(--font-mono);
-  }
-
-  .ab-batch-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 8px;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--amber-line);
-    font-size: 9.5px;
-  }
-
-  .ab-batch-badge {
-    color: var(--amber);
-    font-weight: 600;
-  }
-
-  .ab-batch-count {
-    color: var(--txt-3);
-  }
-
-  .ab-batch-apply {
-    margin-left: auto;
-    background: var(--amber);
-    color: var(--bg);
-    font-size: 8.5px;
-    font-weight: 600;
-    padding: 1px 5px;
-    border-radius: 2px;
-  }
-
-  .ab-head {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    background: var(--bg-elev);
-    border-bottom: 1px solid var(--bdr);
-    font-size: 10px;
-  }
-
-  .ab-pill {
-    padding: 1px 6px;
-    border: 1px solid var(--amber-line);
-    background: var(--amber-wash);
-    color: var(--amber);
-    font-weight: 600;
-  }
-
-  .ab-model {
-    color: var(--cyan);
-    font-size: 9.5px;
-  }
-
-  .ab-range {
-    margin-left: auto;
-    color: var(--txt-3);
-    font-size: 9.5px;
-  }
-
-  .ab-in {
-    padding: 8px 10px;
-    font-size: 11px;
+  .sym-name {
     color: var(--txt);
-    font-style: italic;
-    background: var(--bg);
   }
 
-  .ab-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    border-top: 1px solid var(--bdr);
-    font-size: 10px;
-    color: var(--txt-3);
-  }
-
-  .ab-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
-  }
-
-  .ab-tag {
+  .sym-ln {
     margin-left: auto;
+    color: var(--txt-4);
+    font-weight: normal;
+  }
+
+  /* harness-grid */
+  .harness-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 6px 0;
+  }
+
+  .chip-harness {
+    font-size: 10px;
+    padding: 2px 7px;
+    border: 1px solid var(--bdr);
+    background: var(--surface);
+    color: var(--txt-3);
+    font-family: var(--mono);
+  }
+
+  .chip-harness.on {
+    border-color: var(--amber);
     color: var(--amber);
-    border: 1px solid var(--amber-line);
-    padding: 0 4px;
-    font-weight: 500;
+    background: var(--amber-wash);
+    font-weight: 600;
   }
 
   /* selection demo */

@@ -1,0 +1,1710 @@
+---
+// ReviewThreads.astro: Dedicated section for Agent Threads, GitHub PR Review, Inline Comments, and Batch Editing
+const pillars = [
+  {
+    num: '01',
+    title: 'Multi-Turn Agent Threads',
+    sub: 'Persistent context alongside code',
+    body: 'Anchor conversations to code ranges with Alt+T or line gutter icons. Stream real-time tool steps and replies over Server-Sent Events, preserved locally in atomic disk transcripts that survive restarts.',
+    tag: 'Alt+T · SSE STREAM',
+  },
+  {
+    num: '02',
+    title: 'Instant GitHub PR Review',
+    sub: 'Scoped merge-base diffs from URL',
+    body: 'Pass any PR URL to inspect scoped merge-base diffs in an isolated ephemeral worktree in 12 ms. Review true changes against target branches without branch switching or dirtying your local tree.',
+    tag: 'px0 <pr-url>',
+  },
+  {
+    num: '03',
+    title: 'Inline Comments & Line Actions',
+    sub: 'Hover gutter icons or chord Alt+R',
+    body: 'Hover any line number for the contextual thread icon, or press Alt+R to draft inline review notes. Comments stay anchored in memory until you submit formal reviews to GitHub or send them to your agent.',
+    tag: 'Alt+R · GUTTER ICON',
+  },
+  {
+    num: '04',
+    title: 'Queued Batch Inline Edits',
+    sub: 'Stage comments across files with Alt+E',
+    body: 'Highlight code in diff or source views, press Alt+E, and stage edit prompts across multiple files. Review queued comments in the Threads drawer and apply all at once with Mod+Enter.',
+    tag: 'Alt+E · Mod+Enter',
+  },
+  {
+    num: '05',
+    title: 'Multi-Harness Continuity',
+    sub: 'Claude, Gemini, Cursor, Agy & more',
+    body: 'Connect natively to Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, or Goose. Switch models or harnesses mid-thread with automatic session resume and transcript replay.',
+    tag: '8+ HARNESSES',
+  },
+  {
+    num: '06',
+    title: 'GitHub Reviews & PR Push',
+    sub: 'Approve, request changes, and push fixes',
+    body: 'Submit formal approvals or change requests directly to GitHub with your inline notes attached. Review AI-generated commit messages and push fixes straight back to PR head branches without a terminal.',
+    tag: 'APPROVE · COMMIT · PUSH',
+  },
+];
+---
+
+<section class="sec" id="review">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">02</span><span>/review</span></div>
+      <div>
+        <h2 class="sec-title"><em>Threads</em> & code review.</h2>
+        <p class="sec-sub">
+          Review GitHub PRs, leave inline comments, and make code-level edits directly in place.
+          Trigger quick inline fixes with <code class="inline-code">Alt+E</code> or guide multi-step code changes across files with agent threads, watching every tool step execute live.
+        </p>
+      </div>
+    </header>
+
+    <!-- Main interactive showcase panel in light mode -->
+    <div class="rev-showcase pnl reveal">
+      <div class="pnl-h">
+        <div class="rev-tab-group" role="tablist">
+          <button class="rev-tab on" id="tab-rev-threads" type="button" role="tab" aria-selected="true" aria-controls="view-rev-threads">
+            <span class="tab-ico">💬</span>
+            <span>Agent Threads</span>
+            <span class="rev-pill pill-violet">Alt+T</span>
+          </button>
+          <button class="rev-tab" id="tab-rev-pr" type="button" role="tab" aria-selected="false" aria-controls="view-rev-pr">
+            <span class="tab-ico">⎇</span>
+            <span>GitHub PR Review</span>
+            <span class="rev-pill pill-amber">#123</span>
+          </button>
+          <button class="rev-tab" id="tab-rev-batch" type="button" role="tab" aria-selected="false" aria-controls="view-rev-batch">
+            <span class="tab-ico">⚡</span>
+            <span>Batch Inline Edits</span>
+            <span class="rev-pill pill-cyan">Alt+E</span>
+          </button>
+        </div>
+
+        <div class="rev-top-meta">
+          <span class="meta-status-dot"></span>
+          <span class="meta-label" id="rev-meta-text">Harness: <b>claude-3-7-sonnet</b> · Live SSE stream</span>
+        </div>
+      </div>
+
+      <!-- VIEW 1: AGENT THREADS -->
+      <div class="rev-view" id="view-rev-threads" role="tabpanel">
+        <div class="threads-layout">
+          <!-- Left: Code Editor Context Preview -->
+          <div class="threads-code-side">
+            <div class="side-hdr">
+              <div class="side-file-info">
+                <span class="file-icon">📄</span>
+                <span class="file-name">internal/auth/token.go</span>
+                <span class="anchor-badge">@token.go:38-44</span>
+              </div>
+              <span class="side-hint">anchored editor context</span>
+            </div>
+
+            <div class="editor-view">
+              <div class="code-line"><span class="ln">38</span><span class="cl-tx"><span class="k">func</span> <span class="fn">ResolveToken</span>(cfg <span class="ty">Config</span>) (<span class="ty">string</span>, <span class="ty">error</span>) &#123;</span></div>
+              <div class="code-line cl-anchored"><span class="ln">39</span><span class="cl-tx">    <span class="k">if</span> tok := cfg.<span class="pr">GitHubToken</span>; tok != <span class="s">""</span> &#123;</span></div>
+              <div class="code-line cl-anchored"><span class="ln">40</span><span class="cl-tx">        <span class="k">return</span> tok, nil</span></div>
+              <div class="code-line cl-anchored cl-highlighted">
+                <span class="ln">41</span>
+                <span class="cl-tx">        <span class="k">return</span> os.<span class="fn">Getenv</span>(<span class="s">"GITHUB_TOKEN"</span>), nil</span>
+                <span class="gutter-thread-icon" title="Thread anchored here">💬</span>
+              </div>
+              <div class="code-line cl-anchored"><span class="ln">42</span><span class="cl-tx">    &#125;</span></div>
+              <div class="code-line cl-anchored"><span class="ln">43</span><span class="cl-tx">    <span class="k">return</span> <span class="fn">resolveGhCliToken</span>()</span></div>
+              <div class="code-line"><span class="ln">44</span><span class="cl-tx">&#125;</span></div>
+            </div>
+
+            <div class="editor-foot">
+              <span class="ef-tag">Selection active · press <kbd class="alt-key">Alt</kbd><kbd>T</kbd> to start thread</span>
+              <span class="ef-stat">46 lines · Go 1.24</span>
+            </div>
+          </div>
+
+          <!-- Right: Threads Sidebar Pane -->
+          <div class="threads-pane-side">
+            <div class="tp-hdr">
+              <div class="tp-title-row">
+                <span class="tp-icon">#4</span>
+                <span class="tp-title">Refactor auth token fallback</span>
+                <span class="tp-badge-live">LIVE SSE</span>
+              </div>
+              <div class="tp-harness-row">
+                <span class="th-label">Harness:</span>
+                <div class="harness-chips">
+                  <span class="h-chip on">claude</span>
+                  <span class="h-chip">gemini</span>
+                  <span class="h-chip">cursor</span>
+                  <span class="h-chip">agy</span>
+                  <span class="h-chip">+4</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Messages Transcript -->
+            <div class="tp-transcript">
+              <!-- User turn -->
+              <div class="turn turn-user">
+                <div class="turn-hdr">
+                  <span class="user-badge">User</span>
+                  <span class="turn-anchor">@token.go:38-44</span>
+                </div>
+                <div class="turn-body">
+                  Add fallback to GH_TOKEN environment variable and check for empty string before running the gh CLI binary. Keep error handling intact.
+                </div>
+              </div>
+
+              <!-- Assistant turn -->
+              <div class="turn turn-assistant">
+                <div class="turn-hdr">
+                  <span class="assistant-badge">claude-3-7-sonnet</span>
+                  <span class="turn-status">turn 1 · streamed in 1.4s</span>
+                </div>
+
+                <!-- Collapsible Tool Steps -->
+                <div class="tool-steps-box">
+                  <div class="ts-hdr">
+                    <span class="ts-indicator"></span>
+                    <span class="ts-title">Tool Execution Steps (3)</span>
+                    <span class="ts-pill">complete</span>
+                  </div>
+                  <div class="ts-list">
+                    <div class="ts-item"><span class="ts-ok">✓</span><span class="ts-cmd">Read</span> <span class="ts-target">internal/auth/token.go</span> <span class="ts-meta">(46 lines)</span></div>
+                    <div class="ts-item"><span class="ts-ok">✓</span><span class="ts-cmd">Edit</span> <span class="ts-target">internal/auth/token.go</span> <span class="ts-meta">(+14, -3)</span></div>
+                    <div class="ts-item"><span class="ts-ok">✓</span><span class="ts-cmd">Run</span> <span class="ts-target">go test ./internal/auth/...</span> <span class="ts-meta">(PASS in 84ms)</span></div>
+                  </div>
+                </div>
+
+                <div class="turn-body markdown-content">
+                  <p>I have updated <code>ResolveToken</code> to check <code>cfg.GitHubToken</code>, then inspect <code>GITHUB_TOKEN</code> and <code>GH_TOKEN</code> before falling back to the <code>gh</code> CLI.</p>
+                  
+                  <div class="snippet-fence">
+                    <div class="sf-hdr"><span>go</span><span class="sf-copy">Copy</span></div>
+                    <pre><code><span class="k">if</span> tok := os.<span class="fn">Getenv</span>(<span class="s">"GH_TOKEN"</span>); tok != <span class="s">""</span> &#123;
+    <span class="k">return</span> tok, nil
+&#125;</code></pre>
+                  </div>
+
+                  <div class="touched-chips">
+                    <span class="tc-label">Touched:</span>
+                    <span class="t-chip" title="Click to view file in editor">token.go <b class="chip-add">+14</b> <b class="chip-del">−3</b></span>
+                    <span class="tc-auto-reload">✓ tab reloaded</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Thread compose box -->
+            <div class="tp-compose">
+              <div class="compose-input-mock">
+                <span class="cim-ph">Ask a follow-up or instruct next change...</span>
+                <span class="cim-kbd"><kbd>Enter</kbd> send</span>
+              </div>
+              <div class="compose-footer">
+                <span class="cf-harness">Model: claude-3-7-sonnet · Native session resumed</span>
+                <button class="btn-stop-mock" type="button">Stop</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: GITHUB PR REVIEW -->
+      <div class="rev-view is-hidden" id="view-rev-pr" role="tabpanel">
+        <div class="pr-layout">
+          <!-- Left: PR Tree & Comments List -->
+          <div class="pr-tree-side">
+            <div class="side-hdr">
+              <span class="pr-title-num">PR #123</span>
+              <span class="pr-branch-badge">main &larr; auth-refactor</span>
+            </div>
+
+            <ul class="pr-file-list">
+              <li class="pr-dir">
+                <span class="dir-chev">▾</span>
+                <span class="dir-name">internal/auth</span>
+              </li>
+              <li class="pr-file pr-file-active">
+                <span class="pf-indent"></span>
+                <span class="pf-name">token.go</span>
+                <span class="pf-comment-badge" title="1 draft comment">💬 1</span>
+                <span class="badge-m">M</span>
+              </li>
+              <li class="pr-file">
+                <span class="pf-indent"></span>
+                <span class="pf-name">provider.go</span>
+                <span class="pf-comment-badge" title="1 draft comment">💬 1</span>
+                <span class="badge-a">A</span>
+              </li>
+              <li class="pr-dir">
+                <span class="dir-chev">▾</span>
+                <span class="dir-name">cmd</span>
+              </li>
+              <li class="pr-file">
+                <span class="pf-indent"></span>
+                <span class="pf-name">main.go</span>
+                <span class="badge-m">M</span>
+              </li>
+            </ul>
+
+            <div class="pr-action-card">
+              <div class="pac-h">
+                <span class="pac-title">Batch Apply (2)</span>
+                <span class="pac-runner">claude-haiku</span>
+              </div>
+              <p class="pac-desc">Dispatch all drafted review comments across files directly to your coding agent.</p>
+              <div class="pac-btns">
+                <button class="btn-apply-mock" type="button">Batch Apply</button>
+                <button class="btn-submit-mock" type="button">Submit Review &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Merge-Base Diff View with Inline Comment Composer -->
+          <div class="pr-diff-side">
+            <div class="side-hdr">
+              <div class="diff-header-meta">
+                <span class="diff-badge-base">merge-base (8f2a1c)</span>
+                <span class="diff-filename">internal/auth/token.go</span>
+                <span class="diff-stats"><span class="s-add">+14</span> <span class="s-del">−3</span></span>
+              </div>
+              <div class="diff-shortcuts">
+                <span class="sc-item"><kbd class="alt-key">Alt</kbd><kbd>R</kbd> comment</span>
+                <span class="sc-item"><kbd class="mod-key">Ctrl</kbd><kbd>D</kbd> diff</span>
+              </div>
+            </div>
+
+            <div class="diff-viewport">
+              <div class="diff-pane diff-unified">
+                <div class="pane-hdr">
+                  <span>diff against merge-base · author: @alice</span>
+                  <span class="ephemeral-tag">ephemeral worktree</span>
+                </div>
+                <div class="diff-lines">
+                  <div class="dline"><span class="dln">38</span><span class="dln">38</span><span class="dmark"> </span><span class="dtx"><span class="k">func</span> ResolveToken(cfg Config) (string, error) &#123;</span></div>
+                  <div class="dline dline-del"><span class="dln">39</span><span class="dln"> </span><span class="dmark">−</span><span class="dtx">    <span class="k">return</span> os.Getenv("GITHUB_TOKEN"), nil</span></div>
+                  <div class="dline dline-add"><span class="dln"> </span><span class="dln">39</span><span class="dmark">+</span><span class="dtx">    <span class="k">if</span> tok := cfg.GitHubToken; tok != "" &#123;</span></div>
+                  <div class="dline dline-add"><span class="dln"> </span><span class="dln">40</span><span class="dmark">+</span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
+                  <div class="dline dline-add dline-comment-anchor">
+                    <span class="dln"> </span><span class="dln">41</span><span class="dmark">+</span>
+                    <span class="dtx">    <span class="k">if</span> tok := os.Getenv("GITHUB_TOKEN"); tok != "" &#123;</span>
+                    <span class="gutter-pencil" title="Add review comment (Alt+R)">✏</span>
+                  </div>
+
+                  <!-- Inline Draft Review Comment Composer -->
+                  <div class="inline-comment-composer">
+                    <div class="icc-head">
+                      <span class="icc-author">Draft Review Comment · line 41</span>
+                      <span class="icc-tag">in-memory draft</span>
+                    </div>
+                    <div class="icc-body">
+                      Check if GH_TOKEN is also set before falling back to the gh CLI binary so standard environment variables take precedence.
+                    </div>
+                    <div class="icc-actions">
+                      <span class="icc-hint">Press <kbd>Ctrl+Enter</kbd> to save draft</span>
+                      <div class="icc-btns">
+                        <button class="btn-ic-discard" type="button">Discard</button>
+                        <button class="btn-ic-save" type="button">Save Draft</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="dline"><span class="dln">42</span><span class="dln">42</span><span class="dmark"> </span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
+                  <div class="dline"><span class="dln">43</span><span class="dln">43</span><span class="dmark"> </span><span class="dtx">    &#125;</span></div>
+                  <div class="dline"><span class="dln">44</span><span class="dln">44</span><span class="dmark"> </span><span class="dtx">    <span class="k">return</span> resolveGhCliToken()</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="diff-foot">
+              <span class="df-note">Hover any gutter line or select code & press <kbd class="alt-key">Alt</kbd><kbd>R</kbd></span>
+              <span class="df-tag">submit to GitHub · Approve / Request Changes / Comment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: BATCH INLINE EDITS -->
+      <div class="rev-view is-hidden" id="view-rev-batch" role="tabpanel">
+        <div class="batch-layout">
+          <div class="batch-top-bar">
+            <div class="btb-info">
+              <span class="btb-badge">Batch Edit Queue</span>
+              <span class="btb-count">2 comments staged across 2 files</span>
+            </div>
+            <div class="btb-actions">
+              <span class="btb-runner">Active Runner: <b>claude-3-7-sonnet</b></span>
+              <button class="btn-batch-apply-hero" type="button">Apply All (2) [Mod+Enter]</button>
+            </div>
+          </div>
+
+          <div class="batch-cards-grid">
+            <!-- Staged Comment 1 -->
+            <div class="batch-comment-card">
+              <div class="bcc-head">
+                <span class="bcc-pill pill-violet">Comment 1</span>
+                <span class="bcc-loc">internal/auth/token.go:41</span>
+                <span class="bcc-badge">Alt+E staged</span>
+              </div>
+              <div class="bcc-code-snippet">
+                <pre><code><span class="dmark">+</span> <span class="k">if</span> tok := os.Getenv(<span class="s">"GITHUB_TOKEN"</span>); tok != <span class="s">""</span> &#123;</code></pre>
+              </div>
+              <div class="bcc-prompt">
+                <span class="bcc-prompt-label">Instruction:</span>
+                <p>Support GH_TOKEN environment variable fallback with empty string check</p>
+              </div>
+              <div class="bcc-footer">
+                <span class="bcc-status">Ready to dispatch</span>
+                <span class="bcc-conflict-guard">✓ Overlap safe</span>
+              </div>
+            </div>
+
+            <!-- Staged Comment 2 -->
+            <div class="batch-comment-card">
+              <div class="bcc-head">
+                <span class="bcc-pill pill-cyan">Comment 2</span>
+                <span class="bcc-loc">internal/auth/provider.go:19</span>
+                <span class="bcc-badge">Alt+E staged</span>
+              </div>
+              <div class="bcc-code-snippet">
+                <pre><code><span class="k">func</span> (p *Provider) <span class="fn">Authenticate</span>(r *http.Request) (*Token, error) &#123;</code></pre>
+              </div>
+              <div class="bcc-prompt">
+                <span class="bcc-prompt-label">Instruction:</span>
+                <p>Validate empty bearer header and return ErrMissingBearer error early</p>
+              </div>
+              <div class="bcc-footer">
+                <span class="bcc-status">Ready to dispatch</span>
+                <span class="bcc-conflict-guard">✓ Overlap safe</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="batch-status-panel">
+            <div class="bsp-item">
+              <span class="bsp-label">Overlap Conflict Protection</span>
+              <span class="bsp-val">Guarded (HTTP 409 conflict abort)</span>
+            </div>
+            <div class="bsp-item">
+              <span class="bsp-label">Tab Synchronization</span>
+              <span class="bsp-val">Automatic in-place tab reload</span>
+            </div>
+            <div class="bsp-item">
+              <span class="bsp-label">Thread Preservation</span>
+              <span class="bsp-val">Saved as multi-turn thread with follow-up</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 Core Feature Pillars -->
+    <div class="pillars-grid">
+      {pillars.map((p) => (
+        <article class="pillar-cell reveal">
+          <div class="pil-top">
+            <span class="pil-num">{p.num}</span>
+            <span class="pil-tag">{p.tag}</span>
+          </div>
+          <h3 class="pil-title">{p.title}</h3>
+          <h4 class="pil-sub">{p.sub}</h4>
+          <p class="pil-body">{p.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const initReviewShowcase = () => {
+    const tabThreads = document.getElementById('tab-rev-threads');
+    const tabPr = document.getElementById('tab-rev-pr');
+    const tabBatch = document.getElementById('tab-rev-batch');
+
+    const viewThreads = document.getElementById('view-rev-threads');
+    const viewPr = document.getElementById('view-rev-pr');
+    const viewBatch = document.getElementById('view-rev-batch');
+
+    const metaText = document.getElementById('rev-meta-text');
+
+    if (!tabThreads || !tabPr || !tabBatch || !viewThreads || !viewPr || !viewBatch) return;
+
+    const setTab = (activeTab: HTMLElement, activeView: HTMLElement, meta: string) => {
+      [tabThreads, tabPr, tabBatch].forEach((t) => {
+        t.classList.remove('on');
+        t.setAttribute('aria-selected', 'false');
+      });
+      [viewThreads, viewPr, viewBatch].forEach((v) => v.classList.add('is-hidden'));
+
+      activeTab.classList.add('on');
+      activeTab.setAttribute('aria-selected', 'true');
+      activeView.classList.remove('is-hidden');
+      if (metaText) metaText.innerHTML = meta;
+    };
+
+    tabThreads.addEventListener('click', () => {
+      setTab(tabThreads, viewThreads, 'Harness: <b>claude-3-7-sonnet</b> · Live SSE stream');
+    });
+
+    tabPr.addEventListener('click', () => {
+      setTab(tabPr, viewPr, 'GitHub PR: <b>#123</b> · Scoped merge-base diff (8f2a1c)');
+    });
+
+    tabBatch.addEventListener('click', () => {
+      setTab(tabBatch, viewBatch, 'Batch Queue: <b>2 staged comments</b> · Mod+Enter to apply');
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReviewShowcase);
+  } else {
+    initReviewShowcase();
+  }
+</script>
+
+<style>
+  /* ════════ LIGHT MODE DEDICATED SHOWCASE ════════ */
+  .rev-showcase {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 24px rgba(140, 149, 159, 0.12);
+    color: #1f2328;
+  }
+
+  .rev-showcase .pnl-h {
+    background: #f6f8fa;
+    border-bottom: 1px solid #d0d7de;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .rev-tab-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .rev-tab {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid #d0d7de;
+    background: #ffffff;
+    color: #57606a;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    padding: 4px 11px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 3px;
+  }
+
+  .rev-tab:hover {
+    color: #1f2328;
+    border-color: #8c959f;
+  }
+
+  .rev-tab.on {
+    background: #ffffff;
+    border-color: #b45309;
+    color: #b45309;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .tab-ico {
+    font-size: 11px;
+  }
+
+  .rev-pill {
+    font-size: 9px;
+    padding: 1px 5px;
+    font-weight: 700;
+    border-radius: 2px;
+  }
+
+  .pill-violet {
+    background: #f5f0ff;
+    color: #6e40c9;
+    border: 1px solid #d8b4fe;
+  }
+
+  .pill-amber {
+    background: #fff8eb;
+    color: #9a6700;
+    border: 1px solid #fcd34d;
+  }
+
+  .pill-cyan {
+    background: #eff8ff;
+    color: #0969da;
+    border: 1px solid #b6e3ff;
+  }
+
+  .rev-top-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #57606a;
+  }
+
+  .meta-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #1a7f37;
+    box-shadow: 0 0 6px rgba(26, 127, 55, 0.4);
+  }
+
+  .meta-label b {
+    color: #1f2328;
+    font-weight: 600;
+  }
+
+  .rev-view {
+    min-height: 480px;
+    background: #ffffff;
+  }
+
+  .is-hidden {
+    display: none !important;
+  }
+
+  /* ════════ VIEW 1: AGENT THREADS LAYOUT (LIGHT MODE) ════════ */
+  .threads-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+    min-height: 480px;
+  }
+
+  .threads-code-side {
+    border-right: 1px solid #d0d7de;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+  }
+
+  .side-hdr {
+    padding: 8px 14px;
+    background: #f6f8fa;
+    border-bottom: 1px solid #d0d7de;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+  }
+
+  .side-file-info {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .file-icon {
+    font-size: 11px;
+  }
+
+  .file-name {
+    font-weight: 600;
+    color: #1f2328;
+  }
+
+  .anchor-badge {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    background: #f5f0ff;
+    color: #6e40c9;
+    border: 1px solid #d8b4fe;
+    font-weight: 600;
+  }
+
+  .side-hint {
+    color: #57606a;
+    font-size: 10.5px;
+  }
+
+  .editor-view {
+    flex: 1;
+    padding: 12px 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-x: auto;
+    background: #ffffff;
+    color: #1f2328;
+  }
+
+  .code-line {
+    display: flex;
+    padding: 0 14px;
+    align-items: center;
+    position: relative;
+  }
+
+  .code-line .ln {
+    width: 28px;
+    color: #8c959f;
+    user-select: none;
+    font-size: 11px;
+  }
+
+  .code-line .cl-tx {
+    color: #1f2328;
+    white-space: pre;
+  }
+
+  .cl-anchored {
+    background: #faf5ff;
+  }
+
+  .cl-highlighted {
+    background: #f3e8ff;
+  }
+
+  .gutter-thread-icon {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 1px 5px;
+    background: #8250df;
+    color: #ffffff;
+    border-radius: 2px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .editor-foot {
+    padding: 6px 14px;
+    border-top: 1px solid #d0d7de;
+    background: #f6f8fa;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: #57606a;
+  }
+
+  .editor-foot kbd {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    padding: 1px 4px;
+    font-size: 9.5px;
+  }
+
+  /* Right: Threads Pane Side */
+  .threads-pane-side {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+  }
+
+  .tp-hdr {
+    padding: 10px 14px;
+    border-bottom: 1px solid #d0d7de;
+    background: #f6f8fa;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .tp-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tp-icon {
+    color: #6e40c9;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .tp-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1f2328;
+  }
+
+  .tp-badge-live {
+    font-size: 9px;
+    padding: 1px 5px;
+    background: #dafbe1;
+    color: #1a7f37;
+    font-weight: 700;
+    border: 1px solid #82e299;
+    margin-left: auto;
+  }
+
+  .tp-harness-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10.5px;
+    color: #57606a;
+  }
+
+  .harness-chips {
+    display: flex;
+    gap: 4px;
+  }
+
+  .h-chip {
+    padding: 1px 6px;
+    font-size: 10px;
+    border: 1px solid #d0d7de;
+    background: #ffffff;
+    color: #57606a;
+    cursor: pointer;
+  }
+
+  .h-chip.on {
+    border-color: #8250df;
+    color: #6e40c9;
+    background: #f5f0ff;
+    font-weight: 700;
+  }
+
+  .tp-transcript {
+    flex: 1;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    background: #ffffff;
+  }
+
+  .turn {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1px solid #d0d7de;
+  }
+
+  .turn-user {
+    background: #f0f7ff;
+    border-color: #b6e3ff;
+    border-left: 3px solid #0969da;
+  }
+
+  .turn-assistant {
+    background: #fafbfc;
+    border-color: #d0d7de;
+    border-left: 3px solid #8250df;
+  }
+
+  .turn-hdr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10.5px;
+  }
+
+  .user-badge {
+    color: #0969da;
+    font-weight: 700;
+  }
+
+  .assistant-badge {
+    color: #6e40c9;
+    font-weight: 700;
+  }
+
+  .turn-anchor {
+    font-size: 9.5px;
+    color: #0550ae;
+    background: #e1f0ff;
+    border: 1px solid #b6e3ff;
+    padding: 0 4px;
+  }
+
+  .turn-status {
+    margin-left: auto;
+    color: #57606a;
+    font-size: 10px;
+  }
+
+  .turn-body {
+    font-size: 12px;
+    line-height: 1.55;
+    color: #1f2328;
+  }
+
+  .turn-body code {
+    background: #edf0f5;
+    color: #1f2328;
+    padding: 1px 4px;
+    border-radius: 2px;
+  }
+
+  .tool-steps-box {
+    margin: 6px 0 8px 0;
+    border: 1px solid #d0d7de;
+    background: #ffffff;
+    font-size: 11px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  }
+
+  .ts-hdr {
+    padding: 5px 8px;
+    background: #f6f8fa;
+    border-bottom: 1px solid #d0d7de;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ts-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1a7f37;
+  }
+
+  .ts-title {
+    font-weight: 600;
+    color: #1f2328;
+    font-size: 10.5px;
+  }
+
+  .ts-pill {
+    margin-left: auto;
+    font-size: 9px;
+    color: #1a7f37;
+    background: #dafbe1;
+    border: 1px solid #82e299;
+    padding: 0 4px;
+    font-weight: 600;
+  }
+
+  .ts-list {
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    background: #ffffff;
+  }
+
+  .ts-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #1f2328;
+  }
+
+  .ts-ok {
+    color: #1a7f37;
+    font-weight: bold;
+  }
+
+  .ts-cmd {
+    color: #9a6700;
+    font-weight: 600;
+  }
+
+  .ts-target {
+    color: #0969da;
+    font-weight: 500;
+  }
+
+  .ts-meta {
+    color: #57606a;
+    font-size: 9.5px;
+  }
+
+  .snippet-fence {
+    margin: 8px 0;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    font-family: var(--mono);
+    font-size: 11.5px;
+  }
+
+  .sf-hdr {
+    padding: 4px 8px;
+    background: #edf0f5;
+    border-bottom: 1px solid #d0d7de;
+    display: flex;
+    justify-content: space-between;
+    color: #57606a;
+    font-size: 9.5px;
+  }
+
+  .sf-copy {
+    color: #0969da;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .snippet-fence pre {
+    padding: 8px;
+    margin: 0;
+    overflow-x: auto;
+    color: #1f2328;
+    background: #f6f8fa;
+  }
+
+  .touched-chips {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 10.5px;
+  }
+
+  .tc-label {
+    color: #57606a;
+  }
+
+  .t-chip {
+    padding: 2px 7px;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    font-size: 10.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+  }
+
+  .chip-add {
+    color: #1a7f37;
+    font-weight: 700;
+  }
+
+  .chip-del {
+    color: #cf222e;
+    font-weight: 700;
+  }
+
+  .tc-auto-reload {
+    margin-left: auto;
+    font-size: 10px;
+    color: #1a7f37;
+    font-weight: 600;
+  }
+
+  .tp-compose {
+    padding: 10px 14px;
+    border-top: 1px solid #d0d7de;
+    background: #f6f8fa;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .compose-input-mock {
+    padding: 8px 10px;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11.5px;
+    color: #57606a;
+  }
+
+  .compose-input-mock kbd {
+    background: #edf0f5;
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    padding: 1px 4px;
+    font-size: 9.5px;
+  }
+
+  .compose-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: #57606a;
+  }
+
+  .btn-stop-mock {
+    background: #ffffff;
+    border: 1px solid #cf222e;
+    color: #cf222e;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* ════════ VIEW 2: GITHUB PR REVIEW LAYOUT (LIGHT MODE) ════════ */
+  .pr-layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    min-height: 480px;
+  }
+
+  .pr-tree-side {
+    border-right: 1px solid #d0d7de;
+    background: #f6f8fa;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pr-title-num {
+    font-weight: 700;
+    color: #9a6700;
+  }
+
+  .pr-branch-badge {
+    font-size: 9.5px;
+    color: #57606a;
+  }
+
+  .pr-file-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+    flex: 1;
+    font-size: 11.5px;
+  }
+
+  .pr-dir {
+    padding: 4px 10px;
+    color: #1f2328;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .pr-file {
+    padding: 3px 10px 3px 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #24292f;
+    cursor: pointer;
+  }
+
+  .pr-file:hover {
+    background: #eef2ff;
+    color: #1f2328;
+  }
+
+  .pr-file-active {
+    background: #ffffff;
+    color: #0969da;
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 #0969da;
+  }
+
+  .pf-name {
+    flex: 1;
+  }
+
+  .pf-comment-badge {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    background: #fff8eb;
+    color: #9a6700;
+    border: 1px solid #fcd34d;
+    font-weight: 700;
+  }
+
+  .badge-m {
+    font-size: 9px;
+    padding: 0 4px;
+    background: #fff8eb;
+    color: #9a6700;
+    border: 1px solid #fcd34d;
+    font-weight: 700;
+  }
+
+  .badge-a {
+    font-size: 9px;
+    padding: 0 4px;
+    background: #dafbe1;
+    color: #1a7f37;
+    border: 1px solid #82e299;
+    font-weight: 700;
+  }
+
+  .pr-action-card {
+    margin: 10px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .pac-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .pac-title {
+    color: #1f2328;
+  }
+
+  .pac-runner {
+    font-size: 9.5px;
+    color: #6e40c9;
+    background: #f5f0ff;
+    border: 1px solid #d8b4fe;
+    padding: 1px 4px;
+    font-weight: 600;
+  }
+
+  .pac-desc {
+    font-size: 10px;
+    color: #57606a;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .pac-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .btn-apply-mock {
+    background: #fcd34d;
+    border: 1px solid #f59e0b;
+    color: #0b0d14;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 4px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-submit-mock {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* Right: PR Diff View */
+  .pr-diff-side {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+  }
+
+  .diff-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .diff-badge-base {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    background: #eff8ff;
+    color: #0969da;
+    border: 1px solid #b6e3ff;
+    font-weight: 600;
+  }
+
+  .diff-filename {
+    font-weight: 600;
+    color: #1f2328;
+  }
+
+  .diff-stats {
+    font-size: 10.5px;
+  }
+
+  .s-add {
+    color: #1a7f37;
+    font-weight: 600;
+  }
+
+  .s-del {
+    color: #cf222e;
+    font-weight: 600;
+  }
+
+  .diff-shortcuts {
+    display: flex;
+    gap: 8px;
+    font-size: 10.5px;
+    color: #57606a;
+  }
+
+  .diff-shortcuts kbd {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    padding: 1px 4px;
+    font-size: 9.5px;
+  }
+
+  .diff-viewport {
+    flex: 1;
+    overflow-x: auto;
+    background: #ffffff;
+  }
+
+  .diff-unified {
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .pane-hdr {
+    padding: 6px 14px;
+    background: #f6f8fa;
+    border-bottom: 1px solid #d0d7de;
+    font-size: 10.5px;
+    color: #57606a;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ephemeral-tag {
+    color: #9a6700;
+    font-weight: 600;
+  }
+
+  .diff-lines {
+    padding: 6px 0;
+    background: #ffffff;
+  }
+
+  .dline {
+    display: flex;
+    padding: 1px 14px;
+    align-items: center;
+  }
+
+  .dln {
+    width: 26px;
+    color: #8c959f;
+    user-select: none;
+    font-size: 10.5px;
+  }
+
+  .dmark {
+    width: 14px;
+    color: #57606a;
+    user-select: none;
+    font-weight: bold;
+  }
+
+  .dtx {
+    color: #1f2328;
+    white-space: pre;
+    flex: 1;
+  }
+
+  .dline-del {
+    background: #ffebe9;
+  }
+
+  .dline-del .dmark,
+  .dline-del .dtx {
+    color: #cf222e;
+    font-weight: 500;
+  }
+
+  .dline-add {
+    background: #dafbe1;
+  }
+
+  .dline-add .dmark,
+  .dline-add .dtx {
+    color: #1a7f37;
+    font-weight: 500;
+  }
+
+  .dline-comment-anchor {
+    position: relative;
+    background: #fff8c5;
+  }
+
+  .gutter-pencil {
+    color: #9a6700;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .inline-comment-composer {
+    margin: 8px 14px 10px 40px;
+    background: #ffffff;
+    border: 1px solid #d97706;
+    box-shadow: 0 4px 14px rgba(180, 83, 9, 0.1);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-radius: 3px;
+  }
+
+  .icc-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    border-bottom: 1px solid #fed7aa;
+    padding-bottom: 4px;
+  }
+
+  .icc-author {
+    color: #9a6700;
+    font-weight: 700;
+  }
+
+  .icc-tag {
+    color: #57606a;
+    font-size: 9.5px;
+  }
+
+  .icc-body {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #1f2328;
+  }
+
+  .icc-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10.5px;
+    color: #57606a;
+    margin-top: 4px;
+  }
+
+  .icc-actions kbd {
+    background: #edf0f5;
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    padding: 1px 4px;
+    font-size: 9.5px;
+  }
+
+  .icc-btns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .btn-ic-discard {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #57606a;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .btn-ic-save {
+    background: #fcd34d;
+    border: 1px solid #f59e0b;
+    color: #0b0d14;
+    font-weight: 700;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+
+  .diff-foot {
+    padding: 6px 14px;
+    border-top: 1px solid #d0d7de;
+    background: #f6f8fa;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: #57606a;
+  }
+
+  .diff-foot kbd {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    padding: 1px 4px;
+    font-size: 9.5px;
+  }
+
+  /* ════════ VIEW 3: BATCH INLINE EDITS LAYOUT (LIGHT MODE) ════════ */
+  .batch-layout {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: #ffffff;
+  }
+
+  .batch-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+  }
+
+  .btb-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btb-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0969da;
+    text-transform: uppercase;
+  }
+
+  .btb-count {
+    font-size: 11px;
+    color: #1f2328;
+  }
+
+  .btb-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btb-runner {
+    font-size: 11px;
+    color: #57606a;
+  }
+
+  .btb-runner b {
+    color: #6e40c9;
+  }
+
+  .btn-batch-apply-hero {
+    background: #fcd34d;
+    color: #0b0d14;
+    border: 1px solid #f59e0b;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 5px 12px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .batch-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .batch-comment-card {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .bcc-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+  }
+
+  .bcc-pill {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    font-weight: 700;
+  }
+
+  .bcc-loc {
+    font-weight: 600;
+    color: #1f2328;
+  }
+
+  .bcc-badge {
+    margin-left: auto;
+    font-size: 9.5px;
+    color: #57606a;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    padding: 0 4px;
+  }
+
+  .bcc-code-snippet {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    padding: 6px 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #1f2328;
+  }
+
+  .bcc-code-snippet pre {
+    margin: 0;
+    color: #1f2328;
+  }
+
+  .bcc-prompt {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #1f2328;
+  }
+
+  .bcc-prompt-label {
+    font-size: 10px;
+    color: #57606a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+
+  .bcc-prompt p {
+    margin: 0;
+  }
+
+  .bcc-footer {
+    margin-top: auto;
+    padding-top: 6px;
+    border-top: 1px solid #e1e4e8;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+  }
+
+  .bcc-status {
+    color: #9a6700;
+    font-weight: 600;
+  }
+
+  .bcc-conflict-guard {
+    color: #1a7f37;
+    font-weight: 600;
+  }
+
+  .batch-status-panel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    padding: 10px 14px;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    font-size: 11px;
+  }
+
+  .bsp-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .bsp-label {
+    color: #57606a;
+    font-size: 10px;
+  }
+
+  .bsp-val {
+    color: #1f2328;
+    font-weight: 600;
+  }
+
+  /* ════════ PILLARS GRID (HIGH-CONTRAST LIGHT/DARK SUPPORT) ════════ */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pillar-cell {
+    background: var(--bg-elev);
+    border: 1px solid var(--bdr);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .pil-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10.5px;
+  }
+
+  .pil-num {
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  .pil-tag {
+    color: var(--txt-3);
+    letter-spacing: 0.06em;
+  }
+
+  .pil-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--txt);
+    margin: 0;
+  }
+
+  .pil-sub {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--amber);
+    margin: 0;
+  }
+
+  .pil-body {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--txt-2);
+    margin: 0;
+  }
+
+  /* Syntax helpers (Paper Light Palette) */
+  .k { color: #cf222e; font-weight: 600; }
+  .fn { color: #8250df; font-weight: 600; }
+  .ty { color: #0550ae; }
+  .pr { color: #953800; }
+  .s { color: #0a3069; }
+
+  @media (max-width: 900px) {
+    .threads-layout,
+    .pr-layout,
+    .batch-cards-grid,
+    .pillars-grid,
+    .batch-status-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .threads-code-side,
+    .pr-tree-side {
+      border-right: none;
+      border-bottom: 1px solid #d0d7de;
+    }
+  }
+</style>
