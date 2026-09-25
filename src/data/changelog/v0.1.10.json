@@ -1,0 +1,49 @@
+{
+  "version": "0.1.10",
+  "tag": "v0.1.10",
+  "date": "2026-09-25",
+  "title": "Multi-Turn Agent Threads, Syntax-Highlighted Diffs, Tab Context Actions & AGY/Gemini Harness Support",
+  "summary": "Introduces multi-turn coding agent threads with live SSE streaming and transcript persistence in a new Threads sidebar pane, Chroma syntax-highlighted diffs across unified and split views, thread-backed inline and batch code editing, native support for agy and gemini agent harnesses, tab context menus with batch closing actions, and file tree copy shortcuts.",
+  "commitCount": 8,
+  "commitRange": "v0.1.9..v0.1.10",
+  "categories": [
+    {
+      "name": "Multi-Turn Agent Threads & Sidebar Conversation Pane",
+      "items": [
+        "Thread store and turn runner with persistent session continuity, replay, and transcript storage under user config directory",
+        "Dedicated Threads pane in the right inspector with real-time SSE streaming for replies, status, and tool steps",
+        "Thread actions wired to selection toolbars, editor right-click context menu, and keyboard shortcuts",
+        "Thread-backed inline and batch code edits routed through thread management with comment queueing and cancellation",
+        "Replaced line hover pencil button with thread icon and contextual action menu",
+        "Rich markdown rendering and code copy buttons within thread messages"
+      ]
+    },
+    {
+      "name": "Agent Harness Integrations (AGY & Gemini)",
+      "items": [
+        "Native stream-json event parsing and session handling for Google Antigravity (agy) and Gemini agent harnesses",
+        "Updated thread execution internals and configuration documentation for multi-harness agent workflows",
+        "Deterministic agent snapshot diffing with sorted changed-file tracking across iterations"
+      ]
+    },
+    {
+      "name": "Syntax-Highlighted Diff Views",
+      "items": [
+        "Fast server-side Chroma syntax highlighting parsed directly into structured diff hunks",
+        "Structured hunk tokenization and highlighted HTML payload delivery via /api/diff (supporting diff, prDiff, and yourDiff)",
+        "Unified and split diff view rendering with full language token styling across addition, deletion, and context lines",
+        "Unit test coverage for diff hunk tokenization and edge-case parsing"
+      ]
+    },
+    {
+      "name": "Tab Management & Explorer Ergonomics",
+      "items": [
+        "Tab right-click context menu with selective batch closing: Close Tab, Close Others, Close to the Right, and Close All",
+        "Optimized batch tab dismissal using descending index splicing and concurrent Promise.allSettled backend cache evictions",
+        "Right inspector reopen button in header with automatic tab restoration when sidebar is collapsed",
+        "File tree context menu actions to quickly copy relative paths, absolute paths, and file names",
+        "Accessibility attributes and click-outside listeners dismissing context menus on escape, scroll, resize, or blur"
+      ]
+    }
+  ]
+}
