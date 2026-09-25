@@ -89,14 +89,21 @@ This toggles the active editor between standard code view and the interactive Di
 - **Clean Hunk Headers**: Diffs feature clean hunk boundaries without distracting metadata.
 - **Persistent Preferences**: Use the toggle in the editor toolbar to switch between Split and Unified modes. px0 stores your layout preference in `localStorage`.
 
-## Selecting & Editing Directly in Diff Views
+### Syntax-Highlighted Diffs (Powered by Chroma)
 
-You can select code directly inside both split and unified diffs:
+In px0 v0.1.10, diff code lines feature server-side syntax highlighting powered by Chroma:
+- **Language Token Preservation**: Keywords, function signatures, types, comments, and strings retain full theme token colors across both split and unified views.
+- **Diff Contrast**: Subtle green (`--gi-bg`) and red (`--gd-bg`) background tinting highlights additions and deletions while keeping syntax colors sharp and legible.
+- **Zero Client Overhead**: Highlighting is executed during server-side hunk parsing and delivered via `/api/diff`, avoiding heavy client-side tokenizers.
 
-1. Drag across lines or use keyboard selection inside the diff viewport. px0 maps diff lines to working tree coordinates (`data-l` and `data-at` line anchors).
-2. Press `Alt+E` (or `Option+E` on macOS), or right-click the selection.
-3. Enter your prompt in the agent composer to request adjustments.
-4. When the harness finishes writing, px0 reloads the file while maintaining your diff view mode and exact scroll position.
+## Selecting, Editing & Starting Threads from Diff Views
+
+You can interact directly with code lines inside both split and unified diffs:
+
+1. **Selection Anchoring**: Drag across lines or use keyboard navigation inside the diff viewport. px0 maps diff lines to working tree coordinates (`data-l` and `data-at` line anchors).
+2. **Start a Thread (`Alt+T`)**: Press `Alt+T` (`Option+T` on macOS) to open a multi-turn conversation with your agent anchored to those diff lines.
+3. **Inline Agent Edits (`Alt+E`)**: Press `Alt+E` to open the comment box and stage an edit instruction for your coding harness.
+4. **Live Reload**: When the harness completes writing, px0 reloads the file while maintaining your diff view mode and exact scroll position.
 
 ## Gutter Diff Markers in Normal View
 
@@ -105,6 +112,7 @@ Even when viewing standard code without full diff mode enabled, the editor line 
 - **Green bar**: Added line.
 - **Blue bar**: Modified line.
 - **Red triangle**: Deleted line marker positioned where deleted lines originally sat.
+- **Thread Icon**: Hovering any line number displays a thread icon to start a thread or stage an inline edit.
 
 ## Sidebar Git Panel (Stage, Commit, Push, Pull)
 
@@ -117,7 +125,7 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 
 ### 2. Manual Commit & Commit with AI
 - **Collapsible Monospace Input**: The commit message textarea is hidden by default to keep the sidebar compact. Click the toggle link to reveal it for manual typing, or let it auto-expand when generating a message.
-- **Standalone AI Generation & Pre-Commit Review**: Click **Generate** to draft a commit message with your configured AI harness (Claude Code, Gemini CLI, Cursor Agent, Antigravity) without committing immediately. This lets you review and tweak the text before clicking **Commit**.
+- **Standalone AI Generation & Pre-Commit Review**: Click **Generate** to draft a commit message with your configured AI harness (Claude Code, Antigravity, Gemini CLI, Cursor Agent) without committing immediately. This lets you review and tweak the text before clicking **Commit**.
 - **1-Click Commit with AI**: Alternatively, click **Commit with AI** to generate a message and commit the staged changes in a single action.
 - **Data-Loss Protection**: If a commit fails (for instance due to pre-commit hooks or git conflicts), the generated message remains in the textarea so you never lose your draft.
 - **Curated Diff Context**: px0 supplies the agent with the list of staged file paths, a diffstat summary, and the staged diff capped at 32 KB while excluding lockfiles and minified assets.
@@ -134,6 +142,20 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 ### 5. Throttled Status Refresh & Flicker-Free Tabs
 - Background git status syncs are throttled with an adaptive cooldown window and deduplication to avoid eating CPU during rapid disk operations.
 - Open tabs apply an `onlyIfChanged` guard during background synchronizations: untouched files are never repainted, eliminating cursor jumps or visual tab flickering.
+
+## Tab Context Menu & Batch Closing
+
+Managing many open diffs and files is simplified with the tab context menu:
+- Right-click any tab in the tab bar to access **Close**, **Close Others**, **Close to the Right**, **Close to the Left**, or **Close All**.
+- Actions without matching tabs are automatically disabled.
+- Closing tabs in bulk triggers batched backend cache evictions (`Promise.allSettled`) to keep memory minimal.
+
+## File Tree Context Menu
+
+Right-click any folder or file row in the explorer (or click the three-dots action button) to:
+- **Copy Relative Path**: Copies the project-relative path (e.g. `src/internal/diff.go`).
+- **Copy File Name / Folder Name**: Copies just the filename or directory name.
+- **Copy Absolute Path**: Copies the full filesystem path on the host machine.
 
 ## GitHub Pull Request Review
 

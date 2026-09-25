@@ -7,32 +7,47 @@ order: 2
 
 # Pairing with AI Coding Agents
 
-When working with autonomous coding agents such as Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, or Goose, code modifications arrive rapidly across multiple files. Running a 1.5 GB Electron IDE to supervise edits wastes gigabytes of system memory and risks typing conflicts.
+When working with autonomous coding agents such as Claude Code, Google Antigravity, Gemini CLI, Cursor Agent, OpenCode, Codex, Aider, or Goose, code modifications arrive rapidly across multiple files. Running a 1.5 GB Electron IDE to supervise edits wastes gigabytes of system memory and risks typing conflicts.
 
-Built as the IDE for humans and AI, px0 pairs with autonomous coding agents in two distinct ways:
+Built as the IDE for humans and AI, px0 pairs with autonomous coding agents in three distinct ways:
 
-1. **Integrated In-App Agent Dispatch (`Alt+E`)**: Select code in px0, describe your change, and dispatch it directly to your installed harness with automatic reloading and live streaming.
-2. **Terminal Supervision (Sidecar Mode)**: Run your agent in your terminal or tmux pane while px0 serves as a lightweight, read-first review station.
+1. **Multi-Turn Agent Threads (`Alt+T`)**: Conduct persistent, multi-turn conversations anchored to code selections or workspace concepts. Inspect tool steps live and follow up across turns directly in the right sidebar Threads pane.
+2. **Integrated In-App Agent Dispatch (`Alt+E`)**: Select code in px0, stage single or batch comments, and dispatch them directly to your installed harness with automatic reloading and live streaming.
+3. **Terminal Supervision (Sidecar Mode)**: Run your agent in your terminal or tmux pane while px0 serves as a lightweight, read-first review station with sub-millisecond Git synchronization.
 
 ---
 
-## Mode 1: Integrated In-App Agent Dispatch
+## Mode 1: Multi-Turn Agent Threads
 
-px0 can directly invoke your installed coding harnesses without leaving the browser:
+Threads provide an interactive, conversational loop directly beside your code:
 
 1. Open your workspace with `px0 .`
-2. Highlight the code you want modified in either the code viewport or git diff view.
-3. Press `Alt+E` (or `Option+E` on macOS), or right-click the selection.
-4. Pick your desired harness and model from the dropdown.
-5. Enter your instruction and press `Enter`.
+2. Select any code block and press `Alt+T` (`Option+T` on macOS), or click the thread icon beside any line number.
+3. The **Threads** pane in the right inspector opens, anchored to your selection.
+4. Enter your question or prompt (e.g. *"Explain how this error path is handled and draft a safer variant"*).
+5. Watch live as the harness streams its reply and collapsible tool steps (`Read handler.go`, `Edit types.go`).
+6. Follow up seamlessly with subsequent messages: native session harnesses (`claude`, `agy`, `gemini`, `cursor-agent`) resume their existing sessions without re-sending full history, saving API tokens.
 
-px0 executes the harness, streams output live to the running terminal with a `[<harness>]` prefix, guards against overlapping file edits, and automatically reloads touched documents upon completion.
+For a full walkthrough of threads, see the [Agent Threads & Multi-Turn Conversations guide](/docs/guides/agent-threads).
+
+---
+
+## Mode 2: Integrated In-App Agent Dispatch
+
+px0 can directly invoke your installed coding harnesses for focused edits:
+
+1. Highlight the code you want modified in either the code viewport or git diff view.
+2. Press `Alt+E` (or `Option+E` on macOS), or right-click the selection.
+3. Pick your desired harness and model from the dropdown.
+4. Enter your instruction and press `Enter` to stage a comment (for batching) or `Ctrl+Enter` (`Cmd+Enter` on macOS) to **Apply now**.
+5. When the edit finishes, px0 automatically reloads touched documents and updates git status gutters.
+6. The edit is preserved as an `inline` or `batch` thread in the Threads list for future reference and follow-up queries.
 
 For a comprehensive walkthrough of the in-app agent workflow, consult the [Editing with Coding Agents guide](/docs/guides/editing-with-coding-agents).
 
 ---
 
-## Mode 2: External Terminal Supervision (Sidecar Mode)
+## Mode 3: External Terminal Supervision (Sidecar Mode)
 
 If you prefer driving complex, multi-step agent conversations directly inside your terminal, keep your active terminal pane dedicated to the agent prompt while running px0 alongside it.
 
@@ -87,7 +102,7 @@ When an external terminal agent finishes applying changes to disk:
 - Click the **Reindex / Reload button (`↻`)** at the top of the file tree in the px0 web interface, or reload your browser.
 - px0 rescans the project tree in a few milliseconds, refreshes git status badges (`M`, `A`, `D`), and updates diff views against `HEAD`.
 
-*(Note: If you dispatched the edit through px0's in-app composer using `Alt+E`, reloading occurs automatically when the agent exits.)*
+*(Note: If you dispatched the edit through px0's in-app composer using `Alt+E` or a Thread, reloading occurs automatically when the agent completes.)*
 
 ---
 
@@ -95,6 +110,6 @@ When an external terminal agent finishes applying changes to disk:
 
 - **Optimized for Reads**: No heavy editor or accidental keystrokes overwriting agent work in progress.
 - **Zero Watcher Overhead**: Without recursive `inotify` or `fsevents` watching hundreds of thousands of files, your machine stays cool and quiet.
-- **Instant Git Diffs**: Press `Ctrl+D` (or `Cmd+D`) to toggle side-by-side or unified diffs across all modified files in real time.
-- **Diff View Selection**: Select lines directly inside diff view to send targeted refinements back to your agent.
+- **Chroma Syntax-Highlighted Diffs**: Press `Ctrl+D` (or `Cmd+D`) to toggle side-by-side or unified diffs with full language syntax coloring across modified lines.
+- **Diff View Selection**: Select lines directly inside diff view to send targeted refinements back to your agent or start a thread.
 - **Low CPU & Memory**: px0 uses strictly ~20-30 MB of host resident memory (~100-180 MB total including the browser tab) and sub-1% CPU, reserving resources for your agent and compiler.

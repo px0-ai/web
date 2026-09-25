@@ -17,7 +17,7 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | :--- | :--- | :--- |
 | `Cmd+P` | `Ctrl+P` | **Go to file**: Fast fuzzy file finder across workspace |
 | `Cmd+K` | `Ctrl+K` | **Universal palette**: Quick open files, symbols, and actions |
-| `Cmd+Shift+P` | `Ctrl+Shift+P` | **Command palette**: Access all editor and view commands |
+| `Cmd+Shift+P` | `Ctrl+Shift+P` | **Command palette**: Access all editor, view, and thread commands |
 | `Cmd+Shift+O` | `Ctrl+Shift+O` | **Go to symbol**: Symbol outline in current active file |
 | `Cmd+Shift+F` | `Ctrl+Shift+F` | **Workspace search**: Full-text regex search across all files |
 | `Cmd+Shift+R` | `Ctrl+Shift+R` | **Refresh workspace**: Live reindex of workspace tree and Git status |
@@ -25,6 +25,7 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Cmd+F` | `Ctrl+F` | **Find in file**: In-file search seeded with current selection |
 | `Cmd+G` | `Ctrl+G` | **Jump to line**: Enter line number to jump directly |
 | `Cmd+B` | `Ctrl+B` | **Toggle sidebar**: Show or hide the left explorer sidebar |
+| Right-click tree item | Right-click tree item | **File tree context menu**: Copy Relative Path, Copy Name, Copy Absolute Path |
 
 ## Code Intelligence & Language Server (LSP)
 
@@ -44,7 +45,7 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | :--- | :--- | :--- |
 | `Cmd+D` | `Ctrl+D` | **Toggle Git diff**: Toggle split or unified diff against `HEAD` (or merge-base in PR review) |
 | `Option+R` | `Alt+R` | **Review comment**: Draft PR review comment on active selection |
-| `Line Hover (✏)` | `Line Hover (✏)` | **Line action popover**: Choose between GitHub comment or inline agent edit |
+| Line Hover (Thread Icon) | Line Hover (Thread Icon) | **Line action popover**: Choose between Start Thread, Edit Inline, or Review Comment |
 | `Cmd+K` -> `Git: Open Pull Request...` | `Ctrl+K` -> `Git: Open Pull Request...` | **Open PR**: Launch a fresh pull request review tab |
 | `Option+M` | `Alt+M` | **Toggle Markdown preview**: Switch between raw source and rendered GFM |
 
@@ -56,24 +57,28 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Cmd+Shift+T` | `Ctrl+Shift+T` | **Reopen closed tab**: Restore the last closed editor tab |
 | `Ctrl+Tab` | `Ctrl+Tab` | **Switch tab**: Cycle to the next open tab |
 | `Option+1` ... `Option+9` | `Alt+1` ... `Alt+9` | **Select tab**: Select tab by its numeric position |
+| Right-click tab | Right-click tab | **Tab close menu**: Close, Close Others, Close to Right/Left, Close All |
 | `Option+Z` | `Alt+Z` | **Toggle word wrap**: Toggle visual soft-wrapping on or off |
 | `Cmd+Up` / `Cmd+Down` | `Ctrl+Home` / `Ctrl+End` | **Top / Bottom**: Jump caret directly to first or last line |
 
-## Selection & Agent Actions
+## Threads, Selection & Agent Actions
 
 When code is selected in the editor or diff view, the footer selection bar and context menu provide instant actions:
 
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
-| `Option+E` | `Alt+E` | **Edit Inline**: Open compose box to dispatch selected range to coding harness |
-| `Cmd+Enter` | `Ctrl+Enter` | **Apply all comments**: Dispatch all staged inline comments as a single batch edit |
-| `Right-click` | `Right-click` | **Selection actions menu**: Edit Inline, Copy Ref, Copy with Context, Find Usages |
+| `Option+T` | `Alt+T` | **Start Thread**: Open a multi-turn conversation anchored to the selection (or cursor line) |
+| `Option+E` | `Alt+E` | **Edit Inline**: Open comment box in Threads pane to dispatch selected range |
+| `Enter` (in comment box) | `Enter` (in comment box) | **Add comment**: Stage comment into batch and fold composer row |
+| `Cmd+Enter` | `Ctrl+Enter` | **Apply now**: Dispatch single staged comment immediately |
+| `Cmd+Shift+Enter` | `Ctrl+Shift+Enter` | **Apply all comments**: Dispatch all staged batch comments simultaneously |
+| `Right-click` | `Right-click` | **Selection actions menu**: Start Thread, Edit Inline, Copy Ref, Copy with Context, Find Usages |
 | `Shift+Arrows` | `Shift+Arrows` | **Expand selection**: Classic text selection across characters and lines |
 | `Shift+Option+Arrows` | `Shift+Ctrl+Arrows` | **Word selection**: Expand selection by word boundaries |
 | `Option+C` | `Alt+C` | **Copy reference**: Copy standardized `@path:l1-l2` reference (Copy Ref) |
 | `Option+A` | `Alt+A` | **Copy with context**: Copy snippet formatted with `@path:l1-l2` header for prompt composition |
 | `Option+U` | `Alt+U` | **Find usages**: Search workspace for the selected identifier |
-| `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, selection bar, lightbox, or open overlay |
+| `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, menus, selection bar, or open modal |
 | `?` | `?` | **Help sheet**: Display in-app shortcut modal overlay |
 
 ## Image Viewer & Asset Inspection
@@ -112,7 +117,6 @@ When `editor.vimMode` is enabled in Settings:
 | `y` | Visual | Yank: Copy selected text to clipboard |
 | `Alt+C` / `Option+C` | Visual | Copy `@path:l1-l2` reference pointer |
 | `Alt+A` / `Option+A` | Visual | Copy snippet formatted with context for LLM |
+| `Alt+T` / `Option+T` | Visual | Start thread anchored to visual selection |
 | `Alt+E` / `Option+E` | Visual | Dispatch selected range to coding agent |
 | `Escape` | Visual | Cancel selection and return to Normal mode |
-
-

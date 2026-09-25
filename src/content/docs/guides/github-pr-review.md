@@ -76,13 +76,14 @@ When reviewing a PR, you may test local changes or delegate fixes to an AI codin
 
 Reviewing code requires clear communication and quick feedback loops. px0 provides two convenient mechanisms to draft inline comments:
 
-### 1. Line Hover Pencil Icon (`✏`)
+### 1. Line Hover Thread Icon
 
 Hover over any line number in the source editor or diff viewer:
-- A pencil icon (`✏`) appears in the gutter.
-- Clicking it opens a context menu with two choices:
-  - **Leave Comment on GitHub**: Opens the review comment composer for that line.
-  - **Leave Comment for Inline Edit**: Prompts your local AI coding harness to edit those lines directly.
+- A thread icon appears in the gutter.
+- Clicking it opens a context menu with options for that line:
+  - **Add Review Comment**: Opens the GitHub review comment composer for that line.
+  - **Edit Inline**: Prompts your local AI coding harness to edit those lines directly.
+  - **Start Thread**: Opens a persistent conversation with your agent anchored to that line.
 
 ### 2. Selection Action (`Alt+R` / `Option+R`)
 
@@ -188,7 +189,9 @@ If no token is found on your workstation:
 | Shortcut / Control | Context | Action |
 | :--- | :--- | :--- |
 | `Alt+R` / `Option+R` | Editor or diff selection | Open review comment composer |
-| Line Hover (`✏`) | Line number in gutter | Choose between GitHub comment or inline agent edit |
+| `Alt+T` / `Option+T` | Editor or diff selection | Start a thread with your agent anchored to selection |
+| `Alt+E` / `Option+E` | Editor or diff selection | Open inline agent edit comment box |
+| Line Hover (Thread Icon) | Line number in gutter | Choose between review comment, inline edit, or thread |
 | `Cmd+D` / `Ctrl+D` | Active editor tab | Toggle side-by-side / unified diff against merge-base |
 | `Cmd+K` / `Ctrl+K` | Universal Palette | **Git: Open Pull Request...** launches a new review tab |
 | **`Batch Apply`** | PR header bar | Dispatch all drafted comments to local AI coding harness |

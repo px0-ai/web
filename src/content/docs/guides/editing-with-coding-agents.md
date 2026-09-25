@@ -2,27 +2,29 @@
 title: "Editing with Coding Agents"
 description: "How to dispatch selection-anchored edits to Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, or Goose directly inside px0."
 category: "guides"
-order: 3
+order: 4
 ---
 
 # Editing with Coding Agents
 
 px0 is designed from the ground up for high-density reading, navigation, and review. When code needs to change, px0 does not ask you to type character-by-character into a heavy editor. Instead, you delegate changes to your AI coding agent of choice directly from the browser interface, and px0 automatically reloads what moved.
 
+In px0 v0.1.10, inline edits and batch edits are fully integrated with the **Threads** system: edit comment boxes live in the right inspector's Threads pane, and every applied edit is preserved as a multi-turn thread with live tool step streaming and follow-up capabilities.
+
 ## Supported Coding Harnesses
 
-px0 discovers installed coding harnesses on your `PATH` and standard binary directories (`~/.local/bin`, `/usr/local/bin`, npm global prefix). Eight popular coding harnesses are supported out of the box, each configured with optimal headless flags and automatic approval modes:
+px0 discovers installed coding harnesses on your `PATH` and standard binary directories (`~/.local/bin`, `/usr/local/bin`, npm global prefix). Eight popular coding harnesses are supported out of the box, each configured with optimal headless flags, automated approvals, and native session continuity where supported:
 
-| Harness | Identifier | Headless Command Executed |
-| :--- | :--- | :--- |
-| **Claude Code** | `claude` | `claude --permission-mode acceptEdits --model <model> -p {prompt}` |
-| **Gemini CLI** | `gemini` | `gemini --approval-mode auto_edit -m <model> -p {prompt}` |
-| **Cursor Agent** | `cursor-agent` | `cursor-agent --force --model <model> -p {prompt}` |
-| **Antigravity** | `agy` | `agy --dangerously-skip-permissions --mode accept-edits --model <model> -p {prompt}` |
-| **OpenCode** | `opencode` | `opencode run -m <model> {prompt}` |
-| **OpenAI Codex** | `codex` | `codex exec --ask-for-approval never -m <model> {prompt}` |
-| **Aider** | `aider` | `aider --yes-always --no-auto-commits --model <model> --message {prompt}` |
-| **Goose** | `goose` | `goose run --no-session --model <model> -t {prompt}` |
+| Harness | Identifier | Continuity Mode | Headless Command Executed |
+| :--- | :--- | :--- | :--- |
+| **Claude Code** | `claude` | Native session | `claude --permission-mode acceptEdits --model <model> -p {prompt}` |
+| **Google Antigravity** | `agy` | Native session | `agy --dangerously-skip-permissions --mode accept-edits --model <model> -p {prompt}` |
+| **Gemini CLI** | `gemini` | Native session | `gemini --approval-mode auto_edit -m <model> -p {prompt}` |
+| **Cursor Agent** | `cursor-agent` | Native session | `cursor-agent --force --model <model> -p {prompt}` |
+| **OpenCode** | `opencode` | Prompt replay | `opencode run -m <model> {prompt}` |
+| **OpenAI Codex** | `codex` | Prompt replay | `codex exec --ask-for-approval never -m <model> {prompt}` |
+| **Aider** | `aider` | Prompt replay | `aider --yes-always --no-auto-commits --model <model> --message {prompt}` |
+| **Goose** | `goose` | Prompt replay | `goose run --no-session --model <model> -t {prompt}` |
 
 ---
 
@@ -34,7 +36,7 @@ If your team uses an internal agent runner, shell wrapper, or custom orchestrato
 px0 -agent 'my-agent-cli --auto-apply --prompt {prompt}' /path/to/project
 ```
 
-px0 substitutes `{prompt}` with the synthesized instructions and context, executes the command, streams output to the terminal, and auto-reloads touched files when finished.
+px0 substitutes `{prompt}` with the synthesized instructions and context, executes the command, streams output to the terminal and web inspector, and auto-reloads touched files when finished.
 
 ---
 
@@ -46,7 +48,7 @@ px0 substitutes `{prompt}` with the synthesized instructions and context, execut
   ```bash
   px0 -agent claude /path/to/project
   ```
-  Or choose any supported harness: `claude`, `gemini`, `cursor-agent`, `agy`, `opencode`, `codex`, `aider`, or `goose`.
+  Or choose any supported harness: `claude`, `agy`, `gemini`, `cursor-agent`, `opencode`, `codex`, `aider`, or `goose`.
 - **Disabling Agent Dispatch**: To turn off agent endpoints entirely on shared machines:
   ```bash
   px0 -no-agent /path/to/project
@@ -61,63 +63,60 @@ Highlight the code you want to modify using your mouse or keyboard navigation (`
 
 You can select code in either:
 - The standard **Source Viewport**
-- The interactive **Git Diff View** (split or unified diff against `HEAD`)
+- The interactive **Git Diff View** (split or unified diff against `HEAD` or merge-base)
 
-### 2. Open the Agent Composer (`Alt+E` or `Option+E`)
-With code selected, open the compose box:
+### 2. Open the Composer
+With code selected, open the edit box:
 - Press `Alt+E` (or `Option+E` on macOS)
-- Or right-click the selection and choose **Edit Inline**
-- Or click **Edit Inline** in the footer selection bar
+- Right-click the selection and choose **Edit Inline**
+- Click **Edit Inline** in the footer selection bar
+- Or click the **thread icon** that appears beside any line number on hover and choose **Edit Inline**
 
-The active selection remains highlighted in the editor while you type.
+The comment box opens immediately at the top of the **Threads** pane in the right sidebar (sliding open automatically if the sidebar was collapsed).
 
 ### 3. Choose Harness & Model
-The top metadata row of the composer displays the detected harness, active model dropdown, and citation range (for example `@internal/fuzzy.go:64-72`).
+The top row of the comment box displays the selected harness, active model dropdown, and citation range (for example `@internal/fuzzy.go:64-72`).
 
-If multiple harnesses are installed on your system, you can switch between them using the harness switcher in the compose box.
+If multiple harnesses are installed on your system, you can switch between them using the harness dropdown.
 
-### 4. Enter Instructions & Dispatch
-Type your instruction (e.g. `"simplify the score penalty calculation"`) and press `Enter` (or click **Run**).
+### 4. Write a Comment or Apply Immediately
+Type your instruction (e.g. `"simplify the score penalty calculation"` or `"handle nil error check"`). You have two choices:
+- **Add comment (`Enter`)**: Queues the comment so you can stage multiple edits into a batch across files.
+- **Apply now (`Ctrl+Enter` / `Cmd+Enter`)**: Dispatches this single edit immediately.
 
-px0 synthesizes a structured prompt including:
-- Repository root path
-- Relative target file path
-- Standardized `@path:l1-l2` reference
-- Selected code excerpt
-- Your specific prompt instruction
+### 5. Live Streaming in the Threads Pane
+When dispatched, px0 sends the file path, line range, selected code snippet, and prompt to the harness:
+- The edit is tracked in the Threads pane, where live tool steps (such as `Read fuzzy.go` and `Edit fuzzy.go`) and agent replies stream in real time over Server-Sent Events (`/api/threads/stream`).
+- Output lines also stream live to the terminal running px0 with a `[<harness>]` prefix.
+- If you need to stop an in-flight run, click **Cancel** or **Stop** in the Threads pane to abort the process immediately.
 
-### 5. Live Terminal Streaming & Auto-Reload
-While the harness runs:
-- The composer displays a busy processing indicator.
-- Output lines from stdout and stderr stream live to the terminal running px0, prefixed with `[<harness>]`.
-- If you need to stop an in-flight run, press `Escape` or click **Cancel** in the compose box to abort the child process immediately (`/api/agent/cancel`).
-
+### 6. Automatic Document Reload & Preserved Diff State
 When the harness finishes:
-- px0 runs working-tree diff checks (`changedSince`) comparing file sizes, timestamps, and git status.
+- px0 executes working-tree diff checks (`changedSince`) measuring file sizes, timestamps, and git status to discover modified files.
 - Touched syntax highlighting caches are cleared, open language server documents are refreshed, and open editor tabs reload automatically.
 - If you were viewing a git diff, your diff mode and scroll position are preserved.
+
+### 7. Saved as a Thread for Follow-Up
+Every applied edit is preserved as a thread in the Threads list, labeled `inline` or `batch`. You can reopen it at any time to inspect the agent's explanation, view changed file chips, or send a follow-up instruction (e.g. *"also add a test case for this"*).
 
 ---
 
 ## Batch Inline Editing
 
-When reviewing a PR, refactoring a module, or coordinating multi-step changes, submitting one prompt at a time creates friction. px0 supports **Batch Inline Editing**, allowing you to stage multiple selection comments across lines or files, review them together, and apply all changes in a single coordinated run.
+When reviewing code, refactoring a module, or coordinating multi-step changes, submitting one prompt at a time creates friction. px0 supports **Batch Inline Editing**, allowing you to stage multiple selection comments across lines or files, review them together, and apply all changes in a single coordinated run.
 
 ### Creating Multiple Comments
-1. Highlight any code range and press `Alt+E` (or `Option+E` on macOS) to create an edit comment. Alternatively, if no code is highlighted, pressing `Alt+E` anchors a comment to your current cursor line.
-2. Type your instruction in the composer.
-3. Without submitting yet, navigate elsewhere in the file or open another file, select a second target range, and press `Alt+E`.
-4. Gutter indicators immediately display a `✎` anchor glyph and highlight the lines. Clicking the reference badge (e.g. `@src/agent.js:12-25`) in any comment box instantly jumps your viewport back to the target code.
+1. Highlight any code range and press `Alt+E` (or click the line thread icon and choose **Edit Inline**).
+2. Type your instruction and press `Enter` (**Add comment**). The box folds into a compact row showing your text. Click it anytime to expand and edit.
+3. Navigate elsewhere in the file or open another file, select a second target range, and press `Alt+E` to add another comment.
+4. Gutter indicators display anchor badges and highlight the lines. Clicking the reference badge (e.g. `@src/agent.js:12-25`) in any comment box instantly jumps your viewport back to the target code.
 
-### Document-Order Stacking & The Batch Control Bar
-- Comment boxes automatically arrange themselves from top to bottom in document order inside `#agentbox-list`.
-- When two or more comments exist, the **Batch Control Bar** (`#agent-batch-bar`) automatically appears at the top of the composer stack.
-- The bar provides unified controls:
-  - **Comment Counter**: Tracks ready comments versus currently running edits (e.g. `3 comments`, `1 remaining (2 in batch)`).
-  - **Unified Model Selector**: Change the target coding harness and model for the entire batch simultaneously.
-  - **Apply All (`Mod+Enter` / `Ctrl+Enter` / `Cmd+Enter`)**: Dispatches all staged comments together.
-  - **Clear All**: Dismisses all open comment boxes.
-  - **Cancel**: Halts an in-flight batch job.
+### The Batch Control Bar
+As soon as comments are staged, the **Batch Control Bar** appears at the top of the Threads pane:
+- **Comment Counter**: Tracks staged comments (e.g. `2 comments`).
+- **Unified Model Selector**: Change the target coding harness and model for the entire batch simultaneously.
+- **Apply all (N) (`Ctrl+Shift+Enter` / `Cmd+Shift+Enter`)**: Dispatches all staged comments together as a single orchestrated batch.
+- **Clear All**: Dismisses all staged comment boxes.
 
 ### Coordinated Prompt Synthesis
 When you trigger **Apply All**, px0 aggregates all comments into a single orchestrated batch prompt dispatched to your selected coding harness:
@@ -158,15 +157,15 @@ When an agent completes an edit (or when files change on disk), px0 updates your
 
 px0 supports concurrent agent dispatch with strict safety guards:
 - **Disjoint Edits**: You can dispatch multiple edits simultaneously across different files or non-overlapping line ranges in the same file.
-- **Concurrent Batch & Single Edits**: Non-overlapping batch edits and individual edits can run at the same time. The status bar coordinates progress notes smoothly (e.g. `Batch editing 3 items + 1 edit running... 6s`).
 - **Overlap Lock**: If an edit overlaps with line ranges already being modified by an in-flight job, px0 rejects the second dispatch with an HTTP 409 conflict to prevent corrupted merges.
+- **Independent Threads**: Open-ended conversations started from the Threads tab run independently with no line-overlap locks.
 
 ---
 
 ## Error Reporting & Worktree Snapshots
 
 If an agent run fails (such as an API quota exhaustion, authentication failure, or malformed syntax):
-- The compose box stays open and displays the exact `stderr` and `stdout` error output.
+- The thread turn in the Threads pane displays the exact error output and failed step.
 - You can inspect the error, adjust your instruction, and retry immediately.
 - px0 takes pre- and post-run worktree snapshots, enabling instant undo to restore the files modified by the harness to their prior state.
 

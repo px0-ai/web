@@ -1,13 +1,13 @@
 ---
 title: "Architecture & Systems Internals"
-description: "Technical deep dive into px0's single-binary design, parallel indexing, fuzzy matching, virtualized rendering, and Git/GitHub review architecture."
+description: "Technical deep dive into px0's single-binary design, parallel indexing, fuzzy matching, virtualized rendering, agent threads, and Git/GitHub review architecture."
 category: "reference"
 order: 4
 ---
 
 # Architecture & Systems Internals
 
-px0 achieves sub-millisecond startup, instantaneous file navigation, ~20 MB resident memory consumption, safe coding harness dispatch, and real-time Git/GitHub collaboration through dedicated systems engineering principles. This document provides a technical walkthrough of its internal architecture.
+px0 achieves sub-millisecond startup, instantaneous file navigation, ~20 MB resident memory consumption, multi-turn coding agent threads, and real-time Git/GitHub collaboration through dedicated systems engineering principles. This document provides a technical walkthrough of its internal architecture.
 
 ## High-Level Subsystem Flow
 
@@ -16,10 +16,14 @@ Browser Client (Vanilla JS + CSS)
   ├── DOM Virtualized Row Engine (~60 mounted DOM rows)
   ├── Classic Text & Diff Selection Manager
   ├── Bidirectional Scroll Markdown Viewer
-  ├── Agent Composer & Model Discovery Modal
+  ├── Right Inspector & Threads Pane (thread.js, SSE)
+  ├── Agent Edit & Batch Comment Composer (linecomment.js, agent.js)
+  ├── Chroma Syntax-Highlighted Diff Renderer (diff.js)
+  ├── Tab Lifecycle & Batch Dismissal Menu (tabs.js, bus.js)
+  ├── File Tree & Context Action Menu (tree.js)
   ├── Keyboard Palette & Command Router
-  ├── PR Review Header Bar & Line Comment Composer (pr.js, linecomment.js)
-  ├── Sidebar Git Panel & Per-File Stage Controls (gitpanel.js, tree.js)
+  ├── PR Review Header Bar & Line Comment Composer (pr.js)
+  ├── Sidebar Git Panel & Per-File Stage Controls (gitpanel.js)
   └── Reactive Git Stream Client (gitstream.js, SSE)
             │
             ▼ HTTP / JSON / SSE (Pooled Gzip)
@@ -29,8 +33,10 @@ Go Server Runtime (Single Static Binary)
   ├── Bounded Two-Pass Fuzzy Matcher
   ├── Parallel Grep Engine (Buffer reuse)
   ├── Windowed Syntax Lexer (1,000-line chunks + LRU cache)
+  ├── Server-Side Chroma Diff Tokenizer (highlight.go)
+  ├── Multi-Turn Thread Store & Runner (thread.go, SSE /api/threads/stream)
+  ├── Native Agent Harness Parsers: claude, agy, gemini, cursor-agent (agent.go)
   ├── Stdio JSON-RPC Language Server (LSP) Client
-  ├── Coding Harness Dispatch Runner (agent.go, settings.go)
   ├── Pure Shell-Out Git Controller (git.go, gitpanel endpoints)
   ├── Git Forge Provider Engine (provider.go, github.go, pr.go)
   ├── Reactive Git Watcher (git_watcher.go, SSE /api/stream)
@@ -40,7 +46,7 @@ Go Server Runtime (Single Static Binary)
 ## Core Architectural Tenets
 
 ### 1. Optimized for Reads & Delegated Agent Dispatch
-px0 does not attempt to be a heavy code editor with character-by-character typing or save buttons. Code authoring is delegated to external AI coding tools (Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, Goose) or dedicated terminal editors. px0 focuses entirely on the reader experience, automatically reloading whatever files the harness changed.
+px0 does not attempt to be a heavy code editor with character-by-character typing or save buttons. Code authoring is delegated to external AI coding tools (Claude Code, Google Antigravity, Gemini CLI, Cursor Agent, OpenCode, Codex, Aider, Goose) or dedicated terminal editors. px0 focuses entirely on the reader experience, automatically reloading whatever files the harness changed.
 
 ### 2. Single Static Binary Distribution
 The entire web application (HTML, CSS tokens, JavaScript modules, fonts, icons) is embedded directly into the Go binary at compile time using `go:embed`. px0 requires:
@@ -93,10 +99,65 @@ When you trigger an edit with `Alt+E` or right-click:
 - **Prompt Synthesis**: The server synthesizes a prompt including the workspace root, relative file path, line range `@path:l1-l2`, selected snippet, and user prompt.
 - **Overlap Lock**: Disjoint files and non-overlapping line ranges can run concurrently. Conflicting ranges that overlap with an in-flight job are rejected with an HTTP 409 status code.
 - **Worktree Snapshotting**: Before launching the harness and after the process exits, px0 records working-tree snapshots (`changedSince`) measuring file sizes, modification timestamps, and git status to discover exactly which files changed.
+- **Deterministic Diff Ordering**: The list of changed files in `changedSinceMaps` is deterministically sorted, preventing random map iteration ordering from causing unpredictable snapshot diff outputs.
 - **Cache Eviction & Tab Reloading**: Touched files have their Chroma highlight caches cleared (`highlight.Evict`), open LSP documents closed (`lsp.CloseDoc`) to prevent stale buffers, and open tabs reloaded while preserving whether the tab was in source or diff view and retaining diff scroll position.
 - **Security Guard (`localPost`)**: Agent dispatch endpoints are protected against cross-origin abuse and DNS rebinding attacks. Requests must originate from px0's own origin and the Host header must resolve to an IP address or localhost. Requests routed through external tunnel or reverse proxy hostnames are strictly refused.
 
-### 9. Reactive Git Streaming & Adaptive Monitoring Engine
+### 10. Multi-Turn Thread Store, Session Continuity & SSE Streaming
+In px0 v0.1.10, long-running agent interactions are managed by a dedicated thread engine (`thread.go`):
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant UI as Browser (thread.js)
+    participant S as px0 (thread.go)
+    participant H as Coding Harness
+    participant G as Git
+
+    UI->>S: GET /api/threads/stream?id (SSE)
+    S-->>UI: event: thread (initial snapshot)
+    UI->>S: POST /api/threads/send {id, message}
+    S->>G: Take pre-run worktree snapshot
+    S->>H: Spawn turn with session flags and prompt
+    H-->>S: stdout stream (stream-json or lines)
+    S-->>UI: event: delta / tool (live token & step feed)
+    H-->>S: Process exit
+    S->>G: changedSince, settle (evict caches, close stale LSP docs)
+    S-->>UI: event: thread (turn completed, changed files)
+    UI->>S: Reindex and reload touched tabs in place
+```
+
+#### Session Continuity Models
+A turn runs as an independent child process. Continuity across turns is maintained via two strategies:
+1. **Native Session Resumption (`claude`, `agy`, `gemini`, `cursor-agent`)**:
+   - `claude`: Injects `--session-id <uuid>` on turn 1, then `--resume <uuid>` on subsequent turns.
+   - `agy` (Google Antigravity): Captures `conversation_id` from the initial turn and invokes `--conversation <id>` on every turn.
+   - `gemini`: Injects `--session-id <uuid>` on turn 1, then `--resume <uuid>` on subsequent turns.
+   - `cursor-agent`: Captures session ID from `create-chat` and resumes via `--resume <id>`.
+   - Native harnesses maintain their own context internally, meaning px0 sends only the new message, dramatically reducing token usage.
+2. **Transcript Replay (Other Harnesses)**:
+   - For harnesses without native multi-turn CLI flags, px0 replays prior turns formatted as `User:` / `Assistant:` text along with modified file lists, capped at 16 KB of recent context.
+
+#### Real-Time SSE Feed (`/api/threads/stream`)
+Subscribers receive atomic Server-Sent Events:
+- `thread`: Full thread state sent on connection and turn completion.
+- `delta`: Token-level streaming for assistant text responses.
+- `tool`: Real-time streaming of tool call labels (such as `Read file.go`, `Edit server.go`).
+- `list` / `summary`: Live status indicators, unread activity dots, and tab reload notifications (`touched`).
+
+#### Atomic Disk Persistence & Crash Recovery
+Threads are stored per workspace under `<config dir>/threads/<sha256(root)[:8]>.json` (`~/.px0/threads/` or `$XDG_CONFIG_HOME/px0/threads/`), completely outside the git working tree. Files are written atomically with restrictive `0600` permissions. Transcripts flush to disk every two seconds during active streaming and upon turn completion. If px0 is terminated unexpectedly, any in-flight turn is safely marked as interrupted upon the next start.
+
+#### Inline & Batch Edits as Threads
+Single and batch edits dispatched via `Alt+E` execute as threads of kind `edit` and `batch`. They present a unified job interface to the UI while recording full histories in the Threads pane for follow-up questions.
+
+### 11. Server-Side Chroma Diff Syntax Highlighting
+In px0 v0.1.10, diff rendering is augmented with Chroma syntax highlighting parsed entirely on the Go backend (`highlight.go`, `highlightDiff`):
+- **Structured Hunk Tokenization**: The server parses unified diff outputs into structured hunks containing line types (`add`, `del`, `ctx`), original and new line numbers, and Chroma-tokenized HTML rows.
+- **Zero Client Overhead**: Pre-highlighted HTML is returned directly via `/api/diff` (`hunks`, `prHunks`, `yourHunks`), completely eliminating client-side tokenizer overhead.
+- **Theme Color Synchronization**: Highlighted diff tokens share the exact CSS variable classes (`.k`, `.s`, `.nf`, `.nc`) used in source views, ensuring consistent theme styling across all 14 built-in themes while preserving green (`--gi-bg`) and red (`--gd-bg`) diff row backgrounds.
+
+### 12. Reactive Git Streaming & Adaptive Monitoring Engine
 In modern coding workflows, AI agents edit code and developers execute terminal commands. px0 synchronizes file explorer badges, directory dirty dots, diff gutter markers, and full diff views in real time using a zero-overhead reactive engine (`git_watcher.go`, `web/src/gitstream.js`).
 
 #### Pure Shell-Out Architecture
@@ -127,7 +188,7 @@ When `UpdateGitStatus` runs:
 5. Tab reloads apply an `onlyIfChanged` check, preventing background git status syncs from repainting untouched open tabs or causing editor flicker.
 6. Diff tabs for files whose changes were checked out or reset in the CLI are closed automatically in reverse index order, keeping the active tab index stable.
 
-### 11. Git Panel, AI Commit Generation & Pure Shell-Out Write Engine
+### 13. Git Panel, AI Commit Generation & Pure Shell-Out Write Engine
 While the status and diffing engine is purely read-only, the sidebar Git panel introduces explicit repository write actions. Adhering to px0's zero-dependency philosophy, every write operation shells out directly to the host `git` executable:
 
 - **Explicit Invocations Only**: Staging, committing, pushing, and pulling never trigger on background timers or file events. Each executes exactly once in response to an explicit user interaction.
@@ -138,7 +199,7 @@ While the status and diffing engine is purely read-only, the sidebar Git panel i
 - **Targeted Push Routing**: For local workspaces, px0 pushes to the tracked upstream or sets it on initial push. In PR review sessions, it routes pushes directly to the pull request's true head clone URL and branch ref.
 - **Security Isolation**: All Git write endpoints (`/api/git/stage`, `/api/git/unstage`, `/api/git/commit`, `/api/git/push`, `/api/git/pull`, `/api/git/commit-message`) are strictly protected by `localPost` checks, rejecting requests originating from non-local or cross-site contexts.
 
-### 12. Git Forge PR Review & Provider Architecture
+### 14. Git Forge PR Review & Provider Architecture
 px0 provides native pull request review capabilities through a decoupled provider abstraction and process-scoped checkout architecture:
 
 #### The `GitProvider` Abstraction Layer
@@ -191,9 +252,10 @@ In PR review sessions, the sidebar Git panel allows reviewers to commit and push
 - `prSession.Push` executes `git -C worktree push <meta.HeadRepoCloneURL> HEAD:refs/heads/<meta.HeadRef>`, pushing cleanly to the PR's actual repository (including user forks).
 - `prSession.Pull` re-fetches the remote PR head, safely fast-forwards the worktree, re-calculates `diffBase`, re-indexes the workspace, and updates the PR review header bar and comments panel in place.
 
-### 13. Server-Side Session Persistence & Frontend Event Bus
+### 15. Server-Side Session Persistence & Frontend Event Bus
 px0 coordinates frontend subsystems and persistent workspace state through dedicated modules:
 
 - **Server-Side Session API (`/api/session`)**: Workspace state (including open file tabs, active tab selection, and expanded directory paths in the tree) is persisted on the backend via `/api/session`. This ensures workspace layout survives browser restarts and works reliably across different devices and private windows without relying strictly on browser `localStorage`.
 - **Decoupled Event Bus (`bus.js`)**: A lightweight event bus coordinates tab lifecycle transitions (`file:open`, `tab:switch`, `tab:close`). Subsystems such as Markdown Preview, Image Viewer, Selection Bar, and PR Review subscribe to these events to synchronize status and view modes cleanly without circular dependencies.
+- **Batch Tab Management & Descending Index Splicing**: Tab batch closures (`Close Others`, `Close to the Right`, `Close to the Left`, `Close All`) splice DOM elements in descending index order to preserve array bounds, accompanied by batched backend cache evictions (`Promise.allSettled`).
 - **Static Type Checking**: Frontend modules are annotated with structured JSDoc types and checked via `tsconfig.json` (`checkJs: true`) to ensure type safety across browser code.
