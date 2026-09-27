@@ -1,5 +1,5 @@
 ---
-import { GITHUB, RELEASES, INSTALL_CMD, VERSION } from '../data/links';
+import { GITHUB, RELEASES, INSTALL_CMD, VERSION, STARS } from '../data/links';
 import { TARGETS, LSP_SERVERS } from '../data/px0';
 
 const count = TARGETS.reduce((a, t) => a + t.arch.length, 0);
@@ -87,7 +87,7 @@ sudo install px0 /usr/local/bin/`;
         </button>
         <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">
           <span>Star on GitHub</span>
-          <span class="btn-star-count" aria-label="1k+ stars">★ 1k+</span>
+          <span class="btn-star-count" aria-label={`${STARS} stars`}>★ {STARS}</span>
         </a>
       </div>
     </div>

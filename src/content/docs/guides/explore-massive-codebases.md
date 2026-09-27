@@ -51,3 +51,15 @@ When inspecting deep directory structures:
 - **Ignore Protection**: Expand All skips ignored directories (such as `node_modules`, `dist`, or `build`), so massive generated trees are never bulk-loaded. You can still click to expand them individually on demand.
 - **Immediate Cancellation**: Clicking Collapse All, clicking any folder, or switching to the Changes filter cancels running batch expansions immediately.
 - **Session Persistence**: Your expanded folders and open tabs are saved via `/api/session` on the server and restored automatically when you reopen the workspace.
+
+## Why px0 Scales on Massive Repositories
+
+px0's responsiveness on repositories with 100k+ files is driven by low-level systems decisions:
+
+1. **Listen First, Index in Background**: px0 binds its HTTP socket and starts listening immediately. Your browser connects in under 1 ms, while directory traversal runs concurrently across worker goroutines bounded to `NumCPU * 4`.
+2. **Ignore Matcher Precedence**: Rather than running slow regex passes on every directory, ignore rules check segment names, suffixes, and path prefixes first. Directory symlinks are skipped completely to prevent cyclic traversal loops.
+3. **Buffer-Reused Parallel Grep**: Full-workspace search rejects non-matching files in microseconds using `bytes.Contains` on raw buffers. Workers reuse memory buffers across files and fold ASCII casing in-place to avoid heap allocations.
+4. **O(n) Backward-Scan Fuzzy Matching**: File searches prove character presence in pass one, then walk backward from the last hit in pass two to tighten matching clusters. This provides dynamic programming ranking quality within a linear scan.
+5. **Windowed Highlighting & DOM Virtualization**: Files are parsed in 1,000-line chunks (`hlChunk`) with a 512 MB LRU cache. The client mounts only ~60 active DOM rows with 24-row overscan, keeping browser tab RAM steady at ~80-150 MB even on 500,000-line files.
+
+For full implementation details, see the [Architecture & Systems Internals Reference](/docs/reference/architecture-and-internals).

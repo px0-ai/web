@@ -9,7 +9,7 @@ const isHome = pathname === '/';
 
 const navItems = [
   { label: 'Docs', href: '/docs', match: (p: string) => p.startsWith('/docs') },
-  { label: 'Benchmarks', href: isHome ? '#bench' : '/#bench', match: () => false },
+  { label: 'Benchmarks', href: '/benchmarks', match: (p: string) => p.startsWith('/benchmarks') },
   { label: 'Blog', href: '/blog', match: (p: string) => p.startsWith('/blog') },
   { label: 'Changelog', href: '/changelog', match: (p: string) => p.startsWith('/changelog') },
   { label: 'Partners', href: '/design-partners', match: (p: string) => p.startsWith('/design-partners') },

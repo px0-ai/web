@@ -23,12 +23,42 @@ const lspMax = 6;
     <header class="sec-head">
       <div class="sec-id"><span class="sec-n">03</span><span>/bench</span></div>
       <div>
-        <h2 class="sec-title">Measured, <em>not claimed.</em></h2>
+        <div class="bench-kicker">
+          <span class="kicker-tag">// empirical benchmarks</span>
+          <span class="kicker-sep">·</span>
+          <span class="kicker-meta">7 repositories · Linux kernel to Flask</span>
+        </div>
+
+        <h2 class="sec-title bench-title">Measured, <em>not claimed.</em></h2>
+
         <p class="sec-sub">
           Every number here comes from <code class="inline-code">./benchmark.sh</code> against shallow clones of
           seven real repositories. Linux, language servers off, fastest of five requests. Run it on your
           machine and paste the table anywhere.
         </p>
+
+        <div class="bench-highlights">
+          <div class="b-highlight">
+            <span class="b-dot" aria-hidden="true"></span>
+            <span class="b-val">~20-30 MB</span>
+            <span class="b-lbl">host RSS</span>
+          </div>
+          <div class="b-highlight">
+            <span class="b-dot" aria-hidden="true"></span>
+            <span class="b-val">370 ms</span>
+            <span class="b-lbl">Linux kernel (95k files)</span>
+          </div>
+          <div class="b-highlight">
+            <span class="b-dot" aria-hidden="true"></span>
+            <span class="b-val">~90% less</span>
+            <span class="b-lbl">RAM vs VS Code</span>
+          </div>
+          <div class="b-highlight">
+            <span class="b-dot" aria-hidden="true"></span>
+            <span class="b-val">&lt;1 ms</span>
+            <span class="b-lbl">cold startup</span>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -240,6 +270,95 @@ const lspMax = 6;
 </section>
 
 <style>
+  /* Header styling */
+  .bench-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .kicker-tag {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .kicker-sep {
+    color: var(--txt-4);
+  }
+
+  .kicker-meta {
+    color: var(--txt-3);
+    font-size: 10.5px;
+  }
+
+  .bench-title {
+    font-size: clamp(30px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0;
+  }
+
+  .bench-title em {
+    font-style: normal;
+    color: var(--amber);
+    position: relative;
+  }
+
+  .bench-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--bdr);
+  }
+
+  .b-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--txt-2);
+    font-family: var(--font-mono);
+  }
+
+  .b-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .b-val {
+    color: var(--txt);
+    font-weight: 700;
+  }
+
+  .b-lbl {
+    color: var(--txt-3);
+  }
+
+  @media (max-width: 640px) {
+    .bench-kicker {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .kicker-sep {
+      display: none;
+    }
+    .bench-highlights {
+      gap: 8px 12px;
+    }
+  }
+
   .bench-gap {
     margin-top: 16px;
   }

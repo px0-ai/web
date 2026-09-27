@@ -1,0 +1,243 @@
+---
+// CompanyLogos.astro: Moving social proof logo marquee featuring global and Indian engineering companies
+const companies = [
+  {
+    name: 'Google',
+    svg: `<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>`,
+  },
+  {
+    name: 'Zerodha',
+    svg: `<path d="M4 4h16l-10 16h-6l10-16z"/>`,
+  },
+  {
+    name: 'Microsoft',
+    svg: `<path d="M2 2h9v9H2V2zm11 0h9v9h-9V2zM2 13h9v9H2v-9zm11 0h9v9h-9v-9z"/>`,
+  },
+  {
+    name: 'Meta',
+    svg: `<path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z"/>`,
+  },
+  {
+    name: 'Razorpay',
+    svg: `<path d="M22.436 0l-11.91 7.773-4.07 10.392 6.57-4.288 2.05-5.236 5.36-3.5zm-8.872 10.428l-6.57 4.288-5.43 3.548 11.91-7.772 4.07-10.392z"/>`,
+  },
+  {
+    name: 'Stripe',
+    svg: `<path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697.304 12.394.304 6.756.304 2.9 3.298 2.9 8.255c0 4.417 3.593 6.012 7.747 7.551 2.544.945 3.42 1.603 3.42 2.569 0 .964-.877 1.543-2.316 1.543-2.19 0-5.111-1.077-7.078-2.133l-.95 5.592c2.053 1.06 5.483 1.819 8.917 1.819 6.024 0 10.038-2.936 10.038-8.081 0-4.48-3.39-6.079-8.702-7.966z"/>`,
+  },
+  {
+    name: 'Swiggy',
+    svg: `<path d="M12 0C7.2 0 3.3 3.9 3.3 8.7c0 6.6 8 14.7 8.3 15 .2.2.5.3.7.3s.5-.1.7-.3c.4-.4 8.3-8.4 8.3-15C20.7 3.9 16.8 0 12 0zm0 13c-2.4 0-4.3-1.9-4.3-4.3S9.6 4.4 12 4.4s4.3 1.9 4.3 4.3-1.9 4.3-4.3 4.3z"/>`,
+  },
+  {
+    name: 'Postman',
+    svg: `<path d="M13.5 1.5a4.5 4.5 0 0 0-4.5 4.5c0 .77.2 1.5.54 2.14L3.2 14.5a2 2 0 0 0 0 2.83l3.47 3.47a2 2 0 0 0 2.83 0l6.36-6.34c.64.34 1.37.54 2.14.54a4.5 4.5 0 0 0 4.5-4.5 4.5 4.5 0 0 0-4.5-4.5c-.77 0-1.5.2-2.14.54L9.5 4.18c.34-.64.54-1.37.54-2.14a4.5 4.5 0 0 0-4.5-4.5z"/>`,
+  },
+  {
+    name: 'GitHub',
+    svg: `<path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>`,
+  },
+  {
+    name: 'Zomato',
+    svg: `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`,
+  },
+  {
+    name: 'Cloudflare',
+    svg: `<path d="M19.27 9.87A7.47 7.47 0 0012 3a7.48 7.48 0 00-7.37 6.13A5.5 5.5 0 005.5 20h13.25a4.25 4.25 0 00.52-8.47v-.03c0-.55-.07-1.1-.22-1.63z"/>`,
+  },
+  {
+    name: 'CRED',
+    svg: `<path d="M3 3h18v18H3V3zm4 4v10h10V7H7zm2 2h6v6H9V9z"/>`,
+  },
+  {
+    name: 'Linear',
+    svg: `<path d="M3.403 13.568a9.49 9.49 0 0 1-.903-4.068C2.5 4.249 6.749 0 12 0c1.455 0 2.83.332 4.068.903L3.403 13.568zM1.05 15.696L15.696 1.05a9.494 9.494 0 0 1 2.457 2.457L3.507 18.153a9.49 9.49 0 0 1-2.457-2.457zm4.783 5.405L19.467 7.468a9.5 9.5 0 0 1 .903 4.068C20.37 16.787 16.121 21.036 10.87 21.036a9.5 9.5 0 0 1-5.037-.935z"/>`,
+  },
+  {
+    name: 'BrowserStack',
+    svg: `<circle cx="8" cy="8" r="4"/><circle cx="16" cy="8" r="4"/><circle cx="8" cy="16" r="4"/><circle cx="16" cy="16" r="4"/>`,
+  },
+  {
+    name: 'Shopify',
+    svg: `<path d="M19.8 6.4c-.03-.24-.2-.42-.44-.45l-4.52-.61L12.5.34a.45.45 0 0 0-.67-.2l-.33.24L7.54 5.34l-4.52.61c-.24.03-.41.21-.44.45L1.05 21.6c-.03.26.15.5.41.53.04 0 .08 0 .12 0h19.84a.48.48 0 0 0 .48-.48c0-.04 0-.08-.01-.12L19.8 6.4zM12 2.1l1.7 3.03-3.4-.46L12 2.1zM8.8 14.5c0-1.8 1.3-2.6 2.6-3.3 1-.5 1.6-.9 1.6-1.7 0-.7-.5-1.2-1.3-1.2-.9 0-1.5.5-1.9 1.2l-1.3-.9c.7-1.2 1.8-1.8 3.2-1.8 1.8 0 3 1.1 3 2.7 0 1.7-1.2 2.5-2.5 3.2-.9.5-1.6.9-1.6 1.7 0 .8.6 1.3 1.4 1.3 1 0 1.7-.6 2.1-1.3l1.3.8c-.7 1.3-1.9 2-3.4 2-1.9 0-3.2-1.3-3.2-2.7z"/>`,
+  },
+  {
+    name: 'Flipkart',
+    svg: `<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zm0 2h12l2 2.5H4L6 4zm7 7h-2v3H8v2h3v4h2v-4h3v-2h-3v-3z"/>`,
+  },
+];
+---
+
+<div class="hero-logos-strip" aria-label="Companies using px0">
+  <div class="logos-head">
+    <span class="logos-dot" aria-hidden="true"></span>
+    <span class="logos-title">Engineers at these companies use px0</span>
+  </div>
+
+  <div class="marquee-wrapper">
+    <div class="marquee-track">
+      <!-- First copy -->
+      <div class="marquee-group">
+        {companies.map((c) => (
+          <div class="logo-item" title={c.name}>
+            <svg class="logo-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" set:html={c.svg}></svg>
+            <span class="logo-name">{c.name}</span>
+          </div>
+        ))}
+      </div>
+
+      <!-- Second copy for seamless infinite animation loop -->
+      <div class="marquee-group" aria-hidden="true">
+        {companies.map((c) => (
+          <div class="logo-item" title={c.name}>
+            <svg class="logo-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" set:html={c.svg}></svg>
+            <span class="logo-name">{c.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hero-logos-strip {
+    position: relative;
+    margin: 64px 0 32px;
+    padding: 28px 0 22px;
+    border-top: 1px solid var(--bdr);
+    border-bottom: 1px solid var(--bdr);
+    background: linear-gradient(180deg, var(--surface) 0%, transparent 100%);
+    overflow: hidden;
+  }
+
+  .logos-head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .logos-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  .logos-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin: 0;
+  }
+
+  .marquee-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 45s linear infinite;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  .marquee-group {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding-right: 32px;
+  }
+
+  .logo-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--txt-3);
+    cursor: default;
+    user-select: none;
+    transition: color 0.15s, border-color 0.15s, background-color 0.15s, transform 0.15s;
+  }
+
+  .logo-item:hover {
+    color: var(--txt);
+    border-color: var(--bdr);
+    background: var(--bg-elev);
+    transform: translateY(-1px);
+  }
+
+  .logo-icon {
+    flex-shrink: 0;
+    color: inherit;
+    transition: color 0.15s;
+  }
+
+  .logo-item:hover .logo-icon {
+    color: var(--amber);
+  }
+
+  .logo-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: inherit;
+    white-space: nowrap;
+  }
+
+  @keyframes marquee-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .marquee-track::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-logos-strip {
+      margin: 48px 0 24px;
+      padding: 20px 0 18px;
+    }
+    .logos-title {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+    .marquee-group {
+      gap: 20px;
+      padding-right: 20px;
+    }
+    .logo-item {
+      padding: 4px 8px;
+      gap: 6px;
+    }
+    .logo-name {
+      font-size: 12px;
+    }
+  }
+</style>

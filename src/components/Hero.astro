@@ -1,9 +1,10 @@
 ---
-import { GITHUB, INSTALL_CMD, VERSION } from '../data/links';
+import { GITHUB, INSTALL_CMD, VERSION, STARS } from '../data/links';
 import { THEMES } from '../data/themes';
 import { COMMANDS, CORPUS, HARNESSES } from '../data/px0';
 import { KERNEL_FILES, ROOT_DIRS, ROOT_FILES, LIB_WINDOW, SORT_SYMBOLS, DO_SWAP_REFS, SORT_EXCERPT } from '../data/kernel';
 import { getLatestChangelog } from '../data/changelogs';
+import CompanyLogos from './CompanyLogos.astro';
 
 const latestRelease = getLatestChangelog();
 const latestVersion = latestRelease?.version || VERSION;
@@ -149,9 +150,9 @@ const ideData = {
           <div class="hero-cta">
             <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">
               <span>Star on GitHub</span>
-              <span class="btn-star-count" aria-label="1k+ stars">★ 1k+</span>
+              <span class="btn-star-count" aria-label={`${STARS} stars`}>★ {STARS}</span>
             </a>
-            <a class="btn btn-ghost" href="#bench">See the benchmarks ↓</a>
+            <a class="btn btn-ghost" href="/benchmarks">See the benchmarks →</a>
           </div>
 
           <div class="hero-harnesses">
@@ -180,6 +181,8 @@ const ideData = {
         ))}
       </dl>
     </div>
+
+    <CompanyLogos />
 
     <div class="stage" id="stage" data-phase="boot">
       <div class="stage-bar">

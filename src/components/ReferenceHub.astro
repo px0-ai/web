@@ -1,0 +1,199 @@
+---
+// ReferenceHub.astro: Direct links to dedicated reference and deep dive documentation
+const referenceCards = [
+  {
+    num: 'ref.01',
+    tag: 'SYSTEMS ARCHITECTURE',
+    title: 'Architecture & Internals',
+    desc: 'Deep dive into single-binary design, bounded worker pools (NumCPU * 4), windowed syntax chunking with Chroma, and the active LRU memory scavenger.',
+    href: '/docs/reference/architecture-and-internals',
+    cta: 'Read architecture spec',
+    meta: 'Static Go binary · No CGO · No Electron',
+  },
+  {
+    num: 'ref.02',
+    tag: 'KEYBOARD CHEAT SHEET',
+    title: 'Keyboard Shortcuts Reference',
+    desc: 'Complete reference for all 20+ hotkeys: fuzzy file finding, universal palette prefix routing (>, @, :), split diff toggling, and review draft chords.',
+    href: '/docs/reference/keyboard-shortcuts',
+    cta: 'View shortcut sheet',
+    meta: 'Mac, Linux & Windows chords',
+  },
+  {
+    num: 'ref.03',
+    tag: 'EMPIRICAL BENCHMARKS',
+    title: 'Full Benchmark Suite & Methodology',
+    desc: 'Empirical data across seven repositories from Flask to the Linux Kernel, client-server breakdown vs VS Code, and reproducible shell scripts.',
+    href: '/docs/reference/benchmarks-and-performance',
+    cta: 'Explore 7-repo benchmarks',
+    meta: 'Linux kernel (95,710 files) in 370 ms',
+  },
+  {
+    num: 'ref.04',
+    tag: 'CLI SPECIFICATION',
+    title: 'CLI Flags & Configuration',
+    desc: 'Complete reference for daemon flags (-no-open, -host, -port), reverse proxy subpath hosting (-base-path), and JSON configuration schemas.',
+    href: '/docs/reference/cli-flags',
+    cta: 'Read CLI reference',
+    meta: 'Headless, remote, and reverse proxy setup',
+  },
+];
+---
+
+<section class="sec" id="reference">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">06</span><span>/reference</span></div>
+      <div>
+        <h2 class="sec-title">Deep dives & <em>reference manuals.</em></h2>
+        <p class="sec-sub">
+          Looking for low-level Go concurrency semaphores, complete keyboard bindings, or reproducible benchmark scripts? Everything is detailed in dedicated reference guides.
+        </p>
+      </div>
+    </header>
+
+    <div class="ref-grid">
+      {referenceCards.map((card) => (
+        <a href={card.href} class="ref-card reveal">
+          <div class="ref-card-head">
+            <span class="ref-num">{card.num}</span>
+            <span class="ref-tag">{card.tag}</span>
+          </div>
+
+          <h3 class="ref-title">{card.title}</h3>
+          <p class="ref-desc">{card.desc}</p>
+
+          <div class="ref-meta">
+            <span class="ref-meta-dot" aria-hidden="true"></span>
+            <span>{card.meta}</span>
+          </div>
+
+          <div class="ref-cta">
+            <span>{card.cta}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .ref-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s, background-color 0.2s;
+  }
+
+  .ref-card:hover {
+    border-color: var(--amber-line);
+    transform: translateY(-2px);
+    background: var(--bg-card-hover, var(--bg-card));
+  }
+
+  .ref-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .ref-num {
+    font-size: 11px;
+    color: var(--amber);
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  .ref-tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--txt-3);
+    border: 1px solid var(--bdr);
+    padding: 2px 6px;
+  }
+
+  .ref-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--txt);
+    line-height: 1.3;
+  }
+
+  .ref-card:hover .ref-title {
+    color: var(--amber);
+  }
+
+  .ref-desc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--txt-2);
+    margin: 0 0 16px 0;
+    flex: 1;
+  }
+
+  .ref-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--txt-3);
+    font-family: var(--font-mono);
+    padding: 10px 0;
+    border-top: 1px solid var(--bdr);
+    margin-bottom: 12px;
+  }
+
+  .ref-meta-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .ref-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--amber);
+    transition: gap 0.15s;
+  }
+
+  .ref-card:hover .ref-cta {
+    gap: 10px;
+  }
+
+  .ref-cta svg {
+    transition: transform 0.15s;
+  }
+
+  .ref-card:hover .ref-cta svg {
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 768px) {
+    .ref-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

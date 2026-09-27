@@ -15,6 +15,7 @@ export const AUTHOR = "https://arpitbhayani.me";
 export const DESIGN_PARTNER_FORM_URL = "";
 
 export const VERSION = getLatestChangelog()?.version || "0.1.10";
+export const STARS = "1.7k";
 
 /** The one-liner shown on the site. Kept here so it lives in one place. */
 export const INSTALL_URL = "https://px0.ai/install.sh";

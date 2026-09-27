@@ -1,0 +1,738 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Bench from '../components/Bench.astro';
+import Footer from '../components/Footer.astro';
+import { VSCODE_TREE, CORPUS } from '../data/px0';
+import { repoDoc, GITHUB } from '../data/links';
+
+const vscodeTotal = VSCODE_TREE.reduce((acc, curr) => acc + curr.mb, 0);
+
+const testSpecs = [
+  { k: 'Operating System', v: 'Linux 6.x (Ubuntu 24.04 LTS / Debian 12 x86_64)' },
+  { k: 'Processor', v: 'AMD Ryzen 7 / Intel Core i7 (8 physical cores, 16 threads)' },
+  { k: 'Memory', v: '32 GB DDR5 RAM' },
+  { k: 'Storage', v: '1 TB NVMe PCIe 4.0 SSD (direct local filesystem mount)' },
+  { k: 'Test Corpus', v: '7 public open-source git repositories cloned at --depth 1' },
+  { k: 'Run Protocol', v: 'Fastest of 5 consecutive runs (eliminates cold disk cache variance)' },
+  { k: 'LSP Baseline', v: 'Language servers disabled (-no-lsp) for pure reader baseline' },
+  { k: 'Scavenger Timing', v: 'debug.FreeOSMemory() invoked after 15 seconds of idle time' },
+];
+
+const faqs = [
+  {
+    q: 'Why is the Linux kernel indexed faster than the TypeScript repository?',
+    a: 'The TypeScript repository contains tens of thousands of deeply nested, generated AST test fixtures and large JSON snapshots. The Linux kernel consists almost entirely of flat, clean C source files and headers. px0 parallel directory walker traverses and ignores non-code files concurrently, achieving ~370 ms across the 95,710 Linux files.',
+  },
+  {
+    q: 'How does px0 maintain ~20-30 MB host RAM without leaking memory?',
+    a: 'px0 uses windowed lexical chunking (1,000-line blocks) and an active idle memory scavenger. 15 seconds after an indexing or search pass completes, px0 calls debug.FreeOSMemory(), explicitly returning unused heap pages directly back to the operating system kernel.',
+  },
+  {
+    q: 'Does px0 include language server overhead in its memory benchmarks?',
+    a: 'No. Just like in production, language servers (e.g. gopls, clangd) spawn lazily as separate OS processes only when an outline or definition is requested. Without an LSP installed, px0 provides instant regex-based outline fallback with zero extra RAM.',
+  },
+  {
+    q: 'What is the real cost of the browser tab in local vs remote mode?',
+    a: 'On local developer machines, the browser tab consumes ~80-150 MB for the DOM, V8 runtime, and GPU compositing. Total local footprint is ~100-180 MB (still 85-90% lower than Electron IDEs). When running remotely (px0 -host 0.0.0.0 on a devbox or container), the remote host pays strictly the ~20-30 MB Go daemon cost while UI rendering runs locally on your laptop.',
+  },
+];
+---
+
+<Layout
+  title="Performance Benchmarks & Multi-Editor Comparison - px0"
+  description="Empirical benchmark suite comparing px0 against VS Code, Zed, Sublime Text, Vim, and Neovim across seven real-world repositories."
+>
+  <Nav />
+
+  <main class="bm-page">
+    <div class="wrap">
+      <!-- Page Header -->
+      <header class="bm-header">
+        <div class="bm-breadcrumbs">
+          <a href="/" class="bm-crumb-link">px0</a>
+          <span class="bm-crumb-sep">/</span>
+          <span class="bm-crumb-cur">benchmarks</span>
+        </div>
+
+        <div class="bm-headline">
+          <p class="kicker"><span>//</span> empirical performance & methodology</p>
+          <h1 class="bm-title">Performance Benchmarks</h1>
+          <p class="bm-sub">
+            px0 is engineered for extreme responsiveness, instant code navigation, and low host resource utilization.
+            Every benchmark here is empirical, reproducible via shell scripts, and evaluated across seven real-world repositories from Flask to the Linux Kernel.
+          </p>
+        </div>
+
+        <!-- Metric highlights strip -->
+        <div class="bm-hero-strip">
+          <div class="bm-hero-card">
+            <span class="bm-hero-num">&lt;1 ms</span>
+            <span class="bm-hero-label">Cold startup time</span>
+            <span class="bm-hero-desc">Sub-millisecond perceived boot</span>
+          </div>
+          <div class="bm-hero-card">
+            <span class="bm-hero-num">~20-30 MB</span>
+            <span class="bm-hero-label">Host Resident RAM</span>
+            <span class="bm-hero-desc">Single static Go binary</span>
+          </div>
+          <div class="bm-hero-card">
+            <span class="bm-hero-num">370 ms</span>
+            <span class="bm-hero-label">Linux Kernel indexing</span>
+            <span class="bm-hero-desc">95,710 files indexed in parallel</span>
+          </div>
+          <div class="bm-hero-card">
+            <span class="bm-hero-num">~90% less</span>
+            <span class="bm-hero-label">System RAM vs Electron</span>
+            <span class="bm-hero-desc">~100-180 MB total incl. tab</span>
+          </div>
+        </div>
+      </header>
+    </div>
+
+    <!-- The Primary Landing Page Benchmark Component -->
+    <div class="bm-embed">
+      <Bench />
+    </div>
+
+    <div class="wrap">
+      <!-- Section: VS Code Process Tree Deep Dive -->
+      <section class="bm-section">
+        <div class="pnl ticks reveal">
+          <div class="pnl-h">
+            <span>process model memory breakdown · vs code vs px0</span>
+            <span><b>{vscodeTotal} MB</b> VS Code tree vs <b>~25 MB</b> px0 daemon</span>
+          </div>
+          <div class="pnl-b">
+            <div class="proc-comparison">
+              <!-- Left: VS Code breakdown -->
+              <div class="proc-side">
+                <div class="proc-side-head">
+                  <span class="proc-side-title">VS Code Process Tree</span>
+                  <span class="proc-side-total">{vscodeTotal} MB</span>
+                </div>
+                <p class="proc-side-note">Individual processes spawned by default on a standard workspace:</p>
+                <div class="proc-bars">
+                  {VSCODE_TREE.map((proc) => (
+                    <div class="proc-bar-row">
+                      <div class="proc-bar-info">
+                        <span class="proc-bar-name">{proc.name}</span>
+                        <span class="proc-bar-val">{proc.mb} MB</span>
+                      </div>
+                      <div class="proc-bar-track">
+                        <div class="proc-bar-fill proc-bar-fill--vscode" style={`width: ${(proc.mb / 500) * 100}%`}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Right: px0 single-process model -->
+              <div class="proc-side proc-side--px0">
+                <div class="proc-side-head">
+                  <span class="proc-side-title">px0 Core Daemon</span>
+                  <span class="proc-side-total proc-side-total--px0">~20 - 30 MB</span>
+                </div>
+                <p class="proc-side-note">Single static native binary managing all subsystems in memory:</p>
+                <ul class="px0-proc-list">
+                  <li>
+                    <span class="px0-dot"></span>
+                    <div>
+                      <strong>One Process Model</strong>
+                      <span>Router, file indexer, parallel search pool, Chroma highlighter, and Git forge in one binary.</span>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="px0-dot"></span>
+                    <div>
+                      <strong>No Electron or Node Runtime</strong>
+                      <span>Zero bundled Chromium instances, zero Node.js processes, zero CGO dependencies.</span>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="px0-dot"></span>
+                    <div>
+                      <strong>Active Memory Scavenging</strong>
+                      <span>Unused heap pages returned to host OS via debug.FreeOSMemory() after 15 seconds of idle.</span>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="px0-dot"></span>
+                    <div>
+                      <strong>Lazy LSP Spawning</strong>
+                      <span>Language servers spawn strictly on demand and terminate on process exit.</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Reproducible Testing Guide -->
+      <section class="bm-section">
+        <div class="pnl reveal">
+          <div class="pnl-h">
+            <span>reproducibility instructions · shell scripts</span>
+            <span>run locally on your workstation</span>
+          </div>
+          <div class="pnl-b repro-guide">
+            <p class="repro-intro">
+              We encourage developers and teams to verify all claims on their own hardware. The repository provides an automated benchmark harness:
+            </p>
+
+            <div class="repro-steps">
+              <div class="repro-step">
+                <div class="repro-step-h">
+                  <span class="repro-step-n">1</span>
+                  <span>Clone the repository and benchmark corpus</span>
+                </div>
+                <pre class="repro-code"><code>git clone https://github.com/px0-ai/px0.git &amp;&amp; cd px0
+./benchmark.sh --clone</code></pre>
+                <span class="repro-step-hint">Performs shallow clones of all 7 test repositories into bench-repos/.</span>
+              </div>
+
+              <div class="repro-step">
+                <div class="repro-step-h">
+                  <span class="repro-step-n">2</span>
+                  <span>Execute full benchmark suite across all repositories</span>
+                </div>
+                <pre class="repro-code"><code>./benchmark.sh</code></pre>
+                <span class="repro-step-hint">Runs 5 iterations per repository and emits a Markdown table with index, search, and memory statistics.</span>
+              </div>
+
+              <div class="repro-step">
+                <div class="repro-step-h">
+                  <span class="repro-step-n">3</span>
+                  <span>Trace memory scavenging on the Linux kernel</span>
+                </div>
+                <pre class="repro-code"><code>./benchmark.sh --memory bench-repos/linux</code></pre>
+                <span class="repro-step-hint">Profiles RSS through index, 5 full-tree scans, opening large files, and idle scavenger reclamation.</span>
+              </div>
+
+              <div class="repro-step">
+                <div class="repro-step-h">
+                  <span class="repro-step-n">4</span>
+                  <span>Evaluate language server (LSP) request latency</span>
+                </div>
+                <pre class="repro-code"><code>./benchmark.sh --lsp .</code></pre>
+                <span class="repro-step-hint">Benchmarks cold spawn latency, definition lookup, outline extraction, and symbol references with gopls.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Test Hardware & Methodology -->
+      <section class="bm-section">
+        <div class="pnl reveal">
+          <div class="pnl-h">
+            <span>test hardware specifications & methodology</span>
+            <span>controlled environment parameters</span>
+          </div>
+          <div class="pnl-b">
+            <dl class="specs-grid">
+              {testSpecs.map((spec) => (
+                <div class="spec-row">
+                  <dt class="spec-k">{spec.k}</dt>
+                  <dd class="spec-v">{spec.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Benchmark FAQ -->
+      <section class="bm-section">
+        <div class="pnl reveal">
+          <div class="pnl-h">
+            <span>frequently asked questions</span>
+            <span>understanding the data</span>
+          </div>
+          <div class="pnl-b faq-list">
+            {faqs.map((faq) => (
+              <div class="faq-item">
+                <h3 class="faq-q">{faq.q}</h3>
+                <p class="faq-a">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Reference Banner -->
+      <section class="bm-section">
+        <div class="bm-banner">
+          <div class="bm-banner-copy">
+            <h3>Looking for systems architecture details?</h3>
+            <p>Read about bounded goroutine pools, two-pass fuzzy ranking, and windowed Chroma syntax chunking.</p>
+          </div>
+          <div class="bm-banner-actions">
+            <a href="/docs/reference/architecture-and-internals" class="btn-banner-primary">Architecture Spec &rarr;</a>
+            <a href={repoDoc('BENCHMARKS.md')} target="_blank" rel="noopener noreferrer" class="btn-banner-sec">Raw BENCHMARKS.md &rarr;</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .bm-page {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .bm-header {
+    margin-bottom: 40px;
+  }
+
+  .bm-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--txt-3);
+    margin-bottom: 20px;
+  }
+
+  .bm-crumb-link {
+    color: var(--txt-2);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .bm-crumb-link:hover {
+    color: var(--amber);
+  }
+
+  .bm-crumb-sep {
+    color: var(--txt-4);
+  }
+
+  .bm-crumb-cur {
+    color: var(--amber);
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-bottom: 12px;
+  }
+
+  .kicker span {
+    color: var(--amber);
+  }
+
+  .bm-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 16px 0;
+    color: var(--txt);
+  }
+
+  .bm-sub {
+    max-width: 780px;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--txt-2);
+    margin: 0 0 32px 0;
+  }
+
+  /* Metric Highlights Strip */
+  .bm-hero-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .bm-hero-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--bdr);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .bm-hero-num {
+    font-size: 26px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--amber);
+    line-height: 1.1;
+  }
+
+  .bm-hero-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--txt);
+    margin-top: 4px;
+  }
+
+  .bm-hero-desc {
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .bm-embed {
+    margin-top: -30px;
+  }
+
+  .bm-section {
+    margin-top: 40px;
+  }
+
+  /* Process Model Comparison */
+  .proc-comparison {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+    padding: 8px 0;
+  }
+
+  .proc-side {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .proc-side-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .proc-side-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--txt);
+  }
+
+  .proc-side-total {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--txt-2);
+  }
+
+  .proc-side-total--px0 {
+    color: var(--green);
+  }
+
+  .proc-side-note {
+    font-size: 11.5px;
+    color: var(--txt-3);
+    margin: 0;
+  }
+
+  .proc-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .proc-bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .proc-bar-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-family: var(--font-mono);
+  }
+
+  .proc-bar-name {
+    color: var(--txt-2);
+  }
+
+  .proc-bar-val {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .proc-bar-track {
+    height: 8px;
+    background: var(--track, rgba(255, 255, 255, 0.05));
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .proc-bar-fill--vscode {
+    height: 100%;
+    background: #e06c75;
+  }
+
+  .px0-proc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .px0-proc-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .px0-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .px0-proc-list strong {
+    display: block;
+    font-size: 12.5px;
+    color: var(--txt);
+    margin-bottom: 2px;
+  }
+
+  .px0-proc-list span {
+    font-size: 11.5px;
+    color: var(--txt-3);
+    line-height: 1.5;
+  }
+
+  /* Reproducibility Guide */
+  .repro-intro {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--txt-2);
+    margin: 0 0 20px 0;
+  }
+
+  .repro-steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .repro-step {
+    background: var(--surface, rgba(0, 0, 0, 0.2));
+    border: 1px solid var(--bdr);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .repro-step-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--txt);
+  }
+
+  .repro-step-n {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--amber-line);
+    color: var(--amber);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .repro-code {
+    background: var(--code-surface, #0c0e14);
+    border: 1px solid var(--bdr);
+    padding: 10px 12px;
+    margin: 0;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--amber);
+    line-height: 1.5;
+  }
+
+  .repro-step-hint {
+    font-size: 11px;
+    color: var(--txt-3);
+    line-height: 1.4;
+  }
+
+  /* Specifications Grid */
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 24px;
+    margin: 0;
+  }
+
+  .spec-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .spec-k {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    color: var(--amber);
+    letter-spacing: 0.06em;
+  }
+
+  .spec-v {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--txt-2);
+  }
+
+  /* FAQ */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .faq-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .faq-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .faq-q {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--txt);
+    margin: 0;
+  }
+
+  .faq-a {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--txt-2);
+    margin: 0;
+  }
+
+  /* Banner */
+  .bm-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 28px;
+    border: 1px solid var(--amber-line);
+    background: linear-gradient(90deg, var(--amber-wash), transparent 70%), var(--bg-elev);
+  }
+
+  .bm-banner-copy h3 {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--txt);
+  }
+
+  .bm-banner-copy p {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--txt-2);
+  }
+
+  .bm-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .btn-banner-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: var(--amber);
+    color: #08080b;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .btn-banner-primary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-banner-sec {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1px solid var(--bdr-hi);
+    color: var(--txt-2);
+    font-size: 12px;
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .btn-banner-sec:hover {
+    color: var(--txt);
+    border-color: var(--amber-line);
+  }
+
+  @media (max-width: 900px) {
+    .bm-hero-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .proc-comparison {
+      grid-template-columns: 1fr;
+    }
+    .repro-steps {
+      grid-template-columns: 1fr;
+    }
+    .specs-grid {
+      grid-template-columns: 1fr;
+    }
+    .bm-banner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .bm-hero-strip {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
