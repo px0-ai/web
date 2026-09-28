@@ -1,0 +1,166 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { TWEET_IDS, TESTIMONIALS } from '../data/wall-of-love';
+import { GITHUB, MAILTO } from '../data/links';
+
+const total = TWEET_IDS.length + TESTIMONIALS.length;
+---
+
+<Layout
+  title="Wall of Love - What people say about px0"
+  description="Tweets and testimonials from engineers reviewing agent code with px0, the ultra-light, fast-reading code review IDE."
+>
+  <Nav />
+
+  <main class="wl-page">
+    <div class="wrap">
+      <header class="wl-header">
+        <div class="wl-breadcrumbs">
+          <a href="/" class="wl-crumb-link">px0</a>
+          <span class="wl-crumb-sep">/</span>
+          <span class="wl-crumb-cur">wall-of-love</span>
+        </div>
+        <p class="kicker"><span>//</span> wall of love · {total} {total === 1 ? 'post' : 'posts'}</p>
+        <h1 class="wl-title">Wall of Love</h1>
+        <p class="wl-sub">
+          Kind words from engineers who review agent output with px0: a tiny binary, ~20-30 MB of RAM, and diffs that open instantly.
+        </p>
+      </header>
+
+      {total === 0 ? (
+        <div class="wl-empty">
+          <p>No posts yet. Be the first to share what you think.</p>
+          <a href={GITHUB} target="_blank" rel="noopener noreferrer">Star px0 on GitHub &rarr;</a>
+        </div>
+      ) : (
+        <div class="wl-grid" id="wl-grid">
+          {TESTIMONIALS.map((t) => (
+            <figure class="wl-card">
+              <blockquote>{t.quote}</blockquote>
+              <figcaption>
+                <span class="wl-name">{t.name}</span>
+                {t.role && <span class="wl-role">{t.role}</span>}
+                {t.url && (
+                  <a href={t.url} target="_blank" rel="noopener noreferrer">source &rarr;</a>
+                )}
+              </figcaption>
+            </figure>
+          ))}
+          {TWEET_IDS.map((id) => (
+            <div class="wl-tweet" data-tweet-id={id}>
+              <a
+                class="wl-tweet-fallback"
+                href={`https://x.com/i/status/${id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >View post on X &rarr;</a>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <section class="wl-cta">
+        <span>Using px0? Tweet about it and tell us, or email <a href={MAILTO}>the team</a> to be featured.</span>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .wl-page { padding-top: 80px; padding-bottom: 80px; min-height: calc(100vh - 48px); }
+  .wl-header { margin-bottom: 36px; }
+  .wl-breadcrumbs {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; margin-bottom: 16px; color: var(--txt-3);
+  }
+  .wl-crumb-link { color: var(--txt-3); text-decoration: none; transition: color 0.15s; }
+  .wl-crumb-link:hover { color: var(--txt); }
+  .wl-crumb-sep { color: var(--txt-4); }
+  .wl-crumb-cur { color: var(--amber); }
+  .wl-title {
+    font-size: clamp(26px, 4vw, 38px); font-weight: 700;
+    letter-spacing: -0.04em; color: var(--txt); margin: 6px 0 12px;
+  }
+  .wl-sub { font-size: 13.5px; line-height: 1.65; color: var(--txt-2); max-width: 720px; }
+
+  .wl-grid { columns: 3 320px; column-gap: 16px; }
+  .wl-grid > * { break-inside: avoid; margin: 0 0 16px; }
+
+  .wl-card {
+    border: 1px solid var(--bdr); background: var(--bg-elev);
+    padding: 20px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .wl-card blockquote { font-size: 13px; line-height: 1.7; color: var(--txt); margin: 0; }
+  .wl-card figcaption {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+    font-size: 11.5px; color: var(--txt-3);
+  }
+  .wl-name { color: var(--amber); font-weight: 600; }
+  .wl-card a { color: var(--txt-2); text-decoration: none; margin-left: auto; }
+  .wl-card a:hover { color: var(--amber); }
+
+  .wl-tweet { min-height: 60px; }
+  .wl-tweet :global(.twitter-tweet) { margin: 0 !important; }
+  .wl-tweet-fallback { font-size: 12px; color: var(--txt-3); text-decoration: none; }
+  .wl-tweet-fallback:hover { color: var(--amber); }
+
+  .wl-empty {
+    border: 1px solid var(--bdr); background: var(--bg-elev);
+    padding: 40px 24px; text-align: center; font-size: 13px; color: var(--txt-2);
+    display: flex; flex-direction: column; gap: 10px; align-items: center;
+  }
+  .wl-empty a { color: var(--amber); text-decoration: none; }
+
+  .wl-cta {
+    margin-top: 32px; padding: 14px 20px; border: 1px solid var(--bdr);
+    background: var(--surface); font-size: 12px; color: var(--txt-3);
+  }
+  .wl-cta a { color: var(--amber); text-decoration: none; }
+</style>
+
+<script is:inline>
+  (function () {
+    var nodes = document.querySelectorAll('.wl-tweet');
+    if (!nodes.length) return;
+
+    var theme = function () {
+      return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    };
+
+    var render = function () {
+      nodes.forEach(function (el) {
+        el.innerHTML = '';
+        window.twttr.widgets.createTweet(el.getAttribute('data-tweet-id'), el, {
+          theme: theme(),
+          dnt: true,
+          align: 'center',
+        });
+      });
+    };
+
+    window.twttr = (function (d, s, id) {
+      var t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      var js = d.createElement(s);
+      js.id = id;
+      js.async = true;
+      js.src = 'https://platform.x.com/widgets.js';
+      js.charset = 'utf-8';
+      d.head.appendChild(js);
+      t._e = [];
+      t.ready = function (f) { t._e.push(f); };
+      return t;
+    })(document, 'script', 'twitter-wjs');
+
+    window.twttr.ready(render);
+
+    // Re-render embeds when the site theme is toggled
+    new MutationObserver(function () {
+      if (window.twttr && window.twttr.widgets) render();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  })();
+</script>
