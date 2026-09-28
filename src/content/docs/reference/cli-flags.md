@@ -34,6 +34,7 @@ If the argument is omitted, px0 opens the current working directory (`.`). You c
 | `-quiet` | boolean | `false` | Suppress informational startup narration in the terminal. |
 | `-verbose` | boolean | `false` | Enable verbose logging including request timing, prompt payloads, and agent job IDs. |
 | `-update` | boolean | `false` | Check for, download, and install the latest available release of px0 directly into user space. |
+| `-no-update` | boolean | `false` | Do not auto-update px0 on startup. |
 | `-v, -version` | boolean | `false` | Print px0 version and exit. |
 
 ## Examples

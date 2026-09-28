@@ -127,6 +127,7 @@ export const FLAGS = [
   { flag: '-no-color', def: 'false', desc: 'strip ANSI escape sequences' },
   { flag: '-quiet', def: 'false', desc: 'suppress narration, errors still go to stderr' },
   { flag: '-update', def: 'false', desc: 'check for and install the latest release' },
+  { flag: '-no-update', def: 'false', desc: 'do not auto-update px0 on startup' },
   { flag: '-version, -v', def: 'false', desc: 'print version and architecture, then exit' },
 ];
 

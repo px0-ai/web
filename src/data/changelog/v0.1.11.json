@@ -1,0 +1,74 @@
+{
+  "version": "0.1.11",
+  "tag": "v0.1.11",
+  "date": "2026-09-28",
+  "title": "CSV/TSV Table Preview, LSP Diagnostics & Problems Pane, Deleted File Diffs, Auto-Updates & Security Hardening",
+  "summary": "Introduces interactive CSV and TSV table previews with sticky headers and delimiter detection, LSP diagnostics with an inspector Problems pane and diff view indicators, language server management controls, deleted git file diffing and tree indicators, seamless background auto-updates with in-place process re-execution, strict Content-Security-Policy headers and ReDoS protections, cross-platform process metrics with micro-benchmarking, and clean copy actions excluding line numbers.",
+  "commitCount": 17,
+  "commitRange": "v0.1.10..v0.1.11",
+  "categories": [
+    {
+      "name": "CSV & TSV Interactive Table Preview",
+      "items": [
+        "Interactive table preview overlay for CSV and TSV files with auto-detected delimiters, sticky column headers, and line number gutters",
+        "Configurable table.preview.open setting to default structured tabular views for data files",
+        "Quick toggle actions in status bar, command palette, and keyboard shortcuts with byte and row capping for memory safety"
+      ]
+    },
+    {
+      "name": "LSP Diagnostics, Problems Pane & Server Management",
+      "items": [
+        "Dedicated Problems inspector pane to view, filter, search, and navigate workspace language server diagnostics",
+        "LSP diagnostic hovers, jump-to-definition, and gutter indicators integrated into unified and split diff views",
+        "Language server management status bar popup and command palette actions to list, start, stop, and inspect running language servers",
+        "Background language server installation with polling and auto-start upon completion",
+        "Document synchronization hooks and diagnostic caching in the lightweight LSP client"
+      ]
+    },
+    {
+      "name": "Deleted Git File Tracking & Diff Viewer Integration",
+      "items": [
+        "First-class representation of deleted git files in the file explorer with virtual directory retention and strikethrough styling",
+        "Dedicated deleted file tabs defaulting to diff view with state preservation across reloads and workspace reindexing",
+        "Full diff viewer support for deleted files served via API metadata endpoints",
+        "Automatic file tree synchronization when deleted files are added, removed, or restored"
+      ]
+    },
+    {
+      "name": "Automated In-Place Updates & Startup Diagnostics",
+      "items": [
+        "Automated background update engine with platform-specific process re-execution for Unix and Windows",
+        "Added -no-update CLI flag to opt out of automated background checks and restarts",
+        "Detailed startup step durations and phase logging under verbose mode for workspace resolution, listener binding, and initialization",
+        "Reachable network URL discovery advertising sorted non-loopback IPv4 addresses on startup when binding to 0.0.0.0"
+      ]
+    },
+    {
+      "name": "Security Hardening, CSP & ReDoS Protection",
+      "items": [
+        "Strict Content-Security-Policy (CSP) headers applied across all HTTP responses to mitigate XSS and unauthorized exfiltration",
+        "Hardened /api/raw endpoint serving non-image files as application/octet-stream with attachment disposition and nosniff headers",
+        "Fixed ReDoS vulnerability in markdown link and image parsers by eliminating catastrophic backtracking on nested parentheses"
+      ]
+    },
+    {
+      "name": "Process Metrics, Micro-Benchmarks & System Profiling",
+      "items": [
+        "POSIX getrusage process metrics tracking peak RSS and CPU sampling across Linux and macOS with Darwin ps fallback",
+        "Comprehensive Go micro-benchmark suite covering symbol search, file tree scanning, and syntax highlighting",
+        "Automated benchmark scripts supporting load testing, baseline regression comparisons, and JSON/CSV data export",
+        "Documented Apple Silicon M-series benchmark profiles highlighting sub-millisecond search latencies and minimal RAM overhead"
+      ]
+    },
+    {
+      "name": "Editor Ergonomics, Clean Copy Actions & Auto-Reveal",
+      "items": [
+        "Smart copy actions intercepting selection copy to exclude line numbers and gutter artifacts from copied code",
+        "Markdown preview copy actions supporting raw markdown extraction and formatted rich text clipboard export",
+        "explorer.autoReveal setting to automatically reveal and focus active files in the tree upon tab switching or palette selection",
+        "Replaced line gutter glyphs with clear, self-ellipsizing Edit buttons and preserved selections for multi-line actions",
+        "Dynamic right inspector tab resolution defaulting to the first visible pane when opening the inspector"
+      ]
+    }
+  ]
+}
