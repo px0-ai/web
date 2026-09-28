@@ -9,7 +9,7 @@ order: 2
 
 When working with autonomous coding agents such as Claude Code, Google Antigravity, Gemini CLI, Cursor Agent, OpenCode, Codex, Aider, or Goose, code modifications arrive rapidly across multiple files. Running a 1.5 GB Electron IDE to supervise edits wastes gigabytes of system memory and risks typing conflicts.
 
-Built as the IDE for humans and AI, px0 pairs with autonomous coding agents in three distinct ways:
+Built specifically for reviewing AI-generated code, px0 pairs with autonomous coding agents in three distinct ways:
 
 1. **Multi-Turn Agent Threads (`Alt+T`)**: Conduct persistent, multi-turn conversations anchored to code selections or workspace concepts. Inspect tool steps live and follow up across turns directly in the right sidebar Threads pane.
 2. **Integrated In-App Agent Dispatch (`Alt+E`)**: Select code in px0, stage single or batch comments, and dispatch them directly to your installed harness with automatic reloading and live streaming.

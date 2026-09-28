@@ -1,6 +1,6 @@
 ---
 title: "IDEs are dead, long live the IDE"
-description: "Inline text-based editing is obsolete. When autonomous coding agents author the code, human developers must optimize for fast, zero-latency viewing and verification."
+description: "Inline text-based editing is obsolete. When autonomous coding agents author the code, developers must optimize for fast, zero-latency viewing and verification."
 pubDate: 2026-09-15
 author: "Arpit Bhayani"
 tags: ["philosophy", "architecture", "ai-agents", "performance"]
@@ -80,11 +80,11 @@ Inspecting code on a remote cloud VM, GPU instance, or CI runner shouldn't requi
 
 ## The Future of Developer Tooling
 
-The future belongs to agent-driven code generation paired with high-velocity human supervision.
+The future belongs to agent-driven code generation paired with high-velocity developer supervision.
 
 Text editors had a glorious thirty-year run. But as inline character-by-character editing recedes into history, we need specialized, zero-latency inspection consoles that keep up with autonomous agents.
 
-The typing IDE is dead. Long live the inspection IDE: the IDE for humans and AI.
+The typing IDE is dead. Long live the inspection IDE: the IDE built for reviewing AI-generated code.
 
 That is why we built px0.
 

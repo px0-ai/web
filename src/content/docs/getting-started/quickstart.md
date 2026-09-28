@@ -7,7 +7,7 @@ order: 2
 
 # Quickstart & First Session
 
-px0 is the IDE for humans and AI, optimized for quick, fast code reviews with native Git and GitHub integrations, and seamless connection to AI coding harnesses. This guide walks you through launching your first session, navigating the interface, and driving multi-turn agent threads.
+px0 is an IDE built for reviewing AI-generated code, optimized for speed. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, and seamless handoff to local AI coding harnesses. This guide walks you through launching your first session, navigating the interface, and driving multi-turn agent threads.
 
 ## Launching Your First Workspace or PR Review
 
