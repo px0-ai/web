@@ -1,0 +1,36 @@
+{
+  "version": "0.1.12",
+  "tag": "v0.1.12",
+  "date": "2026-09-29",
+  "title": "Diff View Preservation, Automatic Diff Mode, Precise Diff Selection & Instant Thread Snapshots",
+  "summary": "Preserves active diff or source views across definition jumps with Alt-click inversion, automatically defaults modified files to diff mode, clips diff selections to exact character boundaries, accelerates thread loading with direct HTTP snapshots before streaming, and prevents stale thread render races.",
+  "commitCount": 4,
+  "commitRange": "v0.1.11..v0.1.12",
+  "categories": [
+    {
+      "name": "Diff View & Navigation Ergonomics",
+      "items": [
+        "Preserve current diff or source view when navigating to definitions (diff stays in diff, source stays in source)",
+        "Alt-click (or Option-click on macOS) on definition links inverts target mode, opening source from diff view or diff from source view",
+        "Default to diff mode automatically when opening modified files unless source view was explicitly requested",
+        "Suppress status bar notices when implicit diff-view definition navigation falls back quietly to unchanged source files",
+        "Clip selected diff code to exact range character boundaries instead of selecting entire rows indiscriminately"
+      ]
+    },
+    {
+      "name": "Agent Threads & Concurrency Hardening",
+      "items": [
+        "Fetch thread history immediately over standard HTTP before opening event streams only when a turn is actively running",
+        "Browse past agent conversation threads instantaneously without unnecessary stream connection overhead",
+        "Track in-flight thread requests to prevent stale render races when rapidly navigating across threads"
+      ]
+    },
+    {
+      "name": "Documentation & Positioning",
+      "items": [
+        "Refine project positioning across documentation to highlight zero-latency code reviews for AI-generated code",
+        "Update benchmark links to point directly to the dedicated px0.ai/benchmarks path"
+      ]
+    }
+  ]
+}

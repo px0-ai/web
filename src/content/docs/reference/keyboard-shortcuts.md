@@ -31,7 +31,8 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
-| `F12` or `Cmd+Click` | `F12` or `Ctrl+Click` | **Go to definition**: Jump to function, struct, or variable source |
+| `F12` or `Cmd+Click` | `F12` or `Ctrl+Click` | **Go to definition**: Jump to function, struct, or variable source (preserves active diff or source view) |
+| `Option+Cmd+Click` | `Alt+Ctrl+Click` | **Go to definition (invert view)**: Invert target view (open diff if in source, or source if in diff) |
 | `Shift+F12` | `Shift+F12` | **Find all references**: Open workspace usages in Right Inspector |
 | `Option+Shift+H` | `Alt+Shift+H` | **Call trail**: Open callers and callees hierarchy tree |
 | `Hover` | `Hover` | **Type hover**: Inspect type signature and documentation tooltip |
