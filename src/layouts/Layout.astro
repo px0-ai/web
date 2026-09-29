@@ -27,7 +27,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://px0.ai')
 const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toString();
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -54,10 +54,10 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
     <link rel="manifest" href="/manifest.json" />
 
     <!-- Windows Tiles -->
-    <meta name="msapplication-TileColor" content="#06070b" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
-    <meta name="theme-color" content="#06070b" />
+    <meta name="theme-color" content="#f4f5f8" />
     <meta name="generator" content={Astro.generator} />
 
     <script is:inline>
@@ -68,8 +68,7 @@ const ogImage = new URL('/cover.png?v=1', Astro.site || 'https://px0.ai').toStri
           return null;
         }
       })();
-      const theme =
-        stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      const theme = 'light';
       document.documentElement.setAttribute('data-theme', theme);
     </script>
 

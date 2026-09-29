@@ -56,7 +56,7 @@ const navItems = [
 
       <a href="/changelog" class="nav-ver" title="View changelog">v{latestVersion}</a>
 
-      <button id="theme-toggle" class="icon-btn" aria-label="Toggle colour theme">
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle colour theme" style="display: none;">
         <svg class="sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
           <circle cx="12" cy="12" r="4"></circle>
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
@@ -225,6 +225,10 @@ const navItems = [
     color: var(--txt);
     border-color: var(--amber-line);
     background: var(--amber-wash);
+  }
+
+  #theme-toggle {
+    display: none;
   }
 
   :root[data-theme='dark'] .icon-btn .moon,
