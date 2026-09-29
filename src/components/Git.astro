@@ -1188,4 +1188,17 @@ const pillars = [
       grid-template-columns: 1fr;
     }
   }
+
+  @media (max-width: 768px) {
+    .git-showcase {
+      display: none;
+    }
+    .git-pillars {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+    .pil-card {
+      padding: 16px;
+    }
+  }
 </style>

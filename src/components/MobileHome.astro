@@ -1,0 +1,679 @@
+---
+import { GITHUB, INSTALL_CMD, VERSION, STARS } from '../data/links';
+import { HARNESSES } from '../data/px0';
+import { getLatestChangelog } from '../data/changelogs';
+import CompanyLogos from './CompanyLogos.astro';
+
+const latestRelease = getLatestChangelog();
+const latestVersion = latestRelease?.version || VERSION;
+
+const stats = [
+  { v: '<1', u: 'ms', k: 'cold start', d: 'instant boot' },
+  { v: '20-30', u: 'MB', k: 'host memory', d: '~90% less vs VS Code', hi: true },
+  { v: '6.0', u: 'ms', k: 'fuzzy find', d: '95k+ files indexed' },
+  { v: '0', u: '', k: 'runtime deps', d: 'no Electron, no Node' },
+];
+
+const workflows = [
+  {
+    n: '01',
+    tag: 'PR reviews',
+    title: 'Fast PR Code Reviews',
+    desc: 'Pass any GitHub PR URL to inspect scoped merge-base diffs and draft line comments in milliseconds.',
+  },
+  {
+    n: '02',
+    tag: 'agent threads',
+    title: 'Multi-Turn Agent Threads',
+    desc: 'Anchor conversations to code with Alt+T and stream live tool execution over Server-Sent Events.',
+  },
+  {
+    n: '03',
+    tag: 'large repos',
+    title: 'Auditing Massive Repos',
+    desc: 'Read through massive trees like the Linux kernel with virtual-row scrolling and instant symbol search.',
+  },
+  {
+    n: '04',
+    tag: 'zero-ssh',
+    title: 'Remote Cloud Inspection',
+    desc: 'Run on any cloud VM or CI runner over a single HTTP port without SSH keys or port forwarding.',
+  },
+  {
+    n: '05',
+    tag: 'native git',
+    title: 'Working Tree & Git Diffs',
+    desc: 'Stage per-file ticks in the sidebar, inspect split diffs, and generate AI commit messages.',
+  },
+];
+---
+
+<div class="m-home">
+  <!-- Mobile Hero -->
+  <section class="m-hero">
+    <div class="wrap">
+      <div class="m-pill-wrap">
+        <a href="/changelog" class="pill m-announcement">
+          <span class="dot" aria-hidden="true"></span>
+          <span>new version v{latestVersion} is out</span>
+          <span class="m-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="m-kicker"><span>//</span> the IDE built for reviewing AI-generated code.</div>
+
+      <h1 class="m-title">
+        Review code.<br />
+        <span class="m-hl">Fast.</span>
+      </h1>
+
+      <p class="m-sub">
+        px0 is an IDE built for reviewing AI-generated code, optimized for speed. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, and seamless handoff to local AI coding harnesses.
+      </p>
+
+      <div class="m-install">
+        <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
+          <span class="copyline-p">$</span>
+          <code><span>{INSTALL_CMD}</span></code>
+          <span class="copyline-s"></span>
+        </button>
+      </div>
+
+      <div class="m-cta-row">
+        <a class="btn btn-primary m-btn" href={GITHUB} target="_blank" rel="noopener noreferrer">
+          <span>GitHub</span>
+          <span class="btn-star-count">★ {STARS}</span>
+        </a>
+        <a class="btn btn-ghost m-btn" href="/benchmarks">Benchmarks &rarr;</a>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="m-stats">
+        {stats.map((s) => (
+          <div class:list={['m-stat', { 'm-stat--hi': s.hi }]}>
+            <div class="m-stat-top">
+              <span class="m-stat-v">{s.v}{s.u && <small>{s.u}</small>}</span>
+              <span class="m-stat-k">{s.k}</span>
+            </div>
+            <span class="m-stat-d">{s.d}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Social proof logo marquee -->
+  <CompanyLogos />
+
+  <!-- Core Workflows -->
+  <section class="m-sec">
+    <div class="wrap">
+      <div class="m-sec-head">
+        <span class="m-sec-tag">// workflows</span>
+        <h2 class="m-sec-title">Built for review. <em>Engineered for speed.</em></h2>
+      </div>
+
+      <div class="m-cards">
+        {workflows.map((w) => (
+          <div class="m-card">
+            <div class="m-card-top">
+              <span class="m-card-n">{w.n}</span>
+              <span class="m-card-tag">{w.tag}</span>
+            </div>
+            <h3 class="m-card-title">{w.title}</h3>
+            <p class="m-card-desc">{w.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Agent Threads & Coding Harnesses -->
+  <section class="m-sec" id="m-threads">
+    <div class="wrap">
+      <div class="m-sec-head">
+        <span class="m-sec-tag">// agent threads & harnesses</span>
+        <h2 class="m-sec-title">Threads &amp; <em>coding harnesses</em></h2>
+        <p class="m-sec-sub">
+          Review PRs, anchor conversation threads directly to code, and watch agent tool steps execute live over Server-Sent Events.
+        </p>
+      </div>
+
+      <div class="m-cards">
+        <div class="m-card m-card--highlight">
+          <div class="m-card-top">
+            <span class="m-badge-pill">SSE STREAM</span>
+            <span class="m-card-tag">live tool calls</span>
+          </div>
+          <h3 class="m-card-title">Multi-Turn Agent Threads</h3>
+          <p class="m-card-desc">
+            Anchor conversations to lines or diff ranges with Alt+T. Stream real-time file edits, bash commands, and tool calls over Server-Sent Events, preserved locally in atomic disk transcripts.
+          </p>
+        </div>
+
+        <div class="m-card">
+          <div class="m-card-top">
+            <span class="m-badge-pill">AGENTS</span>
+            <span class="m-card-tag">multi-harness</span>
+          </div>
+          <h3 class="m-card-title">Multi-Harness Continuity</h3>
+          <p class="m-card-desc">
+            Connect natively to Claude Code, Antigravity, or OpenCode. Switch models mid-thread with automatic transcript replay.
+          </p>
+        </div>
+
+        <div class="m-card">
+          <div class="m-card-top">
+            <span class="m-badge-pill">1-CLICK</span>
+            <span class="m-card-tag">batch editing</span>
+          </div>
+          <h3 class="m-card-title">Queued Batch Inline Edits</h3>
+          <p class="m-card-desc">
+            Highlight code across multiple files, stage review comments with Alt+E, and apply all edits at once with instant in-place tab reload and zero manual git stashing.
+          </p>
+        </div>
+      </div>
+
+      <!-- Harness Chips inside this section -->
+      <div class="m-harness-box">
+        <span class="m-harness-label">Integrated coding harnesses:</span>
+        <div class="m-harness-chips">
+          {HARNESSES.map((h) => (
+            <span class="m-chip"><i class="m-dot"></i>{h.name}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Working Tree, Git & GitHub Integration -->
+  <section class="m-sec" id="m-git">
+    <div class="wrap">
+      <div class="m-sec-head">
+        <span class="m-sec-tag">// git & github</span>
+        <h2 class="m-sec-title">Working tree, Git &amp; <em>GitHub review</em></h2>
+        <p class="m-sec-sub">
+          Full Git control and GitHub PR review built directly into your browser. Stage per-file ticks, inspect split diffs, generate AI commit messages, and push back without leaving px0.
+        </p>
+      </div>
+
+      <div class="m-cards">
+        <div class="m-card">
+          <div class="m-card-top">
+            <span class="m-badge-pill">TREE STAGING</span>
+            <span class="m-card-tag">sidebar ticks</span>
+          </div>
+          <h3 class="m-card-title">Per-File Staging &amp; Tree Status</h3>
+          <p class="m-card-desc">
+            Stage and unstage individual files with clean checkbox ticks in the sidebar tree. Track modified, added, untracked, and deleted statuses with zero background lag.
+          </p>
+        </div>
+
+        <div class="m-card">
+          <div class="m-card-top">
+            <span class="m-badge-pill">SPLIT &amp; UNIFIED</span>
+            <span class="m-card-tag">chroma diffs</span>
+          </div>
+          <h3 class="m-card-title">Visual Split &amp; Unified Diffs</h3>
+          <p class="m-card-desc">
+            Toggle between side-by-side split and unified Myers diff views with syntax highlighting. Select lines, copy standardized diff snippets, or anchor review notes.
+          </p>
+        </div>
+
+        <div class="m-card">
+          <div class="m-card-top">
+            <span class="m-badge-pill">AI COMMITS</span>
+            <span class="m-card-tag">push &amp; approve</span>
+          </div>
+          <h3 class="m-card-title">AI Commits &amp; GitHub PR Push</h3>
+          <p class="m-card-desc">
+            Generate standardized commit messages from staged diffs with your active coding agent. Submit formal reviews or push fixes directly back to PR branches.
+          </p>
+        </div>
+      </div>
+
+      <!-- Git status badges guide -->
+      <div class="m-git-badges">
+        <div class="m-badge-chip"><b class="b-m">M</b><span>modified</span></div>
+        <div class="m-badge-chip"><b class="b-a">A</b><span>added</span></div>
+        <div class="m-badge-chip"><b class="b-d">D</b><span>deleted</span></div>
+        <div class="m-badge-chip"><b class="b-u">U</b><span>untracked</span></div>
+        <div class="m-badge-chip"><b class="b-r">R</b><span>renamed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security & Architecture -->
+  <section class="m-sec">
+    <div class="wrap">
+      <div class="m-security-card">
+        <span class="m-sec-tag">// architecture</span>
+        <h3 class="m-security-title">Local, Private &amp; Sandboxed</h3>
+        <p class="m-security-desc">
+          Runs strictly locally or on your private dev box. SafePath traversal guards, origin verification, zero telemetry, and zero risk of code leaving your infrastructure.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick CTA -->
+  <section class="m-sec m-sec--bottom">
+    <div class="wrap">
+      <div class="m-cta-box">
+        <h3 class="m-cta-box-title">Start reviewing in seconds</h3>
+        <p class="m-cta-box-desc">Single static binary. No install dependencies.</p>
+        <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
+          <span class="copyline-p">$</span>
+          <code><span>{INSTALL_CMD}</span></code>
+          <span class="copyline-s"></span>
+        </button>
+        <div class="m-links-row">
+          <a href="/docs" class="m-sublink">Documentation &rarr;</a>
+          <a href="/benchmarks" class="m-sublink">Benchmarks &rarr;</a>
+          <a href="/changelog" class="m-sublink">Changelog &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .m-home {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .m-hero {
+    padding-top: 74px;
+    padding-bottom: 24px;
+  }
+
+  .m-pill-wrap {
+    margin-bottom: 14px;
+  }
+
+  .m-announcement {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 26px;
+    padding: 0 10px;
+    border: 1px solid var(--bdr-hi);
+    background: var(--surface);
+    font-size: 11px;
+    color: var(--txt-2);
+    text-decoration: none;
+  }
+
+  .m-arrow {
+    color: var(--amber);
+  }
+
+  .m-kicker {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--txt-3);
+    margin-bottom: 10px;
+  }
+
+  .m-kicker span {
+    color: var(--amber);
+  }
+
+  .m-title {
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 12px;
+    color: var(--txt);
+  }
+
+  .m-hl {
+    color: var(--amber);
+  }
+
+  .m-sub {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--txt-2);
+    margin: 0 0 16px;
+  }
+
+  .m-install {
+    margin-bottom: 14px;
+  }
+
+  .m-cta-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .m-btn {
+    flex: 1;
+    justify-content: center;
+    font-size: 12px;
+    padding: 9px 12px;
+    height: 38px;
+  }
+
+  /* Stats grid */
+  .m-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .m-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .m-stat--hi {
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+  }
+
+  .m-stat-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .m-stat-v {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--txt);
+    line-height: 1;
+  }
+
+  .m-stat-v small {
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 2px;
+    color: var(--txt-3);
+  }
+
+  .m-stat-k {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--amber);
+    font-family: var(--font-mono);
+  }
+
+  .m-stat-d {
+    font-size: 11px;
+    color: var(--txt-3);
+    line-height: 1.3;
+  }
+
+  /* Section styles */
+  .m-sec {
+    padding-block: 36px;
+    border-top: 1px solid var(--bdr);
+  }
+
+  .m-sec--bottom {
+    padding-bottom: 48px;
+  }
+
+  .m-sec-head {
+    margin-bottom: 18px;
+  }
+
+  .m-sec-tag {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--amber);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .m-sec-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0;
+    color: var(--txt);
+  }
+
+  .m-sec-title em {
+    font-style: normal;
+    color: var(--amber);
+  }
+
+  .m-sec-sub {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--txt-2);
+    margin: 8px 0 0;
+  }
+
+  /* Cards */
+  .m-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .m-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .m-card--highlight {
+    border-color: var(--amber-line);
+    background: var(--amber-wash);
+  }
+
+  .m-card-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    margin-bottom: 2px;
+  }
+
+  .m-badge-pill {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--amber);
+    background: var(--bg);
+    border: 1px solid var(--bdr-hi);
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  .m-card-n {
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  .m-card-tag {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--txt-3);
+  }
+
+  .m-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--txt);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .m-card-desc {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--txt-2);
+    margin: 0;
+  }
+
+  /* Harness Box & Chips */
+  .m-harness-box {
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .m-harness-label {
+    font-size: 10.5px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--txt-3);
+  }
+
+  .m-harness-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .m-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 6px 12px;
+    background: var(--bg);
+    border: 1px solid var(--bdr);
+    color: var(--txt-2);
+  }
+
+  .m-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  /* Git Badges Guide */
+  .m-git-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    align-items: center;
+  }
+
+  .m-badge-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--txt-2);
+  }
+
+  .m-badge-chip b {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .b-m { background: rgba(227, 179, 65, 0.15); color: #d29922; }
+  .b-a { background: rgba(46, 160, 67, 0.15); color: #3fb950; }
+  .b-d { background: rgba(248, 81, 73, 0.15); color: #f85149; }
+  .b-u { background: rgba(163, 113, 247, 0.15); color: #a371f7; }
+  .b-r { background: rgba(88, 166, 255, 0.15); color: #58a6ff; }
+
+  /* Security Card */
+  .m-security-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .m-security-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--txt);
+    letter-spacing: -0.01em;
+  }
+
+  .m-security-desc {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--txt-2);
+    margin: 0;
+  }
+
+  /* Bottom CTA */
+  .m-cta-box {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr-hi);
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .m-cta-box-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--txt);
+  }
+
+  .m-cta-box-desc {
+    font-size: 12.5px;
+    color: var(--txt-3);
+    margin: 0;
+  }
+
+  .m-links-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .m-sublink {
+    font-size: 12px;
+    color: var(--amber);
+    text-decoration: none;
+    font-weight: 500;
+  }
+</style>

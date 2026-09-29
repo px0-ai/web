@@ -262,7 +262,13 @@ const navItems = [
   }
 
   @media (max-width: 520px) {
-    .nav-mid { display: none; }
+    .nav-mid {
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-mid::-webkit-scrollbar { display: none; }
+    .nav-link { font-size: 11px; white-space: nowrap; }
   }
 </style>
 

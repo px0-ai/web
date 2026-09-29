@@ -528,4 +528,17 @@ const setups = [
       grid-template-columns: 1fr;
     }
   }
+
+  @media (max-width: 768px) {
+    .remote-showcase {
+      display: none;
+    }
+    .remote-pillars {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+    .r-card {
+      padding: 16px;
+    }
+  }
 </style>

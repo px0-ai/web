@@ -18,18 +18,6 @@ export const HARNESSES = [
     cmd: 'claude --permission-mode acceptEdits --model haiku -p {prompt}',
   },
   {
-    name: 'Gemini CLI',
-    id: 'gemini',
-    defaultModel: 'gemini-2.5-flash-lite',
-    cmd: 'gemini --approval-mode auto_edit -m gemini-2.5-flash-lite -p {prompt}',
-  },
-  {
-    name: 'Cursor Agent',
-    id: 'cursor-agent',
-    defaultModel: 'gemini-3.6-flash-minimal',
-    cmd: 'cursor-agent --force --model gemini-3.6-flash-minimal -p {prompt}',
-  },
-  {
     name: 'Antigravity',
     id: 'agy',
     defaultModel: 'gemini-3.6-flash-low',
@@ -40,24 +28,6 @@ export const HARNESSES = [
     id: 'opencode',
     defaultModel: 'opencode/big-pickle',
     cmd: 'opencode run -m opencode/big-pickle {prompt}',
-  },
-  {
-    name: 'OpenAI Codex',
-    id: 'codex',
-    defaultModel: 'gpt-5-codex',
-    cmd: 'codex exec --ask-for-approval never -m gpt-5-codex {prompt}',
-  },
-  {
-    name: 'Aider',
-    id: 'aider',
-    defaultModel: 'claude-3-7-sonnet',
-    cmd: 'aider --yes-always --no-auto-commits --model claude-3-7-sonnet --message {prompt}',
-  },
-  {
-    name: 'Goose',
-    id: 'goose',
-    defaultModel: 'gpt-4o',
-    cmd: 'goose run --no-session --model gpt-4o -t {prompt}',
   },
 ];
 

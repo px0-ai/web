@@ -8,19 +8,40 @@ import Features from '../components/Features.astro';
 import Remote from '../components/Remote.astro';
 import Git from '../components/Git.astro';
 import PartnersCallout from '../components/PartnersCallout.astro';
+import MobileHome from '../components/MobileHome.astro';
 import Footer from '../components/Footer.astro';
 ---
 
 <Layout>
   <Nav />
   <main>
-    <Hero />
-    <Cases />
-    <ReviewThreads />
-    <Features />
-    <Remote />
-    <Git />
-    {/* <PartnersCallout /> */}
+    <div class="desktop-only">
+      <Hero />
+      <Cases />
+      <ReviewThreads />
+      <Features />
+      <Remote />
+      <Git />
+      {/* <PartnersCallout /> */}
+    </div>
+    <div class="mobile-only">
+      <MobileHome />
+    </div>
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .mobile-only {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .desktop-only {
+      display: none !important;
+    }
+    .mobile-only {
+      display: block !important;
+    }
+  }
+</style>

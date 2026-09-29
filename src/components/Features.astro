@@ -45,16 +45,11 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
       <article class="fcell reveal">
         <div class="fid"><b>f.03</b><span>coding harnesses</span></div>
         <h3>Multi-harness agent dispatch</h3>
-        <p>Direct integration with Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, and Goose. Tabs reload automatically in place with zero manual git stashing.</p>
+        <p>Direct integration with Claude Code, Antigravity, and OpenCode. Tabs reload automatically in place with zero manual git stashing.</p>
         <div class="fviz harness-grid">
           <span class="chip-harness on">claude</span>
-          <span class="chip-harness on">gemini</span>
-          <span class="chip-harness on">cursor</span>
           <span class="chip-harness on">agy</span>
-          <span class="chip-harness">opencode</span>
-          <span class="chip-harness">codex</span>
-          <span class="chip-harness">aider</span>
-          <span class="chip-harness">goose</span>
+          <span class="chip-harness on">opencode</span>
         </div>
       </article>
 
@@ -600,9 +595,25 @@ const servers = ['gopls', 'rust-analyzer', 'typescript-language-server', 'pyrigh
     .fgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 720px) {
     .fgrid { grid-template-columns: minmax(0, 1fr); }
-    .fcell { min-height: 0; }
+    .fcell {
+      min-height: 0;
+      padding: 16px;
+      gap: 6px;
+    }
+    .fcell h3 {
+      font-size: 15px;
+      margin: 0;
+    }
+    .fcell p {
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .fviz {
+      display: none;
+    }
     .srv { grid-template-columns: minmax(0, 1fr); }
   }
 </style>

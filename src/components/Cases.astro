@@ -21,7 +21,7 @@ const cases = [
     num: '02',
     tag: 'agent harnesses',
     title: 'Connecting to Coding Harnesses',
-    desc: 'Select code in px0 or review comments and dispatch directly to Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, or Goose with live reloading.',
+    desc: 'Select code in px0 or review comments and dispatch directly to Claude Code, Antigravity, or OpenCode with live reloading.',
     meta: [
       { label: 'batch apply', val: '1-click' },
       { label: 'inline edit', val: 'Alt E' },
@@ -291,13 +291,41 @@ const cases = [
     }
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 720px) {
+    .cases-grid {
+      gap: 12px;
+    }
+
     .case-card {
-      padding: 18px;
+      padding: 16px;
+    }
+
+    .case-title {
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    .case-desc {
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .case-tty {
+      display: none;
     }
 
     .case-stats {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding-top: 10px;
+      gap: 6px;
+    }
+
+    .cs-label {
+      font-size: 9px;
+    }
+
+    .cs-val {
+      font-size: 11px;
     }
   }
 </style>

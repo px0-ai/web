@@ -32,9 +32,9 @@ const pillars = [
   {
     num: '05',
     title: 'Multi-Harness Continuity',
-    sub: 'Claude, Gemini, Cursor, Agy & more',
-    body: 'Connect natively to Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, or Goose. Switch models or harnesses mid-thread with automatic session resume and transcript replay.',
-    tag: '8+ HARNESSES',
+    sub: 'Claude Code, Antigravity & OpenCode',
+    body: 'Connect natively to Claude Code, Antigravity, or OpenCode. Switch models or harnesses mid-thread with automatic session resume and transcript replay.',
+    tag: 'HARNESSES',
   },
   {
     num: '06',
@@ -1705,6 +1705,36 @@ const pillars = [
     .pr-tree-side {
       border-right: none;
       border-bottom: 1px solid #d0d7de;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .rev-showcase {
+      display: none;
+    }
+
+    .pillars-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .pil-card {
+      padding: 16px;
+      gap: 6px;
+    }
+
+    .pil-title {
+      font-size: 16px;
+    }
+
+    .pil-sub {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .pil-body {
+      font-size: 12px;
+      line-height: 1.5;
     }
   }
 </style>

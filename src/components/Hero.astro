@@ -13,7 +13,7 @@ const stats = [
   { v: '<1', u: 'ms', k: 'cold start', d: 'sub-millisecond instant boot' },
   { v: '20-30', u: 'MB', k: 'host memory', d: '~90% less vs. ~1.4 GB VS Code', hi: true },
   { v: '6.0', u: 'ms', k: 'fuzzy find', d: 'linux kernel, 95,710 files' },
-  { v: `${HARNESSES.length}`, u: '', k: 'ai harnesses', d: 'Claude, Gemini, Cursor, and more' },
+  { v: `${HARNESSES.length}`, u: '', k: 'ai harnesses', d: 'Claude, Antigravity, OpenCode' },
   { v: '1', u: 'tab', k: 'browser based', d: 'no GUI bloat' },
   { v: '0', u: '', k: 'runtime deps', d: 'no Electron, no Node, no CGO' },
 ];
@@ -159,13 +159,8 @@ const ideData = {
             <span class="hh-label">Supported harnesses:</span>
             <div class="hh-pills">
               <span class="hh-pill"><i class="hh-dot"></i>Claude Code</span>
-              <span class="hh-pill"><i class="hh-dot"></i>Gemini CLI</span>
-              <span class="hh-pill"><i class="hh-dot"></i>Cursor Agent</span>
               <span class="hh-pill"><i class="hh-dot"></i>Antigravity</span>
               <span class="hh-pill"><i class="hh-dot"></i>OpenCode</span>
-              <span class="hh-pill"><i class="hh-dot"></i>OpenAI Codex</span>
-              <span class="hh-pill"><i class="hh-dot"></i>Aider</span>
-              <span class="hh-pill"><i class="hh-dot"></i>Goose</span>
             </div>
           </div>
         </div>
@@ -1380,23 +1375,18 @@ const ideData = {
   }
 
   @media (max-width: 720px) {
+    .stage { display: none; }
     .hero-meta span:nth-child(n + 3) { display: none; }
     .hero-meta span:nth-child(2) { border-right: 0; white-space: normal; }
-    .hero-copy { padding: 30px 18px; }
+    .hero-copy { padding: 24px 16px; }
     .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .stat { padding: 16px; }
+    .stat { padding: 14px; }
     .stat:nth-child(3n) { border-right: 1px solid var(--bdr); }
     .stat:nth-child(2n) { border-right: 0; }
     .stat:nth-last-child(-n + 3) { border-bottom: 1px solid var(--bdr); }
     .stat:nth-last-child(-n + 2) { border-bottom: 0; }
-    .ide-body { grid-template-columns: minmax(0, 1fr); height: 480px; }
-    .ide-side,
-    .ide-url,
-    .st.opt { display: none; }
-    .ide-dots { width: auto; }
-    .ide-k { margin-left: auto; }
-    .ide-hover { left: 12px; right: 12px; max-width: none; }
-    .boot { padding: 12px; }
+    .hh-pills { flex-wrap: wrap; gap: 6px; }
+    .hh-pill { font-size: 11px; padding: 2px 8px; }
   }
 </style>
 
