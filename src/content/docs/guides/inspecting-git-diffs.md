@@ -139,7 +139,13 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 - Clicking **Push** uploads committed changes to your configured upstream branch.
 - If no upstream tracking branch is set yet, px0 automatically offers to configure it on the first push (`git push -u origin <branch>`).
 
-### 5. Throttled Status Refresh & Flicker-Free Tabs
+### 5. Reviewing Unpushed Commits
+- In the **Changes** view beneath the file tree, px0 lists all local commits ahead of your tracking branch (`@{u}..HEAD`), labelled with the upstream ref they precede (such as `origin/main`).
+- **Interactive Commit Hover Cards**: Hover over any commit in the unpushed list to view its author, full commit message, colored diffstat (+green / -red), and a **Copy SHA** button.
+- **Commit-Scoped Diffs**: Click any commit row to expand the files it touched, badged identically to working-tree modifications. Clicking a file opens that commit's isolated diff directly in the diff viewer, unaffected by subsequent edits.
+- **Clean Working Tree Retention**: Committing no longer hides your work. The Git changes toggle remains accessible even when your working copy is clean whenever unpushed commits exist.
+
+### 6. Throttled Status Refresh & Flicker-Free Tabs
 - Background git status syncs are throttled with an adaptive cooldown window and deduplication to avoid eating CPU during rapid disk operations.
 - Open tabs apply an `onlyIfChanged` guard during background synchronizations: untouched files are never repainted, eliminating cursor jumps or visual tab flickering.
 

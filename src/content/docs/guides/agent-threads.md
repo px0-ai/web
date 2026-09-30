@@ -43,6 +43,18 @@ Each message continues the same conversation context. Follow-ups like *"Can you 
 
 ---
 
+## Threads in GitHub PR Reviews
+
+When conducting a [GitHub Pull Request Review](/docs/guides/github-pr-review), threads include an explicit review scope selector above the message composer:
+
+- **Whole PR**: Scopes context to the entire pull request from merge-base to PR head.
+- **My changes**: Scopes context strictly to reviewer modifications made locally on top of the PR.
+- **Selection**: Anchors context directly to the selected lines of code.
+
+px0 automatically defaults the initial scope based on where the thread originated: the active editor diff section (PR changes vs. Your changes), the sidebar PR changes toggle, or the full PR. You can switch scope chips at any time before sending a turn; px0 saves the exact diff range as a file and provides it to the harness so the agent reads the full scope rather than guessing.
+
+---
+
 ## Mid-Thread Model & Harness Switching
 
 Beneath the transcript, the **Model** row displays the active coding harness and model selector. You can switch models or harnesses in the middle of an ongoing thread:

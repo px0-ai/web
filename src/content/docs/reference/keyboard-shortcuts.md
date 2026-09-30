@@ -22,7 +22,7 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Cmd+Shift+F` | `Ctrl+Shift+F` | **Workspace search**: Full-text regex search across all files |
 | `Cmd+Shift+R` | `Ctrl+Shift+R` | **Refresh workspace**: Live reindex of workspace tree and Git status |
 | `Cmd+,` | `Ctrl+,` | **Open settings**: Open visual Settings UI and raw JSON configurator |
-| `Cmd+F` | `Ctrl+F` | **Find in file**: In-file search seeded with current selection |
+| `Cmd+F` | `Ctrl+F` | **Find in file**: In-file search with match case toggle (`Aa`), seeded with current selection |
 | `Cmd+G` | `Ctrl+G` | **Jump to line**: Enter line number to jump directly |
 | `Cmd+B` | `Ctrl+B` | **Toggle sidebar**: Show or hide the left explorer sidebar |
 | Right-click tree item | Right-click tree item | **File tree context menu**: Copy Relative Path, Copy Name, Copy Absolute Path |
@@ -49,6 +49,8 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | Line Hover (Thread Icon) | Line Hover (Thread Icon) | **Line action popover**: Choose between Start Thread, Edit Inline, or Review Comment |
 | `Cmd+K` -> `Git: Open Pull Request...` | `Ctrl+K` -> `Git: Open Pull Request...` | **Open PR**: Launch a fresh pull request review tab |
 | `Option+M` | `Alt+M` | **Toggle Markdown preview**: Switch between raw source and rendered GFM |
+| Click unpushed commit | Click unpushed commit | **Inspect unpushed commit**: Expand touched files and review commit diffs |
+| Hover unpushed commit | Hover unpushed commit | **Commit card**: View author, message, diffstat, and Copy SHA |
 
 ## Tabs & Editor Viewport
 

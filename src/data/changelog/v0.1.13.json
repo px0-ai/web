@@ -1,0 +1,57 @@
+{
+  "version": "0.1.13",
+  "tag": "v0.1.13",
+  "date": "2026-09-30",
+  "title": "Unpushed Commits Review, PR Scoped Threads, Case-Sensitive Search & Persistent Theme Preferences",
+  "summary": "Introduces unpushed commit reviews with sidebar hover cards and ref-aware diffing, PR scope integration for review threads, case-sensitive search toggle in the findbar and markdown preview, persistent theme preferences across reloads, and status bar version indicators.",
+  "commitCount": 10,
+  "commitRange": "v0.1.12..v0.1.13",
+  "categories": [
+    {
+      "name": "Unpushed Commit Review & Git Sidebar",
+      "items": [
+        "Unpushed commit section in the sidebar git view listing local commits ahead of the tracking branch (@{u}..HEAD) with ref origin indicators",
+        "Interactive commit hover card displaying author, full commit message, colored diffstat insertions and deletions, and Copy SHA action",
+        "Clickable unpushed commit rows expanding touched files with status badges to review commit-specific diffs",
+        "Support optional ref query parameter across diff, gutter, and file API endpoints to review historical and unpushed commits",
+        "Card Keeper utility maintaining LSP and commit hover cards interactively open during mouse movement",
+        "Git view toggle remains accessible in the file tree when working tree is clean but unpushed commits exist",
+        "Prevent sidebar layout collapse on clean git working trees by properly anchoring bottom panels"
+      ]
+    },
+    {
+      "name": "PR Review Scopes & Review Threads",
+      "items": [
+        "PR diff scope selection (Whole PR, My changes, Selection) for review threads with dedicated scope chips",
+        "Pass explicit PR diff scopes and saved diff files directly to coding harnesses so agents read exact git ranges",
+        "Support pulling PRs when upstream branches are force-pushed without local commits",
+        "Calculate unpushed commits relative to PR head when working in detached HEAD mode",
+        "Synchronize PR head and index state automatically when local commits are pushed",
+        "Authenticate git push and pull operations using HTTP extra headers"
+      ]
+    },
+    {
+      "name": "Case-Sensitive Search & Findbar",
+      "items": [
+        "Match case toggle button in the findbar UI with active state styling",
+        "Case-sensitive search support across search APIs, find state models, and Markdown preview finder",
+        "Unified find state handling between code view and rendered Markdown documentation"
+      ]
+    },
+    {
+      "name": "Theme Preferences & Status Bar",
+      "items": [
+        "Theme preference resolution prioritizing custom choices over default fallbacks and persisting to server settings",
+        "Display current px0 version and title tooltip in the status bar with automatic initialization refresh",
+        "Streamline LSP backend by removing legacy diagnostic tracking in favor of responsive hover and jump navigation"
+      ]
+    },
+    {
+      "name": "Telemetry & Internal Helpers",
+      "items": [
+        "Wire telemetry service to HTTP server to record git commit events",
+        "Extract shared inGitMode helper to tree module to eliminate duplicate logic across prscope and unpushed views"
+      ]
+    }
+  ]
+}
