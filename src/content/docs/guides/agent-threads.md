@@ -97,5 +97,11 @@ The **Threads** tab provides an overview of all conversations in the workspace:
 - **Sorting & Metrics**: Threads are sorted by most recent activity, showing the code anchor, total turn count, and timestamp.
 - **Status Indicators**: A spinner indicates an active turn, while a warning icon marks turns that failed. A pulsing dot on the Threads tab alerts you when a background turn completes while you are viewing another tab.
 - **File Filter**: Click **This file** to filter the list to threads started in the currently active document.
+- **Thread Deletion**: You can remove threads at any time:
+  - Click the trash icon in the thread detail header.
+  - Hover over any thread in the thread list and click its inline trash button.
+  - Focus a thread in the list and press `Delete` or `Backspace`.
+  - Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run **Threads: Delete Current Thread**.
+- **REST Endpoints**: Backend deletion (`POST /api/threads/delete`) and cancellation (`POST /api/threads/cancel`) accept thread IDs passed either via JSON body (`{"id": "..."}`) or URL query parameters.
 - **Transcript Persistence**: Threads are stored locally on the host machine at `~/.px0/threads/<workspace-hash>.json` (or `$XDG_CONFIG_HOME/px0/threads/`), never inside your git working tree. Files are written atomically with restricted `0600` permissions.
 - **Restart Recovery**: Threads survive server restarts. If px0 is terminated while a turn is running, the turn is cleanly marked as interrupted upon reload.

@@ -1,0 +1,50 @@
+{
+  "version": "0.1.14",
+  "tag": "v0.1.14",
+  "date": "2026-10-02",
+  "title": "Mermaid Diagrams in Markdown, Thread Deletion Shortcuts, Real-Time Git Status Sync & Catppuccin Mocha Default",
+  "summary": "Introduces native theme-aware Mermaid diagram rendering with zoom/pan and full-screen controls in Markdown preview, thread deletion shortcuts and palette actions, instant Git status tree synchronization after staging and commits, non-disruptive auto-updates with manual restart notices, and sets Catppuccin Mocha as the default workbench theme.",
+  "commitCount": 7,
+  "commitRange": "v0.1.13..v0.1.14",
+  "categories": [
+    {
+      "name": "Mermaid Diagrams & Markdown Preview",
+      "items": [
+        "Render fenced mermaid blocks as interactive, theme-aware diagrams with automatic SVG color adaptation",
+        "Lazy-load pinned Mermaid runtime from the same origin on demand, requiring no external CDN and functioning completely offline",
+        "Interactive diagram controls featuring zoom (25% to 400%), fit-to-view, and click-and-drag canvas panning",
+        "Full-screen diagram overlay mode with Escape key dismissal and dedicated close actions",
+        "Maintain diagram SVG cache and yield during batch renders for fluid UI responsiveness",
+        "Preserve original code block in DOM for seamless copy and raw Markdown extraction",
+        "Isolated error fallbacks ensure invalid diagrams display clear local error cards without breaking neighboring content",
+        "Debounced automatic diagram re-rendering when cycling or switching themes"
+      ]
+    },
+    {
+      "name": "Thread Management & Shortcuts",
+      "items": [
+        "Delete threads directly from the thread list via hover trash buttons or Delete/Backspace keyboard shortcuts",
+        "Register Threads: Delete Current Thread command in the command palette",
+        "Support thread ID via JSON body in delete and cancel endpoints alongside existing query parameters",
+        "Add unit tests for thread deletion and cancellation across query parameters and JSON payloads"
+      ]
+    },
+    {
+      "name": "Git Status Synchronization & Trees",
+      "items": [
+        "Trigger real-time git status refreshes across tree and sidebar after staging, unstaging, and committing",
+        "Inject all status nodes into index children during git tree updates to ensure complete synchronization",
+        "Remove cooldown restrictions from manual refresh triggers for immediate UI response",
+        "Evaluate rendered dirty rows when calculating clean tree state to prevent premature fallback",
+        "Harden git status UI event handlers with dedicated try-catch blocks and integration tests"
+      ]
+    },
+    {
+      "name": "Themes & Auto-Update",
+      "items": [
+        "Switch default workbench theme to Catppuccin Mocha across settings and documentation",
+        "Notify users to restart px0 after background auto-updates instead of abruptly re-executing processes and dropping active connections"
+      ]
+    }
+  ]
+}

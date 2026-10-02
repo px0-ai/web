@@ -71,6 +71,7 @@ When code is selected in the editor or diff view, the footer selection bar and c
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
 | `Option+T` | `Alt+T` | **Start Thread**: Open a multi-turn conversation anchored to the selection (or cursor line) |
+| `Delete` or `Backspace` | `Delete` or `Backspace` | **Delete thread**: Delete selected thread item in the Threads list |
 | `Option+E` | `Alt+E` | **Edit Inline**: Open comment box in Threads pane to dispatch selected range |
 | `Enter` (in comment box) | `Enter` (in comment box) | **Add comment**: Stage comment into batch and fold composer row |
 | `Cmd+Enter` | `Ctrl+Enter` | **Apply now**: Dispatch single staged comment immediately |
@@ -81,7 +82,7 @@ When code is selected in the editor or diff view, the footer selection bar and c
 | `Option+C` | `Alt+C` | **Copy reference**: Copy standardized `@path:l1-l2` reference (Copy Ref) |
 | `Option+A` | `Alt+A` | **Copy with context**: Copy snippet formatted with `@path:l1-l2` header for prompt composition |
 | `Option+U` | `Alt+U` | **Find usages**: Search workspace for the selected identifier |
-| `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, menus, selection bar, or open modal |
+| `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, menus, selection bar, modal, or full-screen diagram |
 | `?` | `?` | **Help sheet**: Display in-app shortcut modal overlay |
 
 ## Image Viewer & Asset Inspection

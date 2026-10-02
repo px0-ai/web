@@ -15,9 +15,9 @@ The following themes are included out of the box:
 
 | Theme Name | Style | Characteristics |
 | :--- | :--- | :--- |
-| **Tokyo Night** (Default) | Dark | Deep violet background with neon cyan and magenta accents |
-| **Catppuccin Mocha** | Dark | Warm pastel palette on soothing dark mauve |
+| **Catppuccin Mocha** (Default) | Dark | Warm pastel palette on soothing dark mauve |
 | **Catppuccin Latte** | Light | Clean, high-contrast daytime pastel palette |
+| **Tokyo Night** | Dark | Deep violet background with neon cyan and magenta accents |
 | **Dracula** | Dark | Vibrant pink, purple, and green syntax accents |
 | **GitHub Dark** | Dark | Default GitHub code audit appearance |
 | **GitHub Light** | Light | High-contrast black on white documentation style |

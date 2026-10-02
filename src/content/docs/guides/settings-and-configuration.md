@@ -70,7 +70,7 @@ Your git status, commits, and repository files remain completely untouched.
 | `editor.scrollBeyondLastLine` | Text Editor | `true` | `true`, `false` | Enable scrolling past end of document |
 | `editor.bracketPairColorization` | Text Editor | `true` | `true`, `false` | Rainbow bracket pairs and matching |
 | `editor.vimMode` | Text Editor | `false` | `true`, `false` | Modal Vim navigation keybindings |
-| `workbench.colorTheme` | Workbench | `"github-dark"` | 14 built-in theme IDs | Active color theme |
+| `workbench.colorTheme` | Workbench | `"catppuccin-mocha"` | 14 built-in theme IDs | Active color theme |
 | `diffEditor.renderSideBySide` | Diff Editor | `true` | `true`, `false` | Split vs. unified diff view default |
 | `diffEditor.ignoreTrimWhitespace` | Diff Editor | `true` | `true`, `false` | Ignore whitespace differences in diffs |
 | `git.gutterIndicators` | Git | `true` | `true`, `false` | Visual change markers in gutter |
