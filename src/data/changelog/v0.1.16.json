@@ -1,0 +1,36 @@
+{
+  "version": "0.1.16",
+  "tag": "v0.1.16",
+  "date": "2026-10-03",
+  "title": "On-Demand Vendor Asset Caching, Ultra-Lean Binary Footprint, Frontend Minification & Double-Gzip Fix",
+  "summary": "Unbundles heavy vendor assets from the Go binary in favor of transparent on-demand CDN fetching and persistent local caching, introduces frontend bundle minification, resolves static asset double-compression, improves Mermaid export resolution, and streamlines native executable distribution.",
+  "commitCount": 5,
+  "commitRange": "v0.1.15..v0.1.16",
+  "categories": [
+    {
+      "name": "Binary Footprint & On-Demand Vendor Caching",
+      "items": [
+        "Unbundle the bulky Mermaid diagram runtime from binary embedding, significantly slashing executable size while keeping memory usage minimal",
+        "Intelligent on-demand vendor caching: automatically downloads pinned Mermaid releases from CDN on first diagram render and stores them in ~/.px0/cache/vendor/",
+        "Serve cached vendor assets strictly from the same origin (/static/vendor/mermaid-12.0.0.min.js), preserving strict Content Security Policy ('self') and offline capabilities after initial fetch",
+        "Maintain native unpacked executable distribution to eliminate antivirus false positives and preserve OS read-only memory page sharing"
+      ]
+    },
+    {
+      "name": "Performance & Build Optimizations",
+      "items": [
+        "Minify the frontend client bundle using Bun (--minify), reducing uncompressed client JavaScript from ~448 KB down to ~250 KB",
+        "Add gzip bypass mechanism in static file handlers to prevent double gzip compression regressions on precompressed assets",
+        "Improve global export resolution in the Mermaid runtime loader for consistent diagram rendering across browser environments",
+        "Add cache-busting version identifiers to vendored Mermaid asset bundle requests to ensure reliable updates"
+      ]
+    },
+    {
+      "name": "Cleanup & Testing",
+      "items": [
+        "Remove obsolete re-exec helper routines (update_unix.go, update_windows.go) following the non-disruptive update notification model",
+        "Add unit test coverage for double-gzip bypass and update integration test harnesses"
+      ]
+    }
+  ]
+}

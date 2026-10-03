@@ -1,0 +1,21 @@
+{
+  "version": "0.1.15",
+  "tag": "v0.1.15",
+  "date": "2026-10-02",
+  "title": "Pre-Compressed Static Assets, Transparent Decompression Fallback & HTTP Cache Headers",
+  "summary": "Implements automated build-time gzip pre-compression for vendor JavaScript assets, transparent server-side decompression fallbacks for non-gzip clients, long-lived HTTP cache control headers, and comprehensive static asset unit tests.",
+  "commitCount": 2,
+  "commitRange": "v0.1.14..v0.1.15",
+  "categories": [
+    {
+      "name": "Static Asset Compression & Delivery",
+      "items": [
+        "Pre-compress vendor JavaScript assets using gzip level 9 during the web build process to minimize network payloads",
+        "Transparently serve pre-compressed assets with Content-Encoding: gzip and Vary: Accept-Encoding headers when supported by the client",
+        "Dynamic decompression fallback serves uncompressed payloads to legacy clients that do not negotiate gzip compression",
+        "Set immutable cache control headers (Cache-Control: public, max-age=31536000, immutable) and accurate MIME content types for static vendor responses",
+        "Add unit test assertions verifying static asset serving, compression negotiation, and transparent decompression fallbacks"
+      ]
+    }
+  ]
+}

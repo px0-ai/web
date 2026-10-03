@@ -42,7 +42,7 @@ Clicking any standalone image in a rendered Markdown article opens an interactiv
 
 ### 5. Theme-Aware Mermaid Diagrams
 Fenced `mermaid` code blocks automatically render as crisp, interactive SVG diagrams matching the active editor theme:
-- **On-Demand Embedded Runtime**: The pinned Mermaid runtime is self-hosted and embedded inside the single px0 binary. It loads lazily from the same origin only when a document contains a Mermaid block, ensuring zero external network calls, complete offline readiness, and compatibility with `-base-path`.
+- **On-Demand Local Caching Runtime**: To keep the initial px0 binary ultra-lean without bundling bulky multi-megabyte vendor assets, the pinned Mermaid runtime is fetched on first diagram render and cached persistently in user storage (`~/.px0/cache/vendor/`). px0 streams the asset strictly from the same origin only when a document contains a Mermaid block, satisfying strict Content Security Policy (`'self'`) constraints and preserving complete offline capability for subsequent sessions.
 - **Interactive Viewport Controls**: Each diagram includes a floating toolbar with zoom in/out (scaling from 25% to 400%), fit-to-view, and click-and-drag panning across large architectural charts.
 - **Full-Screen Focus Mode**: Click the maximize button to view diagrams in a distraction-free full-screen overlay. Press `Escape` or click the close button to return to standard preview.
 - **Copy & Source Preservation**: The original Mermaid definition is preserved in the DOM, allowing one-click copying and raw Markdown export without losing the diagram source.
