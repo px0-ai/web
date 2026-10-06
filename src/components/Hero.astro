@@ -13,7 +13,7 @@ const stats = [
   { v: '<1', u: 'ms', k: 'cold start', d: 'sub-millisecond instant boot' },
   { v: '20-30', u: 'MB', k: 'host memory', d: '~90% less vs. ~1.4 GB VS Code', hi: true },
   { v: '6.0', u: 'ms', k: 'fuzzy find', d: 'linux kernel, 95,710 files' },
-  { v: `${HARNESSES.length}`, u: '', k: 'ai harnesses', d: 'Claude, Antigravity, OpenCode' },
+  { v: `${HARNESSES.length}`, u: '', k: 'ai harnesses', d: 'Claude, Cursor, Antigravity, OpenCode' },
   { v: '1', u: 'tab', k: 'browser based', d: 'no GUI bloat' },
   { v: '0', u: '', k: 'runtime deps', d: 'no Electron, no Node, no CGO' },
 ];
@@ -159,6 +159,7 @@ const ideData = {
             <span class="hh-label">Supported harnesses:</span>
             <div class="hh-pills">
               <span class="hh-pill"><i class="hh-dot"></i>Claude Code</span>
+              <span class="hh-pill"><i class="hh-dot"></i>Cursor Agent</span>
               <span class="hh-pill"><i class="hh-dot"></i>Antigravity</span>
               <span class="hh-pill"><i class="hh-dot"></i>OpenCode</span>
             </div>

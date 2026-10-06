@@ -114,7 +114,7 @@ px0 --update        # upgrade to the latest release
 | -no-open | false | Do not launch the web browser automatically |
 | -no-lsp | false | Disable language server discovery and use regex-based outline |
 | -no-git | false | Disable git awareness (tree status badges and diff view) |
-| -agent H | none | Pin coding harness: claude, gemini, cursor-agent, agy, opencode, codex, aider, goose, or command template with {prompt} |
+| -agent H | none | Pin coding harness: claude, cursor-agent, agy, opencode, or command template with {prompt} |
 | -no-agent | false | Do not offer editing through a coding harness |
 | -no-color | false | Strip ANSI escape sequences from terminal output |
 | -quiet | false | Suppress CLI narration (errors still print to stderr) |

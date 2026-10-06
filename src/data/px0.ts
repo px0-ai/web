@@ -18,6 +18,12 @@ export const HARNESSES = [
     cmd: 'claude --permission-mode acceptEdits --model haiku -p {prompt}',
   },
   {
+    name: 'Cursor Agent',
+    id: 'cursor-agent',
+    defaultModel: 'gemini-3.6-flash-minimal',
+    cmd: 'cursor-agent --force --model gemini-3.6-flash-minimal -p {prompt}',
+  },
+  {
     name: 'Antigravity',
     id: 'agy',
     defaultModel: 'gemini-3.6-flash-low',
@@ -92,7 +98,7 @@ export const FLAGS = [
   { flag: '-no-open', def: 'false', desc: 'do not launch the browser' },
   { flag: '-no-lsp', def: 'false', desc: 'skip language servers, use the regex outline' },
   { flag: '-no-git', def: 'false', desc: 'disable git awareness (tree status badges and diff view)' },
-  { flag: '-agent H', def: 'none', desc: 'pin coding harness: claude, gemini, cursor-agent, agy, opencode, codex, aider, goose, or command template with {prompt}' },
+  { flag: '-agent H', def: 'none', desc: 'pin coding harness: claude, cursor-agent, agy, opencode, or command template with {prompt}' },
   { flag: '-no-agent', def: 'false', desc: 'do not offer editing through a coding harness' },
   { flag: '-no-color', def: 'false', desc: 'strip ANSI escape sequences' },
   { flag: '-quiet', def: 'false', desc: 'suppress narration, errors still go to stderr' },

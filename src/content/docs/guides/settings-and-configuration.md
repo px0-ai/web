@@ -83,7 +83,7 @@ Your git status, commits, and repository files remain completely untouched.
 | `search.maxResults` | Search | `1000` | `50` to `10000` | Maximum search results returned |
 | `lsp.enabled` | LSP | `true` | `true`, `false` | Master toggle for Language Servers |
 | `lsp.hover.enabled` | LSP | `true` | `true`, `false` | Hover documentation cards |
-| `agent.harness` | Coding Agent | `""` | `claude`, `gemini`, `agy`, etc. | Preferred CLI coding harness |
+| `agent.harness` | Coding Agent | `""` | `claude`, `cursor-agent`, `agy`, `opencode` | Preferred CLI coding harness |
 | `agent.timeoutSeconds` | Coding Agent | `120` | `10` to `600` (seconds) | Max execution runtime for agent jobs |
 | `server.basePath` | Server | `"/"` | any path prefix (e.g. `"/rev-123/"`) | Base URL path prefix to serve endpoints and assets from. Overridden by the `-base-path` CLI flag. |
 

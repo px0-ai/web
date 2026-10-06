@@ -125,7 +125,7 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 
 ### 2. Manual Commit & Commit with AI
 - **Collapsible Monospace Input**: The commit message textarea is hidden by default to keep the sidebar compact. Click the toggle link to reveal it for manual typing, or let it auto-expand when generating a message.
-- **Standalone AI Generation & Pre-Commit Review**: Click **Generate** to draft a commit message with your configured AI harness (Claude Code, Antigravity, Gemini CLI, Cursor Agent) without committing immediately. This lets you review and tweak the text before clicking **Commit**.
+- **Standalone AI Generation & Pre-Commit Review**: Click **Generate** to draft a commit message with your configured AI harness (Claude Code, Cursor Agent, Antigravity, or OpenCode) without committing immediately. This lets you review and tweak the text before clicking **Commit**.
 - **1-Click Commit with AI**: Alternatively, click **Commit with AI** to generate a message and commit the staged changes in a single action.
 - **Data-Loss Protection**: If a commit fails (for instance due to pre-commit hooks or git conflicts), the generated message remains in the textarea so you never lose your draft.
 - **Curated Diff Context**: px0 supplies the agent with the list of staged file paths, a diffstat summary, and the staged diff capped at 32 KB while excluding lockfiles and minified assets.

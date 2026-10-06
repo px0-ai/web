@@ -36,7 +36,7 @@ Go Server Runtime (Single Static Binary)
   ├── Windowed Syntax Lexer (1,000-line hlChunk · 400-line hlContext · 512 MB LRU)
   ├── Server-Side Chroma Diff Tokenizer (highlight.go)
   ├── Multi-Turn Thread Store & Runner (thread.go, SSE /api/threads/stream)
-  ├── Native Agent Harness Parsers: claude, agy, gemini, cursor-agent (agent.go)
+  ├── Native Agent Harness Parsers: claude, agy, cursor-agent (agent.go)
   ├── Stdio JSON-RPC Language Server (LSP) Client (Lazy spawn · regex fallback)
   ├── Pure Shell-Out Git Controller (git.go, gitpanel endpoints)
   ├── Git Forge Provider Engine (provider.go, github.go, pr.go)
@@ -87,7 +87,7 @@ px0 runs as a single Go binary that owns indexing, search, syntax highlighting, 
 ## Core Architectural Tenets
 
 ### 1. Optimized for Reads & Delegated Agent Dispatch
-px0 does not attempt to be a heavy code editor with character-by-character typing or save buttons. Code authoring is delegated to external AI coding tools (Claude Code, Google Antigravity, Gemini CLI, Cursor Agent, OpenCode, Codex, Aider, Goose) or dedicated terminal editors. px0 focuses entirely on the reader experience, automatically reloading whatever files the harness changed.
+px0 does not attempt to be a heavy code editor with character-by-character typing or save buttons. Code authoring is delegated to external AI coding tools (Claude Code, Cursor Agent, Google Antigravity, OpenCode) or dedicated terminal editors. px0 focuses entirely on the reader experience, automatically reloading whatever files the harness changed.
 
 ### 2. Single Static Binary Distribution & Lean Packaging
 The entire web application (HTML, CSS tokens, JavaScript modules, fonts, icons) is embedded directly into the Go binary at compile time using `go:embed`. px0 requires:
@@ -220,11 +220,10 @@ sequenceDiagram
 
 #### Session Continuity Models
 A turn runs as an independent child process. Continuity across turns is maintained via two strategies:
-1. **Native Session Resumption (`claude`, `agy`, `gemini`, `cursor-agent`)**:
+1. **Native Session Resumption (`claude`, `cursor-agent`, `agy`)**:
    - `claude`: Injects `--session-id <uuid>` on turn 1, then `--resume <uuid>` on subsequent turns.
-   - `agy` (Google Antigravity): Captures `conversation_id` from the initial turn and invokes `--conversation <id>` on every turn.
-   - `gemini`: Injects `--session-id <uuid>` on turn 1, then `--resume <uuid>` on subsequent turns.
    - `cursor-agent`: Captures session ID from `create-chat` and resumes via `--resume <id>`.
+   - `agy` (Google Antigravity): Captures `conversation_id` from the initial turn and invokes `--conversation <id>` on every turn.
    - Native harnesses maintain their own context internally, meaning px0 sends only the new message, dramatically reducing token usage.
 2. **Transcript Replay (Other Harnesses)**:
    - For harnesses without native multi-turn CLI flags, px0 replays prior turns formatted as `User:` / `Assistant:` text along with modified file lists, capped at 16 KB of recent context.

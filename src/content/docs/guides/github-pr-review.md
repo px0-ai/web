@@ -108,7 +108,7 @@ When reviewing pull requests, you often identify trivial fixes, missing docstrin
 
 1. Draft your comments across the affected files using `Alt+R` or the gutter pencil icon.
 2. In the PR review header bar, click **Batch Apply**.
-3. px0 dispatches all drafted comments to your configured AI coding agent (Claude Code, Gemini CLI, Cursor Agent, Antigravity, Aider).
+3. px0 dispatches all drafted comments to your configured AI coding agent (Claude Code, Cursor Agent, Antigravity, or OpenCode).
 4. The harness reads your comments as instructions and applies the edits directly to the worktree.
 5. px0's real-time file watcher catches the modifications, reloading the diff view and tab statuses live.
 

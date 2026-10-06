@@ -7,7 +7,7 @@ order: 2
 
 # Pairing with AI Coding Agents
 
-When working with autonomous coding agents such as Claude Code, Google Antigravity, Gemini CLI, Cursor Agent, OpenCode, Codex, Aider, or Goose, code modifications arrive rapidly across multiple files. Running a 1.5 GB Electron IDE to supervise edits wastes gigabytes of system memory and risks typing conflicts.
+When working with autonomous coding agents such as Claude Code, Cursor Agent, Antigravity, or OpenCode, code modifications arrive rapidly across multiple files. Running a 1.5 GB Electron IDE to supervise edits wastes gigabytes of system memory and risks typing conflicts.
 
 Built specifically for reviewing AI-generated code, px0 pairs with autonomous coding agents in three distinct ways:
 
@@ -26,7 +26,7 @@ Threads provide an interactive, conversational loop directly beside your code:
 3. The **Threads** pane in the right inspector opens, anchored to your selection.
 4. Enter your question or prompt (e.g. *"Explain how this error path is handled and draft a safer variant"*).
 5. Watch live as the harness streams its reply and collapsible tool steps (`Read handler.go`, `Edit types.go`).
-6. Follow up seamlessly with subsequent messages: native session harnesses (`claude`, `agy`, `gemini`, `cursor-agent`) resume their existing sessions without re-sending full history, saving API tokens.
+6. Follow up seamlessly with subsequent messages: native session harnesses (`claude`, `cursor-agent`, `agy`) resume their existing sessions without re-sending full history, saving API tokens.
 
 For a full walkthrough of threads, see the [Agent Threads & Multi-Turn Conversations guide](/docs/guides/agent-threads).
 

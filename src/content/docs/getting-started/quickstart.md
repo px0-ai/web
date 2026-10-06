@@ -70,7 +70,7 @@ Located on the right side of the window (with a header button to reopen when col
 
 ### 6. Status Bar
 Located at the bottom of the window, the status bar displays:
-- Active coding harness (Claude Code, Antigravity, Gemini CLI, Cursor Agent, OpenCode, Codex, Aider, or Goose) and selected model
+- Active coding harness (Claude Code, Cursor Agent, Antigravity, or OpenCode) and selected model
 - Language mode (e.g. Go, Rust, TypeScript, Python)
 - Line count and file size
 - Cursor position (line and column)

@@ -18,7 +18,7 @@ That premise is no longer true.
 ## Inline Text-Based Editing is Gone
 
 Code authoring has fundamentally moved to the terminal:
-- Autonomous coding agents (Claude Code, Codex, Aider, custom agent harnesses) write the functions, refactor modules, and iterate on tests.
+- Autonomous coding agents (Claude Code, Cursor Agent, Antigravity, OpenCode, or custom agent harnesses) write the functions, refactor modules, and iterate on tests.
 - CI/CD runners, cloud devboxes, and background compilers synthesize and reshape files concurrently.
 
 The modern developer rarely spends hours typing out boilerplate syntax. Instead, the developer loop has become:
@@ -53,7 +53,7 @@ Opening a heavy IDE like VS Code just to inspect what an agent modified incurs s
 
 When you are running local LLMs, Docker containers, compilers, and multiple agent loops, sacrificing 2 GB of RAM and 15 background processes just to view code is unsustainable.
 
-Consider the everyday friction: you ask an agent like Claude Code or Codex to refactor a feature across 12 files. While the agent runs in your terminal, you open a traditional IDE to inspect what's happening. You wait 8 seconds for the extension host and language servers to warm up. Then, an inadvertent keystroke in an open buffer silently dirties the file, colliding with the agent's live git patch and invalidating the compiler cache.
+Consider the everyday friction: you ask an agent like Claude Code or Cursor Agent to refactor a feature across 12 files. While the agent runs in your terminal, you open a traditional IDE to inspect what's happening. You wait 8 seconds for the extension host and language servers to warm up. Then, an inadvertent keystroke in an open buffer silently dirties the file, colliding with the agent's live git patch and invalidating the compiler cache.
 
 Standard editors maintain read-write buffers because they assume you are typing. In an agent workflow, those writable buffers are a liability.
 

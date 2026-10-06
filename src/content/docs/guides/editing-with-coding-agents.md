@@ -1,6 +1,6 @@
 ---
 title: "Editing with Coding Agents"
-description: "How to dispatch selection-anchored edits to Claude Code, Gemini CLI, Cursor Agent, Antigravity, OpenCode, Codex, Aider, or Goose directly inside px0."
+description: "How to dispatch selection-anchored edits to Claude Code, Cursor Agent, Antigravity, or OpenCode directly inside px0."
 category: "guides"
 order: 4
 ---
@@ -13,18 +13,14 @@ In px0 v0.1.10, inline edits and batch edits are fully integrated with the **Thr
 
 ## Supported Coding Harnesses
 
-px0 discovers installed coding harnesses on your `PATH` and standard binary directories (`~/.local/bin`, `/usr/local/bin`, npm global prefix). Eight popular coding harnesses are supported out of the box, each configured with optimal headless flags, automated approvals, and native session continuity where supported:
+px0 discovers installed coding harnesses on your `PATH` and standard binary directories (`~/.local/bin`, `/usr/local/bin`, npm global prefix). Four coding harnesses are supported out of the box, each configured with optimal headless flags, automated approvals, and native session continuity where supported:
 
 | Harness | Identifier | Continuity Mode | Headless Command Executed |
 | :--- | :--- | :--- | :--- |
 | **Claude Code** | `claude` | Native session | `claude --permission-mode acceptEdits --model <model> -p {prompt}` |
-| **Google Antigravity** | `agy` | Native session | `agy --dangerously-skip-permissions --mode accept-edits --model <model> -p {prompt}` |
-| **Gemini CLI** | `gemini` | Native session | `gemini --approval-mode auto_edit -m <model> -p {prompt}` |
 | **Cursor Agent** | `cursor-agent` | Native session | `cursor-agent --force --model <model> -p {prompt}` |
+| **Google Antigravity** | `agy` | Native session | `agy --dangerously-skip-permissions --mode accept-edits --model <model> -p {prompt}` |
 | **OpenCode** | `opencode` | Prompt replay | `opencode run -m <model> {prompt}` |
-| **OpenAI Codex** | `codex` | Prompt replay | `codex exec --ask-for-approval never -m <model> {prompt}` |
-| **Aider** | `aider` | Prompt replay | `aider --yes-always --no-auto-commits --model <model> --message {prompt}` |
-| **Goose** | `goose` | Prompt replay | `goose run --no-session --model <model> -t {prompt}` |
 
 ---
 
@@ -48,7 +44,7 @@ px0 substitutes `{prompt}` with the synthesized instructions and context, execut
   ```bash
   px0 -agent claude /path/to/project
   ```
-  Or choose any supported harness: `claude`, `agy`, `gemini`, `cursor-agent`, `opencode`, `codex`, `aider`, or `goose`.
+  Or choose any supported harness: `claude`, `cursor-agent`, `agy`, or `opencode`.
 - **Disabling Agent Dispatch**: To turn off agent endpoints entirely on shared machines:
   ```bash
   px0 -no-agent /path/to/project

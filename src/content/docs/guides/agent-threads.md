@@ -70,10 +70,10 @@ A thread turn runs as a dedicated child process. To preserve conversation histor
 
 | Mode | Supported Harnesses | Continuity Mechanism |
 | :--- | :--- | :--- |
-| **Native Session** | `claude` (Claude Code), `cursor-agent`, `agy` (Antigravity), `gemini` (Gemini CLI) | px0 tracks or provides the session ID directly. For example, `claude` uses `--session-id` on turn 1 and `--resume` thereafter; `agy` captures `conversation_id` and resumes with `--conversation`; `gemini` resumes with `--resume <uuid>`. The harness maintains its own context, so subsequent turns send only the new message, saving network tokens. |
-| **Transcript Replay** | `opencode`, `codex`, `aider`, `goose`, and custom harnesses | px0 serializes prior turns as structured `User:` and `Assistant:` blocks along with the list of touched files (capped at 16 KB of recent context) and prefixes it to the prompt. |
+| **Native Session** | `claude` (Claude Code), `cursor-agent`, `agy` (Antigravity) | px0 tracks or provides the session ID directly. For example, `claude` uses `--session-id` on turn 1 and `--resume` thereafter; `cursor-agent` resumes with `--resume <id>`; `agy` captures `conversation_id` and resumes with `--conversation`. The harness maintains its own context, so subsequent turns send only the new message, saving network tokens. |
+| **Transcript Replay** | `opencode` and custom harnesses | px0 serializes prior turns as structured `User:` and `Assistant:` blocks along with the list of touched files (capped at 16 KB of recent context) and prefixes it to the prompt. |
 
-For harnesses supporting token-level streaming (`claude`, `agy`, `gemini`), px0 parses `stream-json` events in real time to stream text deltas and tool invocation labels directly to the browser.
+For harnesses supporting token-level streaming (`claude`, `agy`), px0 parses `stream-json` events in real time to stream text deltas and tool invocation labels directly to the browser.
 
 ---
 
