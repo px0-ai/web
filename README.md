@@ -30,6 +30,32 @@ Output is written to `dist/`. Preview the production build locally with:
 npm run preview
 ```
 
+## Cloudflare Deployment
+
+This repository is configured for zero-latency static deployment on Cloudflare (via Cloudflare Workers Static Assets or Cloudflare Pages).
+
+### Deploy via Wrangler CLI
+
+Authenticate with Cloudflare and deploy the static build:
+
+```bash
+# Preview using Cloudflare's local runtime
+npm run preview:cf
+
+# Build and deploy to Cloudflare
+npm run deploy
+```
+
+### Deploy via Cloudflare Dashboard (Git Integration)
+
+1. Connect the repository in **Cloudflare Dashboard** under **Workers & Pages**.
+2. Configure the build settings:
+   - **Framework preset**: Astro
+   - **Build command**: `npm run build`
+   - **Build output directory**: `dist`
+   - **Node.js version**: Automatically resolved via `.nvmrc` (v22.12.0)
+3. Save and deploy. Custom 404 handling, asset caching, and security headers are handled via `wrangler.jsonc` and `public/_headers`.
+
 ## Project structure
 
 ```

@@ -1,0 +1,141 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="404: Page Not Found - px0"
+  description="The requested page could not be found. Navigate back to the px0 homepage, documentation, or changelog."
+>
+  <Nav />
+
+  <main class="err-page">
+    <div class="wrap">
+      <div class="err-card">
+        <div class="err-header">
+          <span class="err-status">404</span>
+          <span class="err-sep">/</span>
+          <span class="err-tag">not_found</span>
+        </div>
+
+        <h1 class="err-title">File or route not found</h1>
+        <p class="err-desc">
+          The path you requested does not exist on this server. It may have moved or the URL might contain a typo.
+        </p>
+
+        <div class="err-actions">
+          <a href="/" class="btn-primary">Return Home</a>
+          <a href="/docs" class="btn-secondary">Explore Documentation</a>
+          <a href="/changelog" class="btn-secondary">View Changelog</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .err-page {
+    padding-top: 120px;
+    padding-bottom: 120px;
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wrap {
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .err-card {
+    border: 1px solid var(--bdr);
+    background: var(--bg-elev);
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .err-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .err-status {
+    color: var(--amber);
+  }
+
+  .err-sep {
+    color: var(--txt-4);
+  }
+
+  .err-tag {
+    color: var(--txt-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .err-title {
+    font-size: clamp(22px, 3.5vw, 28px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--txt);
+    margin: 0;
+  }
+
+  .err-desc {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--txt-2);
+    margin: 0;
+  }
+
+  .err-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 18px;
+    background: var(--amber-fill);
+    color: #06070b;
+    font-weight: 700;
+    font-size: 12.5px;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary:hover {
+    background: var(--amber-fill-hover);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 18px;
+    border: 1px solid var(--bdr);
+    background: var(--surface);
+    color: var(--txt);
+    font-size: 12.5px;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+</style>

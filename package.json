@@ -10,6 +10,8 @@
     "dev": "astro dev --port 6079",
     "build": "astro build",
     "preview": "astro preview",
+    "preview:cf": "wrangler dev",
+    "deploy": "astro build && wrangler deploy",
     "astro": "astro"
   },
   "dependencies": {
@@ -18,6 +20,7 @@
   },
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "playwright-core": "^1.63.0"
+    "playwright-core": "^1.63.0",
+    "wrangler": "^4.149.0"
   }
 }

@@ -1,0 +1,4 @@
+# Cloudflare Pages & Workers Static Assets Redirects
+# Format: /source /destination [status]
+# Example:
+# /old-path /new-path 301
