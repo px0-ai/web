@@ -61,10 +61,10 @@ Standard editors maintain read-write buffers because they assume you are typing.
 
 We built `px0` around a singular design constraint: **make code reading, exploring, diffing, and verification as fast and lightweight as physically possible.**
 
-### 1. The Zero-Friction Navigation & Review Foundation
-px0 eliminates editor clutter and accidental buffer mutations. It does not burden you with save buttons or risk keystrokes overwriting working tree files while an autonomous agent updates code. You can audit agent changes with total safety.
+### 1. Read-Safe by Default, Quick-Fix Empowered
+px0 eliminates editor clutter and accidental buffer mutations. In traditional editors, open files are always writable, meaning an accidental keystroke can dirty a buffer, corrupt an agent's git patch, or trigger unwanted file watchers. In px0, navigation and review are strictly read-safe by default.
 
-When editing in px0, it is not manual character-by-character buffer hacking. It is agentic: selecting code, issuing directives and intentions in the UI with `Alt+E`, and letting autonomous agents apply changes in the background while px0 reloads what moved.
+When you need an agent to refactor code, you dispatch targeted instructions directly from the selection (`Alt+E`). And when you just need to fix a one-character typo, adjust a port number, or create a missing file, you don't need to burn LLM tokens or leave the browser: press `Cmd/Ctrl+E` to enter a focused in-place edit mode, save with `Cmd/Ctrl+S`, and return immediately to your review.
 
 ### 2. Sub-Millisecond Boot, Minimal Resource Footprint
 Written as a compiled Go binary with embedded web assets, px0 boots in less than 1 ms and idles at ~20-30 MB of host resident memory (~100-180 MB total including the browser tab). You can spin it up on demand, inspect a workspace, and close it without thought.

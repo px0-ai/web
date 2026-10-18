@@ -41,12 +41,12 @@ const does = [
   ['+', 'rendered Markdown preview with live source switch'],
   ['+', 'go to definition, hover, find references (with an LSP)'],
   ['+', 'jump into stdlib and module-cache sources the server points at'],
-  ['+', 'delegates edits to your coding agent (Claude, Antigravity, OpenCode)'],
+  ['+', 'delegates edits to coding agents, plus modal in-place quick fixes (Ctrl+E)'],
   ['+', '14 themes, word wrap, back and forward history'],
 ];
 
 const doesnt = [
-  ['-', 'no heavy editor or save button: edits go through your coding agent, never typed char-by-char'],
+  ['-', 'no accidental dirty buffers: reading is 100% read-safe, editing is explicit and modal (Ctrl+E)'],
   ['-', 'no extension host, no plugin marketplace, no Electron'],
 ];
 ---
@@ -93,7 +93,7 @@ const doesnt = [
           <li><b>verifying agent output</b> open the worktree, trace references, dispatch fixes with Alt+E, close the tab</li>
           <li><b>auditing a codebase</b> read a 25,000-file monorepo on a laptop without the fans spinning up</li>
           <li><b>remote boxes</b> run on the server, tunnel one port, read in any browser</li>
-          <li><b>beside your editor</b> keep vim or VS Code for the edits you still type</li>
+          <li><b>beside your editor</b> keep vim or VS Code for heavy writing; use px0 for instant review, quick fixes, and push</li>
         </ul>
       </div>
     </div>
