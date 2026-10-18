@@ -12,8 +12,8 @@ const pillars = [
   {
     num: '01',
     title: 'Sidebar Git Panel & Staging',
-    sub: 'Per-file stage ticks in tree',
-    body: 'Stage or unstage individual files with clean checkbox ticks directly in the sidebar tree. Track modified, added, untracked, and deleted statuses with zero background lag.',
+    sub: 'Per-file stage ticks & commit stepping',
+    body: 'Stage or unstage files with clean checkbox ticks in the tree, or expand recent and unpushed commits with file-stepping diff tabs (‹ / ›) and zero background lag.',
     tag: 'STAGE · UNSTAGE',
   },
   {
@@ -40,7 +40,7 @@ const pillars = [
       <div>
         <h2 class="sec-title">Working tree, Git & GitHub integration.</h2>
         <p class="sec-sub">
-          Full Git control and GitHub PR review built directly into px0. Stage per-file ticks in the tree, draft inline review comments, generate AI commit messages, inspect split or unified diffs, and push back to PR branches without leaving your browser.
+          Full Git control and GitHub PR review built directly into px0. Stage per-file ticks in the tree, browse recent and unpushed commit diffs with file stepping, draft inline review comments, generate AI commit messages, inspect split or unified diffs, and push back to PR branches without leaving your browser.
         </p>
       </div>
     </header>
@@ -197,7 +197,7 @@ const pillars = [
           </div>
 
           <div class="diff-foot">
-            <span class="df-note">Per-file stage ticks in tree · Fast-forward only pulls prevent detached conflicts</span>
+            <span class="df-note">Per-file stage ticks · File stepping (‹ / ›) across commits · Fast-forward only pulls</span>
             <span class="df-tag">pure shell-out git</span>
           </div>
         </div>

@@ -143,9 +143,15 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 - In the **Changes** view beneath the file tree, px0 lists all local commits ahead of your tracking branch (`@{u}..HEAD`), labelled with the upstream ref they precede (such as `origin/main`).
 - **Interactive Commit Hover Cards**: Hover over any commit in the unpushed list to view its author, full commit message, colored diffstat (+green / -red), and a **Copy SHA** button.
 - **Commit-Scoped Diffs**: Click any commit row to expand the files it touched, badged identically to working-tree modifications. Clicking a file opens that commit's isolated diff directly in the diff viewer, unaffected by subsequent edits.
-- **Clean Working Tree Retention**: Committing no longer hides your work. The Git changes toggle remains accessible even when your working copy is clean whenever unpushed commits exist.
+### 6. Browsing Recent Commits & File Diff Stepping
+- **Expandable Recent Commits List**: In addition to unpushed commits, the Git panel provides an expandable list of recent repository commits. Click any commit to view its author, commit date, full message, and list of modified files with `A`/`M`/`D`/`R` status badges and `+`/`-` line counts.
+- **Commit-Pinned Diffs**: Click any file to view that commit's diff in an isolated tab pinned to the commit (e.g., `@03beaf0`).
+- **Diff Strip Stepping (‹ / ›)**: A compact navigation strip positioned above the diff shows the file position within the commit (e.g., `3 / 17`). Click `‹` or `›` to step to neighboring files in place, swapping the tab content without creating tab proliferation.
+- **Merge Commit Filtering**: Merge commits are parsed against their first parent using accelerated backend diffstat parsing (`git show numstat`).
+- **Paging Support**: Large commits display 100 files at a time with a **Show 100 more** button to preserve UI responsiveness.
+- **Keyboard Navigation**: Use `Up`/`Down` arrow keys to move through commits, `Right`/`Left` to expand or collapse files, and `Enter` to open the first changed file immediately.
 
-### 6. Throttled Status Refresh & Flicker-Free Tabs
+### 7. Throttled Status Refresh & Flicker-Free Tabs
 - Background git status syncs are throttled with an adaptive cooldown window and deduplication to avoid eating CPU during rapid disk operations.
 - Open tabs apply an `onlyIfChanged` guard during background synchronizations: untouched files are never repainted, eliminating cursor jumps or visual tab flickering.
 

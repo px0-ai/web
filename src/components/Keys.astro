@@ -8,6 +8,8 @@ const shortcuts = [
   { keys: ['mod', 'shift', 'F'], act: 'search the whole workspace' },
   { keys: ['mod', 'F'], act: 'find in active file' },
   { keys: ['mod', 'D'], act: 'toggle git diff vs HEAD' },
+  { keys: ['mod', 'E'], act: 'toggle in-browser file edit mode' },
+  { keys: ['mod', 'S'], act: 'save edited file' },
   { keys: ['mod', ','], act: 'open preferences & settings' },
   { keys: ['alt', 'E'], act: 'edit with coding agent on selection' },
   { keys: ['alt', 'C'], act: 'copy reference (@path:l1-l2)' },
@@ -17,6 +19,7 @@ const shortcuts = [
   { keys: ['F12'], alt: ['mod', 'click'], act: 'go to definition' },
   { keys: ['shift', 'F12'], act: 'find all references' },
   { keys: ['alt', '←'], alt: ['alt', '→'], act: 'back, forward through history' },
+  { keys: ['esc'], act: 'leave edit mode, dismiss popups' },
   { keys: ['click'], act: 'right-click selection actions menu' },
 ];
 
@@ -25,6 +28,7 @@ const cap = (k: string) => {
   if (k === 'shift') return { cls: 'kbd shift-key', t: 'Shift' };
   if (k === 'alt') return { cls: 'kbd alt-key', t: 'Alt' };
   if (k === 'hover' || k === 'click') return { cls: 'kbd kbd--ghost', t: k };
+  if (k === 'esc') return { cls: 'kbd', t: 'Esc' };
   return { cls: 'kbd', t: k };
 };
 

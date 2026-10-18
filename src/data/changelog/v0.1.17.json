@@ -1,0 +1,68 @@
+{
+  "version": "0.1.17",
+  "tag": "v0.1.17",
+  "date": "2026-10-18",
+  "title": "In-Browser File Editing & Creation, Recent Commits Diff Stepping, Hardened LSP Lifecycle & Incremental Sync, and Modular Harness Engine",
+  "summary": "Introduces zero-latency in-browser file editing and item creation with dirty state protection and auto-refreshing git status, expands the git panel to browse and step through recent commit diffs, hardens language server lifecycle with deadlock-free async writer loops and incremental document synchronization, delegates harness execution to px0-ai/harness with lazy model discovery, and decomposes core engines into isolated high-performance internal packages.",
+  "commitCount": 19,
+  "commitRange": "v0.1.16..v0.1.17",
+  "categories": [
+    {
+      "name": "In-Browser File Editing & Creation",
+      "items": [
+        "Edit files directly in the browser with Cmd/Ctrl+E, tab header button, or Command Palette, featuring line numbers, smart tab indentation, and word wrap matching code view settings",
+        "Save changes with Cmd/Ctrl+S with instant visual button success feedback and automatic git status, LSP document, search index, and syntax-highlight cache invalidation",
+        "Protect unsaved work with dirty tab indicators and confirmation prompts on close, while cleanly preserving edit state and scroll positions across tab switches",
+        "Create new files and folders from the sidebar header, tree context menu, or Command Palette (File: New File..., File: New Folder...) with automatic parent directory creation and path traversal guards",
+        "Dynamic gutter line number alignment for wrapped lines using off-screen layout measurement"
+      ]
+    },
+    {
+      "name": "Git Panel & Recent Commits Diff Review",
+      "items": [
+        "Expand recent commits in the sidebar git panel to review commit metadata, author details, relative timestamps, and per-file change stats",
+        "Open committed file diffs in pinned tabs (@hash) with a file-stepping strip (‹ / ›) to cycle through modified files in a commit without tab clutter",
+        "Fast backend commit diffstat parsing using git show numstat with first-parent filtering for merge commits",
+        "Shared commit file row rendering and 100-item pagination across both Recent Commits and Unpushed sections",
+        "Full keyboard navigation (arrow keys, Enter) and one-click short SHA copying for commit rows"
+      ]
+    },
+    {
+      "name": "Hardened LSP Lifecycle & Incremental Sync",
+      "items": [
+        "Decouple pipe I/O into dedicated writer loops and use asynchronous writes for RPC replies and cancellation requests to eliminate potential deadlocks",
+        "Serialize document open and sync operations with per-client mutexes and generation counters to discard stale out-of-order reads",
+        "Support incremental document synchronization using UTF-8 rune-safe diffs, skipping sync when content is byte-identical to previous state",
+        "Optimize UTF-16 position conversions and header parsing allocations",
+        "Cache language server binary and install tool lookup results to accelerate startup and responsiveness"
+      ]
+    },
+    {
+      "name": "Harness Delegation & Live Stream Reliability",
+      "items": [
+        "Delegate coding harness execution, preset definitions, and timeout management to the px0-ai/harness module",
+        "Lazy model discovery: query models only for the selected harness to eliminate startup process overhead",
+        "Standardize Server-Sent Events (SSE) heartbeat format to named ping events with sleep/wake detection and traffic watchdog to keep UI tabs in sync",
+        "Refresh active tabs on wake and focus even when git status signatures match"
+      ]
+    },
+    {
+      "name": "Architecture & Developer Workflows",
+      "items": [
+        "Decompose core logic into isolated internal packages: internal/ignore for gitignore matching, internal/fuzzy for two-pass bounded matching, internal/metrics for rusage metrics, and internal/table for CSV/TSV parsing",
+        "Add fast inner loop testing targets (make check, test-short, check-web) with parallel unit test execution",
+        "Eliminate status bar flickering during sidebar resize with hysteresis slack thresholds",
+        "Full-width card layout for textarea settings inputs with contextual placeholder text",
+        "Streamline markdown preview selection actions and clarify Copy Raw Markdown behavior"
+      ]
+    },
+    {
+      "name": "Documentation",
+      "items": [
+        "Add comprehensive user guides and architectural notes for in-browser file editing and new item creation",
+        "Update git integration documentation to cover recent commits browsing, diff stepping, and keyboard shortcuts",
+        "Clarify remote access security guidance to reflect writable workspace access"
+      ]
+    }
+  ]
+}

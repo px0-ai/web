@@ -22,26 +22,27 @@ Browser Client (Vanilla JS + CSS)
   ├── Tab Lifecycle & Batch Dismissal Menu (tabs.js, bus.js)
   ├── File Tree & Context Action Menu (tree.js)
   ├── Keyboard Palette & Command Router (prefix routing: >, @, :)
+  ├── In-Browser Direct Edit View & Word Wrap Gutter (editview.js, newitem.js)
   ├── PR Review Header Bar & Line Comment Composer (pr.js)
-  ├── Sidebar Git Panel & Per-File Stage Controls (gitpanel.js)
+  ├── Sidebar Git Panel, Commit Stepping & Staging (gitpanel.js, commitfiles.js)
   └── Reactive Git Stream Client (gitstream.js, SSE)
             │
             ▼ HTTP / JSON / SSE (Pooled Gzip on 127.0.0.1:7777)
 Go Server Runtime (Single Static Binary)
-  ├── Subsystem Router (HTTP · JSON · Pooled Gzip)
+  ├── Subsystem Router (/api/file/save, /api/fs/new · Pooled Gzip)
   ├── Parallel Index Engine (Listen first · Bounded concurrency: NumCPU * 4)
-  ├── Classification .gitignore Parser (Segment · Suffix · Path · Regex last)
-  ├── Bounded Two-Pass Fuzzy Matcher (O(n) linear backward scan + weight matrix)
+  ├── Classification .gitignore Parser (internal/ignore: Segment · Suffix · Path · Regex)
+  ├── Bounded Two-Pass Fuzzy Matcher (internal/fuzzy: O(n) backward scan + weight matrix)
   ├── Parallel Grep Engine (Worker buffer reuse · bytes.Contains fast reject)
   ├── Windowed Syntax Lexer (1,000-line hlChunk · 400-line hlContext · 512 MB LRU)
   ├── Server-Side Chroma Diff Tokenizer (highlight.go)
   ├── Multi-Turn Thread Store & Runner (thread.go, SSE /api/threads/stream)
-  ├── Native Agent Harness Parsers: claude, agy, cursor-agent (agent.go)
-  ├── Stdio JSON-RPC Language Server (LSP) Client (Lazy spawn · regex fallback)
+  ├── Delegated Coding Harness Runner (px0-ai/harness, agent.go)
+  ├── Hardened Stdio JSON-RPC Language Server Client (Writer loop · incremental sync)
   ├── Pure Shell-Out Git Controller (git.go, gitpanel endpoints)
   ├── Git Forge Provider Engine (provider.go, github.go, pr.go)
   ├── Reactive Git Watcher (git_watcher.go, SSE /api/stream)
-  └── Active Memory Scavenger (debug.FreeOSMemory after 15s)
+  └── Active Memory Scavenger (internal/metrics, debug.FreeOSMemory after 15s)
 ```
 
 ## Subsystem Matrix & Process Model
@@ -86,8 +87,8 @@ px0 runs as a single Go binary that owns indexing, search, syntax highlighting, 
 
 ## Core Architectural Tenets
 
-### 1. Optimized for Reads & Delegated Agent Dispatch
-px0 does not attempt to be a heavy code editor with character-by-character typing or save buttons. Code authoring is delegated to external AI coding tools (Claude Code, Cursor Agent, Google Antigravity, OpenCode) or dedicated terminal editors. px0 focuses entirely on the reader experience, automatically reloading whatever files the harness changed.
+### 1. Edits Are Mostly Delegated & Direct Edits Are Lean
+px0 navigates, searches, and inspects code with zero latency. Large or multi-file changes are made by external coding harnesses (Claude Code, Cursor Agent, Google Antigravity, OpenCode) that px0 dispatches on request, one per non-overlapping line range so several can run concurrently. Quick in-place tweaks and workspace item creation are the focused exception: `/api/file/save` and `/api/fs/new` persist direct edits entered in the browser with dirty state tracking, while automatically invalidating syntax caches and refreshing Git/LSP streams.
 
 ### 2. Single Static Binary Distribution & Lean Packaging
 The entire web application (HTML, CSS tokens, JavaScript modules, fonts, icons) is embedded directly into the Go binary at compile time using `go:embed`. px0 requires:
@@ -396,3 +397,26 @@ For systems engineers and contributors tuning px0's operational profile, the tab
 | | `OVERSCAN` | 24 rows above / below | Prevents blank row flashes during rapid viewport scrolling |
 | | Paint Scheduling | `requestAnimationFrame` | Synchronizes layout and paint passes with display refresh rate |
 | | Font Metric Measure | Offscreen sub-pixel `ch` element | Pixel-perfect column indexing and caret positioning |
+
+### 19. Hardened LSP Lifecycle, Writer Loop & Incremental Document Sync
+In px0 v0.1.17, the Language Server Protocol (LSP) client implementation underwent major concurrency hardening and performance optimization (`lsp.go`):
+
+- **Decoupled Asynchronous Writer Loop**: Pipe I/O writes are decoupled into a dedicated background writer loop. RPC replies, cancellation notifications, and document synchronization payloads write asynchronously to client channels, eliminating pipe buffer saturation deadlocks.
+- **Per-Client Mutex Serialization & Generation Tracking**: Document open, synchronization, and close operations are serialized via per-client mutex locks. Stale out-of-order document reads caused by rapid editing or asynchronous events are safely discarded using monotonic generation counters.
+- **Rune-Safe Incremental Document Synchronization**: The LSP client computes UTF-8 rune-safe diffs (`computeRuneDiff`) between document revisions. Rather than sending full document contents over stdio on every keypress, px0 transmits minimal `textDocument/didChange` range deltas, falling back to full sync only when revisions diverge.
+- **Byte-Identical Short-Circuiting**: Resynchronization is bypassed entirely when document buffers are byte-identical to previous states, eliminating redundant language server re-indexing cycles.
+- **Allocation Reductions & Binary Caching**: UTF-16 position conversions and RPC header parsing routines were rewritten to operate with minimal heap allocations. Language server executable binary paths and package manager lookup results are cached in memory to speed up startup times.
+
+### 20. Modular Internal Engines & Fast Inner Loop Developer Workflows
+To maintain maintainability as capabilities expand without ballooning binary size or compromising execution speed:
+
+- **Internal Engine Decomposition**: Core algorithms were extracted into isolated internal Go packages:
+  - `internal/ignore`: High-performance `.gitignore` parser and classification matcher with sub-millisecond execution times.
+  - `internal/fuzzy`: Two-pass bounded fuzzy path ranking and candidate validation.
+  - `internal/metrics`: Operating system process metrics and platform-specific `rusage` sampling (`getrusage` on Unix, process memory counters on Windows).
+  - `internal/table`: Streaming CSV and TSV tokenizer and row slicer.
+- **Harness Delegation**: Coding harness process execution, argument composition, and model discovery were delegated to the external `github.com/px0-ai/harness` module, with lazy model discovery executed only for the active harness.
+- **Fast Local Verification**: Developers and agents verify changes using optimized inner loop targets:
+  - `make check`: Fast static analysis, vet, and short unit test validation.
+  - `make test-short`: Parallelized standalone unit test suite skipping heavy integration harnesses.
+  - `npm run check-web` (or `node scripts/check-web.js`): Frontend syntax, JSDoc type validity, and bundling checks.

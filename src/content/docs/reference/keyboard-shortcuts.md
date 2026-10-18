@@ -25,7 +25,22 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Cmd+F` | `Ctrl+F` | **Find in file**: In-file search with match case toggle (`Aa`), seeded with current selection |
 | `Cmd+G` | `Ctrl+G` | **Jump to line**: Enter line number to jump directly |
 | `Cmd+B` | `Ctrl+B` | **Toggle sidebar**: Show or hide the left explorer sidebar |
-| Right-click tree item | Right-click tree item | **File tree context menu**: Copy Relative Path, Copy Name, Copy Absolute Path |
+| `Cmd+E` | `Ctrl+E` | **Direct file edit**: Toggle in-browser text edit mode for current file |
+| `Cmd+S` | `Ctrl+S` | **Save file**: Persist edits to disk and refresh Git/LSP/index |
+| `Escape` | `Escape` | **Leave edit mode**: Exit editing (prompts if unsaved changes exist) |
+| Right-click tree item | Right-click tree item | **File tree context menu**: New File, New Folder, Copy Relative Path, Copy Name, Copy Absolute Path |
+
+## Direct File Editing & Creation
+
+| macOS | Linux / Windows | Action |
+| :--- | :--- | :--- |
+| `Cmd+E` | `Ctrl+E` | **Toggle edit mode**: Enter or leave text editing for the active document |
+| `Cmd+S` | `Ctrl+S` | **Save file**: Save edits to disk with instant visual confirmation |
+| `Escape` | `Escape` | **Done / Exit**: Leave edit mode (confirms before discarding unsaved edits) |
+| `Tab` | `Tab` | **Indent**: Insert 4 spaces or indent multi-line selection |
+| `Shift+Tab` | `Shift+Tab` | **Outdent**: Unindent selected lines |
+| `Cmd+Shift+P` -> `File: New File...` | `Ctrl+Shift+P` -> `File: New File...` | **New File**: Create a new file relative to workspace or folder |
+| `Cmd+Shift+P` -> `File: New Folder...` | `Ctrl+Shift+P` -> `File: New Folder...` | **New Folder**: Create a new directory relative to workspace or folder |
 
 ## Code Intelligence & Language Server (LSP)
 
@@ -51,6 +66,11 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Option+M` | `Alt+M` | **Toggle Markdown preview**: Switch between raw source and rendered GFM |
 | Click unpushed commit | Click unpushed commit | **Inspect unpushed commit**: Expand touched files and review commit diffs |
 | Hover unpushed commit | Hover unpushed commit | **Commit card**: View author, message, diffstat, and Copy SHA |
+| Click recent commit | Click recent commit | **Expand recent commit**: View touched files with status letters and +/- line counts |
+| `‹` / `›` in diff strip | `‹` / `›` in diff strip | **Step commit files**: Cycle through touched files in commit-pinned diff tab |
+| `Up` / `Down` | `Up` / `Down` | **Navigate commits**: Move selection between commit rows in Git panel |
+| `Right` / `Left` | `Right` / `Left` | **Expand / Collapse**: Toggle touched files list for selected commit |
+| `Enter` | `Enter` | **Open first file**: Open first changed file for selected commit |
 
 ## Tabs & Editor Viewport
 
