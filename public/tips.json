@@ -1,0 +1,168 @@
+[
+  {
+    "id": "file-navigation",
+    "title": "Quick File Navigation",
+    "category": "Navigation",
+    "tag": "Navigation",
+    "content": "Press **`Cmd/Ctrl + P`** to quickly fuzzy-search and jump to any file in your project without clicking through the folder tree.",
+    "shortcut": "Mod+P"
+  },
+  {
+    "id": "command-palette",
+    "title": "Command Palette",
+    "category": "Navigation",
+    "tag": "Palette",
+    "content": "Access all px0 commands, switch color themes, configure LSP servers, or trigger actions with **`Cmd/Ctrl + Shift + P`**.",
+    "shortcut": "Mod+Shift+P"
+  },
+  {
+    "id": "workspace-search",
+    "title": "Instant Workspace Search",
+    "category": "Search",
+    "tag": "Search",
+    "content": "Press **`Cmd/Ctrl + Shift + F`** to search text across every file in milliseconds. Supports regular expressions, case matching, whole words, and file globs like `*.go`.",
+    "shortcut": "Mod+Shift+F"
+  },
+  {
+    "id": "pr-review-mode",
+    "title": "Zero-Latency Pull Request Review",
+    "category": "Git",
+    "tag": "PR Review",
+    "content": "Run `px0 <pr-url>` from your terminal to review GitHub, GitLab, Gitea/Forgejo, or Bitbucket PRs directly with instant diffs and comments."
+  },
+  {
+    "id": "split-unified-diff",
+    "title": "Split & Unified Diff Views",
+    "category": "Git",
+    "tag": "Diff",
+    "content": "Press **`Cmd/Ctrl + D`** to toggle diff view against HEAD or merge base. You can switch seamlessly between Side-by-Side (Split) and Inline (Unified) modes.",
+    "shortcut": "Mod+D"
+  },
+  {
+    "id": "unpushed-commits",
+    "title": "Review Unpushed Commits",
+    "category": "Git",
+    "tag": "Git",
+    "content": "Click the **Git changes** toggle in the sidebar to review the local commits ahead of your upstream branch, inspecting diffs one commit at a time before pushing."
+  },
+  {
+    "id": "ai-commit-messages",
+    "title": "Stage All & Commit with AI",
+    "category": "AI",
+    "tag": "Git",
+    "content": "In the Git panel, click **Stage all + Commit with AI** to have your local AI coding harness inspect staged changes and generate conventional commit messages."
+  },
+  {
+    "id": "quick-file-edit",
+    "title": "Quick In-Browser Editing",
+    "category": "Editing",
+    "tag": "Editor",
+    "content": "Need to tweak code or fix a comment? Press **`Cmd/Ctrl + E`** to enter direct edit mode, type your edits, and press **`Cmd/Ctrl + S`** to save to disk immediately.",
+    "shortcut": "Mod+E"
+  },
+  {
+    "id": "lsp-navigation",
+    "title": "Go to Definition & References",
+    "category": "Navigation",
+    "tag": "LSP",
+    "content": "Press **`F12`** (or `Cmd/Ctrl + Click`) on any symbol to jump to its definition. Press **`Shift + F12`** to view all symbol references across your project in the inspector.",
+    "shortcut": "F12"
+  },
+  {
+    "id": "call-trails",
+    "title": "Trace Call Trails",
+    "category": "Navigation",
+    "tag": "LSP",
+    "content": "Select any function or method and press **`Alt + Shift + H`** to explore incoming callers and outgoing callees in the Calls panel.",
+    "shortcut": "Alt+Shift+H"
+  },
+  {
+    "id": "copy-with-context",
+    "title": "Copy Code with Context for LLMs",
+    "category": "Selection",
+    "tag": "AI",
+    "content": "Select any lines of code and press **`Alt + A`** to copy the snippet annotated with file paths and line numbers, formatted for AI prompts. Press **`Alt + C`** to copy file and line refs.",
+    "shortcut": "Alt+A"
+  },
+  {
+    "id": "agent-threads",
+    "title": "Start an AI Agent Thread",
+    "category": "AI",
+    "tag": "Agent",
+    "content": "Select code and press **`Alt + T`** to start a multi-turn conversation anchored to that code. Changes can be watched live or dispatched to Claude Code, Gemini CLI, Cursor Agent, Antigravity, or Codex.",
+    "shortcut": "Alt+T"
+  },
+  {
+    "id": "markdown-mermaid",
+    "title": "Rendered Markdown & Mermaid Diagrams",
+    "category": "Viewer",
+    "tag": "Markdown",
+    "content": "Press **`Alt + M`** on Markdown files to toggle rendered previews with GitHub callout alerts, task lists, and full interactive Mermaid flowcharts and sequence diagrams.",
+    "shortcut": "Alt+M"
+  },
+  {
+    "id": "table-viewer",
+    "title": "Interactive CSV & TSV Table Viewer",
+    "category": "Viewer",
+    "tag": "Tables",
+    "content": "Opening `.csv` or `.tsv` files renders them in an interactive virtualized table with sortable columns, row numbering, and instant search."
+  },
+  {
+    "id": "image-inspector",
+    "title": "Pixel-Perfect Image Inspector",
+    "category": "Viewer",
+    "tag": "Assets",
+    "content": "Opening image files launches px0's image viewer featuring 1:1 zoom, fit-to-window, checkerboard transparency background, and crisp pixel-art rendering."
+  },
+  {
+    "id": "vim-mode",
+    "title": "Modal Vim Keybindings",
+    "category": "Editor",
+    "tag": "Vim",
+    "content": "Prefer modal editing? Enable Vim mode in **Settings (`Cmd/Ctrl + ,`)** or click the **VIM** chip in the status bar for `hjkl` motions, visual selection, and Vim search commands."
+  },
+  {
+    "id": "color-themes",
+    "title": "14 Built-in Color Themes",
+    "category": "Interface",
+    "tag": "Theme",
+    "content": "Cycle through 14 themes (Catppuccin Mocha/Latte, Tokyo Night, Dracula, Gruvbox, Nord, Rosé Pine, GitHub Dark/Light) using the theme icon in the sidebar or via Command Palette."
+  },
+  {
+    "id": "word-wrap",
+    "title": "Toggle Word Wrap",
+    "category": "Editor",
+    "tag": "Editor",
+    "content": "Press **`Alt + Z`** to wrap long lines of code or text to fit within your current viewport width without horizontal scrolling.",
+    "shortcut": "Alt+Z"
+  },
+  {
+    "id": "review-workbench",
+    "title": "Multi-Workspace Workbench",
+    "category": "Workbench",
+    "tag": "Workbench",
+    "content": "Run `px0` with no arguments to launch the Review Workbench. Quickly reopen recent workspaces, pin favorite projects, or open new PR URLs from a single port."
+  },
+  {
+    "id": "remote-dev",
+    "title": "Zero-Setup Remote & Cloud Workspaces",
+    "category": "Terminal",
+    "tag": "Remote",
+    "content": "Run `px0 -host 0.0.0.0` on your remote VM, container, or server to review code locally over Tailscale, SSH port forward, or private LAN without remote agent daemons."
+  },
+  {
+    "id": "batch-pr-comments",
+    "title": "Batch Review Comments & AI Apply",
+    "category": "AI",
+    "tag": "PR Review",
+    "content": "Draft inline review comments across multiple files in a PR review, then click **Batch Apply** to have your coding agent resolve all review feedback in one pass."
+  },
+  {
+    "id": "all-shortcuts",
+    "title": "Keyboard Shortcuts Reference",
+    "category": "Navigation",
+    "tag": "Shortcuts",
+    "content": "Press **`?`** anywhere in px0 (when not focused on a text input) to view the cheat sheet of all navigation, editing, and review shortcuts.",
+    "shortcut": "?"
+  }
+]
