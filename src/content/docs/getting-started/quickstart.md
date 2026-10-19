@@ -7,21 +7,25 @@ order: 2
 
 # Quickstart & First Session
 
-px0 is an IDE built for reviewing AI-generated code, optimized for speed. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, and seamless handoff to local AI coding harnesses. This guide walks you through launching your first session, navigating the interface, and driving multi-turn agent threads.
+px0 is an IDE built for reviewing AI-generated code, optimized for speed. It turns your browser into a zero-latency console with native Git and forge integrations (GitHub, GitLab, Gitea, Bitbucket), instant search across massive codebases, and seamless handoff to local AI coding harnesses. This guide walks you through launching your first session, navigating the interface, and driving multi-turn agent threads.
 
 ## Launching Your First Workspace or PR Review
 
-Open any directory, repository, or GitHub pull request by passing it to `px0`:
+Open the review workbench, a local directory, or a pull request URL:
 
 ```bash
-# Open current working directory
+# Launch the Review Workbench dashboard
+px0
+
+# Open current working directory directly
 px0 .
 
-# Open any repository path
+# Open any local repository path
 px0 ~/projects/backend
 
-# Review a GitHub pull request directly in the browser
+# Review a pull request directly in the browser (GitHub, GitLab, Gitea, Bitbucket)
 px0 https://github.com/owner/repo/pull/123
+px0 https://gitlab.com/group/project/-/merge_requests/45
 ```
 
 px0 instantly scans the tree or checks out the PR in a few milliseconds, launches an embedded HTTP server, and opens your default browser.
@@ -38,14 +42,15 @@ The narrow leftmost bar lets you toggle sidebar panels:
 - **Workspace Search**: Full-text regex search across the repository.
 - **Symbol Outline**: Instant symbol hierarchy for the active file.
 - **Themes**: Cycle or select from 14 built-in syntax themes.
-- **Shortcuts (`?`)**: Show the interactive keyboard shortcut sheet.
+- **Help (`?`)**: Open the interactive tips and keyboard shortcut cheat sheet.
 
 ### 2. Collapsible Sidebar
 - **Project Root**: Displays the root folder name.
+- **Workbench Button (▦)**: In the explorer header, click the grid button to jump back to the Review Workbench dashboard.
 - **Changed Files Filter (`*`)**: Filters the tree to show only files with git changes (`M`, `A`, `D`, `U`).
-- **File Tree Context Actions**: Right-click or click the three-dots button on any file or folder to copy its relative path, file name, or absolute path.
+- **File Tree Context Actions**: Right-click or click the three-dots button on any file or folder to create files/folders or copy paths.
 - **Reindex Button (`↻`)**: Re-scans the project tree and updates git diff badges in under 50 ms.
-- **Git Panel**: Stage, commit, generate AI messages, push, and pull at the bottom of the sidebar.
+- **Git Panel**: Stage, commit, generate AI messages, resolve divergence with AI, push, and pull at the bottom of the sidebar.
 
 ### 3. Tab & Breadcrumbs Bar
 - Displays active tabs with language icons.

@@ -33,6 +33,7 @@ The virtualized code view is replaced by a plain text editor with its own synchr
 
 - Press `Esc`, press `Cmd/Ctrl+E` again, or click the **Done** button in the tab header.
 - If you have unsaved edits, px0 prompts you for confirmation before discarding changes.
+- **Scroll & View Alignment**: On Markdown, CSV, or TSV documents, entering edit mode from Preview starts the editor at the exact section you were reading. Leaving edit mode returns directly to your previous view (Preview or Source) with scroll position aligned to the line you were editing.
 
 ### Editor Behavior & Hotkeys
 

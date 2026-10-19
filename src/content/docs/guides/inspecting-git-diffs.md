@@ -91,10 +91,17 @@ This toggles the active editor between standard code view and the interactive Di
 
 ### Syntax-Highlighted Diffs (Powered by Chroma)
 
-In px0 v0.1.10, diff code lines feature server-side syntax highlighting powered by Chroma:
+Diff code lines feature server-side syntax highlighting powered by Chroma:
 - **Language Token Preservation**: Keywords, function signatures, types, comments, and strings retain full theme token colors across both split and unified views.
 - **Diff Contrast**: Subtle green (`--gi-bg`) and red (`--gd-bg`) background tinting highlights additions and deletions while keeping syntax colors sharp and legible.
 - **Zero Client Overhead**: Highlighting is executed during server-side hunk parsing and delivered via `/api/diff`, avoiding heavy client-side tokenizers.
+
+### Intra-Line Character Highlighting & Insertion Carets
+
+When reviewing modified lines, px0 computes exact token- and character-level differences using a refined Myers diff algorithm:
+- **Sub-Character Refinement**: Highlights precisely which characters, arguments, or variable names changed within an altered line, rather than forcing you to eyeball differences across entire lines.
+- **Insertion Carets**: Unmodified counterpart lines display subtle insertion caret indicators showing exactly where new tokens were introduced.
+- **Theme Integration**: Character highlight backgrounds respect your active syntax theme, using calibrated opacity levels that preserve syntax token readability across both Split and Unified diff modes.
 
 ## Selecting, Editing & Starting Threads from Diff Views
 
@@ -131,9 +138,14 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 - **Curated Diff Context**: px0 supplies the agent with the list of staged file paths, a diffstat summary, and the staged diff capped at 32 KB while excluding lockfiles and minified assets.
 - **Custom Commit Instructions**: Set `git.commitMessageInstruction` in Settings (`Cmd+,` or `Ctrl+,`) to enforce custom team guidelines (such as Conventional Commits format, ticket prefixes, or emoji rules).
 
-### 3. Safe Fast-Forward Pull
+### 3. Safe Fast-Forward Pull & AI-Assisted Sync
 - Clicking **Pull** invokes `git merge --ff-only FETCH_HEAD`.
-- If the remote branch has diverged or if uncommitted changes exist locally, px0 refuses the pull immediately with a clear explanatory message. It never initiates an ambiguous merge or creates detached conflict states on disk.
+- If your branch can fast-forward cleanly, px0 updates the checkout immediately and diff views refresh in place.
+- **Divergence Handling**: If your branch has diverged (local unpushed commits exist or the upstream branch was rewritten), px0 refuses to start an unmonitored merge. Instead, the Git panel displays a **Can't fast-forward** card with commit counts and options:
+  - **Rebase with AI**: Replays your local commits cleanly on top of the incoming remote branch, directing your harness to resolve conflicts.
+  - **Merge with AI**: Joins the divergent histories using a merge commit resolved by your harness.
+  - **Dismiss**: Cancel the prompt and resolve the divergence manually in your terminal if preferred.
+- **In-Panel Error Cards**: All Git failures (staging errors, merge conflicts, push rejections, hook failures) are presented inside a notice card at the top of the Git panel rather than fleeting global toasts. The notice persists until dismissed or until the next Git action succeeds.
 
 ### 4. Direct Push
 - Clicking **Push** uploads committed changes to your configured upstream branch.

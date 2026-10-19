@@ -75,7 +75,14 @@ Your git status, commits, and repository files remain completely untouched.
 | `diffEditor.ignoreTrimWhitespace` | Diff Editor | `true` | `true`, `false` | Ignore whitespace differences in diffs |
 | `git.gutterIndicators` | Git | `true` | `true`, `false` | Visual change markers in gutter |
 | `git.commitMessageInstruction` | Git | `""` | Free-text string | Custom instruction prompt appended to AI commit message generator |
-| `github.token` | GitHub | `""` | Personal Access Token (Secret) | GitHub token for PR review actions and review submissions |
+| `github.token` | GitHub | `""` | Personal Access Token (Secret) | GitHub personal access token for PR review actions and submissions |
+| `gitlab.token` | GitLab | `""` | Personal Access Token (Secret) | GitLab personal access token (`api` scope) for merge request reviews. Masked in Settings UI |
+| `gitlab.host` | GitLab | `""` | Hostname (e.g. `gitlab.com`) | Target instance domain for `gitlab.token`. Auto-populated by Connect dialog |
+| `gitea.token` | Gitea | `""` | Personal Access Token (Secret) | Gitea, Forgejo, or Codeberg access token for pull request reviews. Masked in Settings UI |
+| `gitea.host` | Gitea | `""` | Hostname (e.g. `codeberg.org`) | Target instance domain for `gitea.token`. Auto-populated by Connect dialog |
+| `bitbucket.token` | Bitbucket | `""` | Access or API Token (Secret) | Bitbucket Cloud access token or Atlassian API token. Masked in Settings UI |
+| `bitbucket.email` | Bitbucket | `""` | Email address string | Atlassian account email when using an API token to verify push permissions |
+| `tips.enabled` | Tips | `true` | `true`, `false` | Master toggle for non-intrusive floating tips and tricks popups |
 | `explorer.compactFolders` | Explorer | `true` | `true`, `false` | Compact single-child directory chains |
 | `explorer.autoReveal` | Explorer | `true` | `true`, `false` | Auto-scroll to active file in tree |
 | `files.exclude` | Files | Default globs | Array of glob patterns | Exclude patterns from trees and search |

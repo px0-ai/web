@@ -26,10 +26,14 @@ You can also click the **Preview / Source button** in the top right of the edito
 ### 1. Synchronized Bi-Directional Scroll
 When toggling between Markdown Source and Preview using `Alt+M`, px0 automatically preserves your vertical position using source line anchors (`data-line`). Switching back and forth keeps the exact paragraph or code block centered in your viewport.
 
-### 2. Native Syntax-Highlighted Code Fences
-Code fences within Markdown documents are tokenized and rendered using px0's syntax engine (Chroma), matching the color palette of your active theme.
+### 2. Native Syntax-Highlighted Code Fences & Copy Feedback
+- Code fences within Markdown documents are tokenized and rendered using px0's syntax engine (Chroma), matching the color palette of your active theme.
+- **Visual Copy Feedback**: Clicking the copy button in any code fence temporarily transforms the icon into a green checkmark, confirming the snippet has been copied to your clipboard.
 
-### 3. Local Link & Image Resolution
+### 3. Direct Editing from Preview (`Cmd/Ctrl+E`)
+Pressing `Cmd/Ctrl+E` while viewing a rendered preview seamlessly transitions into edit mode centered at the section you were reading. Upon saving and exiting edit mode (`Esc`), px0 returns directly to the rendered preview, automatically aligning the scroll position to your edited paragraph.
+
+### 4. Local Link & Image Resolution
 - **Relative Links**: Clicking a relative link (such as `./docs/architecture.md`) automatically opens the target file in a new tab within px0.
 - **Embedded Images**: Local relative image paths are resolved and served directly by the embedded web server with lazy loading (`loading="lazy"`) and asynchronous decoding (`decoding="async"`).
 

@@ -15,7 +15,7 @@ This reference covers the complete list of startup arguments and command options
 px0 [flags] [file, directory, or pull request URL]
 ```
 
-If the argument is omitted, px0 opens the current working directory (`.`). You can pass a folder to browse an entire codebase, a single file to jump directly into it, or a GitHub pull request URL to enter review mode.
+If the argument is omitted, px0 launches the [Review Workbench](/docs/guides/review-workbench) dashboard. To open the current working directory directly without entering the workbench, pass a dot explicitly: `px0 .`. You can pass a folder to browse an entire codebase, a single file to jump directly into it, or a pull request URL (GitHub, GitLab, Gitea, Bitbucket) to enter review mode.
 
 ## Complete Flags Reference
 
@@ -33,16 +33,26 @@ If the argument is omitted, px0 opens the current working directory (`.`). You c
 | `-no-color` | boolean | `false` | Disable ANSI color codes in terminal startup output. |
 | `-quiet` | boolean | `false` | Suppress informational startup narration in the terminal. |
 | `-verbose` | boolean | `false` | Enable verbose logging including request timing, prompt payloads, and agent job IDs. |
+| `-workbench-child` | boolean | `false` | Internal flag passed to background workspace child processes managed by the Review Workbench. |
 | `-update` | boolean | `false` | Check for, download, and install the latest available release of px0 directly into user space. |
 | `-no-update` | boolean | `false` | Do not auto-update px0 on startup. |
 | `-v, -version` | boolean | `false` | Print px0 version and exit. |
 
 ## Examples
 
-### Reviewing a GitHub Pull Request Directly
+### Launching the Review Workbench
+```bash
+# Open the Review Workbench to manage workspaces and PR worktrees
+px0
+```
+
+### Reviewing Pull Requests Directly
 ```bash
 # Open a GitHub pull request with merge-base diffs and live commenting
 px0 https://github.com/owner/repo/pull/123
+
+# Open a GitLab merge request
+px0 https://gitlab.com/group/project/-/merge_requests/45
 ```
 
 ### Reverse Proxy & Subpath Hosting

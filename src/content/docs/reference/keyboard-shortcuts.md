@@ -55,7 +55,18 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Option+Left` | `Alt+Left` | **Navigate back**: Jump back to previous cursor position / file |
 | `Option+Right` | `Alt+Right` | **Navigate forward**: Jump forward along the navigation trail |
 
-## Git Review, GitHub PR & Everyday Operations
+## Review Workbench Navigation
+
+| macOS | Linux / Windows | Action |
+| :--- | :--- | :--- |
+| `Tab` | `Tab` | **Folder autocompletion**: Complete highlighted directory suggestion |
+| `Up` / `Down` | `Up` / `Down` | **Navigate suggestions**: Move through directory autocompletion list |
+| `Enter` | `Enter` | **Open workspace**: Launch selected directory or pull request URL |
+| `Escape` | `Escape` | **Dismiss**: Close folder completion dropdown |
+| `Cmd+Click` | `Ctrl+Click` | **Open in new tab**: Launch recent workspace in a separate browser tab |
+| Explorer Header (`▦`) | Explorer Header (`▦`) | **Back to Workbench**: Return to Review Workbench dashboard |
+
+## Git Review, Pull Requests & Everyday Operations
 
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
@@ -64,6 +75,9 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | Line Hover (Thread Icon) | Line Hover (Thread Icon) | **Line action popover**: Choose between Start Thread, Edit Inline, or Review Comment |
 | `Cmd+K` -> `Git: Open Pull Request...` | `Ctrl+K` -> `Git: Open Pull Request...` | **Open PR**: Launch a fresh pull request review tab |
 | `Option+M` | `Alt+M` | **Toggle Markdown preview**: Switch between raw source and rendered GFM |
+| `Enter` / `Esc` (in Connect dialog) | `Enter` / `Esc` (in Connect dialog) | Save token / Cancel Connect dialog |
+| `Cmd+Enter` / `Ctrl+Enter` (in Merge dialog) | `Cmd+Enter` / `Ctrl+Enter` (in Merge dialog) | Confirm and execute merge |
+| `Esc` (in Merge dialog) | `Esc` (in Merge dialog) | Dismiss merge dialog |
 | Click unpushed commit | Click unpushed commit | **Inspect unpushed commit**: Expand touched files and review commit diffs |
 | Hover unpushed commit | Hover unpushed commit | **Commit card**: View author, message, diffstat, and Copy SHA |
 | Click recent commit | Click recent commit | **Expand recent commit**: View touched files with status letters and +/- line counts |
@@ -103,7 +117,10 @@ When code is selected in the editor or diff view, the footer selection bar and c
 | `Option+A` | `Alt+A` | **Copy with context**: Copy snippet formatted with `@path:l1-l2` header for prompt composition |
 | `Option+U` | `Alt+U` | **Find usages**: Search workspace for the selected identifier |
 | `Escape` | `Escape` | **Cancel / Dismiss**: Dismiss composer, menus, selection bar, modal, or full-screen diagram |
-| `?` | `?` | **Help sheet**: Display in-app shortcut modal overlay |
+| `?` | `?` | **Help cheat sheet**: Display in-app shortcut modal overlay |
+| Sidebar Footer (`?` icon) | Sidebar Footer (`?` icon) | **Tips & Tricks panel**: Open interactive tips catalog in right inspector |
+| `Cmd+Shift+P` -> `Help: Tips & Tricks (All Tips)` | `Ctrl+Shift+P` -> `Help: Tips & Tricks (All Tips)` | **Inspect all tips**: Browse complete tips list in inspector |
+| `Cmd+Shift+P` -> `Help: Show Tip` | `Ctrl+Shift+P` -> `Help: Show Tip` | **Display tip**: Trigger floating discovery tip widget |
 
 ## Image Viewer & Asset Inspection
 

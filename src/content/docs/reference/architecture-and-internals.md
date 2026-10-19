@@ -420,3 +420,29 @@ To maintain maintainability as capabilities expand without ballooning binary siz
   - `make check`: Fast static analysis, vet, and short unit test validation.
   - `make test-short`: Parallelized standalone unit test suite skipping heavy integration harnesses.
   - `npm run check-web` (or `node scripts/check-web.js`): Frontend syntax, JSDoc type validity, and bundling checks.
+
+### 21. Review Workbench Architecture & Child Process Proxy
+In px0 v0.1.18, running `px0` without arguments launches the Review Workbench (`workbench.go`):
+
+- **Child Process Lifecycle & Readiness**: When a workspace or PR is opened, the workbench spawns a dedicated child process with `-workbench-child -port 0 -no-open -base-path /w/<id>/`. The child signals readiness by writing `px0-ready <addr>` on stdout. The workbench holds child stdin; if the workbench exits or is terminated, child processes receive EOF on stdin and initiate graceful shutdown, removing temporary worktrees and terminating LSP instances.
+- **Unbuffered Reverse Proxy**: All workspace traffic under `/w/<id>/` routes through Go's `httputil.ReverseProxy` configured with `FlushInterval: -1` to stream Server-Sent Events without proxy buffering. The proxy preserves the browser's `Host` header to satisfy same-origin and DNS rebinding protections.
+- **Stable Item IDs & Draft Persistence**: Workspace paths and PR identities are mapped to stable 6-byte hex IDs via SHA-256 (`wbItemID`). Pull request review draft comments are saved in `$XDG_STATE_HOME/px0/pr-sessions/` keyed by this stable ID, ensuring unsubmitted review drafts survive workspace restarts and worktree recreations.
+- **Automatic Idle Workspace Reaping**: The workbench tracks active HTTP requests and event streams per child. Workspaces that maintain zero active connections for 30 minutes are automatically stopped (`reapIdle`), freeing operating system memory while remaining available for instant relaunch on next access.
+- **Single Instance Mutex**: `workbench.lock` records the active PID and loopback address. Subsequent terminal `px0` invocations ping `/api/wb/ping` and activate the existing browser tab instead of creating duplicate servers.
+
+### 22. Extensible Multi-Forge Provider Architecture (`GitProvider`)
+To support diverse enterprise and open-source hosting environments, forge interactions are abstracted through the `GitProvider` interface in `provider.go`:
+
+- **Universal Forge Abstraction**: Registered providers (`GitHubProvider`, `GitLabProvider`, `GiteaProvider`, `BitbucketProvider`) translate platform-specific REST APIs into standardized `PRMeta` structures.
+- **Scoped Git Transport**: Each provider manages clone URLs, head ref mappings, and scoped HTTP authentication headers, ensuring git checkout, pull, push, and rebase operations remain forge-neutral.
+- **Dynamic Onboarding (`TokenSetup`)**: Each provider exposes interactive token generation metadata, driving the in-app Connect dialog to validate and configure access tokens dynamically without server restarts.
+- **Normalized Merge Pipeline**: Merge statuses (`clean`, `conflicts`, `behind`, `blocked`) and methods (`merge`, `squash`, `rebase`) are normalized across forge engines, enabling uniform UI merge dialogs, AI commit rewriting, and safe lease force-pushing.
+
+### 23. Intra-Line Myers Diff Engine & Sub-Character Refinement
+The diff renderer in `diff.js` incorporates a token-level Myers diff algorithm with sub-character refinement:
+
+- **Minimal Edit Scripts**: Rather than treating modified lines as monolithic replacements, px0 calculates the shortest edit script between corresponding line tokens.
+- **Sub-Character Precision**: Exact character substitutions, additions, and deletions are isolated and highlighted with theme-calibrated background opacities.
+- **Insertion Carets**: Unmodified counterpart lines render subtle caret indicators showing the precise column where insertions took place.
+- **Universal Layout Consistency**: Highlighting operates identically across both Side-by-Side (Split) and Inline (Unified) diff layouts with zero client-side layout jumping.
+

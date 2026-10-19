@@ -1,13 +1,17 @@
 ---
-title: "GitHub Pull Request Review & Collaboration"
-description: "Review GitHub pull requests directly in your browser with merge-base diffs, inline line comments, AI batch application, and in-session commit and push back to PR branches."
+title: "Pull Request Review & Collaboration (GitHub, GitLab, Gitea, Bitbucket)"
+description: "Review, edit, resolve conflicts, and merge pull requests across GitHub, GitLab, Gitea, and Bitbucket with merge-base diffs, inline comments, and AI batch application."
 category: "guides"
-order: 8
+order: 9
 ---
 
-# GitHub Pull Request Review & Collaboration
+# Pull Request Review & Collaboration
 
-px0 checks out a pull request's complete source tree and presents it like any local workspace: full codebase navigation, symbol outline, LSP code intelligence, and full-text regex search. Reviewers get a diff scoped to the pull request's merge-base, real-time coding agent synchronization, inline line comment drafting, AI batch application, and the full Git panel: stage, commit, push fixes back to the PR's own branch, and pull in new commits pushed while you were reviewing.
+px0 checks out a pull request's complete source tree and presents it like any local workspace: full codebase navigation, symbol outline, LSP code intelligence, and full-text regex search. Reviewers get a diff scoped to the pull request's merge-base, real-time coding agent synchronization, inline line comment drafting, AI batch application, in-app merge controls, conflict resolution with AI, and the full Git panel to stage, commit, push fixes back to the PR's own branch, or pull in new commits pushed while reviewing.
+
+px0 supports four major git forges using the exact same interface: **GitHub**, **GitLab** (gitlab.com and self-hosted), **Gitea / Forgejo / Codeberg**, and **Bitbucket Cloud**.
+
+For a quick 5-minute walkthrough, see [Getting Started with Pull Request Review](/docs/guides/pr-review-getting-started).
 
 ---
 
@@ -16,7 +20,17 @@ px0 checks out a pull request's complete source tree and presents it like any lo
 Pull request review is triggered by passing the full pull request URL directly to the CLI:
 
 ```bash
+# GitHub
 px0 https://github.com/owner/repo/pull/123
+
+# GitLab (gitlab.com or self-hosted instances)
+px0 https://gitlab.com/group/project/-/merge_requests/45
+
+# Gitea, Forgejo, or Codeberg
+px0 https://codeberg.org/owner/repo/pulls/7
+
+# Bitbucket Cloud
+px0 https://bitbucket.org/workspace/repo/pull-requests/9
 ```
 
 px0 automatically prepares an isolated worktree or clone, computes the merge-base diff against the target branch, and opens a lightweight, zero-latency code viewer in your default browser.
@@ -58,7 +72,7 @@ Unlike standard working tree diffs that compare against `HEAD`, PR reviews calcu
 
 - The **Changes** toggle in the sidebar defaults to all files touched by the pull request.
 - Press **`Cmd+D`** or **`Ctrl+D`** on any file to open side-by-side or unified diffs.
-- The diff is computed against the merge-base between the PR head and its target branch, exactly mirroring the diff shown on GitHub.
+- The diff is computed against the merge-base between the PR head and its target branch, exactly mirroring the diff shown on GitHub or GitLab.
 - Full codebase files remain fully browsable. You can jump to callers, inspect definitions, and search usages across untouched files without having to switch git branches locally.
 
 ### Isolated Reviewer Diffs
@@ -81,7 +95,7 @@ Reviewing code requires clear communication and quick feedback loops. px0 provid
 Hover over any line number in the source editor or diff viewer:
 - A thread icon appears in the gutter.
 - Clicking it opens a context menu with options for that line:
-  - **Add Review Comment**: Opens the GitHub review comment composer for that line.
+  - **Add Review Comment**: Opens the review comment composer for that line.
   - **Edit Inline**: Prompts your local AI coding harness to edit those lines directly.
   - **Start Thread**: Opens a persistent conversation with your agent anchored to that line.
 
@@ -93,12 +107,12 @@ Select any range of lines across the code viewport or diff viewer:
 - Enter your comment and press `Cmd+Enter` or `Ctrl+Enter` to save the draft.
 - Gutter markers (`💬`) and the top PR comments panel update immediately.
 
-### In-Memory Draft Comment Model
+### Persistent Draft Comment Storage
 
-Draft review comments are held in memory on the Go server:
-- They never touch disk or alter git working-tree state.
-- Drafts remain active across tab switches and diff toggles.
-- If you close px0 before submitting or applying, drafts are discarded cleanly.
+Draft review comments are saved in persistent session files located at `$XDG_STATE_HOME/px0/pr-sessions/` (falling back to `~/.px0/pr-sessions/`):
+- Keyed to a stable identifier derived from the forge and PR (`provider/owner/repo#number`), not the temporary checkout path.
+- Drafts survive browser reloads, workspace stops, and worktree recreations.
+- Drafts remain active across tab switches, file edits, and diff toggles until explicitly submitted or deleted.
 
 ---
 
@@ -114,9 +128,9 @@ When reviewing pull requests, you often identify trivial fixes, missing docstrin
 
 ---
 
-## Submitting Formal Reviews to GitHub
+## Submitting Formal Reviews to Remote Forges
 
-When you are ready to post feedback back to GitHub:
+When you are ready to post feedback back to the forge:
 
 1. The PR review header bar displays the overall review composer and status badge.
 2. Enter your top-level review summary in the review box.
@@ -124,63 +138,86 @@ When you are ready to post feedback back to GitHub:
    - **Comment**: Submit feedback without an approval status (available to all reviewers).
    - **Approve**: Approve the pull request (requires repository push access).
    - **Request Changes**: Request changes before merging (requires repository push access).
-4. Submitting posts a single consolidated review payload containing your summary and all drafted line comments.
-5. In-memory drafts are cleared upon successful submission.
+4. Submitting posts your review summary and all drafted line comments according to forge API conventions.
+5. In-session drafts are cleared upon successful submission.
 
 ---
 
-## Edit, Commit, and Push Back to the PR
+## Bringing PRs Up to Date & Resolving Conflicts
 
-A PR checkout in px0 is a real git worktree. You can make adjustments, stage them, and push them directly to the PR's head branch:
+When the upstream base branch moves ahead, the PR status pill in the review bar updates:
+- **Behind main**: The PR is simply behind the base branch and can be updated cleanly.
+- **Conflicts with main**: The base branch has diverged with overlapping edits.
 
-### Commit with AI or Manual Message
-
-1. Make edits to the code (by hand or using your AI coding harness).
-2. Click the stage tick next to changed files in the sidebar, or click **Stage All**.
-3. In the sidebar Git panel, write a commit message, or click **Commit with AI** to let your coding harness generate a concise commit message based on the staged diff.
-4. Click **Commit**.
-
-### Push Back to the PR's Actual Branch
-
-In a PR review session, clicking **Push** sends the checkout's `HEAD` directly to the pull request's actual head branch:
-- Pushes directly to the pull request repository URL, even if the PR originated from an external fork.
-- You do not need to configure git remotes or wrestle with detached `HEAD` pointers in a terminal.
-- Pushes are fast-forward only: if the PR branch moved, the remote rejection is reported cleanly.
-
-### Pulling Upstream PR Updates
-
-If the author pushes new commits to the pull request while you are reviewing:
-1. Click **Pull** in the sidebar Git panel.
-2. px0 fetches the updated PR head.
-3. If the checkout can fast-forward cleanly, px0 updates the worktree, recomputes the merge-base, and refreshes the PR bar, diff views, and comment threads in place.
-4. If your checkout has diverged with local unpushed commits, px0 cleanly refuses the pull rather than creating messy merge conflicts.
-
-> [!IMPORTANT]
-> A PR checkout lives in a temporary directory for the duration of the px0 session. Any edits made there are discarded when the process exits unless you push them back to the PR's branch before closing.
+Click **Update branch** or **Resolve conflicts**:
+1. px0 fetches the latest base branch and prompts you in the Git panel to pick a strategy:
+   - **Rebase with AI**: Replays PR commits on top of base for a linear history.
+   - **Merge with AI**: Merges the base branch into the PR branch with a merge commit.
+2. The chosen harness resolves conflicts, edits files, and stages the resolutions. The harness is instructed never to push.
+3. Review the result in the diff viewer.
+4. For rebases, px0 prompts you before force-pushing. px0 uses `git push --force-with-lease` so that if someone pushed to the PR branch while you were rebasing, the push is refused and remote work is never lost.
 
 ---
 
-## Authentication & Token Discovery
+## Merging the Pull Request
 
-px0 discovers forge credentials automatically in the following order:
+When all checks pass and the pill reads **Ready to merge**, use the merge split button:
 
-1. **`github.token`** in px0 Settings (`Cmd+,` or `Ctrl+,` -> GitHub, stored in `~/.px0/settings.json`).
-2. **`GITHUB_TOKEN`** environment variable.
-3. **`GH_TOKEN`** environment variable.
-4. **`gh auth token`** via the GitHub CLI if installed and authenticated.
+1. Click the dropdown caret to choose a merge strategy:
+   - **Create a merge commit**: Creates a merge commit on the base branch.
+   - **Squash and merge**: Combines all PR commits into a single commit on the base branch.
+   - **Rebase and merge**: Fast-forwards commits linearly onto the base branch.
+2. In the merge dialog, edit the commit title and message. Click **Rewrite with AI** to generate a clean, informative commit summary following your configured `git.commitMessageInstruction`.
+3. Confirm the merge. px0 verifies that the PR head matches the exact commit you reviewed before executing the merge.
 
-### Unauthenticated Read-Only Mode & Token Prompts
+---
 
-If no token is found on your workstation:
-- Public pull requests check out and diff seamlessly.
-- You can navigate the entire repository, draft review comments in memory, and run **Batch Apply** with local AI harnesses.
-- Comment composition controls and reply boxes remain enabled: if you click to submit a review without credentials, px0 presents a helpful nudge prompting you to connect a token.
-- The top PR comments panel is collapsed by default with an interactive header toggle, keeping your editor workspace clean until you want to review all comments.
-- The review submission bar is separated cleanly from the general PR conversation composer.
-- The CLI startup banner displays:
-  ```text
-  access: read-only (no github token: set GITHUB_TOKEN or gh auth login to submit reviews)
-  ```
+## Forge Differences
+
+The table below summarizes behavioral differences across supported git forges:
+
+| Capability | GitHub | GitLab | Gitea / Forgejo | Bitbucket Cloud |
+| :--- | :--- | :--- | :--- | :--- |
+| **Self-hosted instances** | No | Yes | Yes | No (Data Center unsupported) |
+| **Review submission** | Consolidated review | Separate threads + approval | Consolidated review | Separate comments + approval |
+| **Request Changes** | Native | Comment + withdrawn approval | Native | Native |
+| **Threaded replies** | Yes | Yes | Same-line comments | Yes |
+| **Conflicts known in advance** | Yes | Yes | Yes | Yes (from diffstat) |
+| **Protection rules in advance** | Yes | Yes | No (reported on merge attempt) | No (reported on merge attempt) |
+| **Merge pinned to reviewed commit** | Pinned by forge | Pinned by forge | Pinned by forge | Verified by px0 before merge |
+
+### GitLab Nuances
+- **Submissions**: GitLab has no single endpoint for batched reviews. Each draft comment creates a diff discussion thread, and the summary is posted as a note. **Approve** triggers GitLab's native approval pinned to the reviewed commit SHA.
+- **Merge methods**: Follows project settings (merge commit, fast-forward rebase, or squash). When a rebase is required, the status pill reads *Behind main*.
+- **UI wording**: Labeled "PR #N" in the px0 UI rather than GitLab's "!N" for consistency.
+
+### Gitea / Forgejo Nuances
+- **Submissions**: Posted as a single consolidated review payload matching GitHub's workflow.
+- **Replies**: Gitea replies are created as comments on the corresponding line. Existing comments are rendered on the new side of the diff.
+- **Merge checks**: Branch protection rules are validated during the merge attempt; if blocked, Gitea's error reason is displayed in the dialog.
+
+### Bitbucket Cloud Nuances
+- **Checkout**: Bitbucket does not publish head refs under `refs/pull/`, so px0 clones the source branch directly (including from forks).
+- **Submissions**: Drafts post as individual inline comments with native threading.
+- **Tokens**: API tokens require account email to verify push permissions. Standard workspace access tokens leave **Approve** and **Merge** hidden.
+
+---
+
+## Authentication & Forge Connect Dialog
+
+px0 discovers credentials automatically from settings and environment variables:
+
+- **GitHub**: `github.token` in Settings, `GITHUB_TOKEN`, `GH_TOKEN`, or `gh auth token`.
+- **GitLab**: `gitlab.token` in Settings, `GITLAB_TOKEN`, or `glab auth` CLI credentials. For self-hosted instances, configure `gitlab.host`.
+- **Gitea / Codeberg**: `gitea.token` in Settings, `GITEA_TOKEN`. Hostname configured via `gitea.host`.
+- **Bitbucket**: `bitbucket.token` and `bitbucket.email` in Settings, or `BITBUCKET_TOKEN` / `BITBUCKET_EMAIL`.
+
+### Connect Dialog
+
+If you open a pull request without configured credentials, px0 operates in read-only mode and displays a **No &lt;forge&gt; token - click to connect** link in the PR bar. Clicking it opens the in-app Connect dialog:
+- Guides you through generating the correct token type with precise scope instructions.
+- Verifies token validity immediately on paste.
+- Saves the token directly to `~/.px0/settings.json` without requiring a server restart.
 
 ---
 
@@ -194,9 +231,14 @@ If no token is found on your workstation:
 | Line Hover (Thread Icon) | Line number in gutter | Choose between review comment, inline edit, or thread |
 | `Cmd+D` / `Ctrl+D` | Active editor tab | Toggle side-by-side / unified diff against merge-base |
 | `Cmd+K` / `Ctrl+K` | Universal Palette | **Git: Open Pull Request...** launches a new review tab |
+| **No token - click to connect** | PR header bar | Open in-app token connection modal |
 | **`Batch Apply`** | PR header bar | Dispatch all drafted comments to local AI coding harness |
-| **Submit Review** | PR header bar | Submit Approve / Request Changes / Comment to GitHub |
-| **Stage Tick** | File tree row | Stage or unstage that individual file |
-| **Commit with AI** | Sidebar Git panel | Generate message from staged diff and commit |
-| **Push** | Sidebar Git panel | Push committed changes to the PR's head branch |
+| **Submit Review** | PR header bar | Submit Approve / Request Changes / Comment to forge |
+| **Status Pill** | PR header bar | Display mergeability status; click to resolve or refresh |
+| **Squash and merge ▾** | PR header bar | Select merge strategy and open merge dialog |
+| `Cmd/Ctrl+Enter` | Merge dialog | Confirm and execute merge |
+| `Esc` | Merge / Connect dialog | Dismiss modal dialog |
+| **Resolve conflicts** | PR header bar | Trigger AI-assisted rebase or merge on divergence |
+| **Force-push** | Sidebar Git panel | Push rebased commits using safe lease |
 | **Pull** | Sidebar Git panel | Fast-forward checkout onto new commits pushed to the PR |
+| **Push** | Sidebar Git panel | Push committed changes to the PR's head branch |

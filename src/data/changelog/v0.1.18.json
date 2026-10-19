@@ -1,0 +1,84 @@
+{
+  "version": "0.1.18",
+  "tag": "v0.1.18",
+  "date": "2026-10-19",
+  "title": "Review Workbench, Multi-Forge PR Review (GitLab, Gitea, Bitbucket), AI Merge & Conflict Resolution, Intra-Line Diff Highlighting, and Interactive Tips",
+  "summary": "Introduces the Review Workbench for opening directories and PR worktrees from a single dashboard, expands pull request review to GitLab, Gitea/Forgejo, and Bitbucket Cloud with in-app token onboarding, adds PR merge controls with AI conflict resolution and commit message rewriting, delivers sub-character intra-line Myers diff highlighting with insertion carets, embeds an interactive tips and tricks system, and streamlines agent-assisted rebase and merge synchronization.",
+  "commitCount": 16,
+  "commitRange": "v0.1.17..v0.1.18",
+  "categories": [
+    {
+      "name": "Review Workbench",
+      "items": [
+        "Launch a unified workbench dashboard by running bare px0 without arguments to open any directory, browse the local filesystem, or paste PR review URLs",
+        "Fast interactive path autocompletion: type paths with instant folder suggestions, git repository indicators, Tab completion, and arrow-key navigation",
+        "Manage recent and pinned workspaces with persistent storage in workbench.json, running status dots, one-click reopening, and Cmd/Ctrl-click multi-tab support",
+        "Worktree-based PR checkouts: automatically locate and reuse existing local repository clones or create managed partial clones in ~/.px0/repos without duplicating history",
+        "Aggregate status bar metrics: CPU, RAM, and LSP memory chip sums the workbench and active child processes with an interactive per-process breakdown",
+        "Single-instance activation: running px0 while a workbench is active pings and focuses the existing instance, with automatic idle workspace shutdown after 30 minutes of inactivity"
+      ]
+    },
+    {
+      "name": "Multi-Forge PR Review (GitLab, Gitea, Bitbucket)",
+      "items": [
+        "First-class GitLab support: review merge requests on gitlab.com and self-hosted instances with nested group paths, token discovery (gitlab.token, GITLAB_TOKEN, glab CLI), and scoped HTTP git transport",
+        "Gitea, Forgejo, and Codeberg support: review PRs, inspect diffs, draft inline comments, and execute reviews with gitea.token or GITEA_TOKEN",
+        "Bitbucket Cloud support: review pull requests across workspace repositories with API tokens, branch checkouts, and native thread replies",
+        "In-app Forge Connect modal: guided token setup with direct links to forge token generation pages, instant permission verification, and dynamic configuration without server restarts",
+        "Stable PR draft persistence: review comment drafts are keyed to stable PR identifiers in $XDG_STATE_HOME/px0/pr-sessions/, preserving drafts across reopens and worktree recreations"
+      ]
+    },
+    {
+      "name": "PR Merge Controls & AI Conflict Resolution",
+      "items": [
+        "Real-time mergeability status: live status pill in the PR bar displays clean, conflict, behind, or blocked states according to remote forge rules",
+        "Configurable merge execution: split button supporting Create a merge commit, Squash and merge, or Rebase and merge matching repository policies",
+        "Interactive merge dialog: review and customize merge commits with AI-assisted title and body rewriting powered by your local coding harness",
+        "Agent-assisted conflict resolution: automatically dispatch coding harnesses to resolve base-branch divergence via Rebase with AI or Merge with AI",
+        "Safe lease force-pushing: after AI rebase, push rewritten PR review branches using force-with-lease to protect concurrent upstream commits"
+      ]
+    },
+    {
+      "name": "Intra-Line Character Diff Highlighting",
+      "items": [
+        "Token-level Myers diff algorithm with sub-character refinement to pinpoint exact character additions, modifications, and deletions within changed lines",
+        "Insertion caret indicators on unmodified counterpart lines to clearly visualize insertion positions",
+        "Consistent highlighting across both Side-by-Side (Split) and Inline (Unified) diff layouts with opacities matched to active theme CSS variables"
+      ]
+    },
+    {
+      "name": "Interactive Tips & Tricks System",
+      "items": [
+        "Non-intrusive floating tip widget that appears after startup with previous/next navigation and automatic progression",
+        "Searchable and filterable Tips tab in the right-side inspector panel to discover shortcuts, Git workflows, and hidden capabilities",
+        "Sidebar footer help button (?) and Command Palette actions (Help: Tips & Tricks, Help: Show Tip) for on-demand access",
+        "Public tip delivery cached from px0.ai with offline fallback definitions and permanent dismissal toggle via tips.enabled"
+      ]
+    },
+    {
+      "name": "Git Panel & Agent-Assisted Sync",
+      "items": [
+        "Divergence handling on pull: when branches diverge, px0 refuses conflicting fast-forwards and offers Rebase with AI or Merge with AI via the local harness",
+        "In-panel error cards: all Git operations (stage, commit, push, pull, abort) display diagnostic details in an inline card within the Git panel rather than noisy global toasts",
+        "Live sync progress streaming: track harness output during rebase or merge operations with 1-click abort to restore clean branch state"
+      ]
+    },
+    {
+      "name": "Editor, UI & State Management",
+      "items": [
+        "Preserve scroll position, editor line offset, and preview state when toggling between edit and view modes for Markdown, CSV, and TSV files",
+        "Visual copy feedback: code block copy buttons temporarily toggle to a checkmark icon on click",
+        "File tree starts collapsed by default on startup for a distraction-free view, suppressing auto-reveal until files are explicitly opened",
+        "Clean server shutdown: register shutdown hooks to drain in-flight event streams and terminate active SSE listeners cleanly"
+      ]
+    },
+    {
+      "name": "Documentation",
+      "items": [
+        "Add comprehensive guides for the Review Workbench, multi-forge pull request workflows, and the interactive tips system",
+        "Update Git integration guides with agent-assisted pull sync, merge controls, and intra-line diff highlighting",
+        "Document new configuration options for GitLab, Gitea, Bitbucket, and tips preferences in settings reference"
+      ]
+    }
+  ]
+}
