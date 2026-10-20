@@ -91,24 +91,21 @@ const workflows = [
             <span class="mld-dot"></span>
             <span class="mld-title">Ways to run</span>
           </div>
-          <span class="mld-hint">tap to copy</span>
+          <span class="mld-hint">cli overview</span>
         </div>
         <div class="mld-list">
-          <button class="mld-item" type="button" data-copy="px0" aria-label="Copy px0 command">
+          <div class="mld-item">
             <span class="mld-cmd"><span class="mld-prompt">$</span>px0</span>
             <span class="mld-label">review workbench</span>
-            <span class="mld-copied" aria-hidden="true">copied</span>
-          </button>
-          <button class="mld-item" type="button" data-copy="px0 ." aria-label="Copy px0 directory command">
+          </div>
+          <div class="mld-item">
             <span class="mld-cmd"><span class="mld-prompt">$</span>px0 <em>&lt;dir&gt;</em></span>
             <span class="mld-label">local folder / repo</span>
-            <span class="mld-copied" aria-hidden="true">copied</span>
-          </button>
-          <button class="mld-item" type="button" data-copy="px0 https://github.com/owner/repo/pull/123" aria-label="Copy px0 PR URL command">
+          </div>
+          <div class="mld-item">
             <span class="mld-cmd"><span class="mld-prompt">$</span>px0 <em>&lt;pr-url&gt;</em></span>
             <span class="mld-label">pull request worktree</span>
-            <span class="mld-copied" aria-hidden="true">copied</span>
-          </button>
+          </div>
         </div>
       </div>
 
@@ -439,19 +436,12 @@ const workflows = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 9px 10px;
+    padding: 9px 12px;
     background: var(--bg-elev);
     font-family: var(--font-mono);
     text-align: left;
-    position: relative;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.15s;
     width: 100%;
-  }
-
-  .mld-item:active {
-    background: var(--amber-wash);
+    user-select: text;
   }
 
   .mld-cmd {
@@ -482,26 +472,6 @@ const workflows = [
     font-size: 10px;
     color: var(--txt-3);
     letter-spacing: 0.02em;
-  }
-
-  .mld-copied {
-    position: absolute;
-    right: 8px;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--green);
-    background: var(--surface-2);
-    padding: 2px 5px;
-    border-radius: 2px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
-  }
-
-  .mld-item.copied .mld-copied {
-    opacity: 1;
   }
 
   .m-install {

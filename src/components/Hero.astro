@@ -545,36 +545,17 @@ const ideData = {
   .hld-item {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 10px 12px;
+    justify-content: center;
+    padding: 10px 14px;
     background: var(--bg-elev);
     font-family: var(--font-mono);
     text-align: left;
-    cursor: pointer;
-    border: none;
-    position: relative;
-    transition: background-color 0.15s, color 0.15s;
-    min-height: 58px;
-  }
-
-  .hld-item:hover {
-    background: var(--amber-wash);
-  }
-
-  .hld-item:active {
-    background: var(--surface-2);
-  }
-
-  .hld-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    gap: 6px;
+    min-height: 56px;
+    user-select: text;
   }
 
   .hld-cmd {
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--txt);
     display: flex;
@@ -598,48 +579,6 @@ const ideData = {
     font-size: 11.5px;
   }
 
-  .hld-action {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: var(--txt-3);
-    flex-shrink: 0;
-  }
-
-  .hld-item:hover .hld-action {
-    color: var(--amber);
-  }
-
-  .hld-icon-check {
-    display: none;
-    color: var(--green);
-  }
-
-  .hld-copied-text {
-    display: none;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--green);
-  }
-
-  .hld-item.copied {
-    background: var(--surface-2);
-  }
-
-  .hld-item.copied .hld-icon-copy {
-    display: none;
-  }
-
-  .hld-item.copied .hld-icon-check {
-    display: inline-block;
-  }
-
-  .hld-item.copied .hld-copied-text {
-    display: inline;
-  }
-
   .hld-label {
     font-size: 10.5px;
     color: var(--txt-3);
@@ -649,10 +588,6 @@ const ideData = {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .hld-item:hover .hld-label {
-    color: var(--txt-2);
   }
 
   .hero-actions {
