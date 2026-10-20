@@ -306,6 +306,7 @@ if [ "$PATH_ALREADY_CONFIGURED" = "0" ]; then
   fi
 fi
 
-printf "\nRun %b to inspect any directory:\n\n" "${BOLD}px0${RESET}"
-printf "  ${AMBER}px0 .${RESET}                 # inspect current directory\n"
-printf "  ${AMBER}px0 /path/to/project${RESET}  # or pass any directory path\n\n"
+printf "\nRun %b to get started:\n\n" "${BOLD}px0${RESET}"
+printf "  ${AMBER}px0${RESET}                                      # launch review workbench dashboard\n"
+printf "  ${AMBER}px0 .${RESET}                                    # inspect current directory\n"
+printf "  ${AMBER}px0 https://github.com/org/repo/pull/123${RESET} # review PR in an isolated worktree\n\n"

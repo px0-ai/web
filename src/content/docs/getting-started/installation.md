@@ -67,19 +67,25 @@ If you prefer to run each step manually:
 
 ## Launching px0
 
-Launch px0 by passing any directory path directly:
+There are three ways to launch px0:
 
-```bash
-px0 /path/to/project
-```
+1. **Launch the Review Workbench** (recommended):
+   ```bash
+   px0
+   ```
+   Opens the unified browser dashboard on `http://127.0.0.1:7777` to manage recent workspaces, browse local projects with folder autocompletion, and paste PR review URLs.
 
-Or pass `.` (or omit the argument) to open the current working directory:
+2. **Open a local directory or repository directly**:
+   ```bash
+   px0 .                 # open current working directory
+   px0 /path/to/project  # open specific directory path
+   ```
 
-```bash
-px0 .
-```
-
-px0 will immediately index the repository in the background, launch the local HTTP server, and open your default browser to `http://127.0.0.1:7777`.
+3. **Open a pull request review in an isolated worktree**:
+   ```bash
+   px0 https://github.com/owner/repo/pull/123
+   ```
+   Checks out the PR into an ephemeral worktree tied to your local clone with zero clone overhead, computes merge-base diffs, and opens the review interface.
 
 ## Common CLI Options
 
