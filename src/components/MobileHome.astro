@@ -23,24 +23,30 @@ const workflows = [
   },
   {
     n: '02',
+    tag: 'workbench',
+    title: 'Review Workbench: Never Leave px0',
+    desc: 'Launch bare px0 for a unified cockpit. Enjoy 1-click agentic rebases and complete GitHub control without switching tools.',
+  },
+  {
+    n: '03',
     tag: 'agent threads',
     title: 'Multi-Turn Agent Threads',
     desc: 'Anchor conversations to code with Alt+T and stream live tool execution over Server-Sent Events.',
   },
   {
-    n: '03',
+    n: '04',
     tag: 'large repos',
     title: 'Auditing Massive Repos',
     desc: 'Read through massive trees like the Linux kernel with virtual-row scrolling and instant symbol search.',
   },
   {
-    n: '04',
+    n: '05',
     tag: 'zero-ssh',
     title: 'Remote Cloud Inspection',
     desc: 'Run on any cloud VM or CI runner over a single HTTP port without SSH keys or port forwarding.',
   },
   {
-    n: '05',
+    n: '06',
     tag: 'native git',
     title: 'Working Tree & Git Diffs',
     desc: 'Stage per-file ticks in the sidebar, browse recent commit diffs, inspect split diffs, and generate AI commit messages.',
@@ -60,7 +66,7 @@ const workflows = [
         </a>
       </div>
 
-      <div class="m-kicker"><span>//</span> the IDE built for reviewing AI-generated code.</div>
+      <div class="m-kicker"><span>//</span> the review workbench & speed-first IDE for AI-generated code.</div>
 
       <h1 class="m-title">
         Review code.<br />
@@ -68,7 +74,7 @@ const workflows = [
       </h1>
 
       <p class="m-sub">
-        px0 is an IDE built for reviewing AI-generated code, optimized for speed. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, in-place quick fixes, and seamless handoff to local AI coding harnesses.
+        px0 is a review workbench and speed-first IDE built for AI-generated code. Run bare <code>px0</code> to open the workbench, pass a folder (<code>px0 &lt;dir&gt;</code>) to jump into code, or review any pull request URL (<code>px0 &lt;pr-url&gt;</code>) in an isolated worktree.
       </p>
 
       <div class="m-install">
@@ -77,6 +83,12 @@ const workflows = [
           <code><span>{INSTALL_CMD}</span></code>
           <span class="copyline-s"></span>
         </button>
+      </div>
+
+      <div class="m-runs">
+        <span class="m-run-chip"><code>px0</code> <em>workbench</em></span>
+        <span class="m-run-chip"><code>px0 &lt;dir&gt;</code> <em>folder</em></span>
+        <span class="m-run-chip"><code>px0 &lt;pr-url&gt;</code> <em>pr review</em></span>
       </div>
 
       <div class="m-cta-row">
@@ -340,6 +352,46 @@ const workflows = [
     line-height: 1.5;
     color: var(--txt-2);
     margin: 0 0 16px;
+  }
+
+  .m-sub code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--txt);
+    background: var(--surface-2);
+    padding: 1px 4px;
+    border: 1px solid var(--bdr);
+    border-radius: 2px;
+  }
+
+  .m-runs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
+  }
+
+  .m-run-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    background: var(--surface-2);
+    border: 1px solid var(--bdr);
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+
+  .m-run-chip code {
+    color: var(--txt);
+    font-weight: 700;
+  }
+
+  .m-run-chip em {
+    font-style: normal;
+    color: var(--txt-3);
+    font-size: 10px;
   }
 
   .m-install {

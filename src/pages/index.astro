@@ -2,12 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Cases from '../components/Cases.astro';
+import Workbench from '../components/Workbench.astro';
 import ReviewThreads from '../components/ReviewThreads.astro';
-import Features from '../components/Features.astro';
 import Remote from '../components/Remote.astro';
-import Git from '../components/Git.astro';
-import PartnersCallout from '../components/PartnersCallout.astro';
+import Features from '../components/Features.astro';
 import MobileHome from '../components/MobileHome.astro';
 import Footer from '../components/Footer.astro';
 ---
@@ -17,12 +15,10 @@ import Footer from '../components/Footer.astro';
   <main>
     <div class="desktop-only">
       <Hero />
-      <Cases />
+      <Workbench />
       <ReviewThreads />
-      <Features />
       <Remote />
-      <Git />
-      {/* <PartnersCallout /> */}
+      <Features />
     </div>
     <div class="mobile-only">
       <MobileHome />

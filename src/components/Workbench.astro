@@ -1,0 +1,1059 @@
+---
+// Workbench.astro: Dedicated landing page section for Review Workbench, Agentic Rebase, and Complete GitHub Control
+import { GITHUB, VERSION } from '../data/links';
+
+const pillars = [
+  {
+    num: '01',
+    title: 'Never Leave the Workbench',
+    sub: 'One unified launchpad for all projects',
+    body: 'Run bare px0 to open your review dashboard on a single port. Jump into local repositories, switch between projects in browser tabs, keep unsubmitted review drafts across sessions, and return with ▦ without touching external terminal windows.',
+    tag: 'px0 · UNIFIED DASHBOARD',
+  },
+  {
+    num: '02',
+    title: '1-Click Agentic Rebase',
+    sub: 'Harness-driven conflict resolution',
+    body: 'When pull requests diverge or fall behind base branches, click Rebase with AI directly next to the merge status pill. Your local coding harness replays commits, resolves conflicts, and force-pushes safely using lease protection.',
+    tag: '⚡ REBASE WITH AI · SAFE LEASE',
+  },
+  {
+    num: '03',
+    title: 'Complete GitHub Control',
+    sub: 'Review, approve, squash, and merge',
+    body: 'Execute full pull request lifecycles without opening web browsers or separate tools: inspect merge-base diffs, draft inline comments (Alt+R), batch-apply fixes with AI, submit formal verdicts, and squash-merge with AI commit rewriting.',
+    tag: 'APPROVE · SQUASH & MERGE',
+  },
+];
+---
+
+<section class="sec" id="workbench">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="sec-id"><span class="sec-n">01</span><span>/workbench</span></div>
+      <div>
+        <h2 class="sec-title">Review Workbench. <em>Never leave your cockpit.</em></h2>
+        <p class="sec-sub">
+          Run bare <code>px0</code> to launch a unified dashboard across all your repositories and pull requests.
+          With worktree-backed PR isolation, 1-click agentic rebase, and complete GitHub control, you never have to cycle between terminals, local clones, or external review tools.
+        </p>
+      </div>
+    </header>
+
+    <!-- Interactive Workbench Cockpit Showcase -->
+    <div class="wb-showcase pnl reveal">
+      <!-- Top Chrome / Launcher Bar -->
+      <div class="wb-top-bar">
+        <div class="wb-term-tag">
+          <span class="wb-dot"></span>
+          <span class="wb-cmd-label">$ px0</span>
+          <span class="wb-dim">→ listening on 127.0.0.1:7777</span>
+        </div>
+        <div class="wb-quick-links">
+          <span class="wb-chip wb-chip-active">Dashboard</span>
+          <span class="wb-chip">Recent (14)</span>
+          <span class="wb-chip">Worktree Storage</span>
+        </div>
+      </div>
+
+      <!-- Unified Path Input & Autocomplete Simulation -->
+      <div class="wb-input-shelf">
+        <div class="wb-input-box">
+          <span class="wb-input-icon">📂</span>
+          <span class="wb-input-text">~/workspace/<span class="wb-caret"></span></span>
+          <span class="wb-hint">Tab to complete · Enter to open</span>
+        </div>
+
+        <div class="wb-complete-dropdown">
+          <div class="wb-complete-item wb-item-hi">
+            <span class="wb-ci-folder">📁 px0-ai/px0</span>
+            <span class="wb-ci-git">git</span>
+            <span class="wb-ci-meta">feat/agentic-rebase · 3 dirty</span>
+          </div>
+          <div class="wb-complete-item">
+            <span class="wb-ci-folder">📁 kernel</span>
+            <span class="wb-ci-git">git</span>
+            <span class="wb-ci-meta">master · 95,710 files</span>
+          </div>
+          <div class="wb-complete-item">
+            <span class="wb-ci-folder">📁 auth-service</span>
+            <span class="wb-ci-git">git</span>
+            <span class="wb-ci-meta">main · clean</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Workbench Grid: Left Workspaces / Right Cockpit -->
+      <div class="wb-cockpit-grid">
+        <!-- Left: Recent & Pinned Workspaces -->
+        <div class="wb-side-col">
+          <div class="wb-col-hdr">
+            <span class="wb-hdr-title">Workspaces & PR Reviews</span>
+            <span class="wb-hdr-badge">3 running</span>
+          </div>
+
+          <div class="wb-workspaces-list">
+            <!-- Pinned PR Workspace -->
+            <div class="wb-ws-card wb-ws-pinned">
+              <div class="wb-ws-top">
+                <span class="wb-pin-star" title="Pinned workspace">★</span>
+                <span class="wb-ws-name">px0-ai/px0 #123</span>
+                <span class="wb-status-dot dot-live" title="Running in background"></span>
+              </div>
+              <div class="wb-ws-sub">
+                <span class="wb-ws-tag tag-pr">PR WORKTREE</span>
+                <span class="wb-ws-branch">main &larr; token-fallback</span>
+              </div>
+              <div class="wb-ws-footer">
+                <span class="wb-ws-mem">21.4 MB · RSS</span>
+                <div class="wb-ws-actions">
+                  <span class="wb-act-btn" title="Stop process">■</span>
+                  <span class="wb-act-btn" title="Remove">✕</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Running Local Workspace -->
+            <div class="wb-ws-card wb-ws-active">
+              <div class="wb-ws-top">
+                <span class="wb-pin-star" title="Unpinned">☆</span>
+                <span class="wb-ws-name">~/workspace/kernel</span>
+                <span class="wb-status-dot dot-live"></span>
+              </div>
+              <div class="wb-ws-sub">
+                <span class="wb-ws-tag tag-git">LOCAL REPO</span>
+                <span class="wb-ws-branch">master · clangd</span>
+              </div>
+              <div class="wb-ws-footer">
+                <span class="wb-ws-mem">34.2 MB · RSS</span>
+                <div class="wb-ws-actions">
+                  <span class="wb-act-btn">■</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Managed PR Clone Workspace -->
+            <div class="wb-ws-card">
+              <div class="wb-ws-top">
+                <span class="wb-pin-star">☆</span>
+                <span class="wb-ws-name">gitlab.com/ops/deploy #45</span>
+                <span class="wb-status-dot dot-idle"></span>
+              </div>
+              <div class="wb-ws-sub">
+                <span class="wb-ws-tag tag-mr">GITLAB MR</span>
+                <span class="wb-ws-branch">production &larr; v0.1.19</span>
+              </div>
+              <div class="wb-ws-footer">
+                <span class="wb-ws-mem">Idle · 1-click launch</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="wb-side-footer">
+            <span>Aggregated RSS: <b>55.6 MB</b></span>
+            <span class="wb-sep">·</span>
+            <span>Single instance lock</span>
+          </div>
+        </div>
+
+        <!-- Right: Active Cockpit Session Showcase -->
+        <div class="wb-main-cockpit">
+          <!-- Active Workspace Header Bar -->
+          <div class="wb-cockpit-hdr">
+            <div class="wb-back-tag">
+              <span class="wb-back-icon">▦</span>
+              <span class="wb-back-text">Review Workbench</span>
+            </div>
+            <div class="wb-ws-identity">
+              <span class="wb-id-repo">px0-ai/px0</span>
+              <span class="wb-id-sep">/</span>
+              <span class="wb-id-pr">PR #123: Refactor token fallback</span>
+            </div>
+            <div class="wb-worktree-indicator">
+              <span class="wb-wt-label">worktree:</span>
+              <code>~/.px0/repos/px0</code>
+              <span class="wb-wt-note">no clone overhead</span>
+            </div>
+          </div>
+
+          <!-- Highlight 1: Mergeability Pill & 1-Click Agentic Rebase -->
+          <div class="wb-highlight-strip strip-rebase">
+            <div class="wb-strip-left">
+              <span class="wb-strip-badge badge-rebase">AGENTIC REBASE</span>
+              <span class="wb-pill pill-behind">Behind main (2 commits)</span>
+              <button class="wb-btn-rebase-ai" type="button">
+                <span class="wb-bolt">⚡</span>
+                <span>Rebase with AI</span>
+              </button>
+            </div>
+            <div class="wb-strip-right">
+              <span class="wb-hint-agent">Harness replays PR commits, auto-resolves conflicts & force-pushes with safe lease</span>
+            </div>
+          </div>
+
+          <!-- Highlight 2: Complete GitHub & Forge Review Bar -->
+          <div class="wb-highlight-strip strip-github">
+            <div class="wb-strip-left">
+              <span class="wb-strip-badge badge-gh">COMPLETE GITHUB CONTROL</span>
+              <div class="wb-action-cluster">
+                <button class="wb-btn-verdict" type="button">
+                  <span>Submit Review ▾</span>
+                </button>
+                <button class="wb-btn-approve" type="button">
+                  <span>✓ Approve</span>
+                </button>
+                <div class="wb-split-merge">
+                  <button class="wb-btn-merge-main" type="button">Squash and merge</button>
+                  <button class="wb-btn-merge-caret" type="button">▾</button>
+                </div>
+              </div>
+            </div>
+            <div class="wb-strip-right">
+              <span class="wb-checkbox-demo">
+                <span class="wb-chk-box">☑</span>
+                <span class="wb-chk-label">Rewrite commit message with AI</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Review & Code Context Simulator -->
+          <div class="wb-cockpit-body">
+            <div class="wb-diff-head">
+              <div class="wb-dh-file">
+                <span class="wb-file-stat stat-m">M</span>
+                <span class="wb-file-path">internal/auth/token.go</span>
+                <span class="wb-diff-count">+14 / -3</span>
+              </div>
+              <div class="wb-dh-actions">
+                <span class="wb-tag-pill">merge-base diff</span>
+                <span class="wb-tag-pill">2 draft comments</span>
+                <span class="wb-tag-pill pill-batch">⚡ Batch Apply ready</span>
+              </div>
+            </div>
+
+            <!-- Code lines with Myers sub-character highlight preview -->
+            <div class="wb-code-window">
+              <div class="wb-code-line line-del">
+                <span class="ln">41</span>
+                <span class="sign">-</span>
+                <span class="code">return execCommand("gh", "auth", "token").Output()</span>
+              </div>
+              <div class="wb-code-line line-add">
+                <span class="ln">41</span>
+                <span class="sign">+</span>
+                <span class="code">if tok := os.Getenv(<span class="hl-char">"GITHUB_TOKEN"</span>); tok != "" &#123; return tok, nil &#125;</span>
+              </div>
+              <div class="wb-code-line line-add">
+                <span class="ln">42</span>
+                <span class="sign">+</span>
+                <span class="code">return execCommand("gh", "auth", "token").Output()</span>
+              </div>
+            </div>
+
+            <!-- Cockpit Footer Note -->
+            <div class="wb-cockpit-footer">
+              <span class="wb-cf-badge">NEVER LEAVE PX0</span>
+              <span class="wb-cf-text">
+                Browse filesystem · Autocomplete folders · Draft review notes · Batch edit with AI · Safe lease force-push
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pillars Grid -->
+    <div class="wb-pillars-grid">
+      {pillars.map((p) => (
+        <article class="wb-pillar-card reveal">
+          <div class="wb-pillar-top">
+            <span class="wb-pillar-num">{p.num}</span>
+            <span class="wb-pillar-tag">{p.tag}</span>
+          </div>
+          <h3 class="wb-pillar-title">{p.title}</h3>
+          <h4 class="wb-pillar-sub">{p.sub}</h4>
+          <p class="wb-pillar-body">{p.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ════════ WORKBENCH SECTION STYLES ════════ */
+  .wb-showcase {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    margin-bottom: 32px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Top Bar */
+  .wb-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .wb-term-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wb-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 8px var(--amber-glow);
+  }
+
+  .wb-cmd-label {
+    font-weight: 700;
+    color: var(--txt);
+  }
+
+  .wb-dim {
+    color: var(--txt-3);
+  }
+
+  .wb-quick-links {
+    display: flex;
+    gap: 6px;
+  }
+
+  .wb-chip {
+    padding: 3px 9px;
+    border: 1px solid var(--bdr);
+    background: var(--bg);
+    color: var(--txt-3);
+    font-size: 11px;
+    border-radius: 2px;
+  }
+
+  .wb-chip-active {
+    background: var(--amber-wash);
+    border-color: var(--amber-line);
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  /* Input & Autocomplete Shelf */
+  .wb-input-shelf {
+    padding: 14px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .wb-input-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-elev);
+    border: 1px solid var(--amber-line);
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .wb-input-icon {
+    font-size: 14px;
+  }
+
+  .wb-input-text {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .wb-caret {
+    display: inline-block;
+    width: 2px;
+    height: 15px;
+    background: var(--amber);
+    vertical-align: middle;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .wb-hint {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  .wb-complete-dropdown {
+    margin-top: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .wb-complete-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    border-bottom: 1px solid var(--bdr);
+  }
+
+  .wb-complete-item:last-child {
+    border-bottom: none;
+  }
+
+  .wb-item-hi {
+    background: var(--surface-2);
+    border-left: 3px solid var(--amber);
+  }
+
+  .wb-ci-folder {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .wb-ci-git {
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 1px 5px;
+    background: var(--amber-wash);
+    color: var(--amber);
+    border: 1px solid var(--amber-line);
+    border-radius: 2px;
+  }
+
+  .wb-ci-meta {
+    margin-left: auto;
+    color: var(--txt-3);
+    font-size: 11px;
+  }
+
+  /* Cockpit Grid */
+  .wb-cockpit-grid {
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    min-height: 480px;
+  }
+
+  @media (max-width: 900px) {
+    .wb-cockpit-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Side Column */
+  .wb-side-col {
+    background: var(--bg-elev);
+    border-right: 1px solid var(--bdr);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wb-col-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+  }
+
+  .wb-hdr-title {
+    font-weight: 700;
+    color: var(--txt-2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .wb-hdr-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    background: var(--surface-2);
+    color: var(--txt-3);
+    border-radius: 2px;
+  }
+
+  .wb-workspaces-list {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+  }
+
+  .wb-ws-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .wb-ws-pinned {
+    border-left: 3px solid var(--amber);
+  }
+
+  .wb-ws-active {
+    border-color: var(--amber-line);
+    background: var(--surface-2);
+  }
+
+  .wb-ws-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wb-pin-star {
+    color: var(--amber);
+    font-size: 13px;
+  }
+
+  .wb-ws-name {
+    font-weight: 600;
+    color: var(--txt);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wb-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-left: auto;
+  }
+
+  .dot-live {
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+  }
+
+  .dot-idle {
+    background: var(--txt-4);
+  }
+
+  .wb-ws-sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .wb-ws-tag {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-pr {
+    background: rgba(187, 154, 247, 0.15);
+    color: var(--violet);
+    border: 1px solid rgba(187, 154, 247, 0.3);
+  }
+
+  .tag-git {
+    background: rgba(122, 162, 247, 0.15);
+    color: var(--blue);
+    border: 1px solid rgba(122, 162, 247, 0.3);
+  }
+
+  .tag-mr {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--amber);
+    border: 1px solid var(--amber-line);
+  }
+
+  .wb-ws-branch {
+    color: var(--txt-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wb-ws-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10.5px;
+    color: var(--txt-4);
+    padding-top: 4px;
+    border-top: 1px solid var(--bdr);
+  }
+
+  .wb-ws-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .wb-act-btn {
+    cursor: pointer;
+    color: var(--txt-3);
+  }
+
+  .wb-act-btn:hover {
+    color: var(--txt);
+  }
+
+  .wb-side-footer {
+    padding: 10px 14px;
+    border-top: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--txt-3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+  }
+
+  .wb-sep {
+    color: var(--txt-4);
+  }
+
+  /* Right: Main Cockpit Column */
+  .wb-main-cockpit {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wb-cockpit-hdr {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .wb-back-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    background: var(--amber-wash);
+    border: 1px solid var(--amber-line);
+    color: var(--amber);
+    font-weight: 700;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .wb-back-icon {
+    font-size: 13px;
+  }
+
+  .wb-ws-identity {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--txt);
+  }
+
+  .wb-id-pr {
+    color: var(--txt-2);
+  }
+
+  .wb-worktree-indicator {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--txt-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wb-worktree-indicator code {
+    color: var(--txt-2);
+    font-family: var(--font-mono);
+  }
+
+  .wb-wt-note {
+    font-size: 10px;
+    color: var(--amber);
+    padding: 1px 5px;
+    border: 1px solid var(--amber-line);
+    border-radius: 2px;
+  }
+
+  /* Highlight Strips */
+  .wb-highlight-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .strip-rebase {
+    background: rgba(251, 191, 36, 0.05);
+  }
+
+  .strip-github {
+    background: var(--bg-elev);
+  }
+
+  .wb-strip-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .wb-strip-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .badge-rebase {
+    background: var(--amber-wash);
+    border: 1px solid var(--amber-line);
+    color: var(--amber);
+  }
+
+  .badge-gh {
+    background: var(--surface-2);
+    border: 1px solid var(--bdr);
+    color: var(--txt-2);
+  }
+
+  .pill-behind {
+    padding: 2px 8px;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid #f59e0b;
+    color: #f59e0b;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .wb-btn-rebase-ai {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--amber-fill);
+    color: #0b0d14;
+    border: none;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+  }
+
+  .wb-btn-rebase-ai:hover {
+    background: var(--amber-fill-hover);
+    transform: translateY(-1px);
+  }
+
+  .wb-bolt {
+    font-size: 11px;
+  }
+
+  .wb-hint-agent {
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+
+  /* GitHub Action Bar */
+  .wb-action-cluster {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wb-btn-verdict,
+  .wb-btn-approve {
+    padding: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    border: 1px solid var(--bdr);
+    background: var(--bg-card);
+    color: var(--txt);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .wb-btn-approve {
+    border-color: #10b981;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  .wb-split-merge {
+    display: flex;
+  }
+
+  .wb-btn-merge-main {
+    padding: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    background: var(--amber-fill);
+    color: #0b0d14;
+    border: 1px solid var(--amber-fill);
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    cursor: pointer;
+  }
+
+  .wb-btn-merge-caret {
+    padding: 4px 6px;
+    background: var(--amber-fill-hover);
+    color: #0b0d14;
+    border: 1px solid var(--amber-fill);
+    border-left: none;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .wb-checkbox-demo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--txt-2);
+  }
+
+  .wb-chk-box {
+    color: var(--amber);
+    font-size: 13px;
+  }
+
+  /* Body & Diff simulator */
+  .wb-cockpit-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+  }
+
+  .wb-diff-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bdr);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .wb-dh-file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .stat-m {
+    color: #f59e0b;
+    font-weight: 700;
+  }
+
+  .wb-diff-count {
+    color: var(--txt-3);
+    font-size: 11px;
+  }
+
+  .wb-dh-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .wb-tag-pill {
+    padding: 2px 7px;
+    background: var(--surface-2);
+    border: 1px solid var(--bdr);
+    color: var(--txt-3);
+    font-size: 10.5px;
+    border-radius: 2px;
+  }
+
+  .pill-batch {
+    background: rgba(187, 154, 247, 0.15);
+    border-color: rgba(187, 154, 247, 0.3);
+    color: var(--violet);
+    font-weight: 600;
+  }
+
+  .wb-code-window {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 10px 0;
+  }
+
+  .wb-code-line {
+    display: flex;
+    padding: 3px 14px;
+    line-height: 1.5;
+  }
+
+  .line-del {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+  }
+
+  .line-add {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+  }
+
+  .ln {
+    width: 32px;
+    color: var(--txt-4);
+    user-select: none;
+  }
+
+  .sign {
+    width: 16px;
+    font-weight: 700;
+  }
+
+  .hl-char {
+    background: rgba(16, 185, 129, 0.25);
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+
+  .wb-cockpit-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--bg-elev);
+    border: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    margin-top: auto;
+  }
+
+  .wb-cf-badge {
+    padding: 2px 6px;
+    background: var(--amber);
+    color: #0b0d14;
+    font-weight: 800;
+    font-size: 10px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .wb-cf-text {
+    color: var(--txt-2);
+  }
+
+  /* Pillars Grid */
+  .wb-pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 900px) {
+    .wb-pillars-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .wb-pillar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bdr);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .wb-pillar-card:hover {
+    border-color: var(--amber-line);
+    transform: translateY(-2px);
+  }
+
+  .wb-pillar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .wb-pillar-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--amber);
+  }
+
+  .wb-pillar-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--txt-3);
+  }
+
+  .wb-pillar-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--txt);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .wb-pillar-sub {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--amber-soft);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .wb-pillar-body {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--txt-2);
+    margin: 0;
+  }
+</style>

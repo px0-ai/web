@@ -59,12 +59,17 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 
 | macOS | Linux / Windows | Action |
 | :--- | :--- | :--- |
+| `/` | `/` | **Focus input**: Jump focus to the path / PR URL input box |
 | `Tab` | `Tab` | **Folder autocompletion**: Complete highlighted directory suggestion |
 | `Up` / `Down` | `Up` / `Down` | **Navigate suggestions**: Move through directory autocompletion list |
 | `Enter` | `Enter` | **Open workspace**: Launch selected directory or pull request URL |
-| `Escape` | `Escape` | **Dismiss**: Close folder completion dropdown |
+| `Escape` | `Escape` | **Dismiss**: Close folder completion dropdown or restore previous theme |
 | `Cmd+Click` | `Ctrl+Click` | **Open in new tab**: Launch recent workspace in a separate browser tab |
+| Hover row -> `☆` / `★` | Hover row -> `☆` / `★` | **Pin / Unpin**: Pin favorite workspace to the top of the list |
+| Hover row -> `■` | Hover row -> `■` | **Stop workspace**: Stop child workspace process and free RAM |
+| Hover row -> `✕` | Hover row -> `✕` | **Remove**: Stop workspace process and remove from recent list |
 | Explorer Header (`▦`) | Explorer Header (`▦`) | **Back to Workbench**: Return to Review Workbench dashboard |
+| Status Bar Palette | Status Bar Palette | **Theme preview**: Cycle and select syntax theme across workspaces |
 
 ## Git Review, Pull Requests & Everyday Operations
 

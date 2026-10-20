@@ -97,6 +97,34 @@ A live status indicator dot shows whether each workspace is currently **running*
 
 ---
 
+## Keyboard Shortcuts & Controls
+
+| Shortcut / Control | Context | Action |
+| :--- | :--- | :--- |
+| `/` | Workbench Page | Focus the path / PR URL input box |
+| `Tab` | Path Input | Complete into the highlighted folder suggestion |
+| `↑` / `↓` | Path Suggestions | Navigate up / down through folder suggestions |
+| `Enter` | Path Input / Suggestion | Open the entered folder, PR URL, or highlighted suggestion |
+| `Esc` | Path Suggestions / Theme | Dismiss folder suggestions or restore previous theme |
+| `Cmd/Ctrl + Click` | Recent Workspaces | Open workspace in a new browser tab |
+| `☆` / `★` | Workspace Row | Pin workspace to the top of the list, or unpin |
+| `■` | Workspace Row | Stop running workspace child process and free RAM |
+| `✕` | Workspace Row | Stop workspace and remove from list |
+| `▦` | Workspace Header | Return to the Review Workbench from any open workspace |
+| `Palette button` / `Arrow keys` | Status Bar | Preview and select workbench color theme |
+
+---
+
+## Never Leave the Workbench: Complete GitHub Control & Agentic Rebase
+
+The Review Workbench is built to serve as your complete code review and Git cockpit: you never have to leave the workbench or cycle between external terminals and IDEs:
+
+- **Complete GitHub & Forge Control**: Review scoped merge-base diffs, draft inline comments with `Alt+R`, batch-apply AI suggestions, submit approvals or change requests, and execute merges (Squash, Merge Commit, Rebase) straight from the interface.
+- **Agentic Rebase & Conflict Resolution**: When pull requests or local branches fall behind or encounter conflicts, trigger **Rebase with AI** directly next to the status pill. Your local coding harness replays commits, resolves conflict markers, and stages clean resolutions. Rewritten branches can be pushed safely using `--force-with-lease`.
+- **Zero-Friction Switching**: Jump between multiple active reviews in browser tabs, monitor real-time resource usage across all child instances, and click **▦** in any workspace header to instantly return to the central workbench launchpad.
+
+---
+
 ## Worktree-Based Pull Request Reviews
 
 When opening a pull request from the workbench, px0 never clones full repositories repeatedly. Instead, it creates an isolated `git worktree` tied to a local clone:

@@ -19,19 +19,19 @@ const cases = [
   },
   {
     num: '02',
-    tag: 'agent harnesses',
-    title: 'Connecting to Coding Harnesses',
-    desc: 'Select code in px0 or review comments and dispatch directly to Claude Code, Cursor Agent, Antigravity, or OpenCode with live reloading.',
+    tag: 'review workbench',
+    title: 'Review Workbench: Never Leave px0',
+    desc: 'Launch bare px0 to manage local repositories and PR worktrees from a unified cockpit. Execute 1-click agentic rebases, enjoy complete GitHub control, and inspect diffs without ever switching tools.',
     meta: [
-      { label: 'batch apply', val: '1-click' },
-      { label: 'inline edit', val: 'Alt E' },
-      { label: 'harness reload', val: 'instant' },
+      { label: 'single launcher', val: 'px0' },
+      { label: 'agentic rebase', val: '1-click' },
+      { label: 'github control', val: 'complete' },
     ],
     snippet: [
-      '<span class="c-dim">px0:</span> Batch Apply (2 review comments)',
-      '<span class="c-out">→ dispatched to claude-haiku runner</span>',
-      '<span class="c-ok">✓</span> 3 files refactored · tabs reloaded in place',
-      '<span class="c-dim">git panel:</span> Commit with AI & push to PR branch',
+      '<span class="c-dim">$</span> <span class="c-hi">px0</span> <span class="c-dim"># opens review workbench on 127.0.0.1:7777</span>',
+      '<span class="c-out">→ 3 active workspaces · auto-complete paths with Tab</span>',
+      '<span class="c-dim">pill [Behind main]:</span> <span class="c-hi">Rebase with AI</span> → agent resolves conflicts',
+      '<span class="c-ok">✓</span> squash & merge with AI commit rewriting · never leave px0',
     ],
   },
   {
@@ -74,7 +74,7 @@ const cases = [
 <section class="sec" id="cases">
   <div class="wrap">
     <header class="sec-head">
-      <div class="sec-id"><span class="sec-n">01</span><span>/cases</span></div>
+      <div class="sec-id"><span class="sec-n">02</span><span>/cases</span></div>
       <div>
         <h2 class="sec-title">Fast code reviews. <em>Connected to harnesses.</em></h2>
         <p class="sec-sub">

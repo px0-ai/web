@@ -135,10 +135,10 @@ const ideData = {
 
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="kicker"><span>//</span> the IDE built for reviewing AI-generated code.</p>
+        <p class="kicker"><span>//</span> the review workbench & speed-first IDE for AI-generated code.</p>
         <h1>Review code.<br /><span class="hl">Fast.</span><i class="h1-cur" aria-hidden="true"></i></h1>
         <p class="hero-sub">
-          px0 is an IDE built for reviewing AI-generated code, optimized for speed. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, in-place quick fixes, and seamless handoff to local AI coding harnesses.
+          px0 is a review workbench and speed-first IDE built for AI-generated code. Run bare <code>px0</code> for the review workbench, pass a folder (<code>px0 &lt;dir&gt;</code>) to jump into code, or review any pull request URL (<code>px0 &lt;pr-url&gt;</code>) in an isolated worktree.
         </p>
 
         <div class="hero-actions">
@@ -147,6 +147,24 @@ const ideData = {
             <code><span>{INSTALL_CMD}</span></code>
             <span class="copyline-s"></span>
           </button>
+
+          <div class="hero-runs">
+            <span class="hr-item" title="Open the review workbench dashboard">
+              <code>px0</code>
+              <small>workbench</small>
+            </span>
+            <span class="hr-sep">·</span>
+            <span class="hr-item" title="Open local directory directly">
+              <code>px0 &lt;dir&gt;</code>
+              <small>local repo</small>
+            </span>
+            <span class="hr-sep">·</span>
+            <span class="hr-item" title="Review pull request in an isolated worktree without cloning">
+              <code>px0 &lt;pr-url&gt;</code>
+              <small>pr review</small>
+            </span>
+          </div>
+
           <div class="hero-cta">
             <a class="btn btn-primary" href={GITHUB} target="_blank" rel="noopener noreferrer">
               <span>Star on GitHub</span>
@@ -446,6 +464,51 @@ const ideData = {
   .hero-sub strong {
     color: var(--txt);
     font-weight: 600;
+  }
+
+  .hero-sub code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--txt);
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border: 1px solid var(--bdr);
+    border-radius: 2px;
+  }
+
+  .hero-runs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    padding: 2px 0 4px;
+  }
+
+  .hr-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .hr-item code {
+    color: var(--txt);
+    font-weight: 700;
+    background: var(--surface-2);
+    padding: 2px 7px;
+    border: 1px solid var(--bdr);
+    border-radius: 2px;
+  }
+
+  .hr-item small {
+    color: var(--txt-3);
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+  }
+
+  .hr-sep {
+    color: var(--txt-4);
   }
 
   .hero-actions {

@@ -1,5 +1,5 @@
 ---
-// ReviewThreads.astro: Dedicated section for Agent Threads, GitHub PR Review, Inline Comments, and Batch Editing
+// ReviewThreads.astro: Dedicated section for Autonomous Agents, Threads, and Batch Editing
 const pillars = [
   {
     num: '01',
@@ -10,38 +10,24 @@ const pillars = [
   },
   {
     num: '02',
-    title: 'Instant GitHub PR Review',
-    sub: 'Scoped merge-base diffs from URL',
-    body: 'Pass any PR URL to inspect scoped merge-base diffs in an isolated ephemeral worktree in 12 ms. Review true changes against target branches without branch switching or dirtying your local tree.',
-    tag: 'px0 <pr-url>',
-  },
-  {
-    num: '03',
-    title: 'Inline Comments & Line Actions',
-    sub: 'Hover gutter icons or chord Alt+R',
-    body: 'Hover any line number for the contextual thread icon, or press Alt+R to draft inline review notes. Comments stay anchored in memory until you submit formal reviews to GitHub or send them to your agent.',
-    tag: 'Alt+R · GUTTER ICON',
-  },
-  {
-    num: '04',
     title: 'Queued Batch Inline Edits',
     sub: 'Stage comments across files with Alt+E',
     body: 'Highlight code in diff or source views, press Alt+E, and stage edit prompts across multiple files. Review queued comments in the Threads drawer and apply all at once with Mod+Enter.',
     tag: 'Alt+E · Mod+Enter',
   },
   {
-    num: '05',
+    num: '03',
     title: 'Multi-Harness Continuity',
     sub: 'Claude Code, Cursor Agent, Antigravity & OpenCode',
     body: 'Connect natively to Claude Code, Cursor Agent, Antigravity, or OpenCode. Switch models or harnesses mid-thread with automatic session resume and transcript replay.',
     tag: 'HARNESSES',
   },
   {
-    num: '06',
-    title: 'GitHub Reviews & PR Push',
-    sub: 'Approve, request changes, and push fixes',
-    body: 'Submit formal approvals or change requests directly to GitHub with your inline notes attached. Review AI-generated commit messages and push fixes straight back to PR head branches without a terminal.',
-    tag: 'APPROVE · COMMIT · PUSH',
+    num: '04',
+    title: 'Live Tool Step Streaming',
+    sub: 'Transparent execution: read, edit, run, test',
+    body: 'Watch your agent read files, write diffs, run test suites, and execute bash commands in real time with collapsible tool step cards and instant syntax-highlighted previews.',
+    tag: 'REAL-TIME TOOL LOGS',
   },
 ];
 ---
@@ -49,12 +35,12 @@ const pillars = [
 <section class="sec" id="review">
   <div class="wrap">
     <header class="sec-head">
-      <div class="sec-id"><span class="sec-n">02</span><span>/review</span></div>
+      <div class="sec-id"><span class="sec-n">02</span><span>/threads</span></div>
       <div>
-        <h2 class="sec-title"><em>Threads</em> & code review.</h2>
+        <h2 class="sec-title">Autonomous agents. <em>Threaded alongside code.</em></h2>
         <p class="sec-sub">
-          Review GitHub PRs, leave inline comments, and make code-level edits directly in place.
-          Trigger quick inline fixes with <code class="inline-code">Alt+E</code> or guide multi-step code changes across files with agent threads, watching every tool step execute live.
+          Anchor multi-turn conversations to code with <code class="inline-code">Alt+T</code>.
+          Watch tools execute live over Server-Sent Events, or queue quick inline fixes with <code class="inline-code">Alt+E</code> and apply them all at once.
         </p>
       </div>
     </header>
@@ -67,11 +53,6 @@ const pillars = [
             <span class="tab-ico">💬</span>
             <span>Agent Threads</span>
             <span class="rev-pill pill-violet">Alt+T</span>
-          </button>
-          <button class="rev-tab" id="tab-rev-pr" type="button" role="tab" aria-selected="false" aria-controls="view-rev-pr">
-            <span class="tab-ico">⎇</span>
-            <span>GitHub PR Review</span>
-            <span class="rev-pill pill-amber">#123</span>
           </button>
           <button class="rev-tab" id="tab-rev-batch" type="button" role="tab" aria-selected="false" aria-controls="view-rev-batch">
             <span class="tab-ico">⚡</span>
@@ -207,122 +188,7 @@ const pillars = [
         </div>
       </div>
 
-      <!-- VIEW 2: GITHUB PR REVIEW -->
-      <div class="rev-view is-hidden" id="view-rev-pr" role="tabpanel">
-        <div class="pr-layout">
-          <!-- Left: PR Tree & Comments List -->
-          <div class="pr-tree-side">
-            <div class="side-hdr">
-              <span class="pr-title-num">PR #123</span>
-              <span class="pr-branch-badge">main &larr; auth-refactor</span>
-            </div>
-
-            <ul class="pr-file-list">
-              <li class="pr-dir">
-                <span class="dir-chev">▾</span>
-                <span class="dir-name">internal/auth</span>
-              </li>
-              <li class="pr-file pr-file-active">
-                <span class="pf-indent"></span>
-                <span class="pf-name">token.go</span>
-                <span class="pf-comment-badge" title="1 draft comment">💬 1</span>
-                <span class="badge-m">M</span>
-              </li>
-              <li class="pr-file">
-                <span class="pf-indent"></span>
-                <span class="pf-name">provider.go</span>
-                <span class="pf-comment-badge" title="1 draft comment">💬 1</span>
-                <span class="badge-a">A</span>
-              </li>
-              <li class="pr-dir">
-                <span class="dir-chev">▾</span>
-                <span class="dir-name">cmd</span>
-              </li>
-              <li class="pr-file">
-                <span class="pf-indent"></span>
-                <span class="pf-name">main.go</span>
-                <span class="badge-m">M</span>
-              </li>
-            </ul>
-
-            <div class="pr-action-card">
-              <div class="pac-h">
-                <span class="pac-title">Batch Apply (2)</span>
-                <span class="pac-runner">claude-haiku</span>
-              </div>
-              <p class="pac-desc">Dispatch all drafted review comments across files directly to your coding agent.</p>
-              <div class="pac-btns">
-                <button class="btn-apply-mock" type="button">Batch Apply</button>
-                <button class="btn-submit-mock" type="button">Submit Review &rarr;</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: Merge-Base Diff View with Inline Comment Composer -->
-          <div class="pr-diff-side">
-            <div class="side-hdr">
-              <div class="diff-header-meta">
-                <span class="diff-badge-base">merge-base (8f2a1c)</span>
-                <span class="diff-filename">internal/auth/token.go</span>
-                <span class="diff-stats"><span class="s-add">+14</span> <span class="s-del">−3</span></span>
-              </div>
-              <div class="diff-shortcuts">
-                <span class="sc-item"><kbd class="alt-key">Alt</kbd><kbd>R</kbd> comment</span>
-                <span class="sc-item"><kbd class="mod-key">Ctrl</kbd><kbd>D</kbd> diff</span>
-              </div>
-            </div>
-
-            <div class="diff-viewport">
-              <div class="diff-pane diff-unified">
-                <div class="pane-hdr">
-                  <span>diff against merge-base · author: @alice</span>
-                  <span class="ephemeral-tag">ephemeral worktree</span>
-                </div>
-                <div class="diff-lines">
-                  <div class="dline"><span class="dln">38</span><span class="dln">38</span><span class="dmark"> </span><span class="dtx"><span class="k">func</span> ResolveToken(cfg Config) (string, error) &#123;</span></div>
-                  <div class="dline dline-del"><span class="dln">39</span><span class="dln"> </span><span class="dmark">−</span><span class="dtx">    <span class="k">return</span> os.Getenv("GITHUB_TOKEN"), nil</span></div>
-                  <div class="dline dline-add"><span class="dln"> </span><span class="dln">39</span><span class="dmark">+</span><span class="dtx">    <span class="k">if</span> tok := cfg.GitHubToken; tok != "" &#123;</span></div>
-                  <div class="dline dline-add"><span class="dln"> </span><span class="dln">40</span><span class="dmark">+</span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
-                  <div class="dline dline-add dline-comment-anchor">
-                    <span class="dln"> </span><span class="dln">41</span><span class="dmark">+</span>
-                    <span class="dtx">    <span class="k">if</span> tok := os.Getenv("GITHUB_TOKEN"); tok != "" &#123;</span>
-                    <span class="gutter-pencil" title="Add review comment (Alt+R)">✏</span>
-                  </div>
-
-                  <!-- Inline Draft Review Comment Composer -->
-                  <div class="inline-comment-composer">
-                    <div class="icc-head">
-                      <span class="icc-author">Draft Review Comment · line 41</span>
-                      <span class="icc-tag">in-memory draft</span>
-                    </div>
-                    <div class="icc-body">
-                      Check if GH_TOKEN is also set before falling back to the gh CLI binary so standard environment variables take precedence.
-                    </div>
-                    <div class="icc-actions">
-                      <span class="icc-hint">Press <kbd>Ctrl+Enter</kbd> to save draft</span>
-                      <div class="icc-btns">
-                        <button class="btn-ic-discard" type="button">Discard</button>
-                        <button class="btn-ic-save" type="button">Save Draft</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="dline"><span class="dln">42</span><span class="dln">42</span><span class="dmark"> </span><span class="dtx">        <span class="k">return</span> tok, nil</span></div>
-                  <div class="dline"><span class="dln">43</span><span class="dln">43</span><span class="dmark"> </span><span class="dtx">    &#125;</span></div>
-                  <div class="dline"><span class="dln">44</span><span class="dln">44</span><span class="dmark"> </span><span class="dtx">    <span class="k">return</span> resolveGhCliToken()</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="diff-foot">
-              <span class="df-note">Hover any gutter line or select code & press <kbd class="alt-key">Alt</kbd><kbd>R</kbd></span>
-              <span class="df-tag">submit to GitHub · Approve / Request Changes / Comment</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- VIEW 3: BATCH INLINE EDITS -->
+      <!-- VIEW 2: BATCH INLINE EDITS -->
       <div class="rev-view is-hidden" id="view-rev-batch" role="tabpanel">
         <div class="batch-layout">
           <div class="batch-top-bar">
@@ -416,23 +282,21 @@ const pillars = [
 <script>
   const initReviewShowcase = () => {
     const tabThreads = document.getElementById('tab-rev-threads');
-    const tabPr = document.getElementById('tab-rev-pr');
     const tabBatch = document.getElementById('tab-rev-batch');
 
     const viewThreads = document.getElementById('view-rev-threads');
-    const viewPr = document.getElementById('view-rev-pr');
     const viewBatch = document.getElementById('view-rev-batch');
 
     const metaText = document.getElementById('rev-meta-text');
 
-    if (!tabThreads || !tabPr || !tabBatch || !viewThreads || !viewPr || !viewBatch) return;
+    if (!tabThreads || !tabBatch || !viewThreads || !viewBatch) return;
 
     const setTab = (activeTab: HTMLElement, activeView: HTMLElement, meta: string) => {
-      [tabThreads, tabPr, tabBatch].forEach((t) => {
+      [tabThreads, tabBatch].forEach((t) => {
         t.classList.remove('on');
         t.setAttribute('aria-selected', 'false');
       });
-      [viewThreads, viewPr, viewBatch].forEach((v) => v.classList.add('is-hidden'));
+      [viewThreads, viewBatch].forEach((v) => v.classList.add('is-hidden'));
 
       activeTab.classList.add('on');
       activeTab.setAttribute('aria-selected', 'true');
@@ -442,10 +306,6 @@ const pillars = [
 
     tabThreads.addEventListener('click', () => {
       setTab(tabThreads, viewThreads, 'Harness: <b>claude-3-7-sonnet</b> · Live SSE stream');
-    });
-
-    tabPr.addEventListener('click', () => {
-      setTab(tabPr, viewPr, 'GitHub PR: <b>#123</b> · Scoped merge-base diff (8f2a1c)');
     });
 
     tabBatch.addEventListener('click', () => {

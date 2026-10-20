@@ -10,7 +10,9 @@ const cols = [
     title: 'product',
     links: [
       { label: 'Overview', href: '/' },
-      { label: 'Threads & Review', href: '/#review' },
+      { label: 'Review Workbench', href: '/#workbench' },
+      { label: 'Agent Threads', href: '/#review' },
+      { label: 'Remote Inspection', href: '/#remote' },
       { label: 'Features', href: '/#features' },
       { label: 'Benchmarks', href: '/benchmarks' },
       { label: 'Architecture', href: '/docs/reference/architecture-and-internals' },
@@ -52,7 +54,7 @@ const cols = [
         <img src="/logo/px0-logo-dark.png" alt="px0" class="logo-img logo-dark" />
         <img src="/logo/px0-logo-light.png" alt="px0" class="logo-img logo-light" />
       </a>
-      <p>px0 is an IDE built for reviewing AI-generated code, optimized for speed. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, and seamless handoff to local AI coding harnesses.</p>
+      <p>px0 is a review workbench and speed-first IDE built for AI-generated code. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, and seamless handoff to local AI coding harnesses.</p>
       <div class="f-install">
         <button class="copyline" type="button" data-copy={INSTALL_CMD} aria-label="Copy install command">
           <span class="copyline-p">$</span>
