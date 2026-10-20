@@ -138,7 +138,7 @@ const ideData = {
         <p class="kicker"><span>//</span> the review workbench & speed-first IDE for AI-generated code.</p>
         <h1>Review code.<br /><span class="hl">Fast.</span><i class="h1-cur" aria-hidden="true"></i></h1>
         <p class="hero-sub">
-          px0 is a review workbench and speed-first IDE built for AI-generated code. Run bare <code>px0</code> for the review workbench, pass a folder (<code>px0 &lt;dir&gt;</code>) to jump into code, or review any pull request URL (<code>px0 &lt;pr-url&gt;</code>) in an isolated worktree.
+          px0 is a review workbench and speed-first IDE built for AI-generated code. It turns your browser into a zero-latency console with native Git and GitHub integrations, instant search across massive codebases, in-place quick fixes, and seamless handoff to local AI coding harnesses.
         </p>
 
         <div class="hero-actions">
@@ -148,21 +148,67 @@ const ideData = {
             <span class="copyline-s"></span>
           </button>
 
-          <div class="hero-runs">
-            <span class="hr-item" title="Open the review workbench dashboard">
-              <code>px0</code>
-              <small>workbench</small>
-            </span>
-            <span class="hr-sep">·</span>
-            <span class="hr-item" title="Open local directory directly">
-              <code>px0 &lt;dir&gt;</code>
-              <small>local repo</small>
-            </span>
-            <span class="hr-sep">·</span>
-            <span class="hr-item" title="Review pull request in an isolated worktree without cloning">
-              <code>px0 &lt;pr-url&gt;</code>
-              <small>pr review</small>
-            </span>
+          <!-- 3 Interactive CLI Launch Modes -->
+          <div class="hero-launch-deck">
+            <div class="hld-header">
+              <div class="hld-header-left">
+                <span class="hld-dot"></span>
+                <span class="hld-title">Ways to run</span>
+              </div>
+              <span class="hld-hint">click to copy</span>
+            </div>
+            <div class="hld-grid">
+              <button class="hld-item" type="button" data-copy="px0" aria-label="Copy px0 command">
+                <div class="hld-top">
+                  <span class="hld-cmd"><span class="hld-prompt">$</span>px0</span>
+                  <div class="hld-action">
+                    <svg class="hld-icon hld-icon-copy" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <svg class="hld-icon hld-icon-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span class="hld-copied-text">copied</span>
+                  </div>
+                </div>
+                <span class="hld-label">review workbench</span>
+              </button>
+
+              <button class="hld-item" type="button" data-copy="px0 ." aria-label="Copy px0 directory command">
+                <div class="hld-top">
+                  <span class="hld-cmd"><span class="hld-prompt">$</span>px0 <em>&lt;dir&gt;</em></span>
+                  <div class="hld-action">
+                    <svg class="hld-icon hld-icon-copy" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <svg class="hld-icon hld-icon-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span class="hld-copied-text">copied</span>
+                  </div>
+                </div>
+                <span class="hld-label">local folder / repo</span>
+              </button>
+
+              <button class="hld-item" type="button" data-copy="px0 https://github.com/owner/repo/pull/123" aria-label="Copy px0 PR URL command">
+                <div class="hld-top">
+                  <span class="hld-cmd"><span class="hld-prompt">$</span>px0 <em>&lt;pr-url&gt;</em></span>
+                  <div class="hld-action">
+                    <svg class="hld-icon hld-icon-copy" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <svg class="hld-icon hld-icon-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span class="hld-copied-text">copied</span>
+                  </div>
+                </div>
+                <span class="hld-label">pull request worktree</span>
+              </button>
+            </div>
           </div>
 
           <div class="hero-cta">
@@ -476,39 +522,173 @@ const ideData = {
     border-radius: 2px;
   }
 
-  .hero-runs {
+  .hero-launch-deck {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    padding: 2px 0 4px;
-  }
-
-  .hr-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .hr-item code {
-    color: var(--txt);
-    font-weight: 700;
-    background: var(--surface-2);
-    padding: 2px 7px;
+    flex-direction: column;
     border: 1px solid var(--bdr);
     border-radius: 2px;
+    background: var(--bg-card);
+    overflow: hidden;
+    margin: 4px 0 2px;
   }
 
-  .hr-item small {
+  .hld-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .hld-header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--txt-2);
+    font-weight: 600;
+  }
+
+  .hld-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  .hld-hint {
     color: var(--txt-3);
-    font-size: 10.5px;
-    letter-spacing: 0.02em;
+    font-size: 9.5px;
   }
 
-  .hr-sep {
-    color: var(--txt-4);
+  .hld-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    background: var(--bdr);
+    gap: 1px;
+  }
+
+  @media (max-width: 600px) {
+    .hld-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .hld-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg-elev);
+    font-family: var(--font-mono);
+    text-align: left;
+    cursor: pointer;
+    border: none;
+    position: relative;
+    transition: background-color 0.15s, color 0.15s;
+    min-height: 58px;
+  }
+
+  .hld-item:hover {
+    background: var(--amber-wash);
+  }
+
+  .hld-item:active {
+    background: var(--surface-2);
+  }
+
+  .hld-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .hld-cmd {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--txt);
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    white-space: nowrap;
+  }
+
+  .hld-prompt {
+    font-size: 11px;
+    color: var(--amber);
+    margin-right: 2px;
+    user-select: none;
+    font-weight: 700;
+  }
+
+  .hld-cmd em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--amber);
+    font-size: 11.5px;
+  }
+
+  .hld-action {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--txt-3);
+    flex-shrink: 0;
+  }
+
+  .hld-item:hover .hld-action {
+    color: var(--amber);
+  }
+
+  .hld-icon-check {
+    display: none;
+    color: var(--green);
+  }
+
+  .hld-copied-text {
+    display: none;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  .hld-item.copied {
+    background: var(--surface-2);
+  }
+
+  .hld-item.copied .hld-icon-copy {
+    display: none;
+  }
+
+  .hld-item.copied .hld-icon-check {
+    display: inline-block;
+  }
+
+  .hld-item.copied .hld-copied-text {
+    display: inline;
+  }
+
+  .hld-label {
+    font-size: 10.5px;
+    color: var(--txt-3);
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hld-item:hover .hld-label {
+    color: var(--txt-2);
   }
 
   .hero-actions {

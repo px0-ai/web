@@ -85,10 +85,31 @@ const workflows = [
         </button>
       </div>
 
-      <div class="m-runs">
-        <span class="m-run-chip"><code>px0</code> <em>workbench</em></span>
-        <span class="m-run-chip"><code>px0 &lt;dir&gt;</code> <em>folder</em></span>
-        <span class="m-run-chip"><code>px0 &lt;pr-url&gt;</code> <em>pr review</em></span>
+      <div class="m-launch-deck">
+        <div class="mld-header">
+          <div class="mld-header-left">
+            <span class="mld-dot"></span>
+            <span class="mld-title">Ways to run</span>
+          </div>
+          <span class="mld-hint">tap to copy</span>
+        </div>
+        <div class="mld-list">
+          <button class="mld-item" type="button" data-copy="px0" aria-label="Copy px0 command">
+            <span class="mld-cmd"><span class="mld-prompt">$</span>px0</span>
+            <span class="mld-label">review workbench</span>
+            <span class="mld-copied" aria-hidden="true">copied</span>
+          </button>
+          <button class="mld-item" type="button" data-copy="px0 ." aria-label="Copy px0 directory command">
+            <span class="mld-cmd"><span class="mld-prompt">$</span>px0 <em>&lt;dir&gt;</em></span>
+            <span class="mld-label">local folder / repo</span>
+            <span class="mld-copied" aria-hidden="true">copied</span>
+          </button>
+          <button class="mld-item" type="button" data-copy="px0 https://github.com/owner/repo/pull/123" aria-label="Copy px0 PR URL command">
+            <span class="mld-cmd"><span class="mld-prompt">$</span>px0 <em>&lt;pr-url&gt;</em></span>
+            <span class="mld-label">pull request worktree</span>
+            <span class="mld-copied" aria-hidden="true">copied</span>
+          </button>
+        </div>
       </div>
 
       <div class="m-cta-row">
@@ -364,34 +385,123 @@ const workflows = [
     border-radius: 2px;
   }
 
-  .m-runs {
+  .m-launch-deck {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 16px;
-    font-family: var(--font-mono);
-  }
-
-  .m-run-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    background: var(--surface-2);
+    flex-direction: column;
     border: 1px solid var(--bdr);
-    padding: 3px 7px;
     border-radius: 2px;
+    background: var(--bg-card);
+    overflow: hidden;
+    margin-bottom: 18px;
   }
 
-  .m-run-chip code {
+  .mld-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--bdr);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .mld-header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--txt-2);
+    font-weight: 600;
+  }
+
+  .mld-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  .mld-hint {
+    color: var(--txt-3);
+    font-size: 9px;
+  }
+
+  .mld-list {
+    display: flex;
+    flex-direction: column;
+    background: var(--bdr);
+    gap: 1px;
+  }
+
+  .mld-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 10px;
+    background: var(--bg-elev);
+    font-family: var(--font-mono);
+    text-align: left;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.15s;
+    width: 100%;
+  }
+
+  .mld-item:active {
+    background: var(--amber-wash);
+  }
+
+  .mld-cmd {
+    font-size: 12px;
+    font-weight: 700;
     color: var(--txt);
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+  }
+
+  .mld-prompt {
+    font-size: 11px;
+    color: var(--amber);
+    margin-right: 2px;
+    user-select: none;
     font-weight: 700;
   }
 
-  .m-run-chip em {
+  .mld-cmd em {
     font-style: normal;
-    color: var(--txt-3);
+    color: var(--amber);
+    font-weight: 500;
+    font-size: 11px;
+  }
+
+  .mld-label {
     font-size: 10px;
+    color: var(--txt-3);
+    letter-spacing: 0.02em;
+  }
+
+  .mld-copied {
+    position: absolute;
+    right: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: var(--surface-2);
+    padding: 2px 5px;
+    border-radius: 2px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+  }
+
+  .mld-item.copied .mld-copied {
+    opacity: 1;
   }
 
   .m-install {
