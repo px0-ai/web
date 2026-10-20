@@ -162,7 +162,7 @@ if [ -z "$TARGET_DIR" ]; then
   fi
 fi
 
-# Priority 4: Last resort — requiring sudo
+# Priority 4: Last resort (requiring sudo)
 if [ -z "$TARGET_DIR" ]; then
   if command -v sudo >/dev/null 2>&1 && [ -d "/usr/local/bin" ]; then
     USE_SUDO=1
