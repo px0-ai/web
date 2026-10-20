@@ -23,7 +23,7 @@ Browser Client (Vanilla JS + CSS)
   ├── File Tree & Context Action Menu (tree.js)
   ├── Keyboard Palette & Command Router (prefix routing: >, @, :)
   ├── In-Browser Direct Edit View & Word Wrap Gutter (editview.js, newitem.js)
-  ├── PR Review Header Bar & Line Comment Composer (pr.js)
+  ├── PR Review Bar, Merge Dialog & Comment Composer (pr.js, prmerge.js)
   ├── Sidebar Git Panel, Commit Stepping & Staging (gitpanel.js, commitfiles.js)
   └── Reactive Git Stream Client (gitstream.js, SSE)
             │
@@ -445,4 +445,12 @@ The diff renderer in `diff.js` incorporates a token-level Myers diff algorithm w
 - **Sub-Character Precision**: Exact character substitutions, additions, and deletions are isolated and highlighted with theme-calibrated background opacities.
 - **Insertion Carets**: Unmodified counterpart lines render subtle caret indicators showing the precise column where insertions took place.
 - **Universal Layout Consistency**: Highlighting operates identically across both Side-by-Side (Split) and Inline (Unified) diff layouts with zero client-side layout jumping.
+
+### 24. Bottom Review Bar, AI Rebase, and Build Validation
+In px0 v0.1.19, the pull request review interface and web packaging pipelines were enhanced:
+
+- **Bottom PR Review Bar**: The PR review summary composer, verdict buttons, and merge status controls were relocated from the header to the bottom of the viewport directly above the comments panel, matching natural review flow.
+- **Adjacent AI Rebase Action**: A dedicated Rebase with AI button is rendered directly beside the merge status pill, providing instant 1-click dispatch to the local coding harness for base-branch conflict resolution.
+- **Squash Merge AI Rewriting**: The merge confirmation dialog features an AI commit message rewrite checkbox for squash merges, automatically synthesizing concise titles and bulleted bodies using the local harness.
+- **Bundler Syntax Validation**: The build and check pipelines validate generated JavaScript bundles using Node `--check` syntax verification, and the bundling script robustly strips multiline import and export statements.
 

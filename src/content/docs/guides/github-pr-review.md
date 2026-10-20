@@ -132,7 +132,7 @@ When reviewing pull requests, you often identify trivial fixes, missing docstrin
 
 When you are ready to post feedback back to the forge:
 
-1. The PR review header bar displays the overall review composer and status badge.
+1. The PR review bar at the bottom of the screen (right above the comments panel) holds the review summary, verdict buttons, and merge controls.
 2. Enter your top-level review summary in the review box.
 3. Select your review action:
    - **Comment**: Submit feedback without an approval status (available to all reviewers).
@@ -145,11 +145,9 @@ When you are ready to post feedback back to the forge:
 
 ## Bringing PRs Up to Date & Resolving Conflicts
 
-When the upstream base branch moves ahead, the PR status pill in the review bar updates:
-- **Behind main**: The PR is simply behind the base branch and can be updated cleanly.
-- **Conflicts with main**: The base branch has diverged with overlapping edits.
+The first row of the PR bar shows a **status pill** with the forge's answer to mergeability (*Ready to merge*, *Checks failing*, *Conflicts with main*, *Behind main*, *Merge blocked*, *Draft*, or *Checking mergeability...*). Clicking the pill or the **Rebase with AI** button next to it takes the next step (resolve or force-push). When there is no next step, clicking the pill refreshes the status.
 
-Click **Update branch** or **Resolve conflicts**:
+When the PR conflicts with its base, or is behind it, click **Rebase with AI** (or click the status pill):
 1. px0 fetches the latest base branch and prompts you in the Git panel to pick a strategy:
    - **Rebase with AI**: Replays PR commits on top of base for a linear history.
    - **Merge with AI**: Merges the base branch into the PR branch with a merge commit.
@@ -161,14 +159,12 @@ Click **Update branch** or **Resolve conflicts**:
 
 ## Merging the Pull Request
 
-When all checks pass and the pill reads **Ready to merge**, use the merge split button:
+With push access, a split merge button sits next to **Approve**. The main button runs the method you used last (e.g. **Squash and merge**). The caret lists every method the repository allows: **Create a merge commit**, **Squash and merge**, or **Rebase and merge**. Clicking the merge button directly opens the merge dialog:
 
-1. Click the dropdown caret to choose a merge strategy:
-   - **Create a merge commit**: Creates a merge commit on the base branch.
-   - **Squash and merge**: Combines all PR commits into a single commit on the base branch.
-   - **Rebase and merge**: Fast-forwards commits linearly onto the base branch.
-2. In the merge dialog, edit the commit title and message. Click **Rewrite with AI** to generate a clean, informative commit summary following your configured `git.commitMessageInstruction`.
-3. Confirm the merge. px0 verifies that the PR head matches the exact commit you reviewed before executing the merge.
+1. Choose or verify the merge strategy.
+2. For squash merges, a checkbox lets you **Rewrite commit message with AI** to automatically synthesize an informative commit title and description using your local coding harness.
+3. For a merge commit or squash, you can also manually edit the title and message or click **Rewrite with AI** to regenerate them from the PR commits and diff on demand.
+4. Confirm the merge. px0 verifies that the PR head matches the exact commit you reviewed before executing the merge.
 
 ---
 
@@ -231,14 +227,14 @@ If you open a pull request without configured credentials, px0 operates in read-
 | Line Hover (Thread Icon) | Line number in gutter | Choose between review comment, inline edit, or thread |
 | `Cmd+D` / `Ctrl+D` | Active editor tab | Toggle side-by-side / unified diff against merge-base |
 | `Cmd+K` / `Ctrl+K` | Universal Palette | **Git: Open Pull Request...** launches a new review tab |
-| **No token - click to connect** | PR header bar | Open in-app token connection modal |
-| **`Batch Apply`** | PR header bar | Dispatch all drafted comments to local AI coding harness |
-| **Submit Review** | PR header bar | Submit Approve / Request Changes / Comment to forge |
-| **Status Pill** | PR header bar | Display mergeability status; click to resolve or refresh |
-| **Squash and merge ▾** | PR header bar | Select merge strategy and open merge dialog |
+| **No token - click to connect** | PR review bar (bottom) | Open in-app token connection modal |
+| **`Batch Apply`** | PR review bar (bottom) | Dispatch all drafted comments to local AI coding harness |
+| **Submit Review** | PR review bar (bottom) | Submit Approve / Request Changes / Comment to forge |
+| **Status Pill** | PR review bar (bottom) | Display mergeability status; click to resolve or refresh |
+| **Rebase with AI** | PR review bar (bottom) | Trigger AI-assisted rebase or merge against base branch |
+| **Squash and merge ▾** | PR review bar (bottom) | Open merge dialog (caret: select merge strategy) |
 | `Cmd/Ctrl+Enter` | Merge dialog | Confirm and execute merge |
 | `Esc` | Merge / Connect dialog | Dismiss modal dialog |
-| **Resolve conflicts** | PR header bar | Trigger AI-assisted rebase or merge on divergence |
 | **Force-push** | Sidebar Git panel | Push rebased commits using safe lease |
 | **Pull** | Sidebar Git panel | Fast-forward checkout onto new commits pushed to the PR |
 | **Push** | Sidebar Git panel | Push committed changes to the PR's head branch |

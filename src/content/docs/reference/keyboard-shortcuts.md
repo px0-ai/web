@@ -76,6 +76,8 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | `Cmd+K` -> `Git: Open Pull Request...` | `Ctrl+K` -> `Git: Open Pull Request...` | **Open PR**: Launch a fresh pull request review tab |
 | `Option+M` | `Alt+M` | **Toggle Markdown preview**: Switch between raw source and rendered GFM |
 | `Enter` / `Esc` (in Connect dialog) | `Enter` / `Esc` (in Connect dialog) | Save token / Cancel Connect dialog |
+| Click **Rebase with AI** | Click **Rebase with AI** | **AI Rebase**: Trigger AI-assisted rebase or merge against base branch |
+| Click **Squash and merge** | Click **Squash and merge** | **Open merge dialog**: Open PR merge confirmation dialog |
 | `Cmd+Enter` / `Ctrl+Enter` (in Merge dialog) | `Cmd+Enter` / `Ctrl+Enter` (in Merge dialog) | Confirm and execute merge |
 | `Esc` (in Merge dialog) | `Esc` (in Merge dialog) | Dismiss merge dialog |
 | Click unpushed commit | Click unpushed commit | **Inspect unpushed commit**: Expand touched files and review commit diffs |

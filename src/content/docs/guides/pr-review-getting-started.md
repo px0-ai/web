@@ -51,7 +51,7 @@ You can read public pull requests without authentication. To draft inline commen
 
 ### Quick Connect Modal
 
-Click **No &lt;forge&gt; token - click to connect** in the top PR bar. The Connect dialog provides direct links to your forge's token creation page, describes required permissions, and validates the token immediately upon pasting. The token is saved to your configuration without requiring a restart.
+Click **No &lt;forge&gt; token - click to connect** in the PR review bar. The Connect dialog provides direct links to your forge's token creation page, describes required permissions, and validates the token immediately upon pasting. The token is saved to your configuration without requiring a restart.
 
 ### Forge-Specific Token Setup
 
@@ -111,9 +111,9 @@ Because the review runs in a genuine Git worktree, you can make fixes directly:
 
 ## 5. Bring PRs Up to Date & Resolve Conflicts
 
-When the upstream base branch has moved ahead, the PR status pill displays **Behind main** or **Conflicts with main**, and the merge button updates to **Update branch** or **Resolve conflicts**:
+When the upstream base branch has moved ahead, the PR status pill displays **Behind main** or **Conflicts with main**, and the **Rebase with AI** button appears next to it:
 
-1. Click **Resolve conflicts** (or **Update branch**).
+1. Click **Rebase with AI** (or click the status pill).
 2. px0 fetches the base branch and presents two agent-assisted strategies in the Git panel:
    - **Rebase with AI**: Replays the PR commits on top of the updated base branch for a clean, linear history.
    - **Merge with AI**: Joins the branches by creating a merge commit.
@@ -125,13 +125,13 @@ When the upstream base branch has moved ahead, the PR status pill displays **Beh
 
 ## 6. Merge the Pull Request
 
-When the status pill indicates **Ready to merge**, use the split button next to Approve:
+When the status pill indicates **Ready to merge**, use the merge button next to Approve:
 
-1. Click the dropdown caret to pick a merge method:
-   - **Create a merge commit**: Creates a two-parent merge commit on the base branch.
+1. Click the merge button to open the merge dialog, or click the dropdown caret to pick a merge method:
    - **Squash and merge**: Combines all PR commits into a single commit on the base branch.
+   - **Create a merge commit**: Creates a two-parent merge commit on the base branch.
    - **Rebase and merge**: Fast-forwards PR commits linearly onto the base branch.
-2. In the merge dialog, edit the commit title and message. Click **Rewrite with AI** to synthesize an informative summary from the PR diff and commit history.
+2. In the merge dialog, edit the commit title and message. For squash merges, check **Rewrite commit message with AI** (or click **Rewrite with AI**) to synthesize an informative summary from the PR diff and commit history.
 3. Click **Confirm**. px0 executes the merge pinned to the exact commit you reviewed.
 
 ---

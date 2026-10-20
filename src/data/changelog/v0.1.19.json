@@ -1,0 +1,36 @@
+{
+  "version": "0.1.19",
+  "tag": "v0.1.19",
+  "date": "2026-10-20",
+  "title": "Bottom PR Review Bar, AI Rebase Action, Squash Commit AI Rewriting, and Web Bundler Syntax Validation",
+  "summary": "Relocates the pull request review bar to the bottom of the viewport directly above comments, adds an explicit AI Rebase button next to the merge status pill, simplifies merge button actions with direct dialog opening and an AI commit message rewrite option for squash merges, upgrades px0-ai/harness to v0.0.2, and adds syntax validation to web bundling scripts.",
+  "commitCount": 5,
+  "commitRange": "v0.1.18..v0.1.19",
+  "categories": [
+    {
+      "name": "Pull Request Review & Merging",
+      "items": [
+        "Relocate the PR review bar to the bottom of the screen right above the comments panel for a more ergonomic review workflow",
+        "Add dedicated Rebase with AI button directly adjacent to the merge status pill for 1-click agent conflict resolution",
+        "Simplify split merge button action to directly open the merge dialog on click",
+        "Add Rewrite commit message with AI checkbox option when Squash and merge is selected in the merge dialog",
+        "Anchor merge dropdown menu upward from the bottom review bar for clean viewport layout"
+      ]
+    },
+    {
+      "name": "Tooling & Build System",
+      "items": [
+        "Add automated bundle syntax validation (node --check) to build and check scripts",
+        "Support multiline import and export re-export statements in the lightweight web bundler",
+        "Upgrade px0-ai/harness dependency to v0.0.2 with updated module checksums"
+      ]
+    },
+    {
+      "name": "Documentation",
+      "items": [
+        "Update pull request review guides to reflect the bottom review bar placement and AI rebase controls",
+        "Update keyboard shortcuts and PR workflow references with new merge dialog controls"
+      ]
+    }
+  ]
+}
