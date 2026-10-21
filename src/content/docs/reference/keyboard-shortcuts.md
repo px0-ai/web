@@ -36,6 +36,8 @@ You can also press `?` anywhere inside px0 to open the in-app shortcut cheat she
 | :--- | :--- | :--- |
 | `Cmd+E` | `Ctrl+E` | **Toggle edit mode**: Enter or leave text editing for the active document |
 | `Cmd+S` | `Ctrl+S` | **Save file**: Save edits to disk with instant visual confirmation |
+| `Cmd+F` | `Ctrl+F` | **Find in editor**: Open find bar to search within the editing buffer |
+| `Enter` / `Shift+Enter` (in find) | `Enter` / `Shift+Enter` (in find) | **Next / Prev hit**: Cycle through matches and center in editor |
 | `Escape` | `Escape` | **Done / Exit**: Leave edit mode (confirms before discarding unsaved edits) |
 | `Tab` | `Tab` | **Indent**: Insert 4 spaces or indent multi-line selection |
 | `Shift+Tab` | `Shift+Tab` | **Outdent**: Unindent selected lines |

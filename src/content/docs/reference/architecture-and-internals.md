@@ -33,16 +33,15 @@ Go Server Runtime (Single Static Binary)
   ├── Parallel Index Engine (Listen first · Bounded concurrency: NumCPU * 4)
   ├── Classification .gitignore Parser (internal/ignore: Segment · Suffix · Path · Regex)
   ├── Bounded Two-Pass Fuzzy Matcher (internal/fuzzy: O(n) backward scan + weight matrix)
-  ├── Parallel Grep Engine (Worker buffer reuse · bytes.Contains fast reject)
-  ├── Windowed Syntax Lexer (1,000-line hlChunk · 400-line hlContext · 512 MB LRU)
-  ├── Server-Side Chroma Diff Tokenizer (highlight.go)
-  ├── Multi-Turn Thread Store & Runner (thread.go, SSE /api/threads/stream)
+  ├── Parallel Grep Engine (Worker buffer reuse · zero-allocation ASCII fold reject)
+  ├── Windowed Syntax Lexer & Markdown Engine (internal/render: 1,000-line hlChunk · 512 MB LRU)
+  ├── Regex Symbol Extractor (internal/symbols: Lazy language grammar compilation)
+  ├── Multi-Turn Thread Store & Runner (agent.go: Turn snapshots · SSE /api/threads/stream)
   ├── Delegated Coding Harness Runner (px0-ai/harness, agent.go)
-  ├── Hardened Stdio JSON-RPC Language Server Client (Writer loop · incremental sync)
-  ├── Pure Shell-Out Git Controller (git.go, gitpanel endpoints)
-  ├── Git Forge Provider Engine (provider.go, github.go, pr.go)
-  ├── Reactive Git Watcher (git_watcher.go, SSE /api/stream)
-  └── Active Memory Scavenger (internal/metrics, debug.FreeOSMemory after 15s)
+  ├── Hardened Stdio JSON-RPC Language Server Client (lsp.go: publishDiagnostics · writer loop)
+  ├── Pure Shell-Out Git Controller (git.go: /api/git/hunk, auto-staging, watcher stream)
+  ├── Unified Git Forge Provider Engine (forge.go: GitHub, GitLab, Gitea, Bitbucket)
+  └── Active Memory Scavenger & Preferences (internal/metrics, internal/settings, FreeOSMemory)
 ```
 
 ## Subsystem Matrix & Process Model
@@ -453,4 +452,16 @@ In px0 v0.1.19, the pull request review interface and web packaging pipelines we
 - **Adjacent AI Rebase Action**: A dedicated Rebase with AI button is rendered directly beside the merge status pill, providing instant 1-click dispatch to the local coding harness for base-branch conflict resolution.
 - **Squash Merge AI Rewriting**: The merge confirmation dialog features an AI commit message rewrite checkbox for squash merges, automatically synthesizing concise titles and bulleted bodies using the local harness.
 - **Bundler Syntax Validation**: The build and check pipelines validate generated JavaScript bundles using Node `--check` syntax verification, and the bundling script robustly strips multiline import and export statements.
+
+### 25. Single-Hunk Staging, Turn Snapshots, Decoupled Packages, and High-Throughput Search
+In px0 v0.1.20, key subsystems were refactored for modular isolation, and high-performance Git, search, and editor capabilities were introduced:
+
+- **Single-Hunk Git Actions (`/api/git/hunk`)**: The visual diff viewer now features granular hunk controls (`gitApplyHunk`), piping zero-context patches directly through `git apply --unidiff-zero` to stage (`--cached`), unstage (`--reverse --cached`), or discard (`--reverse`) isolated diff hunks without modifying adjacent modifications.
+- **Auto-Staging on Commit**: When committing without any pre-staged files, `handleGitCommit` automatically checks `gitHasUncommittedChanges` and stages modified and untracked files (`git stage .`), providing zero-friction commits.
+- **Safe Repositories and Unborn HEAD Resilience**: Git repository discovery respects `safe.directory` rules, and branch detection gracefully resolves unborn `HEAD` states directly from `.git/HEAD` on empty or newly initialized repositories.
+- **Per-Turn Worktree Snapshots & Reversion**: Before running each agent thread turn, px0 records an anonymous Git tree snapshot (`beforeSHA`) in `.git/objects` without touching refs or index. A post-turn snapshot (`afterSHA`) enables isolated turn diff inspection and 1-click turn rollbacks (`/api/threads/revert`) using `gitCheckoutSnapshotPaths`.
+- **Decoupled Internal Packages**: Core subsystems were extracted into isolated internal packages (`internal/fuzzy`, `internal/ignore`, `internal/metrics`, `internal/render`, `internal/settings`, `internal/symbols`, `internal/telemetry`, `internal/ui`, `internal/update`), improving testability and code isolation while keeping the root package clean.
+- **High-Throughput Search Prefiltering**: Full-text grep search adds a zero-allocation ASCII fold scan (`containsFoldASCII`) and whole-file literal rejection, bypassing line splitting and regex parsing for files that do not contain search tokens.
+- **In-Editor Find & Word Wrap**: The in-browser text editor includes a buffer find bar (`Cmd/Ctrl+F`) with hit navigation, match counters, and viewport centering, alongside dynamic line height calculation for wrapped text.
+- **Inline LSP Diagnostics**: Diagnostic messages (`publishDiagnostics`) from background language servers are piped directly to editor gutters and file tabs with severity badges and idle scavenging.
 

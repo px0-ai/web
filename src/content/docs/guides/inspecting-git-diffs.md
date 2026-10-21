@@ -103,6 +103,22 @@ When reviewing modified lines, px0 computes exact token- and character-level dif
 - **Insertion Carets**: Unmodified counterpart lines display subtle insertion caret indicators showing exactly where new tokens were introduced.
 - **Theme Integration**: Character highlight backgrounds respect your active syntax theme, using calibrated opacity levels that preserve syntax token readability across both Split and Unified diff modes.
 
+### Single-Hunk Actions: Stage, Unstage & Discard
+
+Starting in version 0.1.20, px0 supports granular hunk-level staging directly inside the visual diff viewer (`/api/git/hunk`), available in both Split and Unified modes:
+
+- **Stage Hunk**: Stage only the selected hunk to the Git index (`git apply --cached --unidiff-zero -`). This lets you craft focused commits without staging entire files or dropping to a terminal patch session.
+- **Unstage Hunk**: Remove an individual staged hunk from the Git index while keeping your working tree edits intact (`git apply --reverse --cached --unidiff-zero -`).
+- **Discard Hunk**: Immediately revert changes within an isolated hunk back to `HEAD` (`git apply --reverse --unidiff-zero -`), discarding unwanted edits with 1 click.
+- **Context Line Expansion**: Expand surrounding lines above or below diff hunks to verify enclosing functions, loops, or scope before deciding whether to stage or discard.
+
+## Safe Repositories & Unborn HEAD Handling
+
+px0 includes built-in safeguards when inspecting and operating on Git repositories:
+
+- **Safe Directory Validation**: The backend git probe validates repository access and respects git `safe.directory` rules, preventing unexpected permission errors in multi-user or containerized environments.
+- **Unborn HEAD Resilience**: When opening newly initialized repositories that have no commits yet (an unborn `HEAD`), px0 cleanly reads the target branch from `.git/HEAD`, displays working tree files without failing, and allows staging and initial commits seamlessly.
+
 ## Selecting, Editing & Starting Threads from Diff Views
 
 You can interact directly with code lines inside both split and unified diffs:
@@ -131,9 +147,11 @@ px0 includes a dedicated Git panel at the base of the left sidebar, providing co
 - The panel displays live counts: `X staged / Y changed`.
 
 ### 2. Manual Commit & Commit with AI
+- **Auto-Staging on Commit**: If you click **Commit** or **Commit with AI** when no files are explicitly staged, px0 automatically stages all modified and untracked files before committing. If the working tree is completely clean, px0 notifies you that there are no changes to commit.
 - **Collapsible Monospace Input**: The commit message textarea is hidden by default to keep the sidebar compact. Click the toggle link to reveal it for manual typing, or let it auto-expand when generating a message.
-- **Standalone AI Generation & Pre-Commit Review**: Click **Generate** to draft a commit message with your configured AI harness (Claude Code, Cursor Agent, Antigravity, or OpenCode) without committing immediately. This lets you review and tweak the text before clicking **Commit**.
-- **1-Click Commit with AI**: Alternatively, click **Commit with AI** to generate a message and commit the staged changes in a single action.
+- **Standalone AI Generation & Pre-Commit Review**: Click **Generate** to draft a commit message with your configured AI harness (Claude Code, Cursor Agent, Antigravity, or OpenCode) without committing immediately. This lets you review and tweak the text before clicking **Commit**. AI commit message parsing automatically strips enclosing quotes.
+- **1-Click Commit with AI**: Alternatively, click **Commit with AI** to generate a message and commit changes in a single action.
+- **Static Button Labels & State Preservation**: Commit button labels remain stable without staged counts, and panel refreshes are prevented from clobbering commit success flashes or in-flight error states.
 - **Data-Loss Protection**: If a commit fails (for instance due to pre-commit hooks or git conflicts), the generated message remains in the textarea so you never lose your draft.
 - **Curated Diff Context**: px0 supplies the agent with the list of staged file paths, a diffstat summary, and the staged diff capped at 32 KB while excluding lockfiles and minified assets.
 - **Custom Commit Instructions**: Set `git.commitMessageInstruction` in Settings (`Cmd+,` or `Ctrl+,`) to enforce custom team guidelines (such as Conventional Commits format, ticket prefixes, or emoji rules).

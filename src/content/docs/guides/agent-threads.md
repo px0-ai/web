@@ -43,6 +43,17 @@ Each message continues the same conversation context. Follow-ups like *"Can you 
 
 ---
 
+## Worktree Turn Snapshots & Safe Reversion
+
+Starting in version 0.1.20, px0 automatically isolates working-tree edits on a per-turn basis using lightweight Git tree snapshots:
+
+1. **Pre-Turn Snapshot**: Before launching the coding harness, px0 records an anonymous Git tree object (`beforeSHA`) representing current working-tree files without touching branches, index, or HEAD.
+2. **Post-Turn Snapshot**: Once the turn finishes, a second snapshot (`afterSHA`) captures the resulting files.
+3. **Turn-Level Diff Review**: Click any changed file chip inside a turn card to inspect the exact diff produced by that specific turn, separated from prior edits or subsequent modifications.
+4. **1-Click Turn Revert**: If an agent turn introduces bugs or an incorrect approach, click **Revert Turn** (`POST /api/threads/revert`). px0 restores only the files modified during that turn back to their `beforeSHA` state. The conversation transcript and history remain fully intact with the turn flagged as reverted, so you can re-prompt or steer the harness in a new direction.
+
+---
+
 ## Threads in GitHub PR Reviews
 
 When conducting a [GitHub Pull Request Review](/docs/guides/github-pr-review), threads include an explicit review scope selector above the message composer:

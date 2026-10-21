@@ -1,0 +1,68 @@
+{
+  "version": "0.1.20",
+  "tag": "v0.1.20",
+  "date": "2026-10-21",
+  "title": "Single-Hunk Git Staging, Agent Turn Snapshots, In-Editor Find, and High-Throughput Search Optimizations",
+  "summary": "Introduces single-hunk Git staging, unstaging, and discarding directly from diff views, automatic worktree turn snapshots with revert support in agent threads, in-editor find with line centering and hit navigation, auto-staging on commit, unborn HEAD and safe directory support, LSP inline diagnostics, decoupled internal packages, and multi-core search pipeline optimizations.",
+  "commitCount": 14,
+  "commitRange": "v0.1.19..v0.1.20",
+  "categories": [
+    {
+      "name": "Git & Diff Operations",
+      "items": [
+        "Add single-hunk staging, unstaging, and discarding (gitApplyHunk) directly from the visual diff viewer",
+        "Support diff hunk context line expansion in both split and unified diff modes",
+        "Automatically stage unstaged modifications when committing without pre-staged files",
+        "Add safe git directory validation and cache verification in git probe",
+        "Support unborn HEAD states during repository branch detection, unstaging, and diffing",
+        "Return fresh git status payload directly from stage and unstage endpoints for immediate UI updates",
+        "Maintain static commit button text and prevent commit success flash state clobbering in git panel",
+        "Strip enclosing quotation marks when parsing AI-generated commit messages"
+      ]
+    },
+    {
+      "name": "Agent Threads & Snapshots",
+      "items": [
+        "Add worktree turn snapshot capture (gitSnapshotWorktree) and restore helpers for per-turn diff review and rollback in agent threads"
+      ]
+    },
+    {
+      "name": "Editor & UI Capabilities",
+      "items": [
+        "Add in-editor find bar (Cmd/Ctrl+F) with hit navigation, match count indicator, and viewport centering",
+        "Add word wrap support with dynamic line height measurement in the virtualized renderer",
+        "Expose LSP diagnostics with inline diagnostic badges in the editor interface",
+        "Streamline row rendering and gutter updates to minimize DOM reflows and memory allocations"
+      ]
+    },
+    {
+      "name": "Performance & Architecture",
+      "items": [
+        "Refactor codebase into decoupled internal packages (fuzzy, ignore, metrics, render, settings, symbols, telemetry, ui, update)",
+        "Add zero-allocation ASCII fold scanning and whole-file pre-filtering to bypass line splitting during full-text searches",
+        "Add preallocation and heap filtering to fuzzy search worker pipelines",
+        "Construct file tree index concurrently with git status resolution for faster cold startups",
+        "Consolidate forge provider subsystems into forge.go and LSP client subsystems into lsp.go",
+        "Cache static assets, LSP document handles, and git status snap states"
+      ]
+    },
+    {
+      "name": "Testing & Tooling",
+      "items": [
+        "Add unified test-bench verification runner (test-bench.sh) and Makefile targets for automated test and benchmark suites",
+        "Add micro-benchmarks across internal packages and workbench operations",
+        "Increase test coverage across fuzzy search, gitignore parsing, table delimiters, and error handling",
+        "Add build-web target in Makefile for streamlined frontend asset compilation",
+        "Simplify post-install instructions and getting-started examples for px0 CLI workflows"
+      ]
+    },
+    {
+      "name": "Documentation",
+      "items": [
+        "Update feature and internal documentation for single-hunk staging, auto-staging, and in-editor find",
+        "Document per-turn thread diff snapshots and rollback capabilities",
+        "Add documentation for internal subsystem testing, benchmarks, and decoupled internal packages"
+      ]
+    }
+  ]
+}

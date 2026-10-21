@@ -43,7 +43,20 @@ The virtualized code view is replaced by a plain text editor with its own synchr
 | `Shift+Tab` | Outdent | Decreases indentation across selected lines. |
 | `Enter` | New line | Automatically preserves the indentation depth of the preceding line. |
 | `Cmd+S` / `Ctrl+S` | Save | Flushes edits to disk and clears dirty state. |
-| `Esc` | Leave edit mode | Exits edit mode (prompts if unsaved changes exist). |
+| `Cmd+F` / `Ctrl+F` | Find in editor | Opens the in-editor find bar directly over the active text buffer. |
+| `Enter` / `Shift+Enter` (in find) | Next / Prev hit | Navigates to the next or previous matching occurrence and centers it. |
+| `Cmd+G` / `Ctrl+G` | Jump to line | Jumps caret directly to the specified line number. |
+| `Esc` | Leave edit mode / Close find | Closes find bar if open, or leaves edit mode (prompts if unsaved changes exist). |
+
+### In-Editor Find & Caret Navigation (`Cmd/Ctrl+F`)
+
+Starting in version 0.1.20, direct edit mode includes a focused in-editor find bar:
+
+- **Direct Buffer Searching**: Search operates instantly over the active textarea buffer without relying on full-text indexing or backend round-trips.
+- **Match Count Indicator**: Displays live hit statistics (e.g. `3 / 14`) as you type.
+- **Seamless Hit Stepping**: Press `Enter` or click the down arrow to step to the next match; press `Shift+Enter` or click the up arrow to step backwards.
+- **Viewport Centering**: Each matching hit is highlighted, selected, and centered within the viewport.
+- **Scrollbar Markers**: Matches are plotted along the scrollbar track for instant spatial awareness.
 
 - **Native Undo History**: Edits use the browser's native input commands, preserving full `Cmd+Z` / `Ctrl+Z` undo and redo stacks.
 - **Dynamic Word Wrap**: Follows the active `editor.wordWrap` setting (`Alt+Z`). When wrap mode is active, gutter line numbers dynamically align to wrapped line heights using an off-screen layout mirror.
